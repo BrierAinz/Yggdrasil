@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lilith-orchestrator"
+version = "2.0.0"
+description = "Orchestrator engine for Lilith"
+requires-python = ">=3.9"
+dependencies = [
+    "lilith-core>=2.0.0",
+    "lilith-tools>=2.0.0",
+    "lilith-memory>=2.0.0",
+]

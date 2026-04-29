@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vanaheim-framework"
+version = "1.0.0"
+description = "Base framework for all Vanaheim bots"
+requires-python = ">=3.9"
+dependencies = [
+    "pydantic>=2.0",
+    "python-dotenv>=1.0",
+]

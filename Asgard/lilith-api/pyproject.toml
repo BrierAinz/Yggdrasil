@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lilith-api"
+version = "2.0.0"
+description = "REST API for Lilith"
+requires-python = ">=3.9"
+dependencies = [
+    "lilith-core>=2.0.0",
+    "lilith-tools>=2.0.0",
+    "lilith-memory>=2.0.0",
+    "lilith-orchestrator>=2.0.0",
+    "fastapi>=0.100",
+    "uvicorn>=0.23",
+    "pydantic>=2.0",
+]
