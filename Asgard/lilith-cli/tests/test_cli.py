@@ -14,4 +14,4 @@ def test_cli_version():
         timeout=10,
     )
     assert result.returncode == 0
-    assert "2.0.0" in result.stdout
+    assert "2.1.0" in result.stdout

@@ -52,3 +52,8 @@ class MemoryStore:
                 "SELECT * FROM memories ORDER BY timestamp DESC LIMIT ?", (limit,)
             ).fetchall()
             return [dict(row) for row in rows]
+
+    def count_entries(self) -> int:
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM memories")
+        return cursor.fetchone()[0]
