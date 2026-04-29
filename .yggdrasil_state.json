@@ -1,0 +1,19 @@
+{
+  "realms": {
+    "Asgard": {"files": 45, "size_kb": 180},
+    "Vanaheim": {"files": 12, "size_kb": 45},
+    "Alfheim": {"files": 8, "size_kb": 25},
+    "Svartalfheim": {"files": 20, "size_kb": 60},
+    "Muspelheim": {"files": 5, "size_kb": 15},
+    "Niflheim": {"files": 3, "size_kb": 12},
+    "Midgard": {"files": 2, "size_kb": 5},
+    "Jotunheim": {"files": 2, "size_kb": 5},
+    "Helheim": {"files": 4, "size_kb": 20}
+  },
+  "summary": {
+    "total_files": 101,
+    "total_size_kb": 367,
+    "realms_active": 9
+  },
+  "note": "Estado aproximado post-remaster v2.0"
+}

@@ -8,6 +8,8 @@ YGGDRASIL = Path(__file__).parent.resolve()
 STATE_FILE = YGGDRASIL / ".yggdrasil_state.json"
 
 
+EXCLUDE_DIRS = {"__pycache__", "node_modules", ".git", "Archives", "Archives_Lilith_Monolith", "Archives_Lilith_Legacy"}
+
 def scan_realms() -> dict:
     realms = {}
     for realm in [
@@ -17,7 +19,12 @@ def scan_realms() -> dict:
         path = YGGDRASIL / realm
         if not path.exists():
             continue
-        files = list(path.rglob("*.py")) + list(path.rglob("*.js")) + list(path.rglob("*.md"))
+        files = []
+        for ext in ("*.py", "*.js", "*.md"):
+            for f in path.rglob(ext):
+                if any(part in EXCLUDE_DIRS for part in f.parts):
+                    continue
+                files.append(f)
         realms[realm] = {
             "path": str(path),
             "files": len(files),
