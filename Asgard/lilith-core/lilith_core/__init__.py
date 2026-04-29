@@ -2,6 +2,6 @@
 __version__ = "2.0.0"
 
 from .config import Config
-from .exceptions import LilithError, ToolError, LLMError
+from .exceptions import LilithError, LLMError, ToolError
 
 __all__ = ["Config", "LilithError", "ToolError", "LLMError"]

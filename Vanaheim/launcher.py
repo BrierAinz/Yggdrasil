@@ -25,6 +25,7 @@ def main():
     module_path, func_name = BOTS[bot_name]
     try:
         import importlib
+
         module = importlib.import_module(module_path)
         getattr(module, func_name)()
     except ImportError as e:

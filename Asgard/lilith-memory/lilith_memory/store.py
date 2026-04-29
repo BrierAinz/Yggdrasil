@@ -1,7 +1,7 @@
+import json
 import sqlite3
 from pathlib import Path
-from typing import List, Dict, Optional
-import json
+from typing import Dict, List, Optional
 
 
 class MemoryStore:
@@ -11,7 +11,8 @@ class MemoryStore:
 
     def _init_db(self):
         with sqlite3.connect(self.db_path) as conn:
-            conn.execute("""
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS memories (
                     id INTEGER PRIMARY KEY,
                     content TEXT NOT NULL,
@@ -19,14 +20,20 @@ class MemoryStore:
                     metadata TEXT,
                     timestamp REAL DEFAULT (unixepoch())
                 )
-            """)
+            """
+            )
             conn.execute("CREATE INDEX IF NOT EXISTS idx_time ON memories(timestamp)")
 
-    def add(self, content: str, embedding: Optional[bytes] = None, metadata: Optional[Dict] = None):
+    def add(
+        self,
+        content: str,
+        embedding: Optional[bytes] = None,
+        metadata: Optional[Dict] = None,
+    ):
         with sqlite3.connect(self.db_path) as conn:
             conn.execute(
                 "INSERT INTO memories (content, embedding, metadata) VALUES (?, ?, ?)",
-                (content, embedding, json.dumps(metadata) if metadata else None)
+                (content, embedding, json.dumps(metadata) if metadata else None),
             )
 
     def search(self, query: str, limit: int = 5) -> List[Dict]:
@@ -34,7 +41,7 @@ class MemoryStore:
             conn.row_factory = sqlite3.Row
             rows = conn.execute(
                 "SELECT * FROM memories WHERE content LIKE ? ORDER BY timestamp DESC LIMIT ?",
-                (f"%{query}%", limit)
+                (f"%{query}%", limit),
             ).fetchall()
             return [dict(row) for row in rows]
 
@@ -42,7 +49,6 @@ class MemoryStore:
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             rows = conn.execute(
-                "SELECT * FROM memories ORDER BY timestamp DESC LIMIT ?",
-                (limit,)
+                "SELECT * FROM memories ORDER BY timestamp DESC LIMIT ?", (limit,)
             ).fetchall()
             return [dict(row) for row in rows]

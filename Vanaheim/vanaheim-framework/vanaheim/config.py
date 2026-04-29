@@ -1,7 +1,7 @@
+import json
 import os
 from pathlib import Path
-from typing import Dict, Any
-import json
+from typing import Any, Dict
 
 
 class BotConfig:

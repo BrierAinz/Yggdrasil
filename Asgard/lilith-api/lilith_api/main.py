@@ -1,10 +1,11 @@
+from typing import Any, Dict, List
+
 from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List, Dict, Any
 from lilith_core.config import Config
 from lilith_memory.store import MemoryStore
 from lilith_orchestrator.engine import LilithEngine
 from lilith_tools.registry import ToolRegistry
+from pydantic import BaseModel
 
 app = FastAPI(title="Lilith API", version="2.0.0")
 

@@ -1,6 +1,7 @@
-import pytest
 import sys
 from pathlib import Path
+
+import pytest
 
 YGGDRASIL_ROOT = Path(__file__).parent.parent.resolve()
 

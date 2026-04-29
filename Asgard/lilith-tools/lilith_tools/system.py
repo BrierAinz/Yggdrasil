@@ -10,6 +10,7 @@ class SystemInfoTool(BaseTool):
 
     def execute(self, **kwargs) -> ToolResult:
         import platform
+
         data = {
             "os": platform.system(),
             "version": platform.version(),
@@ -26,4 +27,5 @@ class SystemTimeTool(BaseTool):
 
     def execute(self, **kwargs) -> ToolResult:
         from datetime import datetime
+
         return ToolResult(success=True, data={"now": datetime.now().isoformat()})

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Gestor de modelos LLM para Niflheim."""
-import json
 import hashlib
+import json
+import sys
 from pathlib import Path
 from typing import Dict, Optional
-import sys
 
 NIFLHEIM = Path(__file__).parent.parent
 MODELS_DIR = NIFLHEIM / "Models"
@@ -19,7 +19,9 @@ def load_registry() -> Dict:
 
 def save_registry(registry: Dict):
     REGISTRY.parent.mkdir(parents=True, exist_ok=True)
-    REGISTRY.write_text(json.dumps(registry, indent=2, ensure_ascii=False), encoding="utf-8")
+    REGISTRY.write_text(
+        json.dumps(registry, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
 
 
 def add_model(name: str, url: str = "", size: int = 0, checksum: str = ""):
@@ -69,7 +71,9 @@ def list_models():
         exists = Path(info["path"]).exists()
         verified = verify_model(name) if exists else False
         status = "OK" if verified else "PRESENT" if exists else "MISSING"
-        size_str = f"{info.get('size', 0) / 1024**3:.1f} GB" if info.get("size") else "?"
+        size_str = (
+            f"{info.get('size', 0) / 1024**3:.1f} GB" if info.get("size") else "?"
+        )
         print(f"{status:<10} {name:<30} {size_str:<12}")
 
 
