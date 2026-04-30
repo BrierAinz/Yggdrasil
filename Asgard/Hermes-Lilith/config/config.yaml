@@ -1,0 +1,125 @@
+# Midgard Agent - Configuración Principal
+
+## Información General
+version: "1.0.0"
+workspace: "D:\\Proyectos\\Midgard"
+created: "2026-04-20"
+
+## Paths
+paths:
+  workspace: "D:\\Proyectos\\Midgard\\workspace"
+  backups: "D:\\Proyectos\\Midgard\\backups"
+  logs: "D:\\Proyectos\\Midgard\\workspace\\logs"
+  skills: "D:\\Proyectos\\Midgard\\skills"
+  proyectos: "D:\\Proyectos\\Midgard\\workspace\\proyectos"
+  templates: "D:\\Proyectos\\Midgard\\workspace\\templates"
+
+## Sistema de Memorias
+memories:
+  enabled: true
+  path: "/memories"
+  auto_document: true
+  pattern_threshold: 3  # Veces antes de crear patrón automático
+  backup_before_edit: true
+
+## Configuración de Desktop Control
+desktop:
+  screenshot_on_action: false  # Captura después de acciones importantes
+  confirm_destructive: true   # Confirmar antes de eliminar
+  log_all_actions: true       # Loggear todas las acciones
+
+## Configuración de VS Code
+vscode:
+  auto_format: true           # Formatear al guardar
+  auto_save: true            # Guardado automático
+  extensions:
+    - "ms-python.python"
+    - "esbenp.prettier-vscode"
+    - "dbaeumer.vscode-eslint"
+    - "eamodio.gitlens"
+    - "GitHub.copilot"
+
+## Configuración de Automatización
+automation:
+  enabled: true
+  macros_dir: "D:\\Proyectos\\Midgard\\automation\\macros"
+  scripts_dir: "D:\\Proyectos\\Midgard\\automation\\scripts"
+  workflows_dir: "D:\\Proyectos\\Midgard\\automation\\workflows"
+
+  # Programación
+  schedule:
+    backup_daily:
+      enabled: true
+      cron: "0 2 * * *"  # 2:00 AM daily
+      script: "backup.ps1"
+
+    cleanup_weekly:
+      enabled: true
+      cron: "0 3 * * 0"  # 3:00 AM Sunday
+      script: "cleanup.ps1"
+
+## Configuración de Backups
+backup:
+  enabled: true
+  retention_days: 30
+  max_size_mb: 1024
+  compress: true
+  targets:
+    - path: "D:\\Proyectos\\Midgard\\memories"
+      pattern: "*.md"
+    - path: "D:\\Proyectos\\Midgard\\skills"
+      pattern: "**/*.md"
+    - path: "D:\\Proyectos\\Midgard\\config"
+      pattern: "*.yaml"
+
+## Configuración de Logs
+logging:
+  level: "info"  # debug, info, warning, error
+  rotation: "daily"
+  max_files: 14
+  categories:
+    - "activity"
+    - "tasks"
+    - "errors"
+    - "automation"
+
+## Configuración de Learning
+learning:
+  enabled: true
+  auto_detect_patterns: true
+  min_repetitions: 3        # Mínimo de repeticiones para crear patrón
+  track_performance: true
+  weekly_review: true
+
+## Preferencias del Usuario
+# (Se actualiza desde /memories/conocimiento/preferencias_usuario.md)
+user_preferences:
+  language: "es"
+  timezone: "America/Argentina/Buenos_Aires"
+  notifications: true
+  autonomy_level: "medium"  # low, medium, high
+
+## Seguridad
+security:
+  require_confirmation:
+    - "delete"
+    - "format"
+    - "diskpart"
+    - "rm -rf"
+    - "drop database"
+  readonly_paths:
+    - "C:\\Windows"
+    - "C:\\Program Files"
+  sandbox_mode: false  # Activar si se quiere modo sandbox
+
+## Sandboxing (Para ejecutar en entorno aislado)
+sandbox:
+  enabled: false
+  isolated_paths:
+    - "D:\\Proyectos\\Midgard"
+    - "D:\\Temp"
+  blocked_commands:
+    - "rm -rf /"
+    - "format"
+    - "diskpart"
+    - "del /f /s /q C:\\"

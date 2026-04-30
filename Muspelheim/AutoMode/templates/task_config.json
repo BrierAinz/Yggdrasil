@@ -1,0 +1,46 @@
+{
+  "_schema": "AutoMode Task Configuration v1.0",
+  "task_id": "task_YYYYMMDD_HHMMSS",
+  "title": "Título descriptivo de la tarea",
+  "description": "Descripción detallada del objetivo",
+  "created_at": "2026-03-21T10:00:00",
+  "owner_id": "123456789",
+  "channel_id": "987654321",
+  "status": "pending",
+  "settings": {
+    "auto_delegate": true,
+    "checkpoint_interval_steps": 5,
+    "report_interval_hours": 4,
+    "max_retries_per_step": 3,
+    "timeout_per_step_minutes": 30
+  },
+  "security_limits": {
+    "forbidden_paths": [
+      "Core/Config/security.json",
+      "Core/Config/secrets.json",
+      "Core/Config/muninn.json"
+    ],
+    "forbidden_operations": [
+      "delete",
+      "format",
+      "rm -rf"
+    ],
+    "require_approval": [
+      "modify_core_files",
+      "delete_files",
+      "change_permissions"
+    ],
+    "max_file_size_mb": 100,
+    "allowed_working_dirs": [
+      "D:/Proyectos/Yggdrasil",
+      "D:/Proyectos/Muspelheim"
+    ]
+  },
+  "notifications": {
+    "on_start": true,
+    "on_checkpoint": true,
+    "on_complete": true,
+    "on_error": true,
+    "on_approval_needed": true
+  }
+}

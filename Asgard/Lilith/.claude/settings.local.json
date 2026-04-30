@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude config:*)",
+      "Bash(powershell.exe -Command \"echo $PROFILE\")",
+      "Bash(powershell.exe -Command \"Write-Output \\\\$PROFILE\")"
+    ]
+  }
+}

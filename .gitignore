@@ -37,7 +37,24 @@ Thumbs.db
 
 # Yggdrasil specific
 Helheim/Quarantine_*/
+Helheim/Archives_*/
 *.log
 logs/
 tmp/
 temp/
+
+# ML Models & Datasets
+Niflheim/Datasets/
+Niflheim/Models/
+*.safetensors
+*.pth
+*.pt
+*.bin
+*.onnx
+*.ckpt
+
+# Binaries & Archives
+Asgard/*.tar.gz
+Asgard/*.exe
+Asgard/]
+*.exe

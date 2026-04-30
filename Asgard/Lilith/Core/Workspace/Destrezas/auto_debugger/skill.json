@@ -1,0 +1,22 @@
+﻿{
+    "name": "auto_debugger",
+    "description": "Recibe un error/traceback, analiza el codigo fuente y sugiere el fix",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {
+        "error": {
+            "type": "string",
+            "required": true,
+            "description": "El error o traceback a analizar"
+        },
+        "archivo": {
+            "type": "string",
+            "required": false,
+            "description": "Archivo fuente donde ocurrio el error"
+        }
+    },
+    "output": "Analisis del error con fix sugerido",
+    "tools_required": [
+        "GeminiClient"
+    ]
+}

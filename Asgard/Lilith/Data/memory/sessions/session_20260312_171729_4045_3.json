@@ -1,0 +1,52 @@
+{
+  "session_id": "session_20260312_171729_4045",
+  "saved_at": "2026-03-12T17:38:46.795049",
+  "message_count": 9,
+  "summary": "¿Qué proyectos tengo activos?",
+  "messages": [
+    {
+      "role": "user",
+      "content": "¿Qué proyectos tengo activos?"
+    },
+    {
+      "role": "assistant",
+      "content": "**Proyectos activos confirmados:**\n\n| Proyecto | Estado | Descripción |\n|----------|--------|-------------|\n| **Lilith** | Operacional | Tu IA táctica personal (este sistema) |\n| **Yggdrasil** | Remakeado | Organización de proyectos — estructura de 9 reinos |\n| **Svartalfheim** | Remakeado | Continúa bajo la nueva arquitectura Yggdrasil |\n| **Juego de terror procedural** | Desarrollo activo | Tu proyecto principal como Game Creator |\n\n**Nota:** No tengo visibilidad de tu filesystem local. Si hay más proyectos en `Workspace/` o directorios que no has mencionado en sesiones previas, necesito que me lo indiques para actualizar el registro.\n\n¿Priorizamos alguno hoy, Ainz?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    },
+    {
+      "role": "user",
+      "content": "¿Qué proyectos tengo activos?"
+    },
+    {
+      "role": "assistant",
+      "content": "Sistemas nominales. Consultando tu panteón activo...\n\n---\n\n## **PROYECTOS ACTIVOS — ESTADO ACTUAL**\n\n| Proyecto | Rol | Estado |\n|----------|-----|--------|\n| **Lilith** | IA tática personal | 🟢 **Operativa** — sesión activa |\n| **Yggdrasil** | Organização de projetos (9 reinos) | 🟡 **Remakeado** — nova estrutura em curso |\n| **Svartalfheim** | Subsistema de Yggdrasil | 🟡 **Remakeado** — integrado à nova arquitetura |\n| **Jogo de terror procedural** | Projeto principal de Game Creator | 🔵 **Desenvolvimento ativo** — seu foco principal |\n| **Yggdrasil (sistema de arte)** | Pipeline SD/ComfyUI | 🟢 **Funcional** — sob controle de Lilith |\n\n---\n\n## **ANOMALIAS DETECTADAS**\n\nNenhuma crítica. Mas registro um padrão: **Yggdrasil e Svartalfheim** foram \"remakeados\" há duas sessões, mas não tenho os logs da nova arquitetura no `Workspace/Mente/`. \n\nIsso é intencional — trabalho local — ou preciso atualizar meu índice?\n\n---\n\n## **PENDENTES SEM RESOLUÇÃO**\n\n- Decisão de engine para o jogo de terror: Unity, Unreal, ou motor próprio?\n- Estrutura dos 9 reinos de Yggdrasil: documentação atualizada?\n- Pipeline de arte: SD 1.5, SDXL, ou Flux como base?\n\n---\n\nQualquer ordem, Ainz.",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    },
+    {
+      "role": "user",
+      "content": "¿Qué proyectos tengo activos?"
+    },
+    {
+      "role": "assistant",
+      "content": "**Reporte de estado — Sistemas activos:**\n\n| Proyecto | Estado | Notas |\n|----------|--------|-------|\n| **Lilith** | 🟢 Operativa | Tú. Ahora mismo. |\n| **Yggdrasil** | 🟢 Remakeado | Organización de los 9 reinos — sigue en pie, nueva forma |\n| **Svartalfheim** | 🟢 Remakeado | Subsistema bajo Yggdrasil |\n| **Juego de terror procedural** | 🟡 En desarrollo | Tu proyecto principal como Game Creator |\n| **Sistema de automatización total** | 🔧 En construcción | Objetivo: que yo opere tu workflow digital |\n\n---\n\n**Anomalías detectadas:** Ninguna crítica.\n\n**Pendientes sin timestamp:** ¿Avance en el motor de terror procedural? Última sesión no dejó logs claros de progreso.\n\n¿Prioridad de hoy, Ainz?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    },
+    {
+      "role": "user",
+      "content": "Decidimos usar ChromaDB como vector store principal para Lilith"
+    },
+    {
+      "role": "assistant",
+      "content": "Entendido, Ainz. ChromaDB queda establecido como vector store principal para Lilith.\n\n**Registro de decisión:**\n- **Tecnología:** ChromaDB\n- **Uso primario:** Almacenamiento y recuperación de embeddings para memoria semántica, contexto extendido y búsqueda vectorial\n- **Alternativas descartadas:** (pendiente de documentar si evaluaste otras)\n\n**Implicaciones operativas que detecto:**\n\n| Aspecto | Consideración |\n|--------|---------------|\n| Persistencia | Chroma soporta persistencia en disco — decidir ruta en `Workspace/Memoria/` |\n| Embedding model | Necesito saber cuál usar (OpenAI, local con sentence-transformers, etc.) |\n| Cliente | ¿Python puro o HTTP server para multi-proceso? |\n| Integración con 262k contexto | Chroma complementa, no reemplaza — útil para recuperación selectiva de memoria histórica |\n\n**Pendientes de tu lado:**\n- ¿Embeddings locales o API externa?\n- ¿Estructura de colecciones? (una general, o dividida por proyecto: Yggdrasil, Svartalfheim, terror procedural...)\n\nLo registro en `Workspace/Mente/tech_stack.md` una vez confirmes estos puntos.\n\n¿Avanzamos con la configuración base o hay dependencias bloqueantes?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    },
+    {
+      "role": "user",
+      "content": "Confirmado: Kimi es el orquestador y Eva solo se usa para análisis puntual"
+    }
+  ]
+}

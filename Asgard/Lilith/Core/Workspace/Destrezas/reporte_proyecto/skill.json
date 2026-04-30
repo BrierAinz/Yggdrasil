@@ -1,0 +1,9 @@
+﻿{
+    "name": "reporte_proyecto",
+    "description": "Genera un reporte del estado actual del proyecto Lilith",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {},
+    "output": "Reporte markdown impreso en consola y guardado en Workspace/Taller/",
+    "tools_required": []
+}

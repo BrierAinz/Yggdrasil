@@ -1,0 +1,47 @@
+[
+    {
+        "decision": "Usar ChromaDB como vector store principal para Lilith",
+        "context": "En la sesión, el usuario confirmó el uso de ChromaDB como vector store principal para Lilith y los roles de Kimi como orquestador y Eva para análisis puntual, preguntando por las decisiones de arquitectura tomadas hasta ahora. El asistente analizó el historial y resumió que solo esas decisiones se han documentado explícitamente. Se recomendó archivarlas y revisar pendientes con Kimi.",
+        "project": "Lilith",
+        "recorded_at": "2026-03-12T23:52:55.741244Z",
+        "source": "session_summary"
+    },
+    {
+        "decision": "Kimi es el orquestador principal",
+        "context": "En la sesión, el usuario confirmó el uso de ChromaDB como vector store principal para Lilith y los roles de Kimi como orquestador y Eva para análisis puntual, preguntando por las decisiones de arquitectura tomadas hasta ahora. El asistente analizó el historial y resumió que solo esas decisiones se han documentado explícitamente. Se recomendó archivarlas y revisar pendientes con Kimi.",
+        "project": "Lilith",
+        "recorded_at": "2026-03-12T23:52:55.741244Z",
+        "source": "session_summary"
+    },
+    {
+        "decision": "Eva se usa solo para análisis puntual",
+        "context": "En la sesión, el usuario confirmó el uso de ChromaDB como vector store principal para Lilith y los roles de Kimi como orquestador y Eva para análisis puntual, preguntando por las decisiones de arquitectura tomadas hasta ahora. El asistente analizó el historial y resumió que solo esas decisiones se han documentado explícitamente. Se recomendó archivarlas y revisar pendientes con Kimi.",
+        "project": "Lilith",
+        "recorded_at": "2026-03-12T23:52:55.741244Z",
+        "source": "session_summary"
+    },
+    {
+        "decision": "HALLAZGO: Los tres problemas principales en el archivo main.py, basados en el análisis del historial de conversación proporcionado, son: 1) Ubicación indefinida de la función get_token_stats, lo que genera ambigüedad arquitectónica; 2) Diagnóstico incompleto o fragmentado en el código, evidenciado por interrupciones en el análisis; 3) Limitaciones en las decisiones de arquitectura, restringidas al uso de ChromaDB sin evidencia de integración más amplia.\n\nEVIDENCIA: 1) En el historial [18:02:54],",
+        "context": "/auto Analiza el archivo main.py y dime los 3 problemas principales",
+        "project": "Lilith",
+        "recorded_at": "2026-03-13T02:14:08.483071Z"
+    },
+    {
+        "decision": "Decisión de arquitectura para el sistema de generación procedural de niveles (¿grafo de habitaciones vs. tilemap dinámico?)",
+        "context": "Pendientes sin resolver en el status report del asistente tras saludo del usuario",
+        "project": "Terror procedural",
+        "recorded_at": "2026-03-13T11:41:08.341305Z"
+    },
+    {
+        "decision": "microservicios o monolito modular",
+        "context": "backend del juego de terror procedural",
+        "project": "juego de terror procedural",
+        "recorded_at": "2026-03-13T13:00:15.789520Z"
+    },
+    {
+        "decision": "Auditar estructura de Yggdrasil o forjar nuevo módulo",
+        "context": "Pendientes de proyectos como terror procedural y Yggdrasil",
+        "project": "Yggdrasil (9 reinos)",
+        "recorded_at": "2026-03-13T13:05:44.502042Z"
+    }
+]

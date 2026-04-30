@@ -1,0 +1,28 @@
+{
+  "session_id": "session_20260312_195216_3697",
+  "saved_at": "2026-03-12T19:54:20.271604",
+  "message_count": 4,
+  "summary": "Hola",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hola"
+    },
+    {
+      "role": "assistant",
+      "content": "*Sistemas nominales. WebSocket en espera. Sin anomalías detectadas en los últimos logs.*\n\n---\n\n**Reporte de estado:**\n- Contexto activo: 262k tokens disponibles.\n- Workspace: `Yggdrasil/` montado. `Lilith/` operativo.\n- Sin tareas críticas pendientes del backlog visible.\n\n**Recordatorio de contexto:**\nÚltima sesión quedó en definición de arquitectura para el juego de terror procedural — sistema de generación de niveles basado en tensión dinámica. ¿Continuamos por ahí, o hay prioridad nueva?\n\n---\n\n*El vacío está en calma. Por ahora.*\n\n¿Órdenes, Ainz?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    },
+    {
+      "role": "user",
+      "content": "Cuanto le mide a Ainz?"
+    },
+    {
+      "role": "assistant",
+      "content": "No tengo esa información en el perfil de Ainz, y no es el tipo de dato que registre en `Workspace/Mente/`.\n\n¿Hay algún proyecto activo que requiera atención, o es banter?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    }
+  ]
+}

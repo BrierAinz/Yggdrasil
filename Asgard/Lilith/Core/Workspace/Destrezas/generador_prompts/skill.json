@@ -1,0 +1,23 @@
+﻿{
+    "name": "generador_prompts",
+    "description": "Crea prompts optimizados para arte, narrativa, codigo y mas",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {
+        "objetivo": {
+            "type": "string",
+            "required": true,
+            "description": "Que quieres lograr con el prompt"
+        },
+        "target": {
+            "type": "string",
+            "required": false,
+            "default": "gemini",
+            "description": "Para que modelo: gemini, stable-diffusion, gpt, general"
+        }
+    },
+    "output": "Prompt optimizado listo para usar",
+    "tools_required": [
+        "GeminiClient"
+    ]
+}

@@ -1,0 +1,24 @@
+{
+  "session_id": "test_session_001",
+  "saved_at": "2026-03-07T17:04:45.090628",
+  "message_count": 4,
+  "summary": "",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hola, ¿cómo estás?"
+    },
+    {
+      "role": "assistant",
+      "content": "¡Hola! Estoy bien, gracias por preguntar. ¿En qué puedo ayudarte hoy?"
+    },
+    {
+      "role": "user",
+      "content": "Cuéntame un chiste"
+    },
+    {
+      "role": "assistant",
+      "content": "¿Por qué los pájaros no usan Facebook? Porque ya tienen Twitter."
+    }
+  ]
+}

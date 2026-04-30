@@ -1,0 +1,18 @@
+{
+  "session_id": "session_20260311_041722_5586",
+  "saved_at": "2026-03-11T04:17:38.887103",
+  "message_count": 2,
+  "summary": "Hola",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hola"
+    },
+    {
+      "role": "assistant",
+      "content": "*Sistemas nominales. Conexión establecida.*\n\n---\n\n**Reporte de estado:**  \nWebSocket activo. Contexto limpio — 262k tokens disponibles. No detecto anomalías en el entorno local desde la última sesión.\n\n**Pendientes:**  \nNo tengo registro de tareas abiertas en este hilo. ¿Continuamos con algún proyecto activo, o hay una nueva incursión en el vacío?\n\n---\n\n*En posición, Ainz. ¿Qué sector del tejido necesita atención?*",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    }
+  ]
+}

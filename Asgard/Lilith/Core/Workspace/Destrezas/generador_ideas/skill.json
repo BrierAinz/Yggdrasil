@@ -1,0 +1,23 @@
+﻿{
+    "name": "generador_ideas",
+    "description": "Brainstorming de mecanicas de juego, lore, personajes y mundos",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {
+        "tema": {
+            "type": "string",
+            "required": true,
+            "description": "Tema o genero del brainstorm (ej: 'souls-like', 'dark fantasy')"
+        },
+        "tipo": {
+            "type": "string",
+            "required": false,
+            "default": "mecanica",
+            "description": "Tipo: mecanica, lore, personaje, mundo"
+        }
+    },
+    "output": "Lista de ideas creativas",
+    "tools_required": [
+        "GeminiClient"
+    ]
+}

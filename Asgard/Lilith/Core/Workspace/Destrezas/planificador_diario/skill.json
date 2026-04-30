@@ -1,0 +1,11 @@
+﻿{
+    "name": "planificador_diario",
+    "description": "Al iniciar sesion, revisa recordatorios, learnings y status del proyecto para proponer un plan del dia",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {},
+    "output": "Plan del dia con prioridades y tareas sugeridas",
+    "tools_required": [
+        "GeminiClient"
+    ]
+}

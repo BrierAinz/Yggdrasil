@@ -1,0 +1,23 @@
+﻿{
+    "name": "auto_skill_creator",
+    "description": "Lilith analiza una necesidad y se crea ella misma una nueva skill - la habilidad de aprender habilidades",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {
+        "descripcion": {
+            "type": "string",
+            "required": true,
+            "description": "Descripcion de la skill que se necesita crear"
+        },
+        "nombre": {
+            "type": "string",
+            "required": true,
+            "description": "Nombre corto para la skill (sin espacios, snake_case)"
+        }
+    },
+    "output": "Nueva skill creada y registrada en el sistema",
+    "tools_required": [
+        "GeminiClient"
+    ],
+    "meta": "Esta skill permite a Lilith expandir autonomamente sus propias capacidades"
+}

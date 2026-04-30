@@ -1,0 +1,16 @@
+﻿{
+    "name": "scanner_secretos",
+    "description": "Escanea el proyecto buscando API keys, passwords y secretos expuestos en el codigo",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {
+        "directorio": {
+            "type": "string",
+            "required": false,
+            "default": "Backend",
+            "description": "Directorio a escanear"
+        }
+    },
+    "output": "Reporte de secretos encontrados con ubicacion y riesgo",
+    "tools_required": []
+}

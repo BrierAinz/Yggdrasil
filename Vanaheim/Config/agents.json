@@ -1,0 +1,46 @@
+{
+  "agents": {
+    "shalltear": {
+      "enabled": true,
+      "model": "llama-3.3-70b",
+      "provider": "venice",
+      "timeout": 60,
+      "temperature": 0.3
+    },
+    "adan": {
+      "enabled": true,
+      "model": "qwen2.5-coder:7b",
+      "provider": "ollama",
+      "base_url": "http://localhost:11434",
+      "timeout": 120,
+      "temperature": 0.2
+    },
+    "eva": {
+      "enabled": true,
+      "model": "grok-4-fast-reasoning",
+      "provider": "grok",
+      "timeout": 120,
+      "temperature": 0.5
+    },
+    "crystal": {
+      "enabled": true,
+      "model": "kimi-for-coding",
+      "provider": "kimi",
+      "fallback_provider": "ollama",
+      "fallback_model": "llama3.2:latest",
+      "timeout": 60,
+      "temperature": 0.7
+    },
+    "odin": {
+      "enabled": true,
+      "model": "kimi-for-coding",
+      "provider": "kimi",
+      "timeout": 300,
+      "temperature": 0.3
+    }
+  },
+  "registry": {
+    "persist_state": true,
+    "heartbeat_interval": 30
+  }
+}

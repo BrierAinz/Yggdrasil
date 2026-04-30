@@ -1,0 +1,13 @@
+# Lilith Dependencies
+# ===================
+# Instalar: pip install -r requirements.txt
+
+# Cliente HTTP para LM Studio API
+httpx>=0.27.0
+
+# Embeddings semanticos para memoria
+sentence-transformers>=2.5.0
+
+# Notificaciones Windows Toast (opcional)
+# Si falla la instalacion, las notificaciones se muestran en consola
+winrt>=2.0

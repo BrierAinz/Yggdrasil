@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture — Yggdrasil</title>
+    <meta name="description" content="Full architecture diagram of the Yggdrasil ecosystem — Nine Realms, Gateway REST API, Hermes-Lilith core, and component relationships.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav id="top-nav">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">Yggdrasil</a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="realms.html" class="nav-link">Realms</a>
+                <a href="hermes-lilith.html" class="nav-link">Hermes-Lilith</a>
+                <a href="architecture.html" class="nav-link active">Architecture</a>
+                <a href="setup.html" class="nav-link">Setup</a>
+                <a href="https://github.com/YOUR_USERNAME/Yggdrasil" target="_blank" class="nav-github">
+                    <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" style="padding-top: 8rem; padding-bottom: 3rem;">
+        <div class="hero-inner">
+            <div class="hero-badge">System Design</div>
+            <h1>Architecture</h1>
+            <p class="hero-subtitle">
+                A complete map of the Yggdrasil ecosystem — from the Nine Realms directory structure to the REST Gateway and every component that makes Hermes-Lilith work.
+            </p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-label">Ecosystem</div>
+            <h2>Nine Realms Layout</h2>
+            <p class="section-desc">
+                The directory structure follows the Norse cosmology. Each realm is a top-level directory with a strict purpose.
+            </p>
+
+            <pre class="code-block"><code>Yggdrasil/
+│
+├── Asgard/                           ← Core Technology (permanent)
+│   ├── Hermes-Lilith/                  CLI agent, memory, orchestrator
+│   ├── lilith-orchestrator/gateway/    FastAPI REST Gateway
+│   ├── lilith-core/                    Core libraries
+│   ├── lilith-tools/                   Tool implementations
+│   ├── lilith-memory/                  Vector memory system
+│   ├── lilith-api/                     Public API package
+│   └── lilith-cli/                     Command-line interface
+│
+├── Vanaheim/                         ← AI Agents & Bots
+│   ├── Bots_Lilith_v5/
+│   │   ├── telegram/                   Telegram bot
+│   │   └── bridge/                     Gateway client bridge
+│   ├── Agents/                       Sub-agent profiles
+│   ├── vanaheim-framework/           Agent framework
+│   └── LLM_Experiments/              Model testing
+│
+├── Alfheim/                          ← UI Prototypes
+│   ├── VSCode_Extension_Lilith/      IDE integration
+│   └── ui-seed/                      Visual experiments
+│
+├── Svartalfheim/                     ← Knowledge Base
+│   ├── Knowledge_Base/               Documentation
+│   ├── Grimorios/                    Architecture decisions
+│   └── Playbooks/                    Deployment guides
+│
+├── Muspelheim/                       ← Active Development
+│   ├── AutoMode/                     Sprint templates
+│   └── Hotfixes/                     Emergency patches
+│
+├── Niflheim/                         ← Resources
+│   ├── Datasets/                     Training data
+│   └── Models/                       LLM checkpoints
+│
+├── Midgard/                          ← Personal Apps
+│   └── app/                          Completed applications
+│
+├── Jotunheim/                        ← Massive Projects
+│   └── projects/                     Long-term builds
+│
+├── Helheim/                          ← Graveyard
+│   ├── Archives_Lilith_Legacy/       Old code
+│   └── Quarantine/                   Regenerable trash
+│
+├── REGLAS_YGGDRASIL.md               ← Realm rules
+├── README.md                         ← Project overview
+├── setup_yggdrasil.py                ← Setup script
+├── yggdrasil_cli.py                  ← CLI tool
+└── start_lilith.bat                  ← Launcher script</code></pre>
+        </div>
+    </section>
+
+    <section class="section arch-section">
+        <div class="container">
+            <div class="section-label">Data Flow</div>
+            <h2>Request Lifecycle</h2>
+            <p class="section-desc">
+                A single message from Telegram travels through multiple layers before returning with an answer. Here's the full path.
+            </p>
+
+            <div class="lifecycle-table">
+                <div class="lifecycle-row header">
+                    <div>Step</div>
+                    <div>What happens</div>
+                </div>
+                <div class="lifecycle-row">
+                    <div><strong>1. Telegram</strong></div>
+                    <div>User sends a message to the bot. The bot validates the sender (owner-only) and forwards the text to the Bridge.</div>
+                </div>
+                <div class="lifecycle-row">
+                    <div><strong>2. Bridge</strong></div>
+                    <div>The Bridge (Python client) packages the message into a JSON payload and POSTs it to the Gateway at <code>localhost:8000/api/telegram/chat</code>.</div>
+                </div>
+                <div class="lifecycle-row">
+                    <div><strong>3. Gateway</strong></div>
+                    <div>FastAPI receives the request, generates a session ID (<code>gateway_{user_id}_{timestamp}</code>), and routes to the appropriate handler.</div>
+                </div>
+                <div class="lifecycle-row">
+                    <div><strong>4. Hermes-Lilith</strong></div>
+                    <div>The orchestrator loads the conversation context, queries the vector memory for relevant past interactions, and builds the full prompt.</div>
+                </div>
+                <div class="lifecycle-row">
+                    <div><strong>5. LM Studio</strong></div>
+                    <div>The prompt is sent to LM Studio via the OpenAI-compatible API at <code>localhost:1234/v1/chat/completions</code>. The local model generates a response.</div>
+                </div>
+                <div class="lifecycle-row">
+                    <div><strong>6. Tool Execution</strong></div>
+                    <div>If the model requests a tool (file read, web search, agent spawn), Hermes-Lilith executes it, captures the result, and sends it back to the model.</div>
+                </div>
+                <div class="lifecycle-row">
+                    <div><strong>7. Response</strong></div>
+                    <div>The final answer is returned to the Gateway, which forwards it to the Bridge, which sends it back to Telegram as a reply message.</div>
+                </div>
+                <div class="lifecycle-row">
+                    <div><strong>8. Memory</strong></div>
+                    <div>The conversation is embedded and stored in the vector database for future context retrieval.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-label">Components</div>
+            <h2>Component Relationships</h2>
+            <p class="section-desc">
+                How the major packages interact. Arrows indicate dependency or communication direction.
+            </p>
+
+            <div class="arch-diagram" style="flex-direction: column; gap: 1.5rem;">
+                <!-- Layer 1: Interfaces -->
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <div class="arch-node telegram-node">
+                        <span class="node-icon">📱</span>
+                        <span>Telegram Bot</span>
+                        <span class="node-sub">Interface</span>
+                    </div>
+                    <div class="arch-node" style="border-color: rgba(251,191,36,0.4); background: rgba(251,191,36,0.06);">
+                        <span class="node-icon">🖼️</span>
+                        <span>VSCode Ext</span>
+                        <span class="node-sub">Interface</span>
+                    </div>
+                    <div class="arch-node" style="border-color: rgba(52,211,153,0.4); background: rgba(52,211,153,0.06);">
+                        <span class="node-icon">💻</span>
+                        <span>CLI</span>
+                        <span class="node-sub">Interface</span>
+                    </div>
+                </div>
+                <!-- Arrow -->
+                <div style="color: var(--text-dim); font-family: var(--font-mono); font-size: 0.75rem;">↓ HTTP / REST ↓</div>
+                <!-- Layer 2: Gateway -->
+                <div class="arch-node gateway-node" style="min-width: 300px;">
+                    <span class="node-icon">🔗</span>
+                    <span>Gateway</span>
+                    <span class="node-sub">FastAPI · Port 8000</span>
+                </div>
+                <!-- Arrow -->
+                <div style="color: var(--text-dim); font-family: var(--font-mono); font-size: 0.75rem;">↓ Internal API ↓</div>
+                <!-- Layer 3: Core -->
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <div class="arch-node hermes-node">
+                        <span class="node-icon">⚡</span>
+                        <span>Hermes-Lilith</span>
+                        <span class="node-sub">Orchestrator</span>
+                    </div>
+                    <div class="arch-node" style="border-color: rgba(167,139,250,0.4); background: rgba(167,139,250,0.06);">
+                        <span class="node-icon">🧠</span>
+                        <span>Memory</span>
+                        <span class="node-sub">Vector + SQLite</span>
+                    </div>
+                    <div class="arch-node" style="border-color: rgba(251,113,133,0.4); background: rgba(251,113,133,0.06);">
+                        <span class="node-icon">📅</span>
+                        <span>Scheduler</span>
+                        <span class="node-sub">Cron + SQLite</span>
+                    </div>
+                    <div class="arch-node" style="border-color: rgba(56,189,248,0.4); background: rgba(56,189,248,0.06);">
+                        <span class="node-icon">🔌</span>
+                        <span>Plugins</span>
+                        <span class="node-sub">Dynamic tools</span>
+                    </div>
+                </div>
+                <!-- Arrow -->
+                <div style="color: var(--text-dim); font-family: var(--font-mono); font-size: 0.75rem;">↓ OpenAI API ↓</div>
+                <!-- Layer 4: LLM -->
+                <div class="arch-node" style="min-width: 300px; border-color: rgba(52,211,153,0.4); background: rgba(52,211,153,0.06);">
+                    <span class="node-icon">🌳</span>
+                    <span>LM Studio</span>
+                    <span class="node-sub">Local LLM Server · localhost:1234</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="section-label">Security</div>
+            <h2>Security Model</h2>
+            <p class="section-desc">
+                Yggdrasil is designed for a single owner. Security is focused on isolation, local execution, and preventing accidental damage.
+            </p>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-dot emerald"></div>
+                        <h3>Owner-Only Access</h3>
+                    </div>
+                    <p>
+                        The Telegram bot only responds to the configured <code>TELEGRAM_OWNER_CHAT_ID</code>. All other users are silently ignored. There is no multi-user support by design.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-dot emerald"></div>
+                        <h3>Local Execution</h3>
+                    </div>
+                    <p>
+                        The LLM runs on localhost via LM Studio. Memory is stored in local SQLite. File operations are confined to the host machine. Nothing leaves your network unless a tool explicitly requests it.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-dot emerald"></div>
+                        <h3>Confirmation Gates</h3>
+                    </div>
+                    <p>
+                        Destructive operations (file deletion, process kill, system changes) require explicit human confirmation via Telegram. The agent cannot act autonomously on dangerous commands.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-dot emerald"></div>
+                        <h3>No Secrets in Code</h3>
+                    </div>
+                    <p>
+                        All tokens, API keys, and sensitive configuration live in <code>.env</code> files (gitignored). The <code>.env.example</code> template shows what is needed without exposing values.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>🌳 Yggdrasil — Built with patience in the Nine Realms.</p>
+            <p style="margin-top: 0.5rem;">MIT License · <a href="https://github.com/YOUR_USERNAME/Yggdrasil">View on GitHub</a></p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

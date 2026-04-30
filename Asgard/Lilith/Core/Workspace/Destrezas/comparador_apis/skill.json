@@ -1,0 +1,25 @@
+﻿{
+    "name": "comparador_apis",
+    "description": "Envia el mismo prompt a multiples providers y compara calidad y velocidad",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {
+        "prompt": {
+            "type": "string",
+            "required": true,
+            "description": "Prompt a enviar a todos los providers"
+        },
+        "providers": {
+            "type": "string",
+            "required": false,
+            "default": "gemini,grok",
+            "description": "Providers separados por coma"
+        }
+    },
+    "output": "Comparacion de respuestas con metricas",
+    "tools_required": [
+        "GeminiClient",
+        "GrokClient",
+        "VeniceClient"
+    ]
+}

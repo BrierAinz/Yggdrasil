@@ -1,0 +1,18 @@
+{
+  "session_id": "session_20260312_194659_4848",
+  "saved_at": "2026-03-12T19:47:16.696954",
+  "message_count": 2,
+  "summary": "hola",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hola"
+    },
+    {
+      "role": "assistant",
+      "content": "Sistemas nominales. Conexión establecida, Ainz.\n\nNo detecto anomalías activas en este momento. El vacío está en calma.\n\n¿Qué necesitas?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "last_run_ts": 1774129354.037979,
+  "seen_keys": [
+    "edge:proactive: 🧠 **lilith — memoria proactiva**\n• **[world_monitor] openai anun",
+    "edge:event:world_monitor|about|entity:openai",
+    "edge:tag:ia|about|event:world_monitor",
+    "edge:event:world_monitor|from|source:https://example.com",
+    "proactive: 🧠 **lilith — memoria proactiva**\n• **[world_monitor] openai anuncia a",
+    "edge:proactive: 🧠 **lilith — memoria proactiva**\n• **edge:proactive: 🧠 **lilith",
+    "edge:event:world_monitor|about|entity:ia",
+    "[world_monitor] openai anuncia algo. fuente: https://example.com"
+  ],
+  "sent_timestamps": []
+}

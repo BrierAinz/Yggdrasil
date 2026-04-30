@@ -1,0 +1,8 @@
+[
+  {
+    "tipo": "respuesta_evitar",
+    "contenido": "Sistemas nominales. WebSocket establecido. Sin anomalías detectadas en el entorno local.\n\n**Estado de proyectos activos:**\n- **Lilith:** Operativa. Contexto de 262k tokens disponible.\n- **Yggdrasil:** Pendiente de tu confirmación sobre reestructuración de los 9 reinos.\n- **Terror procedural:** Sin actividad registrada en las últimas 72 horas.\n\n**Pendientes sin resolver:**\n- Decisión de arquitectura para el sistema de generación procedural de niveles (¿grafo de habitaciones vs. tilemap dinámico?)\n- Backup de `Workspace/Mente/` no verificado desde el día 8.\n\n¿Ordenes, Ainz?",
+    "fecha": "2026-03-13",
+    "recurrencias": 1
+  }
+]

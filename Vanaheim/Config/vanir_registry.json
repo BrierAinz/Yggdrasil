@@ -1,0 +1,259 @@
+{
+  "agents": [
+    {
+      "agent_id": "shalltear",
+      "name": "Shalltear",
+      "description": "Clasificaci\u00f3n r\u00e1pida, parsing NL, triaje",
+      "state": "idle",
+      "config": {
+        "agent_id": "shalltear",
+        "name": "Shalltear",
+        "description": "Clasificaci\u00f3n r\u00e1pida, parsing NL, triaje",
+        "model": "llama-3.3-70b",
+        "provider": "venice",
+        "base_url": null,
+        "api_key_env": null,
+        "timeout": 120,
+        "temperature": 0.7,
+        "capabilities": {
+          "can_stream": true,
+          "supports_tools": false,
+          "max_context_tokens": 8192,
+          "specialties": [
+            "classification",
+            "parsing",
+            "triage"
+          ],
+          "supported_tasks": []
+        },
+        "persona_key": null,
+        "fallback_agent": null
+      },
+      "capabilities": {
+        "can_stream": true,
+        "supports_tools": false,
+        "max_context_tokens": 32768,
+        "specialties": [
+          "classification",
+          "parsing",
+          "triage",
+          "intent_detection"
+        ],
+        "supported_tasks": [
+          "clasificar_complejidad",
+          "detectar_intent",
+          "parsear_parametros",
+          "triaje_tarea"
+        ]
+      },
+      "current_task": null,
+      "last_heartbeat": null,
+      "metrics": {}
+    },
+    {
+      "agent_id": "adan",
+      "name": "Ad\u00e1n",
+      "description": "Generaci\u00f3n de c\u00f3digo, tests, refactoring",
+      "state": "idle",
+      "config": {
+        "agent_id": "adan",
+        "name": "Ad\u00e1n",
+        "description": "Generaci\u00f3n de c\u00f3digo, tests, refactoring",
+        "model": "qwen2.5-coder:7b",
+        "provider": "ollama",
+        "base_url": "http://localhost:11434",
+        "api_key_env": null,
+        "timeout": 120,
+        "temperature": 0.7,
+        "capabilities": {
+          "can_stream": true,
+          "supports_tools": true,
+          "max_context_tokens": 8192,
+          "specialties": [
+            "code",
+            "tests",
+            "refactoring"
+          ],
+          "supported_tasks": []
+        },
+        "persona_key": null,
+        "fallback_agent": null
+      },
+      "capabilities": {
+        "can_stream": true,
+        "supports_tools": true,
+        "max_context_tokens": 32768,
+        "specialties": [
+          "code_generation",
+          "refactoring",
+          "tests",
+          "debugging",
+          "code_review"
+        ],
+        "supported_tasks": [
+          "generar_codigo",
+          "refactorizar",
+          "escribir_tests",
+          "debuggear",
+          "revisar_codigo"
+        ]
+      },
+      "current_task": null,
+      "last_heartbeat": null,
+      "metrics": {}
+    },
+    {
+      "agent_id": "eva",
+      "name": "Eva",
+      "description": "An\u00e1lisis de contexto largo, documentaci\u00f3n",
+      "state": "idle",
+      "config": {
+        "agent_id": "eva",
+        "name": "Eva",
+        "description": "An\u00e1lisis de contexto largo, documentaci\u00f3n",
+        "model": "grok-4-fast-reasoning",
+        "provider": "grok",
+        "base_url": null,
+        "api_key_env": null,
+        "timeout": 120,
+        "temperature": 0.7,
+        "capabilities": {
+          "can_stream": true,
+          "supports_tools": false,
+          "max_context_tokens": 128000,
+          "specialties": [
+            "analysis",
+            "documentation",
+            "insights"
+          ],
+          "supported_tasks": []
+        },
+        "persona_key": null,
+        "fallback_agent": null
+      },
+      "capabilities": {
+        "can_stream": true,
+        "supports_tools": false,
+        "max_context_tokens": 128000,
+        "specialties": [
+          "analysis",
+          "documentation",
+          "insights",
+          "summarization",
+          "research"
+        ],
+        "supported_tasks": [
+          "analizar_documento",
+          "generar_documentacion",
+          "sintetizar_informacion",
+          "investigar",
+          "resumir"
+        ]
+      },
+      "current_task": null,
+      "last_heartbeat": null,
+      "metrics": {}
+    },
+    {
+      "agent_id": "crystal",
+      "name": "Crystal",
+      "description": "Asistente p\u00fablico para Discord",
+      "state": "idle",
+      "config": {
+        "agent_id": "crystal",
+        "name": "Crystal",
+        "description": "Asistente p\u00fablico para Discord",
+        "model": "kimi-for-coding",
+        "provider": "kimi",
+        "base_url": null,
+        "api_key_env": null,
+        "timeout": 120,
+        "temperature": 0.7,
+        "capabilities": {
+          "can_stream": true,
+          "supports_tools": false,
+          "max_context_tokens": 8192,
+          "specialties": [
+            "conversation",
+            "general_assistance"
+          ],
+          "supported_tasks": []
+        },
+        "persona_key": null,
+        "fallback_agent": null
+      },
+      "capabilities": {
+        "can_stream": true,
+        "supports_tools": false,
+        "max_context_tokens": 8192,
+        "specialties": [
+          "conversation",
+          "general_assistance",
+          "faq",
+          "help"
+        ],
+        "supported_tasks": [
+          "conversar",
+          "responder_preguntas",
+          "ayuda_general"
+        ]
+      },
+      "current_task": null,
+      "last_heartbeat": null,
+      "metrics": {}
+    },
+    {
+      "agent_id": "odin",
+      "name": "Od\u00edn",
+      "description": "An\u00e1lisis masivo, investigaci\u00f3n profunda",
+      "state": "idle",
+      "config": {
+        "agent_id": "odin",
+        "name": "Od\u00edn",
+        "description": "An\u00e1lisis masivo, investigaci\u00f3n profunda",
+        "model": "kimi-for-coding",
+        "provider": "kimi",
+        "base_url": null,
+        "api_key_env": null,
+        "timeout": 120,
+        "temperature": 0.7,
+        "capabilities": {
+          "can_stream": true,
+          "supports_tools": false,
+          "max_context_tokens": 262000,
+          "specialties": [
+            "deep_analysis",
+            "research",
+            "creative"
+          ],
+          "supported_tasks": []
+        },
+        "persona_key": null,
+        "fallback_agent": null
+      },
+      "capabilities": {
+        "can_stream": true,
+        "supports_tools": false,
+        "max_context_tokens": 262000,
+        "specialties": [
+          "deep_analysis",
+          "research",
+          "creative_writing",
+          "synthesis",
+          "architectural_review"
+        ],
+        "supported_tasks": [
+          "analizar_proyecto_completo",
+          "investigar_profundo",
+          "sintetizar_creativo",
+          "revision_arquitectura",
+          "storytelling"
+        ]
+      },
+      "current_task": null,
+      "last_heartbeat": null,
+      "metrics": {}
+    }
+  ],
+  "updated_at": "2026-04-29T07:31:57.849716"
+}

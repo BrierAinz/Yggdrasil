@@ -1,0 +1,63 @@
+# Hermes Agent - Lilith MCP Configuration
+# =======================================
+# Este archivo configura Hermes para usar las tools de Lilith via MCP
+
+# Configuración del MCP Bridge
+mcp:
+  # Servidor local de Lilith (Windows)
+  # Ejecutar: python D:\Proyectos\Midgard\Lilith\Hermes\mcp_bridge.py
+  servers:
+    lilith:
+      command: python
+      args:
+        - D:\Proyectos\Midgard\Lilith\Hermes\mcp_bridge.py
+      env:
+        PYTHONPATH: D:\Proyectos\Midgard
+      # Para WSL2, usa:
+      # command: python.exe  (desde WSL)
+      # o la IP de Windows
+
+# Tools de Lilith disponibles
+# ===========================
+# Estas tools estarán disponibles en Hermes:
+
+# Control de PC (Windows):
+# - screenshot: Captura de pantalla
+# - get_cursor_position: Posición del cursor
+# - list_windows: Ventanas abiertas
+
+# Archivos:
+# - read_file: Leer archivo
+# - write_file: Escribir archivo
+# - list_directory: Listar directorio
+# - file_exists: Verificar existencia
+
+# Sistema:
+# - run_terminal: Ejecutar comando
+# - open_vscode: Abrir VS Code
+# - open_application: Abrir app
+
+# Coding:
+# - run_git: Comandos git
+# - search_in_files: Buscar en archivos
+
+# Windows:
+# - list_processes: Procesos activos
+# - kill_process: Matar proceso
+# - get_system_info: Info del sistema
+# - get_disk_space: Espacio en disco
+
+# Red:
+# - ping: Hacer ping
+# - check_internet: Verificar conexión
+
+# Browser:
+# - open_url: Abrir URL
+# - search_google: Buscar en Google
+# - clipboard_read/write: Portapapeles
+
+# Notas:
+# =====
+# 1. El MCP bridge debe estar ejecutándose
+# 2. Hermes se conecta al bridge automáticamente
+# 3. Las tools de Lilith aparecen como tools nativas de Hermes

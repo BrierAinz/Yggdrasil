@@ -1,0 +1,87 @@
+{
+  "passed": 9,
+  "total": 13,
+  "elapsed_seconds": 6.307754755020142,
+  "success_rate": 0.6923076923076923,
+  "details": [
+    {
+      "name": "Health Check",
+      "passed": false,
+      "details": "Error: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>",
+      "timestamp": "2026-03-26T23:38:42.490046"
+    },
+    {
+      "name": "Deteccion de macro",
+      "passed": true,
+      "details": "Detecto: backup_proyecto (confianza: 0.33)",
+      "timestamp": "2026-03-26T23:38:42.546974"
+    },
+    {
+      "name": "Extraccion de parametros",
+      "passed": true,
+      "details": "Parametros: ['project_path', 'timestamp']",
+      "timestamp": "2026-03-26T23:38:42.547486"
+    },
+    {
+      "name": "Macro Simple",
+      "passed": false,
+      "details": "Error: 'charmap' codec can't encode character '\\U0001f527' in position 15: character maps to <undefined>",
+      "timestamp": "2026-03-26T23:38:42.548001"
+    },
+    {
+      "name": "Deteccion de operaciones multiples",
+      "passed": true,
+      "details": "Detectadas: 2 operaciones",
+      "timestamp": "2026-03-26T23:38:42.566672"
+    },
+    {
+      "name": "Auto-Batch",
+      "passed": false,
+      "details": "Error: should_auto_batch() missing 1 required positional argument: 'steps'",
+      "timestamp": "2026-03-26T23:38:42.566672"
+    },
+    {
+      "name": "Deteccion de intenciones PC",
+      "passed": true,
+      "details": "Casos: 5",
+      "timestamp": "2026-03-26T23:38:44.626777"
+    },
+    {
+      "name": "Tools bloqueadas configuradas",
+      "passed": true,
+      "details": "Tools bloqueadas: 9",
+      "timestamp": "2026-03-26T23:38:44.626777"
+    },
+    {
+      "name": "Creacion de sesion",
+      "passed": true,
+      "details": "User: test_user_123",
+      "timestamp": "2026-03-26T23:38:44.633469"
+    },
+    {
+      "name": "Historial conversacional",
+      "passed": true,
+      "details": "Mensajes: 2",
+      "timestamp": "2026-03-26T23:38:44.634495"
+    },
+    {
+      "name": "Persistencia de sesiones",
+      "passed": true,
+      "details": "Mensajes tras reinicio: 2",
+      "timestamp": "2026-03-26T23:38:44.635011"
+    },
+    {
+      "name": "Bloqueo de paths peligrosos",
+      "passed": true,
+      "details": "Bloqueados: 3/3",
+      "timestamp": "2026-03-26T23:38:44.636557"
+    },
+    {
+      "name": "Permiso de paths seguros",
+      "passed": false,
+      "details": "Permitidos: 0/2",
+      "timestamp": "2026-03-26T23:38:44.636557"
+    }
+  ],
+  "timestamp": "2026-03-26T23:38:44.637077"
+}

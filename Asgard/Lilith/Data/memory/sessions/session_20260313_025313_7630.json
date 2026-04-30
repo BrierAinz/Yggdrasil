@@ -1,0 +1,18 @@
+{
+  "session_id": "session_20260313_025313_7630",
+  "saved_at": "2026-03-13T02:53:32.800180",
+  "message_count": 2,
+  "summary": "Hola lilith",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hola lilith"
+    },
+    {
+      "role": "assistant",
+      "content": "*Sistemas nominales. Conexión establecida.*\n\nHola, Ainz.\n\nEstoy en línea. No detecto anomalías activas ni conexiones pendientes desde mi última sesión.\n\n¿Qué necesitas hoy?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    }
+  ]
+}

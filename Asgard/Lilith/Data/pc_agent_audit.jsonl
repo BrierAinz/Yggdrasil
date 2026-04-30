@@ -1,0 +1,6 @@
+{"ts": 1773889300.147498, "ts_iso": "2026-03-18T21:01:40.148015", "op": "mkdir", "params": {"path": "D:\\Proyectos\\Lilith\\Core\\Workspace\\Yggdrasil\\Asgard"}, "result_preview": "OK", "user_id": "999", "pid": 27528}
+{"ts": 1773889300.1500819, "ts_iso": "2026-03-18T21:01:40.150081", "op": "mkdir", "params": {"path": "D:\\Proyectos\\Lilith\\Core\\Workspace\\Yggdrasil\\Asgard\\TEST_TELEGRAM_1773889300"}, "result_preview": "OK", "user_id": "999", "pid": 27528}
+{"ts": 1773889300.1547587, "ts_iso": "2026-03-18T21:01:40.154758", "op": "mkdir", "params": {"path": "D:\\Proyectos\\Lilith\\Core\\Workspace\\Yggdrasil\\Asgard\\TEST_TELEGRAM_1773889300\\backend"}, "result_preview": "OK", "user_id": "999", "pid": 27528}
+{"ts": 1773889300.1578927, "ts_iso": "2026-03-18T21:01:40.157892", "op": "batch", "params": {"count": 5}, "result_preview": "OK", "user_id": "999", "pid": 27528, "metadata": {"confirmed_by": "999", "original_user": "999", "token_prefix": "F8B1****"}}
+{"ts": 1774053459.4712422, "ts_iso": "2026-03-20T18:37:39.471242", "op": "list", "params": {"path": "C:\\Users\\Game_\\Downloads"}, "result_preview": "OK", "user_id": "", "pid": 20508}
+{"ts": 1774054214.0718899, "ts_iso": "2026-03-20T18:50:14.071889", "op": "list", "params": {"path": "C:\\Users\\Game_\\Downloads"}, "result_preview": "OK", "user_id": "", "pid": 21012}

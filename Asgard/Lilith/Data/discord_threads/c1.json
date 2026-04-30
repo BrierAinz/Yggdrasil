@@ -1,0 +1,12 @@
+{
+"messages": [
+{
+"role": "user",
+"content": "edita D:/tmp/x.txt"
+},
+{
+"role": "assistant",
+"content": "{\"error\": \"permission_denied\", \"message\": \"Permiso denegado por SecurityGuard.\", \"reason\": \"path_out_of_scope\", \"agent\": \"owner\", \"op\": \"edit\", \"path\": \"D:\\\\tmp\\\\x.txt\", \"hint\": \"La ruta sale del proyecto. Pide al Owner que mueva el archivo a tu zona permitida o ejecute la acción manualmente.\"}"
+}
+]
+}

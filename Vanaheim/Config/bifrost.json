@@ -1,0 +1,48 @@
+{
+  "_comment": "Bifrost Gateway Configuration - Vanaheim",
+  "server": {
+    "host": "0.0.0.0",
+    "port": 9000,
+    "workers": 1
+  },
+  "auth": {
+    "_comment": "Tokens compartidos con Asgard. Deben coincidir con Core/Config/bifrost.json en Lilith.",
+    "tokens": [
+      "bifrost_vanaheim_token_change_in_production"
+    ]
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  },
+  "agents": {
+    "adan": {
+      "model": "qwen2.5-coder:7b",
+      "provider": "ollama",
+      "ollama_url": "http://localhost:11434/api/chat",
+      "timeout_seconds": 60,
+      "max_retries": 1
+    },
+    "eva": {
+      "model": "grok-4-fast-reasoning",
+      "provider": "xai",
+      "timeout_seconds": 45,
+      "max_retries": 2
+    },
+    "odin": {
+      "model": "kimi-for-coding",
+      "provider": "kimi",
+      "timeout_seconds": 120,
+      "max_retries": 2
+    }
+  },
+  "rate_limits": {
+    "requests_per_minute": 60,
+    "requests_per_hour": 1000
+  },
+  "circuit_breaker": {
+    "enabled": true,
+    "failure_threshold": 3,
+    "recovery_timeout_seconds": 30
+  }
+}

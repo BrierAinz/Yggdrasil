@@ -1,0 +1,56 @@
+# Raíz Lilith — ignorados en todo el árbol
+
+# Entorno y secretos
+.env
+.env.local
+*.env
+!*.env.example
+config/secrets.json
+config/webhook_secrets.json
+config/secrets.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Datos runtime
+data/temp/
+data/models/
+data/logs/
+data/backups/
+data/cache/
+data/memory/vector_store/chroma/
+
+# Logs y temporales legacy
+*.log
+temp/
+*.tmp
+*.bak
+
+# Node (Frontend / VSCode)
+node_modules/
+frontend/lilith-dashboard/dist/
+
+# Test y cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+test_report.txt
+
+# Legacy y backups internos
+_legacy/
+*.tar.gz
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db

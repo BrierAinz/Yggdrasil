@@ -1,0 +1,18 @@
+{
+  "smoke_test_channel_999": [
+    {
+      "id": "76cf6351ec3d",
+      "text": "Revisar PR de seguridad",
+      "created_at": 1773792609.751264,
+      "status": "pending"
+    }
+  ],
+  "1453446914350776401": [
+    {
+      "id": "d29b94a7e0b5",
+      "text": "Revisar PR",
+      "created_at": 1773795503.5882375,
+      "status": "pending"
+    }
+  ]
+}
