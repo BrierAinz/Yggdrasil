@@ -8,10 +8,12 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-f59e0b.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10+-22d3ee.svg)](https://python.org)
-[![Tests](https://img.shields.io/badge/Tests-17%2F17%20passing-34d399.svg)]()
 [![Status](https://img.shields.io/badge/Status-Active-34d399.svg)]()
+[![GitHub Stars](https://img.shields.io/github/stars/BrierAinz/Yggdrasil?style=flat&color=fbbf24)](https://github.com/BrierAinz/Yggdrasil/stargazers)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/BrierAinz/Yggdrasil?color=a78bfa)](https://github.com/BrierAinz/Yggdrasil/commits/main)
+[![Repo Size](https://img.shields.io/github/repo-size/BrierAinz/Yggdrasil?color=fb7185)](https://github.com/BrierAinz/Yggdrasil)
 
-[Website](https://YOUR_USERNAME.github.io/Yggdrasil) · [Setup](#quick-start) · [Architecture](#architecture) · [Realms](#the-nine-realms)
+[Website](https://brierainz.github.io/Yggdrasil) · [Setup](#quick-start) · [Architecture](#architecture) · [Realms](#the-nine-realms)
 
 </div>
 
@@ -36,13 +38,8 @@ The crown jewel is **Hermes-Lilith**: a local-first AI agent that runs entirely 
 
 ```bash
 # Clone the tree
-git clone https://github.com/YOUR_USERNAME/Yggdrasil.git
+git clone https://github.com/BrierAinz/Yggdrasil.git
 cd Yggdrasil
-
-# Install core packages
-pip install -e Asgard/lilith-core -e Asgard/lilith-tools -e Asgard/lilith-memory \
-    -e Asgard/lilith-orchestrator -e Asgard/lilith-api -e Asgard/lilith-cli \
-    -e Vanaheim/vanaheim-framework
 
 # Configure environment
 cp Asgard/Hermes-Lilith/.env.example Asgard/Hermes-Lilith/.env
@@ -73,7 +70,7 @@ start_lilith.bat        # Windows
 | 🐉 **Jotunheim** | Massive Projects | Long-term builds (>1 month) |
 | ☠️ **Helheim** | Graveyard | Archived, dead, or quarantined projects |
 
-[Explore all realms →](https://YOUR_USERNAME.github.io/Yggdrasil/realms.html)
+[Explore all realms →](https://brierainz.github.io/Yggdrasil/realms.html)
 
 ---
 
@@ -98,7 +95,7 @@ Telegram Bot  ---------→  VSCode Ext  ---------→  CLI
                     LM Studio (localhost:1234)
 ```
 
-[Full architecture details →](https://YOUR_USERNAME.github.io/Yggdrasil/architecture.html)
+[Full architecture details →](docs/architecture.html)
 
 ---
 
@@ -114,7 +111,7 @@ Telegram Bot  ---------→  VSCode Ext  ---------→  CLI
 | 🚀 **Plugin System** | Hot-pluggable tools with dynamic discovery and runtime enable/disable. |
 | 📱 **Telegram Control** | Remote interface from anywhere. Owner-only access. |
 
-[Agent specs →](https://YOUR_USERNAME.github.io/Yggdrasil/hermes-lilith.html)
+[Agent specs →](https://brierainz.github.io/Yggdrasil/hermes-lilith.html)
 
 ---
 
@@ -151,6 +148,6 @@ MIT ¹ See [LICENSE](LICENSE) for details.
 
 🌳 **Built with patience in the Nine Realms.**
 
-[Website](https://YOUR_USERNAME.github.io/Yggdrasil) · [GitHub](https://github.com/YOUR_USERNAME/Yggdrasil)
+[Website](https://brierainz.github.io/Yggdrasil) · [GitHub](https://github.com/BrierAinz/Yggdrasil)
 
 </div>
