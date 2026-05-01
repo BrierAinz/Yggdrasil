@@ -17,67 +17,26 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-
-# Ruta base del proyecto
-_PROJECT_ROOT = Path(__file__).parent.parent.parent
-_MEMORY_DIR = _PROJECT_ROOT / "memory"
-_MEMORY_DIR.mkdir(exist_ok=True)
-
-DB_PATH = _MEMORY_DIR / "lilith_memory.db"
-
-# Modelo de embeddings ligero
-EMBEDDING_MODEL = "all-MiniLM-L6-v2"
-EMBEDDING_DIM = 384
-
-
-class EmbeddingModel:
-    """Wrapper para sentence-transformers con lazy loading."""
-
-    _instance = None
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance._model = None
-        return cls._instance
-
-    def _load(self):
-        if self._model is None:
-            try:
-                from sentence_transformers import SentenceTransformer
-
-                print("[MEM] Cargando modelo de embeddings...")
-                self._model = SentenceTransformer(EMBEDDING_MODEL)
-                print("[MEM] Modelo listo")
-            except Exception as e:
-                print(f"[MEM] Error cargando embeddings: {e}")
-                self._model = None
-        return self._model
-
-    def encode(self, texts: List[str]) -> Optional[np.ndarray]:
-        model = self._load()
-        if model is None:
-            return None
-        return model.encode(texts, convert_to_numpy=True, show_progress_bar=False)
-
-    def is_available(self) -> bool:
-        return self._load() is not None
-
-
-def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
-    """Calcula similitud coseno entre dos vectores."""
-    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
+from Lilith.memory.base import DB_PATH, EmbeddingModel, cosine_similarity
+from Lilith.memory.memory_consolidation import get_consolidation
+from Lilith.memory.memory_graph import get_memory_graph
+from Lilith.memory.memory_retrieval import get_retriever
 
 
 class EnhancedMemory:
     """
     Sistema de memoria hibrido con embeddings semanticos.
     Usa SQLite para almacenamiento y sentence-transformers para embeddings.
+
+    v2.0: Integra grafo de conocimiento, consolidacion y retrieval hibrido.
     """
 
     def __init__(self):
         self.db = DB_PATH
         self.embedder = EmbeddingModel()
+        self.graph = get_memory_graph()
+        self.consolidation = get_consolidation()
+        self.retriever = get_retriever()
         self._init_db()
 
     def _init_db(self):
@@ -216,7 +175,14 @@ class EnhancedMemory:
             conn.commit()
 
         # Extraer entidades del input
-        self._extract_entities(user_input, timestamp)
+        entities = self._extract_entities(user_input, timestamp)
+
+        # Extraer relaciones entre entidades
+        if entities:
+            self.graph.extract_relations_from_text(user_input, entities)
+
+        # Agregar a cola de consolidación
+        self.consolidation.queue_for_consolidation(episode_id)
 
         # Verificar si necesita compresion
         self._check_compression()
@@ -367,8 +333,10 @@ class EnhancedMemory:
     # ENTIDADES
     # ============================================================
 
-    def _extract_entities(self, text: str, timestamp: str):
-        """Extrae entidades del texto."""
+    def _extract_entities(self, text: str, timestamp: str) -> List[str]:
+        """Extrae entidades del texto. Retorna lista de nombres encontrados."""
+        found = []
+
         # Proyectos/carpetas
         project_patterns = [
             r'(?:proyecto|project|carpeta|folder|directorio|path|ruta)\s+["\']?([A-Za-z_][A-Za-z0-9_-]*)["\']?',
@@ -420,6 +388,7 @@ class EnhancedMemory:
         for tech in tech_keywords:
             if tech in text_lower:
                 self._upsert_entity(tech, "technology", timestamp, text)
+                found.append(tech)
 
         # Extraer proyectos CamelCase
         for pattern in project_patterns:
@@ -427,6 +396,9 @@ class EnhancedMemory:
             for match in matches:
                 if len(match) > 2 and match.lower() not in tech_keywords:
                     self._upsert_entity(match, "project", timestamp, text)
+                    found.append(match)
+
+        return found
 
     def _upsert_entity(self, name: str, entity_type: str, timestamp: str, context: str):
         """Inserta o actualiza una entidad."""
@@ -579,14 +551,13 @@ class EnhancedMemory:
     def get_relevant_context(self, current_input: str, max_tokens: int = 1500) -> str:
         """
         Genera contexto relevante para inyectar en el prompt del modelo.
-        Busca episodios, entidades, facts y errores relacionados.
+        v2.0: Usa retrieval hibrido (vector + keyword + graph + recency).
         """
         parts = []
         used_tokens = 0
 
         def add_part(text: str) -> bool:
             nonlocal used_tokens
-            # Estimacion simple: 1 token ~= 4 chars
             tokens = len(text) // 4
             if used_tokens + tokens > max_tokens:
                 return False
@@ -602,23 +573,33 @@ class EnhancedMemory:
                 pref_text += f"  - {k}: {v}\n"
             add_part(pref_text)
 
-        # 2. Buscar episodios relacionados
-        related = self.search_episodes(current_input, limit=3)
-        if related:
+        # 2. Retrieval hibrido de episodios
+        hybrid_results = self.retriever.retrieve(
+            current_input, limit=5, include_sources=True
+        )
+        if hybrid_results:
             ep_text = "CONVERSACIONES RELACIONADAS PREVIAS:\n"
-            for ep in related:
-                ep_text += f"  - Tu: {ep['user_input'][:80]}...\n"
+            for ep in hybrid_results:
+                sources = ep.get("retrieval_sources", {})
+                source_str = ",".join([f"{k}={v:.2f}" for k, v in sources.items()])
+                ep_text += f"  - [{ep['timestamp'][:10]}] Tu: {ep['user_input'][:80]}... [score:{ep.get('retrieval_score',0):.2f}, src:{source_str}]\n"
                 if ep["response"]:
                     ep_text += f"    Lilith: {ep['response'][:80]}...\n"
             add_part(ep_text)
 
-        # 3. Entidades relevantes
+        # 3. Entidades relevantes del grafo
         entities = self.get_entities(min_mentions=2)
         if entities:
             ent_text = "ENTIDADES CONOCIDAS:\n"
             for e in entities[:10]:
+                # Incluir vecinos del grafo
+                neighbors = self.graph.get_neighbors(e["name"], min_strength=0.5)
+                neighbor_str = ""
+                if neighbors:
+                    neighbor_names = [n[0] for n in neighbors[:3]]
+                    neighbor_str = f" -> {', '.join(neighbor_names)}"
                 ent_text += (
-                    f"  - {e['name']} ({e['type']}, mencionado {e['mentions']}x)\n"
+                    f"  - {e['name']} ({e['type']}, {e['mentions']}x{neighbor_str})\n"
                 )
             add_part(ent_text)
 

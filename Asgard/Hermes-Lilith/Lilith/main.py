@@ -266,7 +266,10 @@ class LilithCLI:
         if not self.no_banner:
             self.print_banner(model_name)
         else:
-            self.p(f" Lilith v2.1 | {model_name} | {len(Lilith_tools.ALL_TOOLS)} tools", S.TITLE)
+            self.p(
+                f" Lilith v2.1 | {model_name} | {len(Lilith_tools.ALL_TOOLS)} tools",
+                S.TITLE,
+            )
             self.div()
 
         status_stream = "ON" if self.streaming_mode else "OFF"
@@ -368,22 +371,56 @@ class LilithCLI:
 
                 elif cmd == "memory":
                     self.div()
-                    self.p(" MEMORIAS DE LILITH ", S.TITLE)
+                    self.p(" MEMORIAS DE LILITH v2.0 ", S.TITLE)
                     self.div()
+
+                    # Stats generales
+                    stats = self.memory.get_stats()
+                    self.p(
+                        f" [Estadisticas] Episodios: {stats.get('episodes',0)} | Entidades: {stats.get('entities',0)} | Facts: {stats.get('facts',0)} | Errores: {stats.get('errors',0)}",
+                        S.PROMPT,
+                    )
+
+                    # Grafo
+                    graph_stats = self.memory.graph.get_graph_stats()
+                    if graph_stats.get("relations", 0) > 0:
+                        self.p(
+                            f" [Grafo] Relaciones: {graph_stats['relations']} | Entidades conectadas: {graph_stats['connected_entities']} | Fuerza promedio: {graph_stats['avg_strength']}",
+                            S.PROMPT,
+                        )
+
+                    # Consolidacion
+                    cons_stats = self.memory.consolidation.get_stats()
+                    if cons_stats.get("consolidated_episodes", 0) > 0:
+                        self.p(
+                            f" [Consolidacion] Cola: {cons_stats['queue_size']} | Consolidados: {cons_stats['consolidated_episodes']}",
+                            S.PROMPT,
+                        )
+
                     recent = self.memory.get_recent_episodes(count=5)
-                    self.p(" [Episodios Recientes]", S.PROMPT)
+                    self.p("\n [Episodios Recientes]", S.PROMPT)
                     for r in recent:
                         ts = r.get("timestamp", "??")[:19]
                         preview = r.get("user_input", "")[:50]
                         self.p(f"   {ts}: {preview}...", S.DIM)
+
                     entities = self.memory.get_entities(limit=10)
                     if entities:
                         self.p("\n [Entidades Conocidas]", S.PROMPT)
                         for e in entities:
+                            # Mostrar vecinos del grafo
+                            neighbors = self.memory.graph.get_neighbors(
+                                e["name"], min_strength=0.5
+                            )
+                            neighbor_str = ""
+                            if neighbors:
+                                n_names = [n[0] for n in neighbors[:2]]
+                                neighbor_str = f" -> {', '.join(n_names)}"
                             self.p(
-                                f"   - {e['name']} ({e['type']}): menciones={e['mentions']}",
+                                f"   - {e['name']} ({e['type']}): {e['mentions']}x{neighbor_str}",
                                 S.DIM,
                             )
+
                     errors = self.memory.search_errors(query="error")[:3]
                     if errors:
                         self.p("\n [Errores Conocidos]", S.PROMPT)
@@ -402,17 +439,47 @@ class LilithCLI:
                         self.p(" Uso: recall <termino a buscar>", S.WARNING)
                         continue
                     self.div()
-                    self.p(f" BUSCANDO: {query} ", S.TITLE)
+                    self.p(f" BUSQUEDA HIBRIDA: {query} ", S.TITLE)
                     self.div()
-                    results = self.memory.search_episodes(query=query, limit=10)
+
+                    # Usar retrieval hibrido
+                    results = self.memory.retriever.retrieve(
+                        query=query, limit=10, include_sources=True
+                    )
                     for r in results:
-                        item_type = "episode"
+                        sources = r.get("retrieval_sources", {})
+                        source_str = ",".join(
+                            [f"{k}={v:.2f}" for k, v in sources.items()]
+                        )
+                        ts = r.get("timestamp", "??")[:10]
                         content = r.get("user_input", "")
-                        score = 1.0
+                        score = r.get("retrieval_score", 0)
                         self.p(
-                            f"   [{item_type}] score={score:.3f} {content[:60]}...",
+                            f"   [{ts}] score={score:.3f} [{source_str}] {content[:60]}...",
                             S.DIM,
                         )
+                        if r.get("response"):
+                            self.p(f"      -> {r['response'][:60]}...", S.DIM)
+
+                    # Mostrar entidades relacionadas del grafo
+                    related = set()
+                    for word in query.lower().split():
+                        if len(word) > 3:
+                            neighbors = self.memory.graph.get_neighbors(
+                                word, min_strength=0.3
+                            )
+                            for n, rel_type, strength in neighbors[:3]:
+                                related.add((n, rel_type, strength))
+                    if related:
+                        self.p("\n [Entidades Relacionadas en Grafo]", S.PROMPT)
+                        for ent, rel_type, strength in sorted(
+                            related, key=lambda x: x[2], reverse=True
+                        )[:5]:
+                            self.p(
+                                f"   - {ent} ({rel_type}, strength={strength:.2f})",
+                                S.DIM,
+                            )
+
                     self.div()
                     print()
                     continue
@@ -688,14 +755,24 @@ Example:
   lilith                    Start interactive session
   lilith --no-banner        Start without the intro banner
   lilith --streaming        Start with streaming enabled
-        """.strip()
+        """.strip(),
     )
-    parser.add_argument("-v", "--version", action="store_true", help="Show version and exit")
-    parser.add_argument("--no-banner", action="store_true", help="Skip the intro banner")
-    parser.add_argument("--streaming", action="store_true", help="Enable streaming mode")
-    parser.add_argument("--no-streaming", action="store_true", help="Disable streaming mode")
+    parser.add_argument(
+        "-v", "--version", action="store_true", help="Show version and exit"
+    )
+    parser.add_argument(
+        "--no-banner", action="store_true", help="Skip the intro banner"
+    )
+    parser.add_argument(
+        "--streaming", action="store_true", help="Enable streaming mode"
+    )
+    parser.add_argument(
+        "--no-streaming", action="store_true", help="Disable streaming mode"
+    )
     parser.add_argument("--model", help="Override model name")
-    parser.add_argument("--cwd", type=Path, help="Change working directory before starting")
+    parser.add_argument(
+        "--cwd", type=Path, help="Change working directory before starting"
+    )
 
     args = parser.parse_args()
 
