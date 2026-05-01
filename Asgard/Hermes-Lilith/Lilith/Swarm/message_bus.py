@@ -20,6 +20,7 @@ class MessageType(Enum):
     LOCK_REQUEST = "lock_request"
     LOCK_RELEASE = "lock_release"
     STATUS_UPDATE = "status_update"
+    PROGRESS = "progress"
     ERROR = "error"
     BROADCAST = "broadcast"
 

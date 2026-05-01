@@ -17,3 +17,6 @@ watchdog>=3.0
 
 # YAML parsing para skills
 pyyaml>=6.0
+
+# Environment variables (.env)
+python-dotenv>=1.0

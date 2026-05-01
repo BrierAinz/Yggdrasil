@@ -18,12 +18,15 @@ import Lilith.Core.orchestrator as orch
 import Lilith.tools as Lilith_tools
 from Lilith.Agents.agent_manager import AgentCapability, AgentManager, get_agent_manager
 from Lilith.auto_start import get_auto_start
+from Lilith.MCP.manager import get_mcp_manager
 from Lilith.memory.enhanced import EnhancedMemory, get_memory
 from Lilith.notifications import get_notifications
 from Lilith.Plugins.plugin_manager import get_plugin_registry
 from Lilith.RAG.rag_engine import get_rag_engine
 from Lilith.Scheduler.task_scheduler import TaskScheduler, TaskStatus, get_scheduler
 from Lilith.Swarm.manager import get_swarm_manager
+from Lilith.tools.dashboard import handle_dashboard_command
+from Lilith.tools.mcp_connect import handle_mcp_command
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -114,6 +117,8 @@ class LilithCLI:
         "stream": "Toggle modo streaming",
         "compact": "Comprimir memorias antiguas",
         "swarm": "Gestionar swarm de agentes",
+        "mcp": "Gestionar servidores MCP",
+        "dashboard": "Abrir dashboard web",
     }
 
     def __init__(self, no_banner=False, streaming_mode=None):
@@ -173,22 +178,38 @@ class LilithCLI:
         if subcmd == "spawn":
             task = " ".join(parts[1:]) if len(parts) > 1 else "Tarea generica"
             num = 2
-            # Parsear --agents N
+            use_llm = False
+            # Parsear flags
             for i, p in enumerate(parts):
                 if p == "--agents" and i + 1 < len(parts):
                     try:
                         num = int(parts[i + 1])
                     except ValueError:
                         pass
-                    break
+                elif p == "--llm":
+                    use_llm = True
             self.div()
             self.p(f" INVOCANDO SWARM ", S.TITLE)
             self.div()
             self.p(f" Tarea: {task}", S.INFO)
             self.p(f" Agentes: {num}", S.INFO)
+            self.p(f" LLM: {'ON' if use_llm else 'OFF (simulado)'}", S.INFO)
             try:
+                # Si se pide LLM, inicializar executor
+                if use_llm and not mgr._executor:
+                    from Lilith.Core.llm_client import LMStudioClient
+                    from Lilith.Swarm.executor import SwarmExecutor
+
+                    client = LMStudioClient()
+                    executor = SwarmExecutor(client)
+                    mgr._executor = executor
+                    mgr._use_llm = True
                 agent_ids = mgr.spawn_swarm(task=task, num_agents=num)
                 self.p(f" [OK] Swarm spawnado: {', '.join(agent_ids)}", S.SUCCESS)
+                # Activar persistencia
+                mgr.enable_persistence()
+                sid = mgr.save_session(task=task)
+                self.p(f" [OK] Sesion guardada: {sid}", S.SUCCESS)
             except Exception as e:
                 self.p(f" [ERROR] {e}", S.ERROR)
             self.div()
@@ -207,6 +228,8 @@ class LilithCLI:
                 self.p(f" Errores: {report['errors']}", S.INFO)
                 self.p(f" Locks: {len(report['file_locks'])}", S.INFO)
                 self.p(f" Mensajes pendientes: {report['pending_messages']}", S.INFO)
+                if mgr._session_id:
+                    self.p(f" Sesion: {mgr._session_id}", S.DIM)
                 if report["agents"]:
                     self.p("\n [Agentes]", S.PROMPT)
                     for a in report["agents"]:
@@ -262,13 +285,78 @@ class LilithCLI:
             self.div()
             print()
 
+        elif subcmd == "save":
+            self.div()
+            self.p(" GUARDANDO SWARM ", S.TITLE)
+            self.div()
+            try:
+                mgr.enable_persistence()
+                sid = mgr.save_session()
+                self.p(f" [OK] Sesion guardada: {sid}", S.SUCCESS)
+            except Exception as e:
+                self.p(f" [ERROR] {e}", S.ERROR)
+            self.div()
+            print()
+
+        elif subcmd == "load":
+            if len(parts) < 2:
+                self.p(" Uso: swarm load <session_id>", S.WARNING)
+                return
+            sid = parts[1]
+            self.div()
+            self.p(f" CARGANDO SESION ", S.TITLE)
+            self.div()
+            try:
+                ok = mgr.load_session(sid)
+                if ok:
+                    history = mgr.get_session_history(sid)
+                    self.p(f" [OK] Sesion cargada: {sid}", S.SUCCESS)
+                    self.p(f" Agentes: {len(history['agents'])}", S.INFO)
+                    self.p(f" Mensajes: {len(history['messages'])}", S.INFO)
+                    self.p(f" Conflictos: {len(history['conflicts'])}", S.INFO)
+                else:
+                    self.p(f" [ERROR] Sesion no encontrada: {sid}", S.ERROR)
+            except Exception as e:
+                self.p(f" [ERROR] {e}", S.ERROR)
+            self.div()
+            print()
+
+        elif subcmd == "history":
+            self.div()
+            self.p(" HISTORIAL DE SWARMS ", S.TITLE)
+            self.div()
+            try:
+                mgr.enable_persistence()
+                sessions = mgr.list_saved_sessions(limit=20)
+                if not sessions:
+                    self.p(" No hay sesiones guardadas", S.DIM)
+                for s in sessions:
+                    status_icon = "✓" if s.get("status") == "complete" else "○"
+                    ts = s.get("created_at", 0)
+                    ts_str = (
+                        datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M")
+                        if ts
+                        else "?"
+                    )
+                    self.p(
+                        f" {status_icon} [{s['id'][:20]}...] {s.get('task', 'N/A')[:40]} | {ts_str}",
+                        S.DIM,
+                    )
+            except Exception as e:
+                self.p(f" [ERROR] {e}", S.ERROR)
+            self.div()
+            print()
+
         else:
             self.p(" Comandos swarm:", S.INFO)
-            self.p("   swarm spawn <tarea> [--agents N]  - Crear swarm")
-            self.p("   swarm status                      - Ver estado")
-            self.p("   swarm kill <id>                   - Matar agente")
-            self.p("   swarm killall                     - Matar todos")
-            self.p("   swarm result <id>                 - Ver resultado")
+            self.p("   swarm spawn <tarea> [--agents N] [--llm]  - Crear swarm")
+            self.p("   swarm status                               - Ver estado")
+            self.p("   swarm kill <id>                            - Matar agente")
+            self.p("   swarm killall                              - Matar todos")
+            self.p("   swarm result <id>                          - Ver resultado")
+            self.p("   swarm save                                 - Guardar sesion")
+            self.p("   swarm load <session_id>                    - Cargar sesion")
+            self.p("   swarm history                              - Ver historial")
 
     def print_tools(self):
         tools = Lilith_tools.ALL_TOOLS
@@ -799,6 +887,16 @@ class LilithCLI:
                 elif cmd.startswith("swarm"):
                     self._handle_swarm_command(user_input[5:].strip())
                     continue
+                elif cmd.startswith("mcp"):
+                    result = handle_mcp_command(user_input[3:].strip())
+                    self.p(result)
+                    continue
+                elif cmd.startswith("dashboard"):
+                    result = handle_dashboard_command(
+                        user_input[10:].strip(), lilith_instance=self
+                    )
+                    self.p(result)
+                    continue
 
                 # Chat
                 self.div("─")
@@ -857,7 +955,7 @@ Interactive Commands:
   recall <query>    Search memories
   agents            View sub-agents
   tasks             View scheduled tasks
-  swarm <cmd>       Manage agent swarm (spawn, status, kill, result)
+  swarm <cmd>       Manage agent swarm (spawn, status, kill, save, load, history)
   index <path>      Index files/folder
   search <query>    Search indexed documents
   plugins           View installed plugins

@@ -7,10 +7,11 @@ import asyncio
 import threading
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 from uuid import uuid4
 
 from Lilith.Swarm.agent import AgentStatus, SwarmAgent
+from Lilith.Swarm.database import SwarmDatabase, get_swarm_db
 from Lilith.Swarm.message_bus import MessageBus, MessageType
 
 
@@ -36,7 +37,12 @@ class ConflictInfo:
 class SwarmManager:
     """Gestiona multiples agentes trabajando en el mismo repo."""
 
-    def __init__(self, repo_path: Optional[Path] = None):
+    def __init__(
+        self,
+        repo_path: Optional[Path] = None,
+        executor: Optional[Any] = None,
+        use_llm: bool = False,
+    ):
         self.repo = repo_path or Path.cwd()
         self.agents: Dict[str, SwarmAgent] = {}
         self.message_bus = MessageBus()
@@ -46,6 +52,12 @@ class SwarmManager:
         self._coordinator_thread: Optional[threading.Thread] = None
         self._stop_event = threading.Event()
         self._running = False
+        self._executor = executor
+        self._use_llm = use_llm
+        self._session_id: Optional[str] = None
+        self._db: Optional[SwarmDatabase] = None
+        self._auto_save_interval = 30.0
+        self._auto_save_thread: Optional[threading.Thread] = None
 
     def spawn_agent(
         self,
@@ -63,6 +75,8 @@ class SwarmManager:
             context=context or {},
             message_bus=self.message_bus,
             file_locks=self.file_locks,
+            executor=self._executor,
+            use_llm=self._use_llm,
         )
 
         with self._lock:
@@ -180,6 +194,105 @@ class SwarmManager:
 
         return False
 
+    # ═══════════════════════════════════════════════════════════════════════════
+    # Persistencia
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    def enable_persistence(self, db: Optional[SwarmDatabase] = None):
+        """Activa persistencia con auto-save."""
+        self._db = db or get_swarm_db()
+        self._start_auto_save()
+
+    def _start_auto_save(self):
+        """Inicia thread de auto-save."""
+        if self._auto_save_thread and self._auto_save_thread.is_alive():
+            return
+        self._auto_save_thread = threading.Thread(
+            target=self._auto_save_loop, daemon=True
+        )
+        self._auto_save_thread.start()
+
+    def _auto_save_loop(self):
+        """Loop de auto-save cada N segundos."""
+        while not self._stop_event.is_set():
+            time.sleep(self._auto_save_interval)
+            if self._session_id and self._db:
+                try:
+                    self.save_session()
+                except Exception:
+                    pass  # Silenciar errores de auto-save
+
+    def save_session(self, session_id: Optional[str] = None, task: str = "") -> str:
+        """Guarda estado actual del swarm en la base de datos."""
+        if not self._db:
+            self._db = get_swarm_db()
+
+        sid = session_id or self._session_id or f"swarm_{uuid4().hex[:12]}"
+        self._session_id = sid
+
+        # Guardar sesion
+        self._db.save_session(
+            session_id=sid,
+            task=task or "swarm task",
+            status="active" if self._running else "paused",
+            repo_path=str(self.repo),
+            use_llm=self._use_llm,
+        )
+
+        # Guardar agentes
+        with self._lock:
+            for agent in self.agents.values():
+                self._db.save_agent(sid, agent.to_dict())
+
+        # Guardar conflictos
+        for conflict in self.conflicts:
+            self._db.save_conflict(sid, conflict.to_dict())
+
+        return sid
+
+    def load_session(self, session_id: str) -> bool:
+        """Carga una sesion guardada. No restaura agentes activos, solo datos."""
+        if not self._db:
+            self._db = get_swarm_db()
+
+        session = self._db.get_session(session_id)
+        if not session:
+            return False
+
+        self._session_id = session_id
+        self._use_llm = bool(session.get("use_llm", 0))
+        if session.get("repo_path"):
+            self.repo = Path(session["repo_path"])
+
+        return True
+
+    def list_saved_sessions(self, limit: int = 50) -> List[Dict]:
+        """Lista sesiones guardadas."""
+        if not self._db:
+            self._db = get_swarm_db()
+        return self._db.list_sessions(limit)
+
+    def get_session_history(self, session_id: str) -> Dict:
+        """Recupera historial completo de una sesion."""
+        if not self._db:
+            self._db = get_swarm_db()
+
+        return {
+            "session": self._db.get_session(session_id),
+            "agents": self._db.get_agents(session_id),
+            "messages": self._db.get_messages(session_id),
+            "conflicts": self._db.get_conflicts(session_id),
+        }
+
+    def delete_saved_session(self, session_id: str) -> bool:
+        """Elimina una sesion guardada."""
+        if not self._db:
+            self._db = get_swarm_db()
+        self._db.delete_session(session_id)
+        if self._session_id == session_id:
+            self._session_id = None
+        return True
+
     def start_coordinator(self):
         """Inicia thread de coordinacion."""
         if self._running:
@@ -197,6 +310,14 @@ class SwarmManager:
         self._stop_event.set()
         if self._coordinator_thread:
             self._coordinator_thread.join(timeout=2)
+        if self._auto_save_thread:
+            self._auto_save_thread.join(timeout=2)
+        # Save final
+        if self._session_id and self._db:
+            try:
+                self.save_session()
+            except Exception:
+                pass
 
     def _coordinate_loop(self):
         """Loop principal de coordinacion."""
@@ -271,9 +392,13 @@ class SwarmManager:
 _swarm_manager: Optional[SwarmManager] = None
 
 
-def get_swarm_manager(repo_path: Optional[Path] = None) -> SwarmManager:
+def get_swarm_manager(
+    repo_path: Optional[Path] = None,
+    executor: Optional[Any] = None,
+    use_llm: bool = False,
+) -> SwarmManager:
     """Obtiene instancia global del swarm manager."""
     global _swarm_manager
     if _swarm_manager is None:
-        _swarm_manager = SwarmManager(repo_path)
+        _swarm_manager = SwarmManager(repo_path, executor=executor, use_llm=use_llm)
     return _swarm_manager

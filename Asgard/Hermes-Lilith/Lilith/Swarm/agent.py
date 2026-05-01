@@ -7,7 +7,7 @@ import threading
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional, Set
+from typing import Any, Callable, Dict, List, Optional, Set
 
 from Lilith.Swarm.message_bus import Message, MessageBus, MessageType
 
@@ -54,6 +54,8 @@ class SwarmAgent:
         context: Dict,
         message_bus: MessageBus,
         file_locks: Dict[str, str],
+        executor: Optional[Any] = None,
+        use_llm: bool = False,
     ):
         self.id = agent_id
         self.task = task
@@ -61,6 +63,8 @@ class SwarmAgent:
         self.context = context
         self.message_bus = message_bus
         self.file_locks = file_locks
+        self.executor = executor
+        self.use_llm = use_llm
 
         self.status = AgentStatus.IDLE
         self.files_read: Set[str] = set()
@@ -149,11 +153,53 @@ class SwarmAgent:
             )
 
     def _execute_task(self) -> TaskResult:
-        """Ejecuta la tarea asignada. Override en subclases."""
-        # Implementacion base: simular trabajo
+        """Ejecuta la tarea asignada. Usa LLM si esta configurado."""
         start = time.time()
 
-        # Simular procesamiento
+        if self.use_llm and self.executor:
+            return self._execute_with_llm(start)
+        else:
+            return self._execute_simulated(start)
+
+    def _execute_with_llm(self, start: float) -> TaskResult:
+        """Ejecuta tarea usando LLM real y tools."""
+
+        def progress_callback(msg: Dict):
+            self.message_bus.broadcast(
+                from_id=self.id,
+                msg_type=MessageType.PROGRESS,
+                data=msg,
+            )
+
+        try:
+            result = self.executor.execute_task(
+                task=self.task,
+                context=self.context,
+                capabilities=self.capabilities,
+                stop_event=self._stop_event,
+                progress_callback=progress_callback,
+            )
+
+            # Actualizar files_written desde el resultado
+            for f in result.get("files_modified", []):
+                self.files_written.add(f)
+
+            return TaskResult(
+                success=result.get("success", False),
+                output=result.get("output", ""),
+                error=result.get("error"),
+                files_modified=result.get("files_modified", []),
+                duration_seconds=time.time() - start,
+            )
+        except Exception as e:
+            return TaskResult(
+                success=False,
+                error=str(e),
+                duration_seconds=time.time() - start,
+            )
+
+    def _execute_simulated(self, start: float) -> TaskResult:
+        """Simulacion de trabajo (para tests y modo offline)."""
         for i in range(5):
             if self._stop_event.is_set():
                 return TaskResult(

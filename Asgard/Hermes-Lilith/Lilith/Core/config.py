@@ -6,8 +6,20 @@
 import os
 from pathlib import Path
 
+# Cargar .env si existe (API keys, configuracion local)
+try:
+    from dotenv import load_dotenv
+
+    _PROJECT_ROOT = Path(__file__).parent.parent.parent
+    _env_file = _PROJECT_ROOT / ".env"
+    if _env_file.exists():
+        load_dotenv(_env_file)
+except ImportError:
+    pass
+
 # Detectar ruta base del proyecto (para rutas relativas)
-_PROJECT_ROOT = Path(__file__).parent.parent.parent
+if "_PROJECT_ROOT" not in dir():
+    _PROJECT_ROOT = Path(__file__).parent.parent.parent
 
 # LM Studio Connection
 # --------------------
@@ -18,6 +30,31 @@ LM_STUDIO_URL = os.getenv("LILITH_LM_URL", "http://localhost:1234/v1")
 # - "auto"         : Detecta el primer modelo cargado en LM Studio
 # - "nombre/exacto": Usa ese modelo especifico (ej: "google/gemma-4-e4b")
 DEFAULT_MODEL = os.getenv("LILITH_MODEL", "auto")
+
+# LLM Providers (fallback chain)
+# --------------------------------
+# Lilith soporta multiples providers de LLM con fallback automatico.
+# El orden en LLM_PROVIDERS define la prioridad: si el primero falla, prueba el siguiente.
+
+LLM_PROVIDERS = [
+    {
+        "name": "lm_studio",
+        "type": "local",
+        "base_url": LM_STUDIO_URL,
+        "model": DEFAULT_MODEL,
+        "api_key": None,  # LM Studio no requiere API key
+    },
+    {
+        "name": "kimi",
+        "type": "remote",
+        "base_url": "https://api.moonshot.cn/v1",
+        "model": "kimi-2.6",
+        "api_key": os.getenv("KIMI_API_KEY", ""),
+    },
+]
+
+# Provider activo: "auto" = intentar en orden, o forzar uno especifico
+LLM_PROVIDER = os.getenv("LILITH_PROVIDER", "auto")
 
 # Chat Settings
 MAX_HISTORY_MESSAGES = 50
