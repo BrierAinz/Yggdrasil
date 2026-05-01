@@ -11,3 +11,9 @@ sentence-transformers>=2.5.0
 # Notificaciones Windows Toast (opcional)
 # Si falla la instalacion, las notificaciones se muestran en consola
 winrt>=2.0
+
+# Hot-reload de skills
+watchdog>=3.0
+
+# YAML parsing para skills
+pyyaml>=6.0

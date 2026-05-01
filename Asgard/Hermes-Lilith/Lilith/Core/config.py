@@ -115,3 +115,9 @@ PROJECTS_DIR = os.getenv("LILITH_PROJECTS", "D:\\Proyectos")
 # Logging
 LOG_LEVEL = "INFO"
 LOG_FILE = str(_PROJECT_ROOT / "logs" / "lilith.log")
+
+# Skills Settings
+SKILLS_DIR = Path(os.getenv("LILITH_SKILLS", Path.home() / ".lilith" / "skills"))
+SKILLS_HOT_RELOAD = os.getenv("LILITH_SKILLS_HOT_RELOAD", "true").lower() == "true"
+SKILLS_AUTO_TRIGGER = os.getenv("LILITH_SKILLS_AUTO_TRIGGER", "true").lower() == "true"
+SKILLS_MAX_TRIGGERED = int(os.getenv("LILITH_SKILLS_MAX_TRIGGERED", "3"))

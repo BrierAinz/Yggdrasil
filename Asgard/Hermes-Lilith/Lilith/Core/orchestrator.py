@@ -15,8 +15,14 @@ _project_root = Path(__file__).parent.parent
 if str(_project_root) not in sys.path:
     sys.path.insert(0, str(_project_root))
 
-from Lilith.Core.config import MAX_TOOL_CALLS, SYSTEM_PROMPT
+from Lilith.Core.config import (
+    MAX_TOOL_CALLS,
+    SKILLS_AUTO_TRIGGER,
+    SKILLS_MAX_TRIGGERED,
+    SYSTEM_PROMPT,
+)
 from Lilith.Core.llm_client import LMStudioClient
+from Lilith.Core.skill_registry import get_skill_registry
 from Lilith.memory.enhanced import get_memory
 from Lilith.tools import ALL_TOOLS
 from Lilith.tools.browser import execute_tool as execute_browser_tool
@@ -72,6 +78,7 @@ class LilithOrchestrator:
     def __init__(self):
         self.client = LMStudioClient()
         self.memory = get_memory()
+        self.skill_registry = get_skill_registry()
         self.messages = [{"role": "system", "content": SYSTEM_PROMPT}]
         self.tool_call_count = 0
         self.session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -82,14 +89,36 @@ class LilithOrchestrator:
         self.tool_call_count = 0
 
     def _build_system_prompt(self, user_input: str) -> str:
-        """Construye el system prompt con contexto de memoria."""
+        """Construye el system prompt con contexto de memoria y skills."""
         base = SYSTEM_PROMPT
+
+        # Inyectar contexto de memoria
         try:
             context = self.memory.get_relevant_context(user_input, max_tokens=1200)
             if context:
                 base += f"\n\n=== CONTEXTO RELEVANTE DE MEMORIA ===\n{context}\n=== FIN CONTEXTO ==="
         except Exception:
             pass
+
+        # Inyectar skills activos
+        if SKILLS_AUTO_TRIGGER:
+            try:
+                triggered = self.skill_registry.get_triggered_skills(
+                    user_input, max_skills=SKILLS_MAX_TRIGGERED
+                )
+                if triggered:
+                    base += "\n\n=== SKILLS ACTIVOS ===\n"
+                    for skill in triggered:
+                        base += f"\n[{skill.name}] {skill.description}\n"
+                        # Incluir contenido del skill (truncado si es muy largo)
+                        content_preview = skill.content[:2000]
+                        if len(skill.content) > 2000:
+                            content_preview += "\n... (truncado)"
+                        base += f"{content_preview}\n"
+                    base += "\n=== FIN SKILLS ==="
+            except Exception:
+                pass
+
         return base
 
     def _should_use_rag(self, text: str) -> bool:
