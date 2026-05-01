@@ -99,6 +99,16 @@ Telegram Bot  ---------→  VSCode Ext  ---------→  CLI
 
 ---
 
+## Documentation
+
+| Doc | Description |
+|-----|-------------|
+| [API Reference](docs/API.md) | Complete HTTP and WebSocket endpoint documentation |
+| [Architecture](docs/ARCHITECTURE.md) | System diagrams, data flow, and deployment topology |
+| [Tutorials by Realm](docs/TUTORIALS.md) | Step-by-step guides for each of the Nine Realms |
+
+---
+
 ## Hermes-Lilith Features
 
 | Feature | Description |
