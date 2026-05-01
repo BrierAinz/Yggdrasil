@@ -11,6 +11,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+import argparse
+
 import Lilith.Core.llm_client as llm
 import Lilith.Core.orchestrator as orch
 import Lilith.tools as Lilith_tools
@@ -112,12 +114,13 @@ class LilithCLI:
         "compact": "Comprimir memorias antiguas",
     }
 
-    def __init__(self):
+    def __init__(self, no_banner=False, streaming_mode=None):
         self.orch = orch.LilithOrchestrator()
         self.memory = get_memory()
         self.session_id = "default"
         self.msg_count = 0
-        self.streaming_mode = False
+        self.streaming_mode = streaming_mode if streaming_mode is not None else False
+        self.no_banner = no_banner
 
     def p(self, msg, style=S.INFO):
         print(f"{style}{msg}{C.RESET}")
@@ -240,7 +243,10 @@ class LilithCLI:
 
         self.p(" Conectando con el Ether...", S.DIM)
         if not llm.test_connection():
-            self.print_banner("Sin conexion")
+            if not self.no_banner:
+                self.print_banner("Sin conexion")
+            else:
+                self.p(" [ERROR] No hay conexion con LM Studio.", S.ERROR)
             self.p("", "")
             self.p(" ╔════════ ERROR ARCANO ════════╗", S.ERROR)
             self.p(" ║                                ║", S.ERROR)
@@ -257,7 +263,11 @@ class LilithCLI:
         client = llm.LMStudioClient()
         model_name = client.model
         client.close()
-        self.print_banner(model_name)
+        if not self.no_banner:
+            self.print_banner(model_name)
+        else:
+            self.p(f" Lilith v2.1 | {model_name} | {len(Lilith_tools.ALL_TOOLS)} tools", S.TITLE)
+            self.div()
 
         status_stream = "ON" if self.streaming_mode else "OFF"
         self.p(
@@ -291,7 +301,8 @@ class LilithCLI:
 
                 elif cmd in ["clear", "cls"]:
                     clear()
-                    self.print_banner(model_name)
+                    if not self.no_banner:
+                        self.print_banner(model_name)
                     continue
 
                 elif cmd == "reset":
@@ -651,7 +662,59 @@ class LilithCLI:
 
 
 def main():
-    cli = LilithCLI()
+    parser = argparse.ArgumentParser(
+        prog="lilith",
+        description="Lilith - Dark Fantasy CLI Agent for LM Studio",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Interactive Commands:
+  exit, quit, q     Leave the realm
+  clear, cls        Clean the viewport
+  help, h           Show grimoire
+  history           View past scrolls
+  tools             View tool arsenal
+  status            Full realm status
+  memory            View Lilith's memories
+  recall <query>    Search memories
+  agents            View sub-agents
+  tasks             View scheduled tasks
+  index <path>      Index files/folder
+  search <query>    Search indexed documents
+  plugins           View installed plugins
+  stream            Toggle streaming mode
+  compact           Compress old memories
+
+Example:
+  lilith                    Start interactive session
+  lilith --no-banner        Start without the intro banner
+  lilith --streaming        Start with streaming enabled
+        """.strip()
+    )
+    parser.add_argument("-v", "--version", action="store_true", help="Show version and exit")
+    parser.add_argument("--no-banner", action="store_true", help="Skip the intro banner")
+    parser.add_argument("--streaming", action="store_true", help="Enable streaming mode")
+    parser.add_argument("--no-streaming", action="store_true", help="Disable streaming mode")
+    parser.add_argument("--model", help="Override model name")
+    parser.add_argument("--cwd", type=Path, help="Change working directory before starting")
+
+    args = parser.parse_args()
+
+    if args.version:
+        print("Lilith v2.1.0 - Dark Fantasy Edition")
+        sys.exit(0)
+
+    if args.cwd:
+        os.chdir(args.cwd)
+
+    streaming = None
+    if args.streaming and args.no_streaming:
+        parser.error("Cannot use --streaming and --no-streaming together")
+    if args.streaming:
+        streaming = True
+    elif args.no_streaming:
+        streaming = False
+
+    cli = LilithCLI(no_banner=args.no_banner, streaming_mode=streaming)
     cli.run()
 
 

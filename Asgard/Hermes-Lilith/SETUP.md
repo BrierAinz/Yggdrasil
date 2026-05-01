@@ -42,6 +42,24 @@ Luego desde cualquier carpeta:
 lilith
 ```
 
+### Opciones de linea de comandos
+
+| Flag | Descripcion |
+|------|-------------|
+| `lilith --help` | Mostrar ayuda completa |
+| `lilith --version` | Mostrar version |
+| `lilith --no-banner` | Iniciar sin banner |
+| `lilith --streaming` | Iniciar con streaming activado |
+| `lilith --no-streaming` | Iniciar con streaming desactivado |
+| `lilith --cwd <path>` | Cambiar directorio antes de iniciar |
+
+### Desinstalar
+
+```cmd
+cd D:\Proyectos\Yggdrasil\Asgard\Hermes-Lilith
+uninstall.bat
+```
+
 ## Comandos disponibles dentro de Lilith
 
 | Comando | Descripcion |
