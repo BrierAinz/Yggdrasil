@@ -23,6 +23,7 @@ from Lilith.notifications import get_notifications
 from Lilith.Plugins.plugin_manager import get_plugin_registry
 from Lilith.RAG.rag_engine import get_rag_engine
 from Lilith.Scheduler.task_scheduler import TaskScheduler, TaskStatus, get_scheduler
+from Lilith.Swarm.manager import get_swarm_manager
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -112,6 +113,7 @@ class LilithCLI:
         "notify": "Enviar notificacion de prueba",
         "stream": "Toggle modo streaming",
         "compact": "Comprimir memorias antiguas",
+        "swarm": "Gestionar swarm de agentes",
     }
 
     def __init__(self, no_banner=False, streaming_mode=None):
@@ -161,6 +163,112 @@ class LilithCLI:
         self.div()
         self.p("  [mensaje]  ◆ Invocar a Lilith")
         self.p("")
+
+    def _handle_swarm_command(self, args: str):
+        """Handler para comandos /swarm."""
+        parts = args.split()
+        subcmd = parts[0] if parts else "status"
+        mgr = get_swarm_manager()
+
+        if subcmd == "spawn":
+            task = " ".join(parts[1:]) if len(parts) > 1 else "Tarea generica"
+            num = 2
+            # Parsear --agents N
+            for i, p in enumerate(parts):
+                if p == "--agents" and i + 1 < len(parts):
+                    try:
+                        num = int(parts[i + 1])
+                    except ValueError:
+                        pass
+                    break
+            self.div()
+            self.p(f" INVOCANDO SWARM ", S.TITLE)
+            self.div()
+            self.p(f" Tarea: {task}", S.INFO)
+            self.p(f" Agentes: {num}", S.INFO)
+            try:
+                agent_ids = mgr.spawn_swarm(task=task, num_agents=num)
+                self.p(f" [OK] Swarm spawnado: {', '.join(agent_ids)}", S.SUCCESS)
+            except Exception as e:
+                self.p(f" [ERROR] {e}", S.ERROR)
+            self.div()
+            print()
+
+        elif subcmd == "status":
+            self.div()
+            self.p(" ESTADO DEL SWARM ", S.TITLE)
+            self.div()
+            try:
+                report = mgr.get_status_report()
+                self.p(
+                    f" Agentes: {report['total_agents']} (activos: {report['active']}, completados: {report['complete']})",
+                    S.INFO,
+                )
+                self.p(f" Errores: {report['errors']}", S.INFO)
+                self.p(f" Locks: {len(report['file_locks'])}", S.INFO)
+                self.p(f" Mensajes pendientes: {report['pending_messages']}", S.INFO)
+                if report["agents"]:
+                    self.p("\n [Agentes]", S.PROMPT)
+                    for a in report["agents"]:
+                        status_color = (
+                            S.HEAL
+                            if a["status"] == "complete"
+                            else (S.WARNING if a["status"] == "working" else S.DIM)
+                        )
+                        self.p(
+                            f"   {a['id']}: {a['status']} | {a['task'][:40]}...",
+                            status_color,
+                        )
+                if report["conflicts"]:
+                    self.p("\n [Conflictos]", S.WARNING)
+                    for c in report["conflicts"]:
+                        self.p(f"   {c['file']}: {', '.join(c['agents'])}", S.WARNING)
+            except Exception as e:
+                self.p(f" [ERROR] {e}", S.ERROR)
+            self.div()
+            print()
+
+        elif subcmd == "kill":
+            if len(parts) < 2:
+                self.p(" Uso: swarm kill <agent_id>", S.WARNING)
+                return
+            agent_id = parts[1]
+            result = mgr.kill_agent(agent_id)
+            self.p(
+                f" {'[OK] Agente eliminado' if result else '[ERROR] No encontrado'}: {agent_id}",
+                S.SUCCESS if result else S.ERROR,
+            )
+
+        elif subcmd == "killall":
+            mgr.kill_all()
+            self.p(" [OK] Todos los agentes eliminados", S.SUCCESS)
+
+        elif subcmd == "result":
+            if len(parts) < 2:
+                self.p(" Uso: swarm result <agent_id>", S.WARNING)
+                return
+            agent_id = parts[1]
+            result = mgr.get_agent_results(agent_id)
+            self.div()
+            self.p(f" RESULTADO: {agent_id} ", S.TITLE)
+            self.div()
+            if result:
+                self.p(f" Status: {result['status']}", S.INFO)
+                self.p(f" Duracion: {result['duration']:.1f}s", S.INFO)
+                if result["result"]:
+                    self.p(f" Output: {str(result['result'])[:200]}", S.DIM)
+            else:
+                self.p(" Agente no encontrado", S.ERROR)
+            self.div()
+            print()
+
+        else:
+            self.p(" Comandos swarm:", S.INFO)
+            self.p("   swarm spawn <tarea> [--agents N]  - Crear swarm")
+            self.p("   swarm status                      - Ver estado")
+            self.p("   swarm kill <id>                   - Matar agente")
+            self.p("   swarm killall                     - Matar todos")
+            self.p("   swarm result <id>                 - Ver resultado")
 
     def print_tools(self):
         tools = Lilith_tools.ALL_TOOLS
@@ -688,6 +796,10 @@ class LilithCLI:
                     print()
                     continue
 
+                elif cmd.startswith("swarm"):
+                    self._handle_swarm_command(user_input[5:].strip())
+                    continue
+
                 # Chat
                 self.div("─")
                 if self.streaming_mode:
@@ -745,6 +857,7 @@ Interactive Commands:
   recall <query>    Search memories
   agents            View sub-agents
   tasks             View scheduled tasks
+  swarm <cmd>       Manage agent swarm (spawn, status, kill, result)
   index <path>      Index files/folder
   search <query>    Search indexed documents
   plugins           View installed plugins
