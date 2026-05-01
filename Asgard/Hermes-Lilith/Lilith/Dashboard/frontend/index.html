@@ -4,20 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lilith Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Particle Canvas (background layer) -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Ambient CSS particles overlay -->
+    <div id="rune-particles" aria-hidden="true"></div>
+
     <div id="app">
         <!-- Header -->
         <header id="header">
             <div class="header-left">
                 <span class="logo">&#x2726;</span>
-                <span class="title">LILITH</span>
+                <span class="title" id="title-lilith">LILITH</span>
                 <span class="version">v3.0</span>
             </div>
             <div class="header-center">
-                <div id="connection-status" class="status-dot disconnected" title="Disconnected"></div>
-                <span id="status-text">Connecting...</span>
+                <div id="connection-status" class="status-rune disconnected" title="Disconnected">
+                    <span class="rune-inner">&#x29BF;</span>
+                </div>
+                <span id="status-text">Summoning...</span>
             </div>
             <div class="header-right">
                 <button id="btn-layout" onclick="toggleLayout()" title="Toggle layout">&#9638;&#9638;&#9638;</button>
@@ -31,14 +42,27 @@
             <div id="pane-chat" class="pane active">
                 <div class="pane-header">
                     <span class="pane-icon">&#x1F4AC;</span>
+                    <span class="pane-rune">&#x16B1;</span>
                     <span class="pane-title">Chat</span>
+                    <span class="pane-rune">&#x16B1;</span>
                 </div>
                 <div class="pane-body" id="chat-body">
                     <div id="chat-messages"></div>
+                    <!-- Summoning circle typing indicator -->
+                    <div id="typing-indicator" class="hidden">
+                        <div class="summoning-circle">
+                            <div class="circle-ring"></div>
+                            <div class="circle-rune r1">&#x16B1;</div>
+                            <div class="circle-rune r2">&#x16A2;</div>
+                            <div class="circle-rune r3">&#x16B7;</div>
+                            <div class="circle-rune r4">&#x16CF;</div>
+                            <span class="circle-text">Communing</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="pane-footer">
                     <div class="chat-input-wrapper">
-                        <input type="text" id="chat-input" placeholder="Send a message to Lilith..." autocomplete="off">
+                        <input type="text" id="chat-input" placeholder="Speak unto the void..." autocomplete="off">
                         <button id="chat-send" onclick="sendChat()">&#x27A4;</button>
                     </div>
                 </div>
@@ -48,13 +72,15 @@
             <div id="pane-terminal" class="pane">
                 <div class="pane-header">
                     <span class="pane-icon">&#x2318;</span>
+                    <span class="pane-rune">&#x16C1;</span>
                     <span class="pane-title">Terminal</span>
+                    <span class="pane-rune">&#x16C1;</span>
                 </div>
-                <div class="pane-body">
+                <div class="pane-body grimoire-body">
                     <div id="terminal-output" class="terminal-content"></div>
                     <div class="terminal-input-line">
-                        <span class="prompt">$</span>
-                        <input type="text" id="terminal-input" placeholder="Enter command..." autocomplete="off">
+                        <span class="prompt">&#x16BA; </span>
+                        <input type="text" id="terminal-input" placeholder="Incant command..." autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -63,32 +89,34 @@
             <div id="pane-system" class="pane">
                 <div class="pane-header">
                     <span class="pane-icon">&#x2699;</span>
+                    <span class="pane-rune">&#x16A5;</span>
                     <span class="pane-title">System</span>
+                    <span class="pane-rune">&#x16A5;</span>
                 </div>
                 <div class="pane-body">
                     <div id="system-info" class="system-grid">
                         <div class="system-item">
-                            <span class="system-label">Model</span>
+                            <span class="system-label">&#x16A5; Model</span>
                             <span class="system-value" id="sys-model">---</span>
                         </div>
                         <div class="system-item">
-                            <span class="system-label">Memory</span>
+                            <span class="system-label">&#x16A0; Memory</span>
                             <span class="system-value" id="sys-memory">---</span>
                         </div>
                         <div class="system-item">
-                            <span class="system-label">Swarm</span>
+                            <span class="system-label">&#x16A2; Swarm</span>
                             <span class="system-value" id="sys-swarm">---</span>
                         </div>
                         <div class="system-item">
-                            <span class="system-label">MCP</span>
+                            <span class="system-label">&#x16CF; MCP</span>
                             <span class="system-value" id="sys-mcp">---</span>
                         </div>
                         <div class="system-item">
-                            <span class="system-label">Uptime</span>
+                            <span class="system-label">&#x16B7; Uptime</span>
                             <span class="system-value" id="sys-uptime">---</span>
                         </div>
                         <div class="system-item">
-                            <span class="system-label">Clients</span>
+                            <span class="system-label">&#x16C1; Clients</span>
                             <span class="system-value" id="sys-clients">---</span>
                         </div>
                     </div>
@@ -99,11 +127,13 @@
             <div id="pane-memory" class="pane">
                 <div class="pane-header">
                     <span class="pane-icon">&#x1F9E0;</span>
+                    <span class="pane-rune">&#x16A0;</span>
                     <span class="pane-title">Memory</span>
+                    <span class="pane-rune">&#x16A0;</span>
                 </div>
                 <div class="pane-body">
                     <div class="memory-search">
-                        <input type="text" id="memory-search-input" placeholder="Search memories..." autocomplete="off">
+                        <input type="text" id="memory-search-input" placeholder="Search the archives..." autocomplete="off">
                     </div>
                     <div id="memory-results" class="memory-list"></div>
                 </div>
@@ -112,7 +142,7 @@
 
         <!-- Status Bar -->
         <footer id="status-bar">
-            <span id="statusbar-left">Lilith v3.0 | Dark Fantasy Dashboard</span>
+            <span id="statusbar-left">&#x16B7; Lilith v3.0 &#x2014; The Void Stares Back &#x16B7;</span>
             <span id="statusbar-center"></span>
             <span id="statusbar-right"></span>
         </footer>
@@ -121,16 +151,16 @@
         <div id="settings-modal" class="modal hidden">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Settings</h2>
+                    <h2>&#x16A0; Arcane Settings &#x16A0;</h2>
                     <button class="modal-close" onclick="toggleSettings()">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="setting-item">
-                        <label>WebSocket URL</label>
+                        <label>WebSocket Portal</label>
                         <input type="text" id="setting-ws-url" value="ws://localhost:8765">
                     </div>
                     <div class="setting-item">
-                        <label>Theme</label>
+                        <label>Visage</label>
                         <select id="setting-theme">
                             <option value="dark-fantasy">Dark Fantasy</option>
                             <option value="midnight">Midnight</option>
@@ -138,7 +168,7 @@
                         </select>
                     </div>
                     <div class="setting-item">
-                        <label>Chat Font Size</label>
+                        <label>Script Size</label>
                         <input type="range" id="setting-font-size" min="12" max="20" value="14">
                     </div>
                 </div>
