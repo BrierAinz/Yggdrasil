@@ -12,6 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import argparse
+from typing import Optional
 
 import Lilith.Core.llm_provider as llm_provider
 import Lilith.Core.orchestrator as orch
@@ -19,7 +20,9 @@ import Lilith.tools as Lilith_tools
 from Lilith.Agents.agent_manager import AgentCapability, AgentManager, get_agent_manager
 from Lilith.auto_start import get_auto_start
 from Lilith.MCP.manager import get_mcp_manager
+from Lilith.memory.background_consolidator import BackgroundConsolidator, get_consolidator
 from Lilith.memory.enhanced import EnhancedMemory, get_memory
+from Lilith.memory.session_store import SessionStore, get_session_store
 from Lilith.notifications import get_notifications
 from Lilith.Plugins.plugin_manager import get_plugin_registry
 from Lilith.RAG.rag_engine import get_rag_engine
@@ -101,6 +104,7 @@ class LilithCLI:
         "cls": "Limpiar visor",
         "history": "Ver pergaminos del pasado",
         "sessions": "Ver sesiones guardadas",
+        "session": "Gestionar sesiones (list, load, search, delete)",
         "reset": "Reiniciar conversacion",
         "tools": "Ver arsenal de herramientas",
         "status": "Estado completo del realm",
@@ -117,6 +121,7 @@ class LilithCLI:
         "notify": "Enviar notificacion de prueba",
         "stream": "Toggle modo streaming",
         "compact": "Comprimir memorias antiguas",
+        "consolidate": "Ejecutar ciclo de consolidacion",
         "swarm": "Gestionar swarm de agentes",
         "mcp": "Gestionar servidores MCP",
         "dashboard": "Abrir dashboard web",
@@ -126,12 +131,15 @@ class LilithCLI:
     def __init__(self, no_banner=False, streaming_mode=None):
         self.orch = orch.LilithOrchestrator()
         self.memory = get_memory()
+        self.session_store: SessionStore = get_session_store()
         self.session_id = "default"
         self.msg_count = 0
         self.streaming_mode = streaming_mode if streaming_mode is not None else False
         self.no_banner = no_banner
         self._copy_builtin_skills()
         self.skill_registry = get_skill_registry()
+        # Iniciar BackgroundConsolidator en segundo plano
+        self._consolidator: Optional[BackgroundConsolidator] = None
 
     def p(self, msg, style=S.INFO):
         print(f"{style}{msg}{C.RESET}")
@@ -566,6 +574,160 @@ class LilithCLI:
         self.div()
         self.p("")
 
+    def _handle_session_command(self, args: str):
+        """Handler para comandos /session y /sessions."""
+        parts = args.split()
+        subcmd = parts[0] if parts else "list"
+        subcmd_lower = subcmd.lower()
+
+        if subcmd_lower in ("list", ""):
+            self.div()
+            self.p(" ARCHIVO DE SESIONES ", S.TITLE)
+            self.div()
+            sessions = self.session_store.list_sessions(limit=20)
+            if not sessions:
+                self.p(" No hay sesiones guardadas en el archivo", S.DIM)
+            else:
+                for s in sessions:
+                    active_marker = ""
+                    if s["id"] == self.orch.session_id:
+                        active_marker = f" {C.HEAL}(actual){C.RESET}"
+                    ts = s.get("last_active", "")[:16]
+                    ep_count = s.get("episode_count", 0)
+                    summary = s.get("summary", "(sin resumen)")[:60]
+                    self.p(
+                        f"  {C.VOID}{s['id']}{C.RESET}{active_marker}",
+                        S.INFO,
+                    )
+                    self.p(f"    Ultima actividad: {ts} | Episodios: {ep_count}", S.DIM)
+                    self.p(f"    {summary}", S.DIM)
+            self.div()
+            print()
+
+        elif subcmd_lower == "search":
+            query = " ".join(parts[1:]) if len(parts) > 1 else ""
+            if not query:
+                self.p(" Uso: session search <consulta>", S.WARNING)
+                return
+            self.div()
+            self.p(f" BUSQUEDA DE SESIONES: {query} ", S.TITLE)
+            self.div()
+            results = self.session_store.search_sessions(query, limit=5)
+            if not results:
+                self.p(" No se encontraron sesiones relevantes", S.DIM)
+            else:
+                for s in results:
+                    score = s.get("search_score", 0)
+                    ts = s.get("last_active", "")[:16]
+                    summary = s.get("summary", "(sin resumen)")[:60]
+                    self.p(
+                        f"  {s['id']} (score={score:.3f})",
+                        S.INFO,
+                    )
+                    self.p(f"    {ts} | {summary}", S.DIM)
+            self.div()
+            print()
+
+        elif subcmd_lower == "load":
+            if len(parts) < 2:
+                self.p(" Uso: session load <session_id>", S.WARNING)
+                return
+            sid = parts[1]
+            session_data = self.session_store.load_session(sid)
+            if not session_data:
+                self.p(f" [ERROR] Sesion no encontrada: {sid}", S.ERROR)
+                return
+            self.div()
+            self.p(f" CARGANDO SESION: {sid} ", S.TITLE)
+            self.div()
+            ts = session_data.get("last_active", "")[:16]
+            ep_count = session_data.get("episode_count", 0)
+            summary = session_data.get("summary", "(sin resumen)")
+            self.p(f"  Ultima actividad: {ts}", S.INFO)
+            self.p(f"  Episodios: {ep_count}", S.INFO)
+            self.p(f"  Resumen: {summary}", S.DIM)
+            # Cargar episodios de la sesión en memoria
+            episodes = self.memory.get_recent_episodes(count=50, session_id=sid)
+            if episodes:
+                self.p(f"\n  Restaurando {len(episodes)} episodios...", S.INFO)
+                # Reiniciar conversación con contexto de la sesión cargada
+                self.orch.reset()
+                self.orch.session_id = sid
+                for ep in reversed(episodes):
+                    if ep.get("user_input"):
+                        self.orch.messages.append({"role": "user", "content": ep["user_input"]})
+                    if ep.get("response"):
+                        self.orch.messages.append({"role": "assistant", "content": ep["response"]})
+                self.p(f" [OK] Sesion {sid} restaurada con {len(episodes)} episodios", S.SUCCESS)
+            else:
+                self.p(" No se encontraron episodios para esta sesion", S.WARNING)
+            self.div()
+            print()
+
+        elif subcmd_lower == "delete":
+            if len(parts) < 2:
+                self.p(" Uso: session delete <session_id>", S.WARNING)
+                return
+            sid = parts[1]
+            if sid == self.orch.session_id:
+                self.p(" No puedes eliminar la sesion activa", S.ERROR)
+                return
+            self.session_store.delete_session(sid)
+            self.p(f" [OK] Sesion {sid} eliminada del archivo", S.SUCCESS)
+
+        elif subcmd_lower == "save":
+            self.div()
+            self.p(" GUARDANDO SESION ACTUAL ", S.TITLE)
+            self.div()
+            try:
+                self.orch._save_current_session()
+                self.p(f" [OK] Sesion {self.orch.session_id} guardada", S.SUCCESS)
+            except Exception as e:
+                self.p(f" [ERROR] {e}", S.ERROR)
+            self.div()
+            print()
+
+        else:
+            self.p(" Comandos session:", S.INFO)
+            self.p("   session list            - Listar sesiones", S.DIM)
+            self.p("   session search <query>  - Buscar sesiones", S.DIM)
+            self.p("   session load <id>       - Cargar sesion", S.DIM)
+            self.p("   session delete <id>     - Eliminar sesion", S.DIM)
+            self.p("   session save            - Guardar sesion actual", S.DIM)
+
+    def _handle_consolidate_command(self):
+        """Handler para el comando /consolidate."""
+        self.div()
+        self.p(" CONSOLIDACION DE MEMORIA ", S.TITLE)
+        self.div()
+
+        # Ejecutar un ciclo manual de consolidación
+        try:
+            consolidator = get_consolidator()
+            self.p(" Ejecutando ciclo de consolidacion...", S.INFO)
+            result = consolidator.run_cycle()
+
+            self.p(f" Episodios fusionados: {result.get('merged', 0)}", S.INFO)
+            self.p(f" Hechos promovidos: {result.get('facts_promoted', 0)}", S.INFO)
+            self.p(f" Relaciones decaidas: {result.get('relations_decayed', 0)}", S.INFO)
+
+            stats = self.orch.get_consolidator_stats()
+            self.p(f"\n Estadisticas acumuladas:", S.PROMPT)
+            self.p(f"  Ciclos: {stats.get('cycles_run', 0)}", S.DIM)
+            self.p(f"  Total fusionados: {stats.get('episodes_merged', 0)}", S.DIM)
+            self.p(f"  Total hechos promovidos: {stats.get('facts_promoted', 0)}", S.DIM)
+            if stats.get('last_run'):
+                self.p(f"  Ultimo ciclo: {stats['last_run'][:19]}", S.DIM)
+
+            running = "ACTIVO" if stats.get('running') else "DETENIDO"
+            self.p(f"  Consolidador: {running}", S.INFO)
+        except Exception as e:
+            self.p(f" [ERROR] {e}", S.ERROR)
+
+        self.div()
+        self.p(" Comandos: consolidate (manual) | El consolidador se puede iniciar con: orchestrator.start_consolidator()", S.DIM)
+        print()
+
     def print_history(self):
         msgs = self.orch.get_history()
         self.div()
@@ -635,6 +797,16 @@ class LilithCLI:
                 cmd = user_input.lower()
 
                 if cmd in ["exit", "quit", "q"]:
+                    # Guardar sesión antes de salir
+                    try:
+                        self.orch._save_current_session()
+                    except Exception:
+                        pass
+                    # Detener consolidador si está activo
+                    try:
+                        self.orch.stop_consolidator()
+                    except Exception:
+                        pass
                     print()
                     self.p(" ╔══════════════════════════════╗", S.TITLE)
                     self.p(" ║                              ║", S.TITLE)
@@ -670,20 +842,11 @@ class LilithCLI:
                     continue
 
                 elif cmd == "sessions":
-                    self.div()
-                    self.p(" SESIONES EN MEMORIA ", S.TITLE)
-                    self.div()
-                    episodes = self.memory.get_recent_episodes(count=200)
-                    sessions = {}
-                    for ep in episodes:
-                        sid = ep.get("session_id", "default")
-                        sessions[sid] = sessions.get(sid, 0) + 1
-                    for sid, count in sorted(
-                        sessions.items(), key=lambda x: x[1], reverse=True
-                    ):
-                        self.p(f"  {sid}: {count} episodios")
-                    self.div()
-                    print()
+                    self._handle_session_command("list")
+                    continue
+
+                elif cmd.startswith("session"):
+                    self._handle_session_command(user_input[8:].strip())
                     continue
 
                 elif cmd == "status":
@@ -1038,6 +1201,10 @@ class LilithCLI:
                         self.p(f" Error: {e}", S.ERROR)
                     self.div()
                     print()
+                    continue
+
+                elif cmd == "consolidate":
+                    self._handle_consolidate_command()
                     continue
 
                 elif cmd.startswith("swarm"):

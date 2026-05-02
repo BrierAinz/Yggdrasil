@@ -28,7 +28,9 @@ from Lilith.Core.dynamic_tools import DynamicToolRegistry, ToolSource
 from Lilith.Core.llm_provider import LLMProvider, get_provider
 from Lilith.Core.skill_registry import get_skill_registry
 from Lilith.MCP.manager import MCPManager, get_mcp_manager
+from Lilith.memory.background_consolidator import BackgroundConsolidator, get_consolidator
 from Lilith.memory.enhanced import get_memory
+from Lilith.memory.session_store import SessionStore, get_session_store
 from Lilith.tools import ALL_TOOLS
 from Lilith.tools.browser import execute_tool as execute_browser_tool
 from Lilith.tools.coding import execute_tool as execute_coding_tool
@@ -142,6 +144,12 @@ class LilithOrchestrator:
         self._mcp_manager: Optional[MCPManager] = None
         self._mcp_initialized = False
         self._registry_lock = threading.Lock()
+
+        # — Session Store: persistencia de sesiones con contexto semántico —
+        self.session_store: SessionStore = get_session_store()
+
+        # — Background Consolidator: consolidación periódica de memoria —
+        self._consolidator: Optional[BackgroundConsolidator] = None
 
         # Registrar tools nativas
         self._register_native_tools()
@@ -288,21 +296,32 @@ class LilithOrchestrator:
         self.client = get_provider(name)
 
     def reset(self):
-        """Reinicia la conversacion."""
+        """Reinicia la conversacion, guardando la sesión actual primero."""
+        # Guardar sesión actual antes de reiniciar
+        self._save_current_session()
+
         self.messages = [{"role": "system", "content": SYSTEM_PROMPT}]
         self.tool_call_count = 0
+        # Generar nuevo session_id para la nueva conversación
+        self.session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     def _build_system_prompt(self, user_input: str) -> str:
-        """Construye el system prompt con contexto de memoria y skills."""
+        """Construye el system prompt con contexto de memoria, skills y sesiones pasadas."""
         base = SYSTEM_PROMPT
 
         # Inyectar contexto de memoria
+        context = ""
         try:
             context = self.memory.get_relevant_context(user_input, max_tokens=1200)
             if context:
                 base += f"\n\n=== CONTEXTO RELEVANTE DE MEMORIA ===\n{context}\n=== FIN CONTEXTO ==="
         except Exception:
             pass
+
+        # Inyectar contexto de sesiones pasadas (SessionStore)
+        session_context = self._inject_session_context(user_input)
+        if session_context:
+            base += f"\n\n{session_context}"
 
         # Inyectar skills activos
         if SKILLS_AUTO_TRIGGER:
@@ -489,8 +508,78 @@ class LilithOrchestrator:
         """Retorna historial de mensajes (sin system)."""
         return self.messages[1:]
 
+    def start_consolidator(self, interval_seconds: int = 300):
+        """Inicia el BackgroundConsolidator para consolidación periódica.
+
+        El consolidador opera en segundo plano como un ente ancestral que
+        teje los hilos de memoria en la penumbra eterna.
+        """
+        if self._consolidator is not None and self._consolidator.is_running:
+            logger.info("[Orchestrator] BackgroundConsolidator ya está ejecutándose.")
+            return
+        self._consolidator = get_consolidator()
+        self._consolidator.start()
+        logger.info("[Orchestrator] BackgroundConsolidator iniciado (intervalo=%ds)", interval_seconds)
+
+    def stop_consolidator(self):
+        """Detiene el BackgroundConsolidator."""
+        if self._consolidator is not None and self._consolidator.is_running:
+            self._consolidator.stop()
+            logger.info("[Orchestrator] BackgroundConsolidator detenido.")
+
+    def get_consolidator_stats(self) -> Dict:
+        """Retorna estadísticas del consolidador de fondo."""
+        if self._consolidator is None:
+            return {"running": False, "cycles_run": 0, "episodes_merged": 0, "facts_promoted": 0}
+        return {
+            "running": self._consolidator.is_running,
+            "last_run": self._consolidator.last_run,
+            **self._consolidator.stats,
+        }
+
+    def _save_current_session(self):
+        """Guarda la sesión actual en el SessionStore.
+
+        Las sombras de esta conversación se sellan en el archivo eterno
+        para que los ecos persistan más allá de su conclusión.
+        """
+        try:
+            episodes = self.memory.get_recent_episodes(count=200, session_id=self.session_id)
+            summary = self.session_store.auto_summary(episodes)
+            if not summary:
+                summary = f"Sesión {self.session_id} — {len(self.messages)} mensajes"
+            self.session_store.save_session(
+                session_id=self.session_id,
+                summary=summary,
+                episode_count=len(episodes),
+                metadata={"tool_calls": self.tool_call_count},
+            )
+            logger.info("[Orchestrator] Sesión %s guardada en SessionStore", self.session_id)
+        except Exception as e:
+            logger.warning("[Orchestrator] Error guardando sesión: %s", e)
+
+    def _inject_session_context(self, user_input: str) -> str:
+        """Inyecta contexto de sesiones pasadas relevantes al prompt.
+
+        Los susurros de sesiones olvidadas se entretejen en el sistema
+        para que la sabiduría ancestral ilumine las tinieblas.
+        """
+        try:
+            context = self.session_store.get_relevant_context(
+                query=user_input, max_sessions=3, max_tokens=800
+            )
+            if context:
+                return context
+        except Exception as e:
+            logger.debug("[Orchestrator] Error inyectando contexto de sesión: %s", e)
+        return ""
+
     def close(self):
-        """Cierra recursos, incluyendo MCP si esta activo."""
+        """Cierra recursos, incluyendo MCP y SessionStore."""
+        # Guardar sesión antes de cerrar
+        self._save_current_session()
+        # Detener consolidador
+        self.stop_consolidator()
         if self._mcp_manager and self._mcp_initialized:
             try:
                 _run_async(self._mcp_manager.stop())
