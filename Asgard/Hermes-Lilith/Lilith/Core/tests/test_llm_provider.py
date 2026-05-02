@@ -48,7 +48,7 @@ class TestLLMProvider:
         """Provider se crea con API key."""
         provider = LLMProvider(
             name="kimi",
-            base_url="https://api.moonshot.cn/v1",
+            base_url="https://api.kimi.com/coding/v1",
             model="kimi-2.6",
             api_key="sk-test-123",
             provider_type="remote",
@@ -64,14 +64,26 @@ class TestLLMProvider:
         assert "Authorization" not in headers
 
     def test_get_headers_with_key(self):
-        """Headers con API key incluyen Authorization Bearer."""
+        """Headers con API key incluyen Authorization Bearer y X-Client para Kimi."""
         provider = LLMProvider(
             name="kimi",
-            base_url="https://api.moonshot.cn/v1",
+            base_url="https://api.kimi.com/coding/v1",
             api_key="sk-test-123",
         )
         headers = provider._get_headers()
         assert headers["Authorization"] == "Bearer sk-test-123"
+        # Kimi Code API requiere X-Client header
+        assert headers["X-Client"] == "claude-code"
+
+    def test_get_headers_non_kimi(self):
+        """Headers sin Kimi no incluyen X-Client."""
+        provider = LLMProvider(
+            name="lm_studio",
+            base_url="http://localhost:1234/v1",
+            api_key="",
+        )
+        headers = provider._get_headers()
+        assert "X-Client" not in headers
 
     def test_repr(self):
         """__repr__ es informativo."""
@@ -84,7 +96,7 @@ class TestLLMProvider:
         """get_status retorna info completa."""
         provider = LLMProvider(
             name="kimi",
-            base_url="https://api.moonshot.cn/v1",
+            base_url="https://api.kimi.com/coding/v1",
             model="kimi-2.6",
             api_key="sk-test",
             provider_type="remote",
@@ -171,7 +183,7 @@ class TestProviderRegistry:
         kimi = _providers["kimi"]
         assert kimi.name == "kimi"
         assert kimi.provider_type == "remote"
-        assert kimi.base_url == "https://api.moonshot.cn/v1"
+        assert kimi.base_url == "https://api.kimi.com/coding/v1"
 
     def test_list_providers(self):
         """list_providers retorna estado de todos."""

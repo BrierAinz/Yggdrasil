@@ -82,10 +82,20 @@ class LLMProvider:
                 self.model = self.name  # fallback al nombre del provider
 
     def _get_headers(self) -> Dict[str, str]:
-        """Retorna headers HTTP para el request."""
-        headers = {"Content-Type": "application/json"}
+        """Retorna headers HTTP para el request.
+
+        Si el provider es Kimi Code, incluye el header X-Client requerido
+        para que la API acepte la conexion (solo permite coding agents).
+        """
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "Lilith/4.0.0 (Yggdrasil-Agent)",
+        }
         if self.api_key:
             headers["Authorization"] = f"Bearer {self.api_key}"
+        # Kimi Code API requiere header X-Client para autenticar coding agents
+        if "kimi.com" in self.base_url:
+            headers["X-Client"] = "claude-code"
         return headers
 
     def is_available(self, force_check: bool = False) -> bool:
