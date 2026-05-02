@@ -38,6 +38,7 @@
                 <a href="hermes-lilith.html" class="nav-link">Hermes-Lilith</a>
                 <a href="architecture.html" class="nav-link active">Architecture</a>
                 <a href="setup.html" class="nav-link">Setup</a>
+                <a href="changelog.html" class="nav-link">Changelog</a>
                 <a href="https://github.com/BrierAinz/Yggdrasil" target="_blank" class="nav-github">
                     <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
                     GitHub
@@ -51,7 +52,7 @@
             <div class="hero-badge">System Design</div>
             <h1>Architecture</h1>
             <p class="hero-subtitle">
-                A complete map of the Yggdrasil ecosystem — from the Nine Realms directory structure to the REST Gateway and every component that makes Hermes-Lilith work.
+                A complete map of the Yggdrasil ecosystem — from the Nine Realms directory structure to the REST Gateway, every component that makes Hermes-Lilith v3.0 work, including Multi-Provider LLM, Swarm Intelligence, MCP, Skills, and the real-time Dashboard.
             </p>
         </div>
     </section>
@@ -68,19 +69,20 @@
 │
 ├── Asgard/                           ← Core Technology (permanent)
 │   ├── Hermes-Lilith/                  CLI agent, memory, orchestrator
+│   │   ├── Lilith/                       Core modules (Core, Swarm, MCP,
+│   │   │                                 Dashboard, Hermes, RAG, Scheduler, Plugins)
+│   │   ├── memory/                       Hybrid memory (vector + graph + FTS5)
+│   │   └── skills/                       Hot-reloadable skill packs
 │   ├── lilith-orchestrator/gateway/    FastAPI REST Gateway
-│   ├── lilith-core/                    Core libraries
-│   ├── lilith-tools/                   Tool implementations
-│   ├── lilith-memory/                  Vector memory system
-│   ├── lilith-api/                     Public API package
-│   └── lilith-cli/                     Command-line interface
+│   └── lilith-v3-master-plan.md       Phase roadmap
 │
 ├── Vanaheim/                         ← AI Agents & Bots
 │   ├── Bots_Lilith_v5/
-│   │   ├── telegram/                   Telegram bot
+│   │   ├── telegram/                   Telegram bot (owner-only)
 │   │   └── bridge/                     Gateway client bridge
 │   ├── Agents/                       Sub-agent profiles
-│   ├── vanaheim-framework/           Agent framework
+│   ├── bifrost/                      Cross-realm communication protocol
+│   ├── Core/                         Shared agent libraries
 │   └── LLM_Experiments/              Model testing
 │
 ├── Alfheim/                          ← UI Prototypes
@@ -110,8 +112,19 @@
 │   ├── Archives_Lilith_Legacy/       Old code
 │   └── Quarantine/                   Regenerable trash
 │
+├── website/                          ← Documentation site (GitHub Pages)
+│   ├── index.html
+│   ├── hermes-lilith.html
+│   ├── architecture.html
+│   ├── realms.html
+│   ├── setup.html
+│   ├── changelog.html
+│   ├── js/main.js
+│   └── css/style.css
+│
 ├── REGLAS_YGGDRASIL.md               ← Realm rules
 ├── README.md                         ← Project overview
+├── CHANGELOG.md                      ← Version history
 ├── setup_yggdrasil.py                ← Setup script
 ├── yggdrasil_cli.py                  ← CLI tool
 └── start_lilith.bat                  ← Launcher script</code></pre>
@@ -145,23 +158,27 @@
                 </div>
                 <div class="lifecycle-row">
                     <div><strong>4. Hermes-Lilith</strong></div>
-                    <div>The orchestrator loads the conversation context, queries the vector memory for relevant past interactions, and builds the full prompt.</div>
+                    <div>The orchestrator loads the conversation context, queries hybrid memory (vector + graph + FTS5) for relevant past interactions, checks Skills for applicable routines, and builds the full prompt.</div>
                 </div>
                 <div class="lifecycle-row">
-                    <div><strong>5. LM Studio</strong></div>
-                    <div>The prompt is sent to LM Studio via the OpenAI-compatible API at <code>localhost:1234/v1/chat/completions</code>. The local model generates a response.</div>
+                    <div><strong>5. LLM Provider</strong></div>
+                    <div>The prompt is sent to LM Studio (local) via OpenAI-compatible API. If LM Studio is unavailable, the LLM Provider automatically falls back to Kimi or another configured remote provider.</div>
                 </div>
                 <div class="lifecycle-row">
-                    <div><strong>6. Tool Execution</strong></div>
-                    <div>If the model requests a tool (file read, web search, agent spawn), Hermes-Lilith executes it, captures the result, and sends it back to the model.</div>
+                    <div><strong>6. Skill / Tool Execution</strong></div>
+                    <div>If the model requests a tool or skill, Hermes-Lilith dispatches it — native tools, MCP connections, dynamic tool calls, or spawns a Swarm agent for parallel work.</div>
                 </div>
                 <div class="lifecycle-row">
-                    <div><strong>7. Response</strong></div>
+                    <div><strong>7. Dashboard</strong></div>
+                    <div>Real-time events stream to the web Dashboard at <code>localhost:8080</code> via WebSocket — showing LLM calls, tool executions, memory operations, and swarm progress.</div>
+                </div>
+                <div class="lifecycle-row">
+                    <div><strong>8. Response</strong></div>
                     <div>The final answer is returned to the Gateway, which forwards it to the Bridge, which sends it back to Telegram as a reply message.</div>
                 </div>
                 <div class="lifecycle-row">
-                    <div><strong>8. Memory</strong></div>
-                    <div>The conversation is embedded and stored in the vector database for future context retrieval.</div>
+                    <div><strong>9. Memory Store</strong></div>
+                    <div>The conversation is compressed and stored across all three memory indices (vector, graph, full-text) for future context retrieval and swarm recall.</div>
                 </div>
             </div>
         </div>
@@ -214,7 +231,7 @@
                     <div class="arch-node" style="border-color: rgba(167,139,250,0.4); background: rgba(167,139,250,0.06);">
                         <span class="node-icon">🧠</span>
                         <span>Memory</span>
-                        <span class="node-sub">Vector + SQLite</span>
+                        <span class="node-sub">Vector + Graph + FTS5</span>
                     </div>
                     <div class="arch-node" style="border-color: rgba(251,113,133,0.4); background: rgba(251,113,133,0.06);">
                         <span class="node-icon">📅</span>
@@ -227,13 +244,43 @@
                         <span class="node-sub">Dynamic tools</span>
                     </div>
                 </div>
+                <!-- Sub-layer 3b: v3.0 Systems -->
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <div class="arch-node" style="border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.06);">
+                        <span class="node-icon">🐝</span>
+                        <span>Swarm</span>
+                        <span class="node-sub">Specialist Agents</span>
+                    </div>
+                    <div class="arch-node" style="border-color: rgba(168,85,247,0.4); background: rgba(168,85,247,0.06);">
+                        <span class="node-icon">📜</span>
+                        <span>Skills</span>
+                        <span class="node-sub">Hot-reload Packs</span>
+                    </div>
+                    <div class="arch-node" style="border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.06);">
+                        <span class="node-icon">🔮</span>
+                        <span>MCP</span>
+                        <span class="node-sub">Model Context Protocol</span>
+                    </div>
+                    <div class="arch-node" style="border-color: rgba(6,182,212,0.4); background: rgba(6,182,212,0.06);">
+                        <span class="node-icon">📊</span>
+                        <span>Dashboard</span>
+                        <span class="node-sub">WebSocket · Port 8080</span>
+                    </div>
+                </div>
                 <!-- Arrow -->
-                <div style="color: var(--text-dim); font-family: var(--font-mono); font-size: 0.75rem;">↓ OpenAI API ↓</div>
+                <div style="color: var(--text-dim); font-family: var(--font-mono); font-size: 0.75rem;">↓ Multi-Provider LLM ↓</div>
                 <!-- Layer 4: LLM -->
-                <div class="arch-node" style="min-width: 300px; border-color: rgba(52,211,153,0.4); background: rgba(52,211,153,0.06);">
-                    <span class="node-icon">🌳</span>
-                    <span>LM Studio</span>
-                    <span class="node-sub">Local LLM Server · localhost:1234</span>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <div class="arch-node" style="min-width: 200px; border-color: rgba(52,211,153,0.4); background: rgba(52,211,153,0.06);">
+                        <span class="node-icon">🌳</span>
+                        <span>LM Studio</span>
+                        <span class="node-sub">Local · localhost:1234</span>
+                    </div>
+                    <div class="arch-node" style="min-width: 200px; border-color: rgba(99,102,241,0.4); background: rgba(99,102,241,0.06);">
+                        <span class="node-icon">☁️</span>
+                        <span>Kimi / OpenAI</span>
+                        <span class="node-sub">Remote Fallback</span>
+                    </div>
                 </div>
             </div>
         </div>

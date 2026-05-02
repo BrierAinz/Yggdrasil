@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Changelog — Yggdrasil</title>
+    <meta name="description" content="Release history and changelog for Yggdrasil and Hermes-Lilith. Track every feature, fix, and improvement across all realms.">
+    <meta name="keywords" content="Yggdrasil, Hermes-Lilith, AI agent, local LLM, LM Studio, Telegram bot, Python, open source, Norse mythology, personal ecosystem, changelog">
+    <meta name="author" content="BrierAinz">
+    <meta name="theme-color" content="#0B0F19">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127795;</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127795;</text></svg>">
+    <meta property="og:title" content="Changelog — Yggdrasil Ecosystem">
+    <meta property="og:description" content="Release history and changelog for Yggdrasil and Hermes-Lilith. Track every feature, fix, and improvement.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://brierainz.github.io/Yggdrasil/changelog.html">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Changelog — Yggdrasil Ecosystem">
+    <meta name="twitter:description" content="Release history and changelog for Yggdrasil and Hermes-Lilith.">
+    <link rel="canonical" href="https://brierainz.github.io/Yggdrasil/changelog.html">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <nav id="top-nav">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">Yggdrasil</a>
+            <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="realms.html" class="nav-link">Realms</a>
+                <a href="hermes-lilith.html" class="nav-link">Hermes-Lilith</a>
+                <a href="architecture.html" class="nav-link">Architecture</a>
+                <a href="setup.html" class="nav-link">Setup</a>
+                <a href="changelog.html" class="nav-link active">Changelog</a>
+                <a href="https://github.com/BrierAinz/Yggdrasil" target="_blank" class="nav-github">
+                    <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" style="padding-top: 8rem; padding-bottom: 3rem;">
+        <div class="hero-inner">
+            <div class="hero-badge">History</div>
+            <h1>Changelog</h1>
+            <p class="hero-subtitle">
+                Every feature, fix, and evolution across the Nine Realms. From the first spark in Muspelheim to the enduring pillars of Asgard.
+            </p>
+        </div>
+    </section>
+
+    <!-- v5.0.0-alpha -->
+    <section class="section">
+        <div class="container">
+            <div class="section-label">Latest Release</div>
+            <h2>v5.0.0-alpha — PC Agent Telegram E2E</h2>
+            <p class="section-desc" style="margin-bottom: 0.5rem;">
+                <span class="status-badge working">Active</span>
+                <span style="color: var(--text-dim); margin-left: 0.5rem;">Released 2026-03-26</span>
+            </p>
+            <p class="section-desc">
+                Complete PC control from Telegram with auto-batched operations, single confirmation per batch, and dual-layer Discord protection. 31/31 tests passing.
+            </p>
+
+            <div class="cards-grid">
+                <div class="card asgard">
+                    <div class="card-header">
+                        <div class="card-dot gold"></div>
+                        <h3>Planner Auto-Batch</h3>
+                    </div>
+                    <p>
+                        Automatically groups multiple PC operations into a single batch. One confirmation instead of N. Integrates at 5 points in the planner pipeline — macro detection, learned plans, prefilter, and patterns.
+                    </p>
+                </div>
+                <div class="card vanaheim">
+                    <div class="card-header">
+                        <div class="card-dot violet"></div>
+                        <h3>Discord Redirect Message</h3>
+                    </div>
+                    <p>
+                        Dual-layer protection blocks PC operations in Discord. Layer 1 (Fail-Fast) detects intent before the planner runs. Layer 2 (Post-Planner) catches anything that slips through. Clean UX with informative redirect messages.
+                    </p>
+                </div>
+                <div class="card muspel">
+                    <div class="card-header">
+                        <div class="card-dot rose"></div>
+                        <h3>PC Macro Engine</h3>
+                    </div>
+                    <p>
+                        6 predefined macros: <code>backup_proyecto</code>, <code>compilar_y_test</code>, <code>setup_proyecto_python</code>, <code>limpiar_temp</code>, <code>git_commit_push</code>, <code>crear_estructura_web</code>. Natural language detection, parameter extraction, and validation.
+                    </p>
+                </div>
+                <div class="card midgard">
+                    <div class="card-header">
+                        <div class="card-dot emerald"></div>
+                        <h3>Telegram Sessions</h3>
+                    </div>
+                    <p>
+                        Persistent session history with 24h TTL, disk persistence, isolated vault in MuninnDB, context formatting for prompts, and automatic cleanup of expired sessions.
+                    </p>
+                </div>
+            </div>
+
+            <div class="callout" style="margin-top: 2rem;">
+                <div class="callout-line">
+                    <span class="callout-icon">⚡</span>
+                    <strong>31 tests passing</strong> — 14 session tests + 17 macro tests. 100% success rate.
+                </div>
+                <div class="callout-line">
+                    <span class="callout-icon">🔒</span>
+                    7-layer security model: Discord blocking, dual-layer protection, regex anti-injection, path sanitization, rate limiting, token expiration, vault isolation.
+                </div>
+                <div class="callout-line">
+                    <span class="callout-icon">📊</span>
+                    ~18,700 lines of code · ~140 total tests · 67 REST APIs · 6 PC macros · 8 MuninnDB vaults.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Version History -->
+    <section class="section">
+        <div class="container">
+            <div class="section-label">Version History</div>
+            <h2>All Releases</h2>
+            <p class="section-desc">
+                The full evolution of Hermes-Lilith from v1.0 to v5.0. Each version represents a milestone in the Nine Realms.
+            </p>
+
+            <table class="status-table">
+                <thead>
+                    <tr>
+                        <th>Version</th>
+                        <th>Date</th>
+                        <th>Realm</th>
+                        <th>Highlights</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>v5.0.0-alpha</code></td>
+                        <td>2026-03-26</td>
+                        <td><span style="color: var(--accent-gold);">Asgard</span></td>
+                        <td>PC Agent Telegram E2E, Auto-Batch, Macros, Sessions, Discord dual-layer security</td>
+                    </tr>
+                    <tr>
+                        <td><code>v4.2.3</code></td>
+                        <td>2026-03-23</td>
+                        <td><span style="color: var(--accent-gold);">Asgard</span></td>
+                        <td>Crystal Kimi API, Health Checks, WebSocket Dashboard, 46 tests</td>
+                    </tr>
+                    <tr>
+                        <td><code>v4.2.2</code></td>
+                        <td>2026-03-22</td>
+                        <td><span style="color: var(--accent-gold);">Asgard</span></td>
+                        <td>DAG Execution Engine, usage guide, historical documentation</td>
+                    </tr>
+                    <tr>
+                        <td><code>v4.2.0</code></td>
+                        <td>2026-03-21</td>
+                        <td><span style="color: var(--accent-gold);">Asgard</span></td>
+                        <td>Full DAG implementation: PlanDag, DagExecutor, DagOptimizer</td>
+                    </tr>
+                    <tr>
+                        <td><code>v4.0.0</code></td>
+                        <td>2026-03-05</td>
+                        <td><span style="color: var(--accent-gold);">Asgard</span></td>
+                        <td>Multi-Agent system, DAG architecture, 5 specialist agents, MuninnDB, Kimi integration</td>
+                    </tr>
+                    <tr>
+                        <td><code>v3.9.0</code></td>
+                        <td>2026-02-28</td>
+                        <td><span style="color: var(--accent-violet);">Vanaheim</span></td>
+                        <td>Intent detection, Response Generator, Crystal Agent for Discord</td>
+                    </tr>
+                    <tr>
+                        <td><code>v3.8.0</code></td>
+                        <td>2026-02-20</td>
+                        <td><span style="color: var(--accent-violet);">Vanaheim</span></td>
+                        <td>Improved Discord integration, roles (Owner/Trusted/Public), slash commands</td>
+                    </tr>
+                    <tr>
+                        <td><code>v3.7.0</code></td>
+                        <td>2026-02-15</td>
+                        <td><span style="color: var(--accent-violet);">Vanaheim</span></td>
+                        <td>Enhanced Telegram bot, confirmation system, task delegation</td>
+                    </tr>
+                    <tr>
+                        <td><code>v3.6.0</code></td>
+                        <td>2026-02-10</td>
+                        <td><span style="color: var(--accent-violet);">Vanaheim</span></td>
+                        <td>Local search (Odin agent), basic web mining (Eva agent)</td>
+                    </tr>
+                    <tr>
+                        <td><code>v3.5.0</code></td>
+                        <td>2026-02-05</td>
+                        <td><span style="color: var(--accent-gold);">Asgard</span></td>
+                        <td>Tools v2 system, basic code generation</td>
+                    </tr>
+                    <tr>
+                        <td><code>v3.0.0</code></td>
+                        <td>2026-01-20</td>
+                        <td><span style="color: var(--accent-gold);">Asgard</span></td>
+                        <td>Modular architecture, configuration system, structured logging, unit tests</td>
+                    </tr>
+                    <tr>
+                        <td><code>v2.3.0</code></td>
+                        <td>2026-01-10</td>
+                        <td><span style="color: var(--accent-violet);">Vanaheim</span></td>
+                        <td>Basic Telegram integration, OpenRouter responses</td>
+                    </tr>
+                    <tr>
+                        <td><code>v2.0.0</code></td>
+                        <td>2026-01-01</td>
+                        <td><span style="color: var(--accent-rose);">Muspelheim</span></td>
+                        <td>Core rewrite, basic agent system, multi-LLM integration</td>
+                    </tr>
+                    <tr>
+                        <td><code>v1.0.0</code></td>
+                        <td>2025-12-15</td>
+                        <td><span style="color: var(--accent-rose);">Muspelheim</span></td>
+                        <td>First functional version, basic LLM API integration, simple memory</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Evolution Timeline -->
+    <section class="section">
+        <div class="container">
+            <div class="section-label">Evolution</div>
+            <h2>The Journey</h2>
+            <p class="section-desc">
+                From a single spark in Muspelheim to the living ecosystem spanning all Nine Realms. Each era brought new capabilities.
+            </p>
+
+            <div class="cards-grid">
+                <div class="card" style="border-color: rgba(255,51,102,0.3); background: rgba(255,51,102,0.04);">
+                    <div class="card-header">
+                        <div class="card-dot rose"></div>
+                        <h3>🔥 Era I — The Spark</h3>
+                    </div>
+                    <p style="color: var(--text-dim); font-family: var(--font-mono); font-size: 0.8rem; margin-bottom: 0.5rem;">v1.0 — v2.0 · Dec 2025 – Jan 2026</p>
+                    <p>
+                        The first light. A simple LLM integration and basic memory system. The core was rewritten from scratch in v2.0, establishing the foundation for everything that followed.
+                    </p>
+                    <ul>
+                        <li>First functional version</li>
+                        <li>LLM API integration</li>
+                        <li>Simple memory system</li>
+                        <li>Core rewrite (v2.0)</li>
+                        <li>Basic agent system</li>
+                        <li>Multi-LLM support</li>
+                    </ul>
+                </div>
+
+                <div class="card" style="border-color: rgba(170,85,255,0.3); background: rgba(170,85,255,0.04);">
+                    <div class="card-header">
+                        <div class="card-dot violet"></div>
+                        <h3>🔮 Era II — The Awakening</h3>
+                    </div>
+                    <p style="color: var(--text-dim); font-family: var(--font-mono); font-size: 0.8rem; margin-bottom: 0.5rem;">v2.3 — v3.9 · Jan – Feb 2026</p>
+                    <p>
+                        The agents learned to speak. Telegram integration, Discord with role-based access, intent detection, and the first specialist agents (Odin, Eva, Crystal).
+                    </p>
+                    <ul>
+                        <li>Telegram bot integration</li>
+                        <li>Discord bot with roles</li>
+                        <li>Intent detection system</li>
+                        <li>Crystal Agent for Discord</li>
+                        <li>Response Generator</li>
+                        <li>Confirmation & delegation</li>
+                    </ul>
+                </div>
+
+                <div class="card asgard">
+                    <div class="card-header">
+                        <div class="card-dot gold"></div>
+                        <h3>🏰 Era III — The Kingdom</h3>
+                    </div>
+                    <p style="color: var(--text-dim); font-family: var(--font-mono); font-size: 0.8rem; margin-bottom: 0.5rem;">v4.0 — v4.2 · Mar 2026</p>
+                    <p>
+                        Asgard formed. Multi-agent DAG architecture, MuninnDB cognitive memory, Kimi API integration, and the WebSocket Dashboard brought the ecosystem to life.
+                    </p>
+                    <ul>
+                        <li>5 specialist agents</li>
+                        <li>DAG Execution Engine</li>
+                        <li>MuninnDB cognitive memory</li>
+                        <li>Kimi API integration</li>
+                        <li>WebSocket Dashboard</li>
+                        <li>46 tests (v4.2.3)</li>
+                    </ul>
+                </div>
+
+                <div class="card" style="border-color: rgba(0,255,136,0.3); background: rgba(0,255,136,0.04);">
+                    <div class="card-header">
+                        <div class="card-dot emerald"></div>
+                        <h3>🌍 Era IV — The Convergence</h3>
+                    </div>
+                    <p style="color: var(--text-dim); font-family: var(--font-mono); font-size: 0.8rem; margin-bottom: 0.5rem;">v5.0-alpha · Mar 2026</p>
+                    <p>
+                        Full PC control from Telegram. Auto-batched operations, macro engine, persistent sessions, and 7-layer security. The ecosystem converges into a unified control surface.
+                    </p>
+                    <ul>
+                        <li>PC Agent Telegram E2E</li>
+                        <li>Auto-Batch planner</li>
+                        <li>6 predefined macros</li>
+                        <li>Persistent sessions</li>
+                        <li>7-layer security model</li>
+                        <li>140+ total tests</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security -->
+    <section class="section">
+        <div class="container">
+            <div class="section-label">Security</div>
+            <h2>Security Model</h2>
+            <p class="section-desc">
+                The v5.0 security model is built on 7 layers of protection, ensuring safe remote control of your machine.
+            </p>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-dot red"></div>
+                        <h3>1. Discord Blocking</h3>
+                    </div>
+                    <p>PC operations disabled by default in Discord. Only authorized via Telegram.</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-dot red"></div>
+                        <h3>2. Dual-Layer Detection</h3>
+                    </div>
+                    <p>Fail-fast layer catches intent before planner runs. Post-planner layer catches anything that slips through.</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-dot red"></div>
+                        <h3>3. Regex Anti-Injection</h3>
+                    </div>
+                    <p>Pattern matching detects and filters dangerous inputs before they reach the command pipeline.</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-dot red"></div>
+                        <h3>4. Path Sanitization</h3>
+                    </div>
+                    <p>Blocks <code>..</code>, <code>|</code>, <code>;</code>, <code>&&</code>, <code>||</code> in file paths to prevent injection attacks.</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-dot red"></div>
+                        <h3>5. Rate Limiting</h3>
+                    </div>
+                    <p>30 operations per hour maximum. Prevents abuse and runaway execution.</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-dot red"></div>
+                        <h3>6. Token Expiration</h3>
+                    </div>
+                    <p>Confirmations expire after 60 seconds. Stale requests are automatically discarded.</p>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-dot red"></div>
+                        <h3>7. Vault Isolation</h3>
+                    </div>
+                    <p>Telegram memory is isolated from Discord memory. One compromised channel cannot access the other.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="section">
+        <div class="container">
+            <div class="section-label">Looking Ahead</div>
+            <h2>Roadmap</h2>
+            <p class="section-desc">
+                What's coming next in the Nine Realms. These are the planned features for v5.1 and beyond.
+            </p>
+
+            <div class="callout" style="margin-bottom: 2rem;">
+                <div class="callout-line">
+                    <span class="callout-icon">🔮</span>
+                    <strong>v5.1 — Progress Streaming:</strong> Real-time step-by-step feedback in Telegram. 6-8 hours estimated.
+                </div>
+                <div class="callout-line">
+                    <span class="callout-icon">📊</span>
+                    <strong>Macro Dashboard:</strong> Metrics and analytics for executed macros.
+                </div>
+                <div class="callout-line">
+                    <span class="callout-icon">🧠</span>
+                    <strong>Custom Macro Learning:</strong> System that learns and suggests custom macros based on usage patterns.
+                </div>
+                <div class="callout-line">
+                    <span class="callout-icon">✅</span>
+                    <strong>Granular Multi-Confirmation:</strong> Confirm individual steps within a batch.
+                </div>
+                <div class="callout-line">
+                    <span class="callout-icon">📤</span>
+                    <strong>Session Export:</strong> Export conversation history for analysis.
+                </div>
+                <div class="callout-line">
+                    <span class="callout-icon">⏪</span>
+                    <strong>Operation Rollback:</strong> Undo PC operations with a single command.
+                </div>
+            </div>
+
+            <div class="code-block">
+                <code>Roadmap priorities:
+├─→ Progress Streaming (Telegram visual feedback)
+├─→ Dashboard de métricas de macros
+├─→ Custom macro learning system
+├─→ Granular multi-confirmation
+├─→ Session history export
+└─→ Operation rollback</code>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-rune-divider">
+                <span>᛭</span><span>᛫</span><span>ᚱ</span><span>ᛏ</span><span>ᚻ</span><span>ᛖ</span><span>ᛉ</span><span>᛭</span><span>᛫</span><span>ᚱ</span><span>ᛏ</span>
+            </div>
+            <p>🌳 Yggdrasil — Built with patience in the Nine Realms.</p>
+            <p style="margin-top: 0.5rem;">MIT License · <a href="https://github.com/BrierAinz/Yggdrasil">View on GitHub</a></p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yggdrasil — Nine Realms Ecosystem</title>
-    <meta name="description" content="A personal project ecosystem organized under the Norse Nine Realms metaphor. Featuring Hermes-Lilith, a local AI agent with Telegram control.">
-    <meta name="keywords" content="Yggdrasil, Hermes-Lilith, AI agent, local LLM, LM Studio, Telegram bot, Python, open source, Norse mythology, personal ecosystem">
+    <meta name="description" content="A personal project ecosystem organized under the Norse Nine Realms metaphor. Featuring Hermes-Lilith v3.0, a dark-fantasy CLI agent with hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, skills framework, and real-time dashboard.">
+    <meta name="keywords" content="Yggdrasil, Hermes-Lilith, AI agent, local LLM, LM Studio, Kimi, Telegram bot, Python, open source, Norse mythology, personal ecosystem, swarm intelligence, MCP, skills framework, memory embeddings">
     <meta name="author" content="BrierAinz">
     <meta name="theme-color" content="#0B0F19">
     <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;&#127795;&lt;/text&gt;&lt;/svg&gt;">
     <link rel="apple-touch-icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;&#127795;&lt;/text&gt;&lt;/svg&gt;">
     <meta property="og:title" content="Yggdrasil — Nine Realms Ecosystem">
-    <meta property="og:description" content="A personal project ecosystem organized under the Norse Nine Realms metaphor. Featuring Hermes-Lilith, a local AI agent with Telegram control, vector memory, and sub-agent delegation.">
+    <meta property="og:description" content="A personal project ecosystem organized under the Norse Nine Realms metaphor. Featuring Hermes-Lilith v3.0 with hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, and real-time dashboard.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://brierainz.github.io/Yggdrasil/">
     <meta name="twitter:card" content="summary">
@@ -107,6 +107,7 @@
                 <a href="hermes-lilith.html" class="nav-link">Hermes-Lilith</a>
                 <a href="architecture.html" class="nav-link">Architecture</a>
                 <a href="setup.html" class="nav-link">Setup</a>
+                <a href="changelog.html" class="nav-link">Changelog</a>
                 <a href="https://github.com/BrierAinz/Yggdrasil" target="_blank" class="nav-github">
                     <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
                     GitHub
@@ -122,7 +123,7 @@
             <div class="hero-badge">Personal Ecosystem · Open Source · MIT</div>
             <h1 class="hero-title" data-typewriter>Nine Realms. One Tree.</h1>
             <p class="hero-subtitle">
-                <strong>Yggdrasil</strong> is a personal project ecosystem organized under the Norse Nine Realms metaphor. At its heart lies <strong>Hermes-Lilith</strong> — a local AI agent that controls your PC via Telegram, orchestrates sub-agents, and manages memory with vector search.
+                <strong>Yggdrasil</strong> is a personal project ecosystem organized under the Norse Nine Realms metaphor. At its heart lies <strong>Hermes-Lilith v3.0</strong> — a dark-fantasy CLI agent with hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, skills framework, and real-time dashboard.
             </p>
             <div class="hero-install">
                 <pre><code><span class="c-dim">$</span> git clone https://github.com/BrierAinz/Yggdrasil.git
@@ -288,15 +289,15 @@
                 <div class="feature-item">
                     <span class="feature-icon">🔍</span>
                     <div class="feature-text">
-                        <strong>Vector Memory</strong>
-                        Sentence-transformer embeddings with SQLite storage, automatic compression, and entity extraction.
+                        <strong>Hybrid Memory</strong>
+                        Vector embeddings + knowledge graph + full-text search (FTS5). Automatic compression, entity extraction, and semantic recall across sessions.
                     </div>
                 </div>
                 <div class="feature-item">
                     <span class="feature-icon">🤖</span>
                     <div class="feature-text">
-                        <strong>Sub-Agent Delegation</strong>
-                        Spawn autonomous coding agents for parallel workstreams with isolated contexts.
+                        <strong>Swarm Intelligence</strong>
+                        LLM-powered specialist agents (researcher, coder, writer, critic) with file locking, conflict resolution, and persistent sessions via SQLite.
                     </div>
                 </div>
                 <div class="feature-item">
@@ -307,17 +308,17 @@
                     </div>
                 </div>
                 <div class="feature-item">
-                    <span class="feature-icon">🔑</span>
+                    <span class="feature-icon">🔮</span>
                     <div class="feature-text">
-                        <strong>PC Control</strong>
-                        File system, process management, Windows automation, browser interaction, and more.
+                        <strong>Multi-Provider LLM</strong>
+                        LM Studio (local) + Kimi (remote) + any OpenAI-compatible provider. Automatic fallback, model auto-detection, and zero-config startup.
                     </div>
                 </div>
                 <div class="feature-item">
-                    <span class="feature-icon">📚</span>
+                    <span class="feature-icon">⚡</span>
                     <div class="feature-text">
-                        <strong>RAG System</strong>
-                        Document ingestion with chunking, embedding, and semantic retrieval for knowledge bases.
+                        <strong>Skills & MCP</strong>
+                        Hot-reloadable skill packs with auto-trigger. MCP (Model Context Protocol) connects external tool servers dynamically. 35+ native tools.
                     </div>
                 </div>
                 <div class="feature-item">
@@ -325,6 +326,20 @@
                     <div class="feature-text">
                         <strong>Plugin Architecture</strong>
                         Hot-pluggable tools with dynamic discovery, enable/disable, and custom tool registration.
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📊</span>
+                    <div class="feature-text">
+                        <strong>Real-time Dashboard</strong>
+                        Web dashboard with WebSocket live updates, multi-pane layout, terminal widget, and system monitoring. Dark fantasy aesthetic.
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📜</span>
+                    <div class="feature-text">
+                        <strong>TOML Config & Resilience</strong>
+                        Unified configuration in <code>~/.lilith/config.toml</code>. Circuit breaker, graceful shutdown, error tracking, and automatic recovery.
                     </div>
                 </div>
             </div>
@@ -358,7 +373,7 @@
                         <td><code>Hermes-Lilith</code></td>
                         <td>Asgard</td>
                         <td><span class="status-badge working">Active</span></td>
-                        <td>Core orchestrator with Telegram bot, Gateway, and memory</td>
+                        <td>Core orchestrator v3.0 — CLI, memory, swarm, MCP, skills, dashboard</td>
                     </tr>
                     <tr>
                         <td><code>Gateway</code></td>
@@ -367,16 +382,28 @@
                         <td>FastAPI REST bridge exposing Telegram, Scheduler, Agents, Plugins</td>
                     </tr>
                     <tr>
-                        <td><code>Telegram Bot</code></td>
-                        <td>Vanaheim</td>
-                        <td><span class="status-badge working">Active</span></td>
-                        <td>Remote control interface for the entire ecosystem</td>
-                    </tr>
-                    <tr>
-                        <td><code>EnhancedMemory</code></td>
+                        <td><code>LLM Providers</code></td>
                         <td>Asgard</td>
                         <td><span class="status-badge working">Active</span></td>
-                        <td>Vector embeddings + SQLite + auto-compression + entity extraction</td>
+                        <td>Multi-provider: LM Studio (local), Kimi (remote), OpenAI-compatible, auto-fallback</td>
+                    </tr>
+                    <tr>
+                        <td><code>Hybrid Memory</code></td>
+                        <td>Asgard</td>
+                        <td><span class="status-badge working">Active</span></td>
+                        <td>Vector embeddings + knowledge graph + FTS5, auto-compression, entity extraction, session search</td>
+                    </tr>
+                    <tr>
+                        <td><code>Swarm Intelligence</code></td>
+                        <td>Asgard</td>
+                        <td><span class="status-badge working">Active</span></td>
+                        <td>LLM-powered specialist agents with file locking, conflict resolution, persistent SQLite sessions</td>
+                    </tr>
+                    <tr>
+                        <td><code>Skills & MCP</code></td>
+                        <td>Asgard</td>
+                        <td><span class="status-badge working">Active</span></td>
+                        <td>Hot-reloadable skill packs, MCP protocol, dynamic tool registration, 35+ native tools</td>
                     </tr>
                     <tr>
                         <td><code>Task Scheduler</code></td>
@@ -385,22 +412,22 @@
                         <td>Cron-like scheduling with REST API and persistent storage</td>
                     </tr>
                     <tr>
-                        <td><code>Agent Manager</code></td>
+                        <td><code>Dashboard</code></td>
                         <td>Asgard</td>
                         <td><span class="status-badge working">Active</span></td>
-                        <td>Sub-agent spawning, delegation, and lifecycle management</td>
+                        <td>Real-time web dashboard with WebSocket, multi-pane layout, terminal widget</td>
                     </tr>
                     <tr>
-                        <td><code>Plugin System</code></td>
+                        <td><code>TOML Config & Resilience</code></td>
                         <td>Asgard</td>
                         <td><span class="status-badge working">Active</span></td>
-                        <td>Dynamic tool discovery and hot-pluggable architecture</td>
+                        <td>Unified config, circuit breaker, graceful shutdown, error tracking, auto-recovery</td>
                     </tr>
                     <tr>
-                        <td><code>RAG Pipeline</code></td>
-                        <td>Asgard</td>
+                        <td><code>Telegram Bot</code></td>
+                        <td>Vanaheim</td>
                         <td><span class="status-badge working">Active</span></td>
-                        <td>Document ingestion, chunking, embedding, semantic search</td>
+                        <td>Remote control interface for the entire ecosystem</td>
                     </tr>
                     <tr>
                         <td><code>VSCode Extension</code></td>
