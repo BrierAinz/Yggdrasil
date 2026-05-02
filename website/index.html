@@ -25,8 +25,53 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-tree">
+            <svg viewBox="0 0 200 400" class="loading-svg" aria-hidden="true">
+                <!-- Yggdrasil tree silhouette -->
+                <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                    <!-- Trunk -->
+                    <path d="M100 50 L100 340"/>
+                    <!-- Roots -->
+                    <path d="M100 340 Q80 360 50 380"/>
+                    <path d="M100 340 Q120 360 150 380"/>
+                    <path d="M100 340 Q100 370 100 390"/>
+                    <!-- Left branches -->
+                    <path d="M100 100 Q70 80 40 70"/>
+                    <path d="M100 160 Q75 140 50 130"/>
+                    <path d="M100 220 Q80 200 55 190"/>
+                    <!-- Right branches -->
+                    <path d="M100 100 Q130 75 160 65"/>
+                    <path d="M100 160 Q125 135 150 125"/>
+                    <path d="M100 220 Q120 195 145 185"/>
+                    <!-- Upper branches -->
+                    <path d="M100 80 Q85 50 70 30"/>
+                    <path d="M100 80 Q115 45 130 25"/>
+                    <!-- Leaf clusters -->
+                    <circle cx="40" cy="65" r="12" fill="currentColor" opacity="0.15"/>
+                    <circle cx="160" cy="60" r="12" fill="currentColor" opacity="0.15"/>
+                    <circle cx="55" cy="125" r="10" fill="currentColor" opacity="0.15"/>
+                    <circle cx="145" cy="120" r="10" fill="currentColor" opacity="0.15"/>
+                    <circle cx="70" cy="25" r="8" fill="currentColor" opacity="0.12"/>
+                    <circle cx="130" cy="20" r="8" fill="currentColor" opacity="0.12"/>
+                </g>
+            </svg>
+            <div class="loading-runes">ᚱ ᛏ ᚻ ᛖ ᛉ ᛗ ᛭</div>
+            <div class="loading-text">Awakening Yggdrasil<span class="loading-cursor">|</span></div>
+        </div>
+    </div>
 
-    <!-- Floating Rune Particles (CSS-only) -->
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress"><div id="scroll-progress-bar"></div></div>
+
+    <!-- Canvas Particles -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Cursor Trail -->
+    <div id="cursor-trail"></div>
+
+    <!-- Floating Rune Particles (CSS-only fallback) -->
     <div class="rune-particles" aria-hidden="true">
         <span class="rune-particle" style="left:5%;  font-size:1.2rem; animation-duration:25s; animation-delay:0s;">ᚱ</span>
         <span class="rune-particle" style="left:12%; font-size:0.8rem; animation-duration:30s; animation-delay:3s;">ᛏ</span>
@@ -57,7 +102,7 @@
                 <span></span><span></span><span></span>
             </button>
             <div class="nav-links">
-                <a href="index.html" class="nav-link active">Home</a>
+                <a href="index.html" class="nav-link active" data-section="hero">Home</a>
                 <a href="realms.html" class="nav-link">Realms</a>
                 <a href="hermes-lilith.html" class="nav-link">Hermes-Lilith</a>
                 <a href="architecture.html" class="nav-link">Architecture</a>
@@ -71,10 +116,11 @@
     </nav>
 
     <!-- HERO -->
-    <section class="hero">
+    <section class="hero" id="hero">
+        <div class="aurora-borealis"></div>
         <div class="hero-inner">
             <div class="hero-badge">Personal Ecosystem · Open Source · MIT</div>
-            <h1>Nine Realms. One Tree.</h1>
+            <h1 class="hero-title" data-typewriter>Nine Realms. One Tree.</h1>
             <p class="hero-subtitle">
                 <strong>Yggdrasil</strong> is a personal project ecosystem organized under the Norse Nine Realms metaphor. At its heart lies <strong>Hermes-Lilith</strong> — a local AI agent that controls your PC via Telegram, orchestrates sub-agents, and manages memory with vector search.
             </p>
@@ -86,10 +132,11 @@
                 <button class="copy-btn" data-copy="git clone https://github.com/BrierAinz/Yggdrasil.git\ncd Yggdrasil\ncp Asgard/Hermes-Lilith/.env.example Asgard/Hermes-Lilith/.env\ncd Asgard/Hermes-Lilith && python main.py">Copy</button>
             </div>
         </div>
+        <div class="hero-fog"></div>
     </section>
 
     <!-- WHAT IS YGGDRASIL -->
-    <section class="section what-section">
+    <section class="section what-section reveal">
         <div class="container">
             <div class="section-label">Overview</div>
             <h2>What is Yggdrasil?</h2>
@@ -97,7 +144,7 @@
                 Yggdrasil is not a monorepo — it is a <strong>living ecosystem</strong> where every project has a purpose, a lifecycle, and a destination realm. Inspired by Norse cosmology, each realm serves a distinct function in the development lifecycle.
             </p>
 
-            <div class="callout">
+            <div class="callout reveal">
                 <div class="callout-line">
                     <span class="callout-icon">→</span>
                     Every project lives in <strong>exactly one realm</strong> at any time. No duplicates, no chaos.
@@ -119,7 +166,7 @@
     </section>
 
     <!-- THE NINE REALMS -->
-    <section class="section">
+    <section class="section reveal">
         <div class="container">
             <div class="section-label">Cosmology</div>
             <h2>The Nine Realms</h2>
@@ -130,7 +177,7 @@
             <div class="realm-tree">
                 <!-- Top: Asgard -->
                 <div class="realm-tree-level">
-                    <div class="realm-tree-node" style="border-color: var(--accent-gold);">
+                    <div class="realm-tree-node" style="--node-color: var(--accent-gold);" style="border-color: var(--accent-gold);">
                         <span class="realm-icon">🏰</span>
                         <span class="realm-name">Asgard</span>
                         <span class="realm-desc">Core Technology</span>
@@ -139,17 +186,17 @@
                 <div class="tree-connector"></div>
                 <!-- Second level -->
                 <div class="realm-tree-level">
-                    <div class="realm-tree-node" style="border-color: var(--accent-violet);">
+                    <div class="realm-tree-node" style="--node-color: var(--accent-violet);">
                         <span class="realm-icon">🤖</span>
                         <span class="realm-name">Vanaheim</span>
                         <span class="realm-desc">AI Agents</span>
                     </div>
-                    <div class="realm-tree-node" style="border-color: var(--accent-amber);">
+                    <div class="realm-tree-node" style="--node-color: var(--accent-amber);">
                         <span class="realm-icon">✨</span>
                         <span class="realm-name">Alfheim</span>
                         <span class="realm-desc">UI Prototypes</span>
                     </div>
-                    <div class="realm-tree-node" style="border-color: var(--accent-stone);">
+                    <div class="realm-tree-node" style="--node-color: var(--accent-stone);">
                         <span class="realm-icon">📚</span>
                         <span class="realm-name">Svartalfheim</span>
                         <span class="realm-desc">Knowledge</span>
@@ -158,22 +205,22 @@
                 <div class="tree-connector"></div>
                 <!-- Third level -->
                 <div class="realm-tree-level">
-                    <div class="realm-tree-node" style="border-color: var(--accent-rose);">
+                    <div class="realm-tree-node" style="--node-color: var(--accent-rose);">
                         <span class="realm-icon">🔥</span>
                         <span class="realm-name">Muspelheim</span>
                         <span class="realm-desc">Active Dev</span>
                     </div>
-                    <div class="realm-tree-node" style="border-color: var(--accent-sky);">
+                    <div class="realm-tree-node" style="--node-color: var(--accent-sky);">
                         <span class="realm-icon">❄️</span>
                         <span class="realm-name">Niflheim</span>
                         <span class="realm-desc">Resources</span>
                     </div>
-                    <div class="realm-tree-node" style="border-color: var(--accent-emerald);">
+                    <div class="realm-tree-node" style="--node-color: var(--accent-emerald);">
                         <span class="realm-icon">🌍</span>
                         <span class="realm-name">Midgard</span>
                         <span class="realm-desc">Personal Apps</span>
                     </div>
-                    <div class="realm-tree-node" style="border-color: var(--accent-stone);">
+                    <div class="realm-tree-node" style="--node-color: var(--accent-stone);">
                         <span class="realm-icon">🐉</span>
                         <span class="realm-name">Jotunheim</span>
                         <span class="realm-desc">Massive Projects</span>
@@ -182,7 +229,7 @@
                 <div class="tree-connector"></div>
                 <!-- Bottom: Helheim -->
                 <div class="realm-tree-level">
-                    <div class="realm-tree-node" style="border-color: var(--accent-red);">
+                    <div class="realm-tree-node" style="--node-color: var(--accent-red);">
                         <span class="realm-icon">☠️</span>
                         <span class="realm-name">Helheim</span>
                         <span class="realm-desc">Graveyard</span>
@@ -197,7 +244,7 @@
     </section>
 
     <!-- HERMES-LILITH OVERVIEW -->
-    <section class="section arch-section">
+    <section class="section arch-section reveal">
         <div class="container">
             <div class="section-label">The Agent</div>
             <h2>Hermes-Lilith</h2>
@@ -289,7 +336,7 @@
     </section>
 
     <!-- PROJECT STATUS -->
-    <section class="section">
+    <section class="section reveal">
         <div class="container">
             <div class="section-label">Status</div>
             <h2>Ecosystem Health</h2>
@@ -375,6 +422,9 @@
     <!-- FOOTER -->
     <footer class="site-footer">
         <div class="container">
+            <div class="footer-rune-divider">
+                <span>᛭</span><span>᛫</span><span>ᚱ</span><span>ᛏ</span><span>ᚻ</span><span>ᛖ</span><span>ᛉ</span><span>᛭</span><span>᛫</span><span>ᚱ</span><span>ᛏ</span>
+            </div>
             <p>🌳 Yggdrasil — Built with patience in the Nine Realms.</p>
             <p style="margin-top: 0.5rem;">MIT License · <a href="https://github.com/BrierAinz/Yggdrasil">View on GitHub</a></p>
         </div>

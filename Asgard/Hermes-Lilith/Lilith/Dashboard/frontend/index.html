@@ -6,15 +6,41 @@
     <title>Lilith Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Cinzel+Decorative:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Particle Canvas (background layer) -->
+    <!-- Particle Canvas (deep background layer) -->
     <canvas id="particle-canvas"></canvas>
 
     <!-- Ambient CSS particles overlay -->
     <div id="rune-particles" aria-hidden="true"></div>
+
+    <!-- Eldritch vortex overlay -->
+    <div id="eldritch-vortex" aria-hidden="true">
+        <div class="vortex-ring v1"></div>
+        <div class="vortex-ring v2"></div>
+        <div class="vortex-ring v3"></div>
+    </div>
+
+    <!-- Cosmic fog layers -->
+    <div id="cosmic-fog" aria-hidden="true">
+        <div class="fog-layer fog-1"></div>
+        <div class="fog-layer fog-2"></div>
+        <div class="fog-layer fog-3"></div>
+    </div>
+
+    <!-- Rune sigil border overlay -->
+    <div id="sigil-border" aria-hidden="true">
+        <div class="sigil-corner sigil-tl"></div>
+        <div class="sigil-corner sigil-tr"></div>
+        <div class="sigil-corner sigil-bl"></div>
+        <div class="sigil-corner sigil-br"></div>
+        <div class="sigil-edge sigil-top"></div>
+        <div class="sigil-edge sigil-bottom"></div>
+        <div class="sigil-edge sigil-left"></div>
+        <div class="sigil-edge sigil-right"></div>
+    </div>
 
     <div id="app">
         <!-- Header -->
@@ -52,10 +78,14 @@
                     <div id="typing-indicator" class="hidden">
                         <div class="summoning-circle">
                             <div class="circle-ring"></div>
+                            <div class="circle-ring-inner"></div>
+                            <div class="circle-ring-outer"></div>
                             <div class="circle-rune r1">&#x16B1;</div>
                             <div class="circle-rune r2">&#x16A2;</div>
                             <div class="circle-rune r3">&#x16B7;</div>
                             <div class="circle-rune r4">&#x16CF;</div>
+                            <div class="circle-rune r5">&#x16BA;</div>
+                            <div class="circle-rune r6">&#x16C1;</div>
                             <span class="circle-text">Communing</span>
                         </div>
                     </div>
@@ -149,6 +179,7 @@
 
         <!-- Settings Modal -->
         <div id="settings-modal" class="modal hidden">
+            <div class="modal-backdrop" onclick="toggleSettings()"></div>
             <div class="modal-content">
                 <div class="modal-header">
                     <h2>&#x16A0; Arcane Settings &#x16A0;</h2>

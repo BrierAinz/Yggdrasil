@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Lilith Dashboard v3.0 — Dark Fantasy / Norse / Lovecraftian Client
-   "The void stares back, and it whispers in runes."
+   Lilith Dashboard v3.0 — ULTRA-PREMIUM Dark Fantasy / Norse / Lovecraftian Client
+   "From the abyss between the stars, the old runes still pulse."
    ═══════════════════════════════════════════════════════════════════════════ */
 
 // ── Config ──────────────────────────────────────────────────────────────────
@@ -12,8 +12,10 @@ const CONFIG = {
     pingInterval: 30000,
     statusUpdateInterval: 5000,
     maxChatMessages: 500,
-    particleCount: 35,
+    particleCount: 45,
     glitchInterval: 12000,
+    trailParticles: true,
+    eldritchEffects: true,
 };
 
 // ── State ───────────────────────────────────────────────────────────────────
@@ -29,12 +31,41 @@ let particleCanvas = null;
 let particleCtx = null;
 let particles = [];
 let animFrame = null;
+let mouseX = 0;
+let mouseY = 0;
+let trailTimer = null;
 
 // ── Rune characters for particles ───────────────────────────────────────────
 const RUNE_CHARS = ['ᚠ','ᚢ','ᚦ','ᚨ','ᚱ','ᚲ','ᚷ','ᚹ','ᚺ','ᚾ','ᛁ','ᛃ','ᛈ','ᛇ','ᛉ','ᛊ','ᛏ','ᛒ','ᛖ','ᛗ','ᛚ','ᛜ','ᛞ','ᛟ'];
-const ELDRITCH_CHARS = ['⌬','⍟','⎔','⎈','⏣','◈','◇','△','▽','☽','☾','⊛','⊕','⊗'];
+const ELDRITCH_CHARS = ['⌬','⍟','⎔','⎈','⏣','◈','◇','△','▽','☽','☾','⊛','⊕','⊗','⏢','⍙','⌘','⎋'];
+const ELDRITCH_SYMBOLS = ['᛭','✦','✧','⟡','⟐','⬡','⬢','◈'];
 
-// ── Particle Canvas System ──────────────────────────────────────────────────
+// ── Mouse tracking for interactive effects ──────────────────────────────────
+document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+
+    // Cursor trail particles
+    if (CONFIG.trailParticles && Math.random() > 0.7) {
+        spawnTrailParticle(e.clientX, e.clientY);
+    }
+});
+
+function spawnTrailParticle(x, y) {
+    const el = document.createElement('div');
+    el.className = 'cursor-trail';
+    el.style.left = (x - 3 + (Math.random() - 0.5) * 10) + 'px';
+    el.style.top = (y - 3 + (Math.random() - 0.5) * 10) + 'px';
+    const hue = [270, 340, 190][Math.floor(Math.random() * 3)];
+    el.style.background = `hsla(${hue}, 80%, 60%, 0.6)`;
+    el.style.boxShadow = `0 0 6px hsla(${hue}, 80%, 60%, 0.4)`;
+    document.body.appendChild(el);
+    setTimeout(() => {
+        if (el.parentNode) el.parentNode.removeChild(el);
+    }, 800);
+}
+
+// ── Particle Canvas System (Enhanced) ──────────────────────────────────────
 function initParticleCanvas() {
     particleCanvas = document.getElementById('particle-canvas');
     if (!particleCanvas) return;
@@ -43,7 +74,7 @@ function initParticleCanvas() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Create particles
+    // Create particles with varied types
     for (let i = 0; i < CONFIG.particleCount; i++) {
         particles.push(createParticle());
     }
@@ -57,65 +88,166 @@ function resizeCanvas() {
     particleCanvas.height = window.innerHeight;
 }
 
-function createParticle() {
-    const isRune = Math.random() > 0.4;
+function createParticle(forceJustCreated) {
+    const type = Math.random();
+    let char, hue, behavior;
+
+    if (type < 0.5) {
+        // Rune characters - Norse
+        char = RUNE_CHARS[Math.floor(Math.random() * RUNE_CHARS.length)];
+        hue = Math.random() > 0.5 ? 270 : 340; // purple or red
+        behavior = 'drift';
+    } else if (type < 0.8) {
+        // Eldritch symbols - Lovecraftian
+        char = ELDRITCH_CHARS[Math.floor(Math.random() * ELDRITCH_CHARS.length)];
+        hue = Math.random() > 0.5 ? 300 : 190; // magenta or cyan
+        behavior = 'pulse';
+    } else {
+        // Tiny stars/dots
+        char = ELDRITCH_SYMBOLS[Math.floor(Math.random() * ELDRITCH_SYMBOLS.length)];
+        hue = 45; // gold
+        behavior = 'twinkle';
+    }
+
     return {
         x: Math.random() * (particleCanvas ? particleCanvas.width : window.innerWidth),
         y: Math.random() * (particleCanvas ? particleCanvas.height : window.innerHeight),
-        char: isRune
-            ? RUNE_CHARS[Math.floor(Math.random() * RUNE_CHARS.length)]
-            : ELDRITCH_CHARS[Math.floor(Math.random() * ELDRITCH_CHARS.length)],
-        size: Math.random() * 10 + 8,
-        speed: Math.random() * 0.3 + 0.1,
-        opacity: Math.random() * 0.12 + 0.04,
+        char: char,
+        size: behavior === 'twinkle' ? Math.random() * 6 + 4 : Math.random() * 10 + 8,
+        speed: Math.random() * 0.35 + 0.08,
+        opacity: Math.random() * 0.12 + 0.03,
+        maxOpacity: Math.random() * 0.18 + 0.06,
         drift: (Math.random() - 0.5) * 0.3,
         rotation: Math.random() * Math.PI * 2,
-        rotationSpeed: (Math.random() - 0.5) * 0.005,
-        hue: Math.random() > 0.5 ? 270 : (Math.random() > 0.5 ? 340 : 160), // purple, red, or green
+        rotationSpeed: (Math.random() - 0.5) * 0.008,
+        hue: hue,
+        behavior: behavior,
+        phase: Math.random() * Math.PI * 2, // for pulsing
+        justCreated: forceJustCreated || false,
+        life: forceJustCreated ? 0 : 1,
     };
 }
 
 function animateParticles() {
     if (!particleCtx || !particleCanvas) return;
 
-    particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+    // Semi-transparent clear for trails effect
+    particleCtx.fillStyle = 'rgba(5, 5, 16, 0.15)';
+    particleCtx.fillRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+    const time = Date.now() * 0.001;
+    const mouseInfluenceRadius = 150;
 
     particles.forEach(p => {
+        // Mouse repulsion
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < mouseInfluenceRadius && dist > 0) {
+            const force = (mouseInfluenceRadius - dist) / mouseInfluenceRadius * 0.5;
+            p.x += (dx / dist) * force;
+            p.y += (dy / dist) * force;
+        }
+
+        // Behavior-specific updates
+        let alpha = p.opacity;
+
+        if (p.behavior === 'pulse') {
+            alpha = p.maxOpacity * (0.5 + 0.5 * Math.sin(time * 1.5 + p.phase));
+        } else if (p.behavior === 'twinkle') {
+            alpha = p.maxOpacity * (0.3 + 0.7 * Math.pow(Math.sin(time * 2 + p.phase), 2));
+        } else {
+            // Drift - with subtle flicker
+            const flicker = Math.sin(time * 0.7 + p.x * 0.01) * 0.04;
+            alpha = Math.max(0, Math.min(1, p.opacity + flicker));
+        }
+
+        // Fade in newly created particles
+        if (p.justCreated) {
+            p.life = Math.min(1, p.life + 0.01);
+            alpha *= p.life;
+            if (p.life >= 1) p.justCreated = false;
+        }
+
         // Update position
         p.y -= p.speed;
         p.x += p.drift;
         p.rotation += p.rotationSpeed;
 
-        // Flicker opacity
-        const flicker = Math.sin(Date.now() * 0.001 + p.x) * 0.03;
-        const alpha = Math.max(0, Math.min(1, p.opacity + flicker));
-
-        // Draw
+        // Draw with glow
         particleCtx.save();
         particleCtx.translate(p.x, p.y);
         particleCtx.rotate(p.rotation);
         particleCtx.font = `${p.size}px monospace`;
         particleCtx.fillStyle = `hsla(${p.hue}, 80%, 65%, ${alpha})`;
         particleCtx.shadowColor = `hsla(${p.hue}, 80%, 65%, ${alpha * 2})`;
-        particleCtx.shadowBlur = 6;
+        particleCtx.shadowBlur = p.behavior === 'twinkle' ? 12 : 8;
         particleCtx.textAlign = 'center';
         particleCtx.textBaseline = 'middle';
         particleCtx.fillText(p.char, 0, 0);
+
+        // Extra glow layer for pulsing particles
+        if (p.behavior === 'pulse') {
+            particleCtx.shadowBlur = 16;
+            particleCtx.fillStyle = `hsla(${p.hue}, 80%, 65%, ${alpha * 0.3})`;
+            particleCtx.fillText(p.char, 0, 0);
+        }
+
         particleCtx.restore();
 
         // Reset if off screen
-        if (p.y < -20) {
-            p.y = particleCanvas.height + 20;
+        if (p.y < -30) {
+            p.y = particleCanvas.height + 30;
             p.x = Math.random() * particleCanvas.width;
         }
-        if (p.x < -20) p.x = particleCanvas.width + 20;
-        if (p.x > particleCanvas.width + 20) p.x = -20;
+        if (p.x < -30) p.x = particleCanvas.width + 30;
+        if (p.x > particleCanvas.width + 30) p.x = -30;
     });
+
+    // Occasional shooting rune
+    if (Math.random() < 0.002) {
+        spawnShootingRune();
+    }
 
     animFrame = requestAnimationFrame(animateParticles);
 }
 
-// ── CSS Rune Particles (overlay) ────────────────────────────────────────────
+function spawnShootingRune() {
+    const startX = Math.random() * particleCanvas.width;
+    const startY = Math.random() * particleCanvas.height * 0.3;
+    const rune = RUNE_CHARS[Math.floor(Math.random() * RUNE_CHARS.length)];
+
+    let frame = 0;
+    const maxFrames = 30;
+    const targetX = startX + (Math.random() - 0.5) * 400;
+    const targetY = startY + 200 + Math.random() * 300;
+
+    function drawFrame() {
+        if (!particleCtx || frame >= maxFrames) return;
+        const progress = frame / maxFrames;
+        const alpha = Math.sin(progress * Math.PI) * 0.5;
+
+        const x = startX + (targetX - startX) * progress;
+        const y = startY + (targetY - startY) * progress;
+
+        particleCtx.save();
+        particleCtx.font = '14px monospace';
+        particleCtx.fillStyle = `hsla(45, 100%, 70%, ${alpha})`;
+        particleCtx.shadowColor = `hsla(45, 100%, 70%, ${alpha * 2})`;
+        particleCtx.shadowBlur = 20;
+        particleCtx.textAlign = 'center';
+        particleCtx.textBaseline = 'middle';
+        particleCtx.fillText(rune, x, y);
+        particleCtx.restore();
+
+        frame++;
+        requestAnimationFrame(drawFrame);
+    }
+
+    drawFrame();
+}
+
+// ── CSS Rune Particles (overlay - enhanced) ──────────────────────────────────
 function spawnCSSRunes() {
     const container = document.getElementById('rune-particles');
     if (!container) return;
@@ -129,16 +261,16 @@ function spawnCSSRunes() {
 
         const x = Math.random() * 100;
         const size = Math.random() * 8 + 10;
-        const duration = Math.random() * 20 + 25;
+        const duration = Math.random() * 25 + 20;
         const delay = Math.random() * 15;
-        const hue = [270, 340, 160, 200][Math.floor(Math.random() * 4)];
+        const hue = [270, 340, 160, 200, 45][Math.floor(Math.random() * 5)];
 
         el.style.left = x + '%';
         el.style.fontSize = size + 'px';
         el.style.animationDuration = duration + 's';
         el.style.animationDelay = delay + 's';
         el.style.color = `hsla(${hue}, 70%, 60%, 0.15)`;
-        el.style.textShadow = `0 0 6px hsla(${hue}, 70%, 60%, 0.3)`;
+        el.style.textShadow = `0 0 8px hsla(${hue}, 70%, 60%, 0.3), 0 0 16px hsla(${hue}, 70%, 60%, 0.15)`;
 
         container.appendChild(el);
 
@@ -150,27 +282,60 @@ function spawnCSSRunes() {
     }
 
     // Initial batch
-    for (let i = 0; i < 12; i++) {
-        setTimeout(() => spawn(), Math.random() * 10000);
+    for (let i = 0; i < 15; i++) {
+        setTimeout(() => spawn(), Math.random() * 12000);
     }
 }
 
-// ── Title Glitch Effect ─────────────────────────────────────────────────────
+// ── Title Glitch Effect (Enhanced) ──────────────────────────────────────────
 function initTitleGlitch() {
     const title = document.getElementById('title-lilith');
     if (!title) return;
 
+    // Store original text for recovery
+    const originalText = title.textContent || 'LILITH';
+
+    // Glitch character set
+    const glitchChars = '᛭⌬⍟⎔ᚠᚢᚦᚨᚱᚲᚹᚺᛁᛊᛏᛖᛗᛚᛞᛟ∎⊕⊗⏢';
+
     function triggerGlitch() {
-        title.classList.add('glitch');
-        setTimeout(() => title.classList.remove('glitch'), 300);
+        // Phase 1: Rapid glitch
+        let glitchCount = 0;
+        const maxGlitches = 3;
+
+        function applyGlitch() {
+            if (glitchCount >= maxGlitches) {
+                // Recovery
+                title.classList.add('glitch');
+                setTimeout(() => {
+                    title.classList.remove('glitch');
+                    title.textContent = originalText;
+                }, 200);
+                return;
+            }
+
+            // Partial corruption
+            let text = originalText.split('');
+            const corruptIdx = Math.floor(Math.random() * text.length);
+            text[corruptIdx] = glitchChars[Math.floor(Math.random() * glitchChars.length)];
+            title.textContent = text.join('');
+
+            glitchCount++;
+            setTimeout(applyGlitch, 60 + Math.random() * 80);
+        }
+
+        applyGlitch();
 
         // Schedule next glitch
-        const nextDelay = CONFIG.glitchInterval + Math.random() * 8000;
+        const nextDelay = CONFIG.glitchInterval + Math.random() * 10000;
         setTimeout(triggerGlitch, nextDelay);
     }
 
     // First glitch after a few seconds
     setTimeout(triggerGlitch, 3000 + Math.random() * 5000);
+
+    // Set data attribute for CSS
+    title.dataset.original = originalText;
 }
 
 // ── Typing Indicator ────────────────────────────────────────────────────────
@@ -210,6 +375,14 @@ function connect() {
         if (statusDot) statusDot.className = 'status-rune connected';
         if (statusText) statusText.textContent = 'Bound to the Void';
         console.log('[Dashboard] WebSocket connected');
+
+        // Visual pulse effect on connect
+        const header = document.getElementById('header');
+        if (header) {
+            header.style.boxShadow = '0 0 30px #00ff8830, inset 0 0 20px #00ff8810';
+            setTimeout(() => { header.style.boxShadow = ''; }, 1000);
+        }
+
         startPing();
         startStatusUpdates();
     };
@@ -227,6 +400,14 @@ function connect() {
         if (statusDot) statusDot.className = 'status-rune disconnected';
         if (statusText) statusText.textContent = 'Severed';
         console.log('[Dashboard] WebSocket closed');
+
+        // Visual shock effect on disconnect
+        const header = document.getElementById('header');
+        if (header) {
+            header.style.boxShadow = '0 0 30px #ff336630, inset 0 0 20px #ff336610';
+            setTimeout(() => { header.style.boxShadow = ''; }, 1500);
+        }
+
         hideTypingIndicator();
         stopPing();
         stopStatusUpdates();
@@ -413,9 +594,12 @@ function addChatMessage(role, content) {
         container.removeChild(container.firstChild);
     }
 
-    // Auto-scroll
+    // Auto-scroll with smooth behavior
     const chatBody = document.getElementById('chat-body');
-    chatBody.scrollTop = chatBody.scrollHeight;
+    chatBody.scrollTo({
+        top: chatBody.scrollHeight,
+        behavior: 'smooth'
+    });
 }
 
 // ── Terminal ────────────────────────────────────────────────────────────────
@@ -435,20 +619,25 @@ function addTerminalLine(text, type) {
     line.className = `term-line term-line-${type}`;
     line.textContent = text;
 
-    // Add subtle animation
+    // Add eldritch reveal animation
     line.style.opacity = '0';
     line.style.transform = 'translateY(4px)';
+    line.style.filter = 'blur(2px)';
     container.appendChild(line);
 
     requestAnimationFrame(() => {
-        line.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+        line.style.transition = 'opacity 0.3s ease, transform 0.3s ease, filter 0.3s ease';
         line.style.opacity = '1';
         line.style.transform = 'translateY(0)';
+        line.style.filter = 'blur(0)';
     });
 
     // Auto-scroll
     const paneBody = container.parentElement;
-    paneBody.scrollTop = paneBody.scrollHeight;
+    paneBody.scrollTo({
+        top: paneBody.scrollHeight,
+        behavior: 'smooth'
+    });
 }
 
 // ── System Status ───────────────────────────────────────────────────────────
@@ -456,7 +645,16 @@ function updateSystemStatus(data) {
     if (!data) return;
     const setText = (id, val) => {
         const el = document.getElementById(id);
-        if (el && val !== undefined) el.textContent = val;
+        if (el && val !== undefined) {
+            // Animated value update with glow effect
+            if (el.textContent !== String(val)) {
+                el.textContent = val;
+                el.style.textShadow = '0 0 20px #00eeff60, 0 0 40px #00eeff30';
+                setTimeout(() => {
+                    el.style.textShadow = '';
+                }, 500);
+            }
+        }
     };
 
     setText('sys-model', data.model || '---');
@@ -481,7 +679,7 @@ function updateSwarmStatus(data) {
         el.textContent = `${data.active_agents || 0}/${data.max_agents || 5} agents`;
         el.style.color = data.active_agents > 0 ? 'var(--accent-green)' : 'var(--text-dim)';
         if (data.active_agents > 0) {
-            el.style.textShadow = '0 0 8px #00ff8840';
+            el.style.textShadow = '0 0 8px #00ff8840, 0 0 16px #00ff8820';
         }
     }
 }
@@ -493,12 +691,12 @@ function updateMcpStatus(data) {
         el.textContent = `${data.connected || 0} servers`;
         el.style.color = data.connected > 0 ? 'var(--accent-green)' : 'var(--text-dim)';
         if (data.connected > 0) {
-            el.style.textShadow = '0 0 8px #00ff8840';
+            el.style.textShadow = '0 0 8px #00ff8840, 0 0 16px #00ff8820';
         }
     }
 }
 
-// ── Memory Search ───────────────────────────────────────────────────────────
+// ── Memory Search ────────────────────────────────────────────────────────────
 function searchMemory(query) {
     if (!query || query.length < 2) return;
     send({ type: 'memory_search', query: query });
@@ -516,9 +714,10 @@ function updateMemoryResults(results) {
         return;
     }
 
-    results.forEach(item => {
+    results.forEach((item, idx) => {
         const div = document.createElement('div');
         div.className = 'memory-item';
+        div.style.animationDelay = `${idx * 0.05}s`;
         div.innerHTML = `
             <span class="mem-key">${escapeHtml(item.key || item.id || '?')}</span>
             <div class="mem-value">${escapeHtml(item.content || item.value || '')}</div>
@@ -550,7 +749,7 @@ function updateStatusBar(data) {
     }
 }
 
-// ── Layout Toggle ───────────────────────────────────────────────────────────
+// ── Layout Toggle ────────────────────────────────────────────────────────────
 function toggleLayout() {
     const mainContent = document.getElementById('main-content');
     if (currentLayout === 'grid') {
@@ -563,25 +762,32 @@ function toggleLayout() {
     send({ type: 'set_layout', layout: currentLayout });
 }
 
-// ── Settings ────────────────────────────────────────────────────────────────
+// ── Settings ──────────────────────────────────────────────────────────────────
 function toggleSettings() {
     const modal = document.getElementById('settings-modal');
     modal.classList.toggle('hidden');
 }
 
-// ── Utilities ────────────────────────────────────────────────────────────────
+// ── Utilities ──────────────────────────────────────────────────────────────────
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
 }
 
-// ── Pane Focus ──────────────────────────────────────────────────────────────
+// ── Pane Focus (Enhanced) ──────────────────────────────────────────────────────
 function setupPaneFocus() {
     document.querySelectorAll('.pane').forEach(pane => {
         pane.addEventListener('click', () => {
             document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
             pane.classList.add('active');
+
+            // Ripple effect on focus
+            pane.style.boxShadow = '0 0 30px #ff336640, inset 0 0 20px #ff336615';
+            setTimeout(() => {
+                // Allow the animation class to take over
+                pane.style.boxShadow = '';
+            }, 400);
         });
     });
 }
@@ -644,14 +850,156 @@ function setupKeyboard() {
     });
 }
 
-// ── Visual Enhancements ─────────────────────────────────────────────────────
+// ── Visual Enhancements ────────────────────────────────────────────────────
 function addEldritchBorderEffect() {
-    // Add subtle pulsing border to active pane at intervals
+    // Pulse active pane border with eldritch energy
     setInterval(() => {
         const activePane = document.querySelector('.pane.active');
         if (!activePane) return;
-        activePane.style.transition = 'box-shadow 0.5s ease';
-    }, 1000);
+
+        // Occasional "power surge" effect
+        if (Math.random() < 0.1) {
+            activePane.style.borderColor = 'var(--accent-purple)';
+            activePane.style.boxShadow = '0 0 30px #aa55ff40, 0 0 60px #ff336630, inset 0 0 20px #aa55ff15';
+            setTimeout(() => {
+                activePane.style.borderColor = '';
+                activePane.style.boxShadow = '';
+            }, 200);
+        }
+    }, 3000);
+}
+
+// ── Ambient Sound Effect (Visual Only - screen pulse) ───────────────────────
+function initAmbientEffects() {
+    // Periodic "void pulse" on the entire app
+    setInterval(() => {
+        const app = document.getElementById('app');
+        if (!app) return;
+
+        // Subtle brightness/contrast shift
+        if (Math.random() < 0.3) {
+            app.style.filter = 'brightness(1.02) contrast(1.01)';
+            setTimeout(() => {
+                app.style.filter = '';
+            }, 150 + Math.random() * 200);
+        }
+    }, 8000 + Math.random() * 4000);
+}
+
+// ── Interactive Sigil Border ─────────────────────────────────────────────────
+function initSigilBorder() {
+    const sigilBorder = document.getElementById('sigil-border');
+    if (!sigilBorder) return;
+
+    // Make sigils react to mouse proximity
+    document.addEventListener('mousemove', (e) => {
+        const corners = sigilBorder.querySelectorAll('.sigil-corner');
+        corners.forEach(corner => {
+            const rect = corner.getBoundingClientRect();
+            const dx = e.clientX - rect.left - rect.width / 2;
+            const dy = e.clientY - rect.top - rect.height / 2;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 200) {
+                const intensity = 1 - dist / 200;
+                corner.style.opacity = 0.15 + intensity * 0.5;
+                corner.style.textShadow = `0 0 ${6 + intensity * 12}px var(--accent-purple), 0 0 ${12 + intensity * 20}px var(--accent-purple)`;
+            }
+        });
+    });
+}
+
+// ── Healthy Reconnection Animation ──────────────────────────────────────────
+function initConnectionAnimations() {
+    // Watch for connection status changes and animate accordingly
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach(mutation => {
+            if (mutation.attributeName === 'class') {
+                const target = mutation.target;
+                if (target.id === 'connection-status') {
+                    const pulse = document.createElement('div');
+                    pulse.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 100px;
+                        height: 100px;
+                        border-radius: 50%;
+                        pointer-events: none;
+                        z-index: 9999;
+                        animation: connection-pulse 1s ease-out forwards;
+                    `;
+
+                    if (target.classList.contains('connected')) {
+                        pulse.style.border = '2px solid #00ff88';
+                        pulse.style.boxShadow = '0 0 30px #00ff8840';
+                    } else if (target.classList.contains('disconnected')) {
+                        pulse.style.border = '2px solid #ff3366';
+                        pulse.style.boxShadow = '0 0 30px #ff336640';
+                    }
+
+                    document.body.appendChild(pulse);
+                    setTimeout(() => {
+                        if (pulse.parentNode) pulse.parentNode.removeChild(pulse);
+                    }, 1000);
+                }
+            }
+        });
+    });
+
+    const statusEl = document.getElementById('connection-status');
+    if (statusEl) {
+        observer.observe(statusEl, { attributes: true });
+    }
+}
+
+// ── Random Eldritch Events ──────────────────────────────────────────────────
+function initEldritchEvents() {
+    // Occasional "whisper" - brief text flash at edges
+    setInterval(() => {
+        if (Math.random() > 0.6) return;
+
+        const whispers = [
+            'ᚠᛁᚱᛁᚾ', 'ᚦᚨᛏᛟᛋ', 'ᛉᛊᛏᚨᚾ', 'ᚹᚨᛚᚺᚨᛚᚺ', 'ᛞᛖᚨᚦ',
+            '⌬⍟⎔', 'ᛁᚨᚺ', 'ᛈᚺᚾᛏ', '◇△▽', '☊☋☌'
+        ];
+
+        const whisper = document.createElement('div');
+        whisper.textContent = whispers[Math.floor(Math.random() * whispers.length)];
+        whisper.style.cssText = `
+            position: fixed;
+            font-family: var(--font-mono);
+            font-size: ${8 + Math.random() * 6}px;
+            color: var(--accent-purple);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 3;
+            text-shadow: 0 0 8px var(--accent-purple);
+            transition: opacity 1s ease;
+        `;
+
+        // Random edge position
+        const edge = Math.floor(Math.random() * 4);
+        switch(edge) {
+            case 0: whisper.style.top = '5%'; whisper.style.left = (10 + Math.random() * 80) + '%'; break;
+            case 1: whisper.style.bottom = '8%'; whisper.style.left = (10 + Math.random() * 80) + '%'; break;
+            case 2: whisper.style.left = '3%'; whisper.style.top = (10 + Math.random() * 80) + '%'; break;
+            case 3: whisper.style.right = '3%'; whisper.style.top = (10 + Math.random() * 80) + '%'; break;
+        }
+
+        document.body.appendChild(whisper);
+
+        // Fade in and out
+        requestAnimationFrame(() => {
+            whisper.style.opacity = '0.15';
+            setTimeout(() => {
+                whisper.style.opacity = '0';
+                setTimeout(() => {
+                    if (whisper.parentNode) whisper.parentNode.removeChild(whisper);
+                }, 1000);
+            }, 2000 + Math.random() * 3000);
+        });
+    }, 15000 + Math.random() * 10000);
 }
 
 // ── Init ────────────────────────────────────────────────────────────────────
@@ -662,6 +1010,11 @@ function init() {
     initParticleCanvas();
     spawnCSSRunes();
     initTitleGlitch();
+    addEldritchBorderEffect();
+    initAmbientEffects();
+    initSigilBorder();
+    initConnectionAnimations();
+    initEldritchEvents();
 
     // Core functionality
     setupPaneFocus();
@@ -670,9 +1023,21 @@ function init() {
     connect();
 }
 
-// ── Start ───────────────────────────────────────────────────────────────────
+// ── Start ────────────────────────────────────────────────────────────────────
 window.addEventListener('load', init);
 window.addEventListener('beforeunload', () => {
     if (ws) ws.close();
     if (animFrame) cancelAnimationFrame(animFrame);
 });
+
+// ── Add connection-pulse animation to stylesheet dynamically ────────────────
+(function injectDynamicStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes connection-pulse {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+})();
