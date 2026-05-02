@@ -1,0 +1,92 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.venv/
+env/
+venv/
+dist/
+build/
+*.egg-info/
+.eggs/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+.pnpm-debug.log
+.next/
+.nuxt/
+out/
+dist/
+build/
+*.map
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# Yggdrasil specific
+Helheim/Quarantine_*/
+*.log
+logs/
+tmp/
+temp/
+
+# Database (keep schema, ignore data)
+*.db
+!swarm_schema.sql
+!memory_schema.sql
+
+# Secrets
+*.pem
+*.key
+.env.local
+.env.production
+credentials.json
+
+# Large binary files
+*.gguf
+*.ggml
+*.bin
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Build artifacts
+*.pyc
+*.pyo
+*.whl
+*.tar.gz
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Coverage
+coverage.xml
+
+# Docker
+docker-compose.override.yml
