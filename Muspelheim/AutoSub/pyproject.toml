@@ -1,0 +1,26 @@
+[project]
+name = "autosub"
+version = "0.1.0"
+description = "Automatic subtitle generator with translation"
+requires-python = ">=3.11"
+dependencies = [
+    "faster-whisper>=1.0",
+    "deep-translator>=1.11",
+    "rich>=13.0",
+    "typer>=0.9",
+    "pysubs2>=1.6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "pytest-cov"]
+gpu = ["pyannote-audio>=3.0"]
+
+[project.scripts]
+autosub = "autosub.cli:app"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
