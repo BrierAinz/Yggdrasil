@@ -30,6 +30,8 @@ from Lilith.Scheduler.task_scheduler import TaskScheduler, TaskStatus, get_sched
 from Lilith.Swarm.manager import get_swarm_manager
 from Lilith.tools.dashboard import handle_dashboard_command
 from Lilith.tools.mcp_connect import handle_mcp_command
+from Lilith.MCP.cron import CronScheduler, get_cron_scheduler
+from Lilith.MCP.templates import AgentTemplate, TemplateLibrary, TemplateRenderer, get_template_library
 from Lilith.Core.graceful_shutdown import (
     check_crash_recovery, clear_crash_marker, register_shutdown_hook,
     save_crash_marker, setup_graceful_shutdown,
@@ -130,6 +132,8 @@ class LilithCLI:
         "mcp": "Gestionar servidores MCP",
         "dashboard": "Abrir dashboard web",
         "skills": "Gestionar skills arcanos",
+        "cron": "Gestionar tareas periodicas (list, enable, disable, run)",
+        "templates": "Gestionar templates de agentes (list, show, spawn)",
     }
 
     def __init__(self, no_banner=False, streaming_mode=None):
@@ -1241,6 +1245,14 @@ class LilithCLI:
                     continue
                 elif cmd.startswith("mcp"):
                     result = handle_mcp_command(user_input[3:].strip())
+                    self.p(result)
+                    continue
+                elif cmd.startswith("cron"):
+                    result = self._handle_cron_command(user_input[4:].strip())
+                    self.p(result)
+                    continue
+                elif cmd.startswith("templates"):
+                    result = self._handle_templates_command(user_input[9:].strip())
                     self.p(result)
                     continue
                 elif cmd.startswith("dashboard"):
