@@ -313,12 +313,25 @@ class LilithOrchestrator:
                 if triggered:
                     base += "\n\n=== SKILLS ACTIVOS ===\n"
                     for skill in triggered:
-                        base += f"\n[{skill.name}] {skill.description}\n"
-                        # Incluir contenido del skill (truncado si es muy largo)
-                        content_preview = skill.content[:2000]
-                        if len(skill.content) > 2000:
-                            content_preview += "\n... (truncado)"
-                        base += f"{content_preview}\n"
+                        # Renderizar template si existe, sino usar content
+                        rendered = skill.render(
+                            user_input=user_input,
+                            context=context if context else "",
+                            memory="",
+                            skills=", ".join(s.name for s in triggered),
+                        )
+                        if rendered:
+                            preview = rendered[:2000]
+                            if len(rendered) > 2000:
+                                preview += "\n... (truncado)"
+                            base += f"\n[{skill.name}] {skill.description}\n{preview}\n"
+                        else:
+                            content_preview = skill.content[:2000]
+                            if len(skill.content) > 2000:
+                                content_preview += "\n... (truncado)"
+                            base += f"\n[{skill.name}] {skill.description}\n{content_preview}\n"
+                        # Registrar uso
+                        self.skill_registry.record_trigger(skill.name)
                     base += "\n=== FIN SKILLS ==="
             except Exception:
                 pass

@@ -27,6 +27,7 @@ from Lilith.Scheduler.task_scheduler import TaskScheduler, TaskStatus, get_sched
 from Lilith.Swarm.manager import get_swarm_manager
 from Lilith.tools.dashboard import handle_dashboard_command
 from Lilith.tools.mcp_connect import handle_mcp_command
+from Lilith.Core.skill_registry import get_skill_registry
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -119,6 +120,7 @@ class LilithCLI:
         "swarm": "Gestionar swarm de agentes",
         "mcp": "Gestionar servidores MCP",
         "dashboard": "Abrir dashboard web",
+        "skills": "Gestionar skills arcanos",
     }
 
     def __init__(self, no_banner=False, streaming_mode=None):
@@ -128,6 +130,8 @@ class LilithCLI:
         self.msg_count = 0
         self.streaming_mode = streaming_mode if streaming_mode is not None else False
         self.no_banner = no_banner
+        self._copy_builtin_skills()
+        self.skill_registry = get_skill_registry()
 
     def p(self, msg, style=S.INFO):
         print(f"{style}{msg}{C.RESET}")
@@ -357,6 +361,147 @@ class LilithCLI:
             self.p("   swarm save                                 - Guardar sesion")
             self.p("   swarm load <session_id>                    - Cargar sesion")
             self.p("   swarm history                              - Ver historial")
+
+    def _copy_builtin_skills(self):
+        """Copia skills built-in desde Lilith/skills/ a ~/.lilith/skills/ si no existen."""
+        import shutil
+        builtin_dir = Path(__file__).parent / "skills"
+        target_dir = Path.home() / ".lilith" / "skills"
+
+        if not builtin_dir.exists():
+            return
+
+        target_dir.mkdir(parents=True, exist_ok=True)
+
+        for skill_file in builtin_dir.glob("*.md"):
+            target_file = target_dir / skill_file.name
+            if not target_file.exists():
+                shutil.copy2(skill_file, target_file)
+
+    def _handle_skills_command(self, args: str):
+        """Handler para comandos /skills."""
+        parts = args.split()
+        subcmd = parts[0] if parts else "list"
+        subcmd_lower = subcmd.lower()
+
+        if subcmd_lower in ("list", ""):
+            self.div()
+            self.p(" SKILLS ARCANOS ", S.TITLE)
+            self.div()
+            skills = self.skill_registry.list_skills()
+            if not skills:
+                self.p(" No hay skills cargados", S.DIM)
+            else:
+                for skill in skills:
+                    status = f"{C.HEAL}ON{C.RESET}" if skill.enabled else f"{C.CORRUPT}OFF{C.RESET}"
+                    triggers = len(skill.trigger)
+                    self.p(
+                        f" [{status}] {skill.name} (priority={skill.priority}, triggers={triggers})",
+                        S.INFO,
+                    )
+                    self.p(f"     {skill.description}", S.DIM)
+            stats = self.skill_registry.get_stats()
+            self.p(f"\n Total: {stats['total_skills']} | Enabled: {stats['enabled_skills']} | Disabled: {stats['disabled_skills']}", S.DIM)
+            self.div()
+            print()
+
+        elif subcmd_lower == "reload":
+            self.div()
+            self.p(" RECARGANDO SKILLS ", S.TITLE)
+            self.div()
+            loaded = self.skill_registry.reload()
+            self.p(f" [OK] {len(loaded)} skills recargados: {', '.join(loaded) if loaded else 'ninguno'}", S.SUCCESS)
+            self.div()
+            print()
+
+        elif subcmd_lower == "enable":
+            if len(parts) < 2:
+                self.p(" Uso: skills enable <nombre>", S.WARNING)
+                return
+            name = parts[1]
+            if self.skill_registry.enable_skill(name):
+                self.p(f" [OK] Skill '{name}' habilitado", S.SUCCESS)
+            else:
+                self.p(f" [ERROR] Skill '{name}' no encontrado", S.ERROR)
+
+        elif subcmd_lower == "disable":
+            if len(parts) < 2:
+                self.p(" Uso: skills disable <nombre>", S.WARNING)
+                return
+            name = parts[1]
+            if self.skill_registry.disable_skill(name):
+                self.p(f" [OK] Skill '{name}' deshabilitado", S.WARNING)
+            else:
+                self.p(f" [ERROR] Skill '{name}' no encontrado", S.ERROR)
+
+        elif subcmd_lower == "stats":
+            self.div()
+            self.p(" ESTADISTICAS DE SKILLS ", S.TITLE)
+            self.div()
+            usage = self.skill_registry.get_usage_stats()
+            if not usage:
+                self.p(" No hay estadisticas de uso", S.DIM)
+            else:
+                for name, stat in usage.items():
+                    times = stat["times_triggered"]
+                    last = stat["last_triggered"]
+                    last_str = ""
+                    if last:
+                        from datetime import datetime as _dt
+                        last_str = _dt.fromtimestamp(last).strftime("%Y-%m-%d %H:%M")
+                    self.p(
+                        f"  {name}: triggered {times}x | last: {last_str or 'never'}",
+                        S.INFO,
+                    )
+            self.div()
+            print()
+
+        elif subcmd_lower == "info":
+            if len(parts) < 2:
+                self.p(" Uso: skills info <nombre>", S.WARNING)
+                return
+            name = " ".join(parts[1:])
+            skill = self.skill_registry.get(name)
+            if not skill:
+                self.p(f" [ERROR] Skill '{name}' no encontrado", S.ERROR)
+                return
+            self.div()
+            self.p(f" SKILL: {skill.name} ", S.TITLE)
+            self.div()
+            self.p(f"  Descripcion: {skill.description}", S.INFO)
+            self.p(f"  Prioridad: {skill.priority}", S.INFO)
+            self.p(f"  Habilitado: {'Si' if skill.enabled else 'No'}", S.INFO)
+            self.p(f"  Version: {skill.version}", S.INFO)
+            if skill.trigger:
+                self.p(f"  Triggers (keywords): {', '.join(skill.trigger)}", S.PROMPT)
+            if skill.trigger_regex:
+                self.p(f"  Triggers (regex): {', '.join(skill.trigger_regex)}", S.PROMPT)
+            if skill.trigger_intent:
+                self.p(f"  Triggers (intent): {', '.join(skill.trigger_intent)}", S.PROMPT)
+            if skill.tools_required:
+                self.p(f"  Tools requeridos: {', '.join(skill.tools_required)}", S.PROMPT)
+            usage = self.skill_registry.get_usage_stats().get(name, {})
+            times = usage.get("times_triggered", 0)
+            last = usage.get("last_triggered")
+            last_str = ""
+            if last:
+                from datetime import datetime as _dt
+                last_str = _dt.fromtimestamp(last).strftime("%Y-%m-%d %H:%M")
+            self.p(f"  Veces activado: {times}", S.DIM)
+            self.p(f"  Ultima activacion: {last_str or 'nunca'}", S.DIM)
+            if skill.source_file:
+                self.p(f"  Archivo: {skill.source_file}", S.DIM)
+            self.div()
+            print()
+
+        else:
+            self.p(" Comandos skills:", S.INFO)
+            self.p("   skills list           - Listar skills", S.DIM)
+            self.p("   skills reload         - Recargar skills", S.DIM)
+            self.p("   skills enable <name>  - Habilitar skill", S.DIM)
+            self.p("   skills disable <name> - Deshabilitar skill", S.DIM)
+            self.p("   skills stats          - Estadisticas de uso", S.DIM)
+            self.p("   skills info <name>    - Info detallada", S.DIM)
 
     def print_tools(self):
         tools = Lilith_tools.ALL_TOOLS
@@ -908,6 +1053,9 @@ class LilithCLI:
                     )
                     self.p(result)
                     continue
+                elif cmd.startswith("skills"):
+                    self._handle_skills_command(user_input[6:].strip())
+                    continue
 
                 # Chat
                 self.div("─")
@@ -967,6 +1115,7 @@ Interactive Commands:
   agents            View sub-agents
   tasks             View scheduled tasks
   swarm <cmd>       Manage agent swarm (spawn, status, kill, save, load, history)
+  skills <cmd>     Manage arcane skills (list, enable, disable, reload, stats, info)
   index <path>      Index files/folder
   search <query>    Search indexed documents
   plugins           View installed plugins

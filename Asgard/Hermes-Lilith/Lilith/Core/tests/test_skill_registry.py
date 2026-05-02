@@ -396,8 +396,8 @@ Content.
         registry = SkillRegistry(skills_dir=tmp_path, hot_reload=False)
         assert registry.get("hidden") is None
 
-    def test_ignores_non_md_files(self, tmp_path):
-        """RED: Debe ignorar archivos que no son .md."""
+    def test_ignores_non_skill_files(self, tmp_path):
+        """RED: Debe ignorar archivos que no son .md/.yaml/.yml."""
         txt = tmp_path / "test.txt"
         txt.write_text(
             """---
