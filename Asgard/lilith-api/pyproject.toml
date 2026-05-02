@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "lilith-api"
-version = "2.0.0"
+version = "2.2.0"
 description = "REST API for Lilith"
 requires-python = ">=3.9"
 dependencies = [
@@ -13,6 +13,19 @@ dependencies = [
     "lilith-memory>=2.0.0",
     "lilith-orchestrator>=2.0.0",
     "fastapi>=0.100",
-    "uvicorn>=0.23",
+    "uvicorn[standard]>=0.23",
     "pydantic>=2.0",
+    "orjson>=3.9",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "uvloop>=0.17",
+    "httpx>=0.24",
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "ruff>=0.1",
+]
+
+[project.scripts]
+lilith-api = "run:main"

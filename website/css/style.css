@@ -4,6 +4,172 @@
    Ultra-Premium Visual Enhancement
    ============================================ */
 
+
+
+/* ============================================
+   ACCESSIBILITY & PERFORMANCE IMPROVEMENTS
+   ============================================ */
+
+/* Reduced motion — disable animations for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    .hero-badge { animation: none !important; }
+    .feature-card, .card { opacity: 1 !important; transform: none !important; }
+    .glow-border { animation: none !important; }
+    #particles-canvas { display: none !important; }
+    .section-label::after { animation: none !important; }
+}
+
+/* Focus-visible for keyboard navigation */
+a:focus-visible, button:focus-visible, .nav-link:focus-visible, .copy-btn:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+    border-radius: 3px;
+}
+
+/* Tab components for Midgard/Vanaheim pages */
+.tab-bar {
+    display: flex;
+    gap: 0.5rem;
+    margin: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+}
+
+.tab-bar .tab-btn {
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.tab-bar .tab-btn:hover {
+    color: var(--text-primary);
+    background: rgba(200, 164, 74, 0.05);
+}
+
+.tab-bar .tab-btn.active {
+    color: var(--accent-gold);
+    border-bottom-color: var(--accent-gold);
+}
+
+.tab-content {
+    display: none;
+    padding: 1rem 0;
+}
+
+.tab-content.active {
+    display: block;
+    animation: fadeInTab 0.3s ease;
+}
+
+@keyframes fadeInTab {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Status badge variants */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-badge.active {
+    background: rgba(0, 255, 136, 0.12);
+    color: #00ff88;
+    border: 1px solid rgba(0, 255, 136, 0.25);
+}
+
+.status-badge.planned {
+    background: rgba(200, 164, 74, 0.12);
+    color: #C7A44A;
+    border: 1px solid rgba(200, 164, 74, 0.25);
+}
+
+.status-badge.deprecated {
+    background: rgba(204, 34, 51, 0.12);
+    color: #cc2233;
+    border: 1px solid rgba(204, 34, 51, 0.25);
+}
+
+.status-badge.experimental {
+    background: rgba(170, 85, 255, 0.12);
+    color: #aa55ff;
+    border: 1px solid rgba(170, 85, 255, 0.25);
+}
+
+/* Timeline component */
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin: 2rem 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent-gold), var(--accent-violet), var(--accent-cyan));
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.55rem;
+    top: 0.4rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent-gold);
+    box-shadow: 0 0 8px rgba(200, 164, 74, 0.4);
+}
+
+.timeline-item .timeline-date {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 0.3rem;
+}
+
+.timeline-item .timeline-title {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.3rem;
+}
+
+.timeline-item .timeline-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+
 /* @property for animated gradient borders */
 @property --angle {
   syntax: '<angle>';

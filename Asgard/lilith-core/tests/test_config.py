@@ -1,4 +1,3 @@
-import pytest
 from lilith_core.config import Config
 
 

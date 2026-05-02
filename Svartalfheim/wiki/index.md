@@ -52,6 +52,16 @@ last_updated: 2026-05-02
 
 ---
 
+## 🔧 Features y Guías de Referencia
+
+|| Feature | Descripción |
+||---------|-------------|
+|| 🏭 [Batch Mode](features/batch-mode.md) | Ejecución no-interactiva via CLI |
+|| 🌙 [Kimi Code API](features/kimi-code-api.md) | Provider remoto de LLM (fallback) |
+|| 🐝 [Swarm Intelligence](features/swarm-intelligence.md) | Multi-agent cooperativo con MessageBus |
+
+---
+
 ## 🕸️ Cross-Realm
 
 - [Mapa de Dependencias](cross-realm.md) — Quién depende de quién

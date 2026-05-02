@@ -6,7 +6,7 @@ Conecta el Bot Telegram (y futuros clients) con el motor de Hermes-Lilith.
 Endpoints criticos implementados; el resto devuelven stubs seguros.
 """
 import asyncio
-import json
+import os
 import sys
 import traceback
 from concurrent.futures import ThreadPoolExecutor
@@ -14,12 +14,35 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException, Request
+# Use orjson for faster JSON serialization; fall back to stdlib json if unavailable
+try:
+    import orjson
+
+    def _json_dumps(obj: Any) -> str:
+        return orjson.dumps(obj).decode("utf-8")
+
+    def _json_loads(data: str | bytes) -> Any:
+        return orjson.loads(data)
+
+except ImportError:
+    import json  # type: ignore[no-redef]
+
+    def _json_dumps(obj: Any) -> str:  # type: ignore[misc]
+        return json.dumps(obj, ensure_ascii=False)
+
+    def _json_loads(data: str | bytes) -> Any:  # type: ignore[misc]
+        return json.loads(data)
+
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse
 
 # ───────────────────────────────────────────────────────────────────────────────
-# Setup paths para importar Hermes-Lilith
+# TEMPORARY: Bridge to legacy Hermes-Lilith monolith.
+# This sys.path hack allows importing from the old codebase during the
+# incremental migration. It MUST be removed once all Lilith modules are
+# fully extracted into their own packages and the monolith is decommissioned.
 # ───────────────────────────────────────────────────────────────────────────────
 _HERE = Path(__file__).resolve()
 _HERMES_ROOT = _HERE.parent.parent.parent / "Asgard" / "Hermes-Lilith"
@@ -78,7 +101,9 @@ def _plugin_mgr():
 # ───────────────────────────────────────────────────────────────────────────────
 _global_orch: Optional[LilithOrchestrator] = None
 _orch_lock = asyncio.Lock()
-_executor = ThreadPoolExecutor(max_workers=2)
+# Scale thread pool with CPU cores: 4 workers per core, capped at 16.
+# The previous max_workers=2 was a bottleneck under concurrent load.
+_executor = ThreadPoolExecutor(max_workers=min(16, os.cpu_count() * 4))
 
 
 def _get_orchestrator() -> LilithOrchestrator:
@@ -160,7 +185,7 @@ def _pc_fs_sync(
             result = file_tool("list_directory", {"path": path})
             return {
                 "success": True,
-                "output": json.dumps(result, ensure_ascii=False, indent=2),
+                "output": _json_dumps(result),
             }
         elif op == "mkdir":
             import os as _os
@@ -172,7 +197,7 @@ def _pc_fs_sync(
             return {"success": True, "output": result.get("content", "(vacío)")}
         elif op == "write":
             result = file_tool("write_file", {"path": path, "content": cmd})
-            return {"success": True, "output": json.dumps(result, ensure_ascii=False)}
+            return {"success": True, "output": _json_dumps(result)}
         elif op == "move":
             import shutil
 
@@ -231,7 +256,14 @@ def _pc_fs_sync(
 app = FastAPI(title="Lilith Gateway", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    # TODO: Move allowed origins to environment variable / config for production.
+    #       The wildcard "*" must not be used in production deployments.
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -260,7 +292,7 @@ async def health():
 @app.post("/api/telegram/chat")
 async def api_telegram_chat(request: Request):
     """Chat principal para el bot de Telegram."""
-    body = await request.json()
+    body = _json_loads(await request.body())
     text = (body.get("text") or "").strip()
     user_id = str(body.get("user_id", "telegram_user"))
     chat_id = str(body.get("chat_id", user_id))
@@ -283,7 +315,7 @@ async def api_telegram_chat(request: Request):
 @app.post("/api/telegram/confirm")
 async def api_telegram_confirm(request: Request):
     """Confirmar operacion pendiente para Telegram."""
-    body = await request.json()
+    body = _json_loads(await request.body())
     token = body.get("token", "")
     approved = body.get("approved", False)
     return {
@@ -296,7 +328,7 @@ async def api_telegram_confirm(request: Request):
 @app.post("/api/telegram/pc/confirm")
 async def api_telegram_pc_confirm(request: Request):
     """Confirmar operacion PC para Telegram."""
-    body = await request.json()
+    body = _json_loads(await request.body())
     token = body.get("token", "")
     approved = body.get("approved", False)
     return {
@@ -313,7 +345,7 @@ async def api_telegram_pc_confirm(request: Request):
 @app.post("/api/pc/fs")
 async def api_pc_fs(request: Request):
     """Operaciones de filesystem remoto."""
-    body = await request.json()
+    body = _json_loads(await request.body())
     op = body.get("op", "")
     path = body.get("path", "")
     dst = body.get("dst", "")
@@ -411,7 +443,7 @@ async def api_scheduler_tasks():
 @app.post("/api/scheduler/tasks")
 async def api_scheduler_add(request: Request):
     try:
-        body = await request.json()
+        body = _json_loads(await request.body())
         sched = _scheduler()
         task_id = sched.add_task(
             description=body.get("description", ""),
@@ -480,7 +512,7 @@ async def api_agents_list():
 @app.post("/api/agents")
 async def api_agents_create(request: Request):
     try:
-        body = await request.json()
+        body = _json_loads(await request.body())
         mgr = _agent_mgr()
         agent = mgr.create_agent(
             name=body.get("name", "Agente"),
@@ -510,7 +542,7 @@ async def api_agents_stats(agent_id: str):
 @app.post("/api/agents/{agent_id}/delegate")
 async def api_agents_delegate(agent_id: str, request: Request):
     try:
-        body = await request.json()
+        body = _json_loads(await request.body())
         mgr = _agent_mgr()
         result = mgr.delegate_task(
             agent_id=agent_id,
@@ -619,7 +651,7 @@ async def api_notebook():
 
 @app.post("/api/mode")
 async def api_mode_post(request: Request):
-    body = await request.json()
+    body = _json_loads(await request.body())
     return {"ok": True, "mode": body.get("mode", "default")}
 
 
@@ -640,7 +672,7 @@ async def api_attention_clear(request: Request):
 
 @app.post("/api/attention/add")
 async def api_attention_add(request: Request):
-    body = await request.json()
+    body = _json_loads(await request.body())
     return {"ok": True, "id": "stub-" + str(int(datetime.now().timestamp()))}
 
 

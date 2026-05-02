@@ -8,7 +8,11 @@ from lilith_tools.base import BaseTool
 
 class BrowserTool(BaseTool):
     name = "browser"
-    description = "Navega a una URL y extrae texto legible. Parametros: url (str), max_chars (int, default 3000), use_playwright (bool, default True)"
+    description = (
+        "Navega a una URL y extrae texto legible. "
+        "Parametros: url (str), max_chars (int, default 3000), "
+        "use_playwright (bool, default True)"
+    )
     parameters = {
         "url": {"type": "string", "description": "URL a visitar"},
         "max_chars": {
@@ -34,7 +38,7 @@ class BrowserTool(BaseTool):
         if use_playwright:
             try:
                 return self._playwright_fetch(url, max_chars)
-            except Exception as e:
+            except Exception:
                 # Fallback silencioso a requests
                 pass
         return self._requests_fetch(url, max_chars)

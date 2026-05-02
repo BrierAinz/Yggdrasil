@@ -1,0 +1,62 @@
+# Ruff configuration for Yggdrasil
+# https://docs.astral.sh/ruff/configuration/
+
+target-version = "py39"
+
+# Same as Black
+line-length = 100
+indent-width = 4
+
+[lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # Pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "RUF",  # Ruff-specific rules
+    "C4",   # flake8-comprehensions
+    "ERA",  # eradicate (commented-out code)
+    "PTH",  # flake8-use-pathlib
+    "PL",   # pylint
+    "TRY",  # tryceratops
+]
+
+ignore = [
+    "E501",    # line too long (handled by formatter)
+    "PLR0913", # too many arguments
+    "PLR2004", # magic value comparison
+    "TRY003",  # avoid specifying exception messages
+    "B905",    # zip() without strict (py39 compat)
+]
+
+# Allow fix for all enabled rules
+fixable = ["ALL"]
+unfixable = []
+
+# Exclude directories from linting
+exclude = [
+    "Helheim",
+    "Muspelheim",
+    "Niflheim",
+    ".git",
+    "__pycache__",
+    "*.egg-info",
+    "node_modules",
+    ".venv",
+    "venv",
+]
+
+[lint.isort]
+known-first-party = ["lilith_core", "lilith_cli", "lilith_api", "lilith_memory", "lilith_tools", "lilith_orchestrator"]
+force-single-line = false
+lines-after-imports = 2
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"

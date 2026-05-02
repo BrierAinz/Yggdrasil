@@ -48,3 +48,20 @@ Cada agente tiene:
 - **LLM cost**: Si `use_llm=True`, cada agente consume tokens
 - **Conflictos**: A pesar de file locks, pueden ocurrir conflictos lógicos
 - **Thread safety**: Requiere thread-local connections en SQLite
+
+## Implementación
+
+**Estado**: Completado (FASE 3-5)
+**Tests**: 40/40 pasando
+**Archivos**:
+- `Swarm/agent.py` — 322 líneas
+- `Swarm/manager.py` — 404 líneas
+- `Swarm/message_bus.py` — 177 líneas
+- `Swarm/conflict_resolver.py` — 340 líneas
+- `Swarm/database.py` — Persistencia SQLite
+- `Swarm/executor.py` — Integración con LLM
+- `Swarm/prompts.py` — Templates de prompts
+- `tools/swarm.py` — CLI tool
+- `Swarm/tests/test_swarm.py` + `test_fase4_5.py` — 40 tests
+
+CLI integrado en main.py: `/swarm spawn|status|kill|killall|result|save|load|history`

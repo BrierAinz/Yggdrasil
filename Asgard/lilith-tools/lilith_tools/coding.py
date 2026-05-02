@@ -8,7 +8,10 @@ from lilith_tools.base import BaseTool
 
 class CodingTool(BaseTool):
     name = "coding"
-    description = "Ejecuta codigo Python en un entorno sandboxed. Parametros: code (str), timeout (int, default 10)"
+    description = (
+        "Ejecuta codigo Python en entorno sandboxed. "
+        "Parametros: code (str), timeout (int, default 10)"
+    )
     parameters = {
         "code": {"type": "string", "description": "Codigo Python a ejecutar"},
         "timeout": {

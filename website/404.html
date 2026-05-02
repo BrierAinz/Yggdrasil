@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Lost in the Void | Yggdrasil</title>
+    <meta name="description" content="The path you seek has vanished into the void.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌊</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .void-page {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        .void-rune {
+            font-size: 6rem;
+            margin-bottom: 1rem;
+            animation: float 4s ease-in-out infinite;
+        }
+        .void-title {
+            font-family: var(--font-sans);
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-rose), var(--accent-violet), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .void-subtitle {
+            font-family: var(--font-sans);
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 500px;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+        .void-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+        .void-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .void-link:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            background: rgba(200, 164, 74, 0.06);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav" id="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-brand">🌳 Yggdrasil</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="realms.html" class="nav-link">Realms</a>
+                <a href="hermes-lilith.html" class="nav-link">Hermes-Lilith</a>
+                <a href="midgard-apps.html" class="nav-link">Midgard Apps</a>
+                <a href="vanaheim-agents.html" class="nav-link">Vanaheim Agents</a>
+                <a href="architecture.html" class="nav-link">Architecture</a>
+                <a href="setup.html" class="nav-link">Setup</a>
+                <a href="changelog.html" class="nav-link">Changelog</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="void-page">
+        <div class="void-rune">VOID</div>
+        <h1 class="void-title">404</h1>
+        <p class="void-subtitle">
+            The path you seek has vanished into the void between realms.
+            Even Heimdall's gaze cannot find what does not exist.
+        </p>
+        <div class="void-links">
+            <a href="index.html" class="void-link">🏠 Home</a>
+            <a href="realms.html" class="void-link">🌍 Realms</a>
+            <a href="architecture.html" class="void-link">🏗️ Architecture</a>
+            <a href="setup.html" class="void-link">⚙️ Setup</a>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

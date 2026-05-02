@@ -610,8 +610,8 @@
      21. SECTION DIVIDER RUNE WAVE
      ============================================ */
   document.querySelectorAll('.section').forEach(section => {
-    const divider = section.querySelector('.section::before');
-    // CSS handles the wave animation, but we can add intersection observer for enhanced effect
+    // CSS ::before pseudo-ddivider handles the wave animation
+    // IntersectionObserver adds --section-visible CSS variable for enhanced effect
     const sectionObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -622,5 +622,48 @@
 
     sectionObserver.observe(section);
   });
+
+  /* ============================================
+     22. TAB SWITCHING (Midgard/Vanaheim pages)
+     ============================================ */
+  document.querySelectorAll('.tab-bar').forEach(bar => {
+    const btns = bar.querySelectorAll('.tab-btn');
+    const parent = bar.parentElement;
+    const contents = parent ? parent.querySelectorAll('.tab-content') : [];
+
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        const target = btn.getAttribute('data-tab');
+        const targetEl = parent ? parent.querySelector(`#${target}`) : null;
+        if (targetEl) targetEl.classList.add('active');
+      });
+    });
+  });
+
+  /* ============================================
+     23. VISIBILITY-BASED CANVAS PAUSE
+     ============================================ */
+  document.addEventListener('visibilitychange', () => {
+    const canvas = document.getElementById('particles-canvas');
+    if (canvas && canvas._animationId) {
+      if (document.hidden) {
+        cancelAnimationFrame(canvas._animationId);
+        canvas._paused = true;
+      } else {
+        canvas._paused = false;
+      }
+    }
+  });
+
+  /* ============================================
+     24. REDUCED MOTION CHECK
+     ============================================ */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const canvas = document.getElementById('particles-canvas');
+    if (canvas) canvas.style.display = 'none';
+  }
 
 })();

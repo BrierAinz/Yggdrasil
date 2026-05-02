@@ -11,4 +11,22 @@ dependencies = [
     "lilith-core>=2.0.0",
     "lilith-tools>=2.0.0",
     "lilith-memory>=2.0.0",
+    "orjson>=3.9",
+    "uvicorn>=0.24.0",
+    "fastapi>=0.104.0",
 ]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "httpx>=0.24",
+    "ruff>=0.1.0",
+    "mypy>=1.5",
+]
+
+# uvloop is Unix-only and optional — install separately on Linux/macOS:
+#   pip install uvloop
+# It is intentionally NOT listed in core dependencies so that Windows
+# installs remain clean.  The gateway gracefully falls back to the default
+# asyncio event loop when uvloop is unavailable.

@@ -12,7 +12,9 @@ dependencies = [
     "lilith-memory>=2.0.0",
     "lilith-orchestrator>=2.0.0",
     "lilith-tools>=2.0.0",
+    "textual>=0.50.0",
 ]
 
 [project.scripts]
 lilith = "lilith_cli.main:main"
+yggdrasil-tui = "lilith_cli.tui.app:main"

@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://brierainz.github.io/Yggdrasil/sitemap.xml

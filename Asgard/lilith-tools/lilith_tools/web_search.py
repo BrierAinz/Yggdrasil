@@ -9,7 +9,10 @@ from lilith_tools.base import BaseTool
 
 class WebSearchTool(BaseTool):
     name = "web_search"
-    description = "Busca en la web usando DuckDuckGo. Parametros: query (str), max_results (int, default 5)"
+    description = (
+        "Busca en la web usando DuckDuckGo. "
+        "Parametros: query (str), max_results (int, default 5)"
+    )
     parameters = {
         "query": {"type": "string", "description": "Termino de busqueda"},
         "max_results": {

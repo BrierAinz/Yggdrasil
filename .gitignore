@@ -53,6 +53,12 @@ Niflheim/Models/
 *.onnx
 *.ckpt
 
+# Generated outputs (images, archives)
+Muspelheim/AI-Influencer/outputs/**/*.png
+Muspelheim/AI-Influencer/outputs/**/*.jpg
+Muspelheim/AI-Influencer/outputs/**/*.webp
+Helheim/Archives_Lilith_Legacy_*.tar.gz
+
 # Binaries & Archives
 Asgard/*.tar.gz
 Asgard/*.exe
