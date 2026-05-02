@@ -22,6 +22,10 @@ from typing import Any, Dict, Iterator, List, Optional
 import httpx
 
 from .config import DEFAULT_MODEL, LLM_PROVIDER, LLM_PROVIDERS, LM_STUDIO_URL
+from .resilience import CircuitBreaker, CircuitBreakerError, RetryConfig, retry_with_backoff
+from .lilith_logger import get_logger
+
+_logger = get_logger("lilith.llm_provider")
 
 
 class LLMProvider:
@@ -38,6 +42,7 @@ class LLMProvider:
         model: str = "auto",
         api_key: Optional[str] = None,
         provider_type: str = "local",
+        chat_timeout: float = 120.0,
     ):
         self.name = name
         self.base_url = base_url.rstrip("/")
@@ -47,6 +52,16 @@ class LLMProvider:
         self._last_error: Optional[str] = None
         self._available: Optional[bool] = None
         self._checked_at: float = 0
+
+        # ── Resilience ──
+        self.chat_timeout = chat_timeout
+        self.circuit_breaker = CircuitBreaker(failure_threshold=3, recovery_timeout=60.0)
+        self.retry_config = RetryConfig(
+            max_retries=3,
+            base_delay=1.0,
+            max_delay=30.0,
+            backoff_factor=2.0,
+        )
 
         # Detectar modelo si es "auto"
         if self.model == "auto":
@@ -123,7 +138,12 @@ class LLMProvider:
         temperature: float = 0.7,
         max_tokens: int = 2048,
     ) -> Dict[str, Any]:
-        """Envia mensaje al modelo y recibe respuesta completa."""
+        """Envia mensaje al modelo y recibe respuesta completa.
+
+        Protegido por circuit breaker y retry con backoff exponencial.
+        Si el circuit breaker esta OPEN, lanza CircuitBreakerError inmediatamente.
+        Retry en errores transitorios (429, 500, 502, 503, 504, timeouts, conexiones).
+        """
         payload = {
             "model": self.model,
             "messages": messages,
@@ -134,22 +154,29 @@ class LLMProvider:
             payload["tools"] = tools
             payload["tool_choice"] = "auto"
 
-        try:
+        def _make_request():
             response = httpx.post(
                 f"{self.base_url}/chat/completions",
                 json=payload,
                 headers=self._get_headers(),
-                timeout=120.0,
+                timeout=self.chat_timeout,
             )
             response.raise_for_status()
             return response.json()
-        except httpx.HTTPStatusError as e:
-            error_msg = f"HTTP {e.response.status_code}: {e.response.text[:500]}"
+
+        try:
+            result = retry_with_backoff(
+                _make_request,
+                retry_config=self.retry_config,
+                circuit_breaker=self.circuit_breaker,
+            )
+            return result
+        except CircuitBreakerError:
+            raise
+        except Exception as e:
+            error_msg = f"HTTP error: {e}"
             self._last_error = error_msg
             return {"error": error_msg}
-        except Exception as e:
-            self._last_error = str(e)
-            return {"error": str(e)}
 
     def chat_stream(
         self,
@@ -158,8 +185,17 @@ class LLMProvider:
         temperature: float = 0.7,
         max_tokens: int = 2048,
     ) -> Iterator[str]:
-        """Streaming generator: yield chunks de texto."""
+        """Streaming generator: yield chunks de texto.
+
+        Protegido por circuit breaker. Si el circuito esta OPEN,
+        emite un mensaje de error en vez de bloquear indefinidamente.
+        """
         import json as _json
+
+        # Verificar circuit breaker antes de iniciar stream
+        if self.circuit_breaker.is_open:
+            yield f"\n[Circuit breaker OPEN — provider '{self.name}' bloqueado por fallos consecutivos. Espera antes de reintentar.]\n"
+            return
 
         payload = {
             "model": self.model,
@@ -178,9 +214,10 @@ class LLMProvider:
                 f"{self.base_url}/chat/completions",
                 json=payload,
                 headers=self._get_headers(),
-                timeout=120.0,
+                timeout=self.chat_timeout,
             ) as response:
                 response.raise_for_status()
+                self.circuit_breaker.record_success()
                 for line in response.iter_lines():
                     if not line or not line.strip():
                         continue
@@ -197,11 +234,18 @@ class LLMProvider:
                                 yield content
                         except (_json.JSONDecodeError, KeyError, IndexError):
                             continue
+        except httpx.HTTPStatusError as e:
+            self.circuit_breaker.record_failure()
+            error_msg = f"HTTP {e.response.status_code}"
+            self._last_error = error_msg
+            yield f"\n[Error streaming desde {self.name}: {error_msg}]\n"
         except Exception as e:
+            self.circuit_breaker.record_failure()
+            self._last_error = str(e)
             yield f"\n[Error streaming desde {self.name}: {e}]\n"
 
     def get_status(self) -> Dict[str, Any]:
-        """Retorna estado del provider."""
+        """Retorna estado del provider incluyendo circuit breaker."""
         return {
             "name": self.name,
             "type": self.provider_type,
@@ -210,6 +254,25 @@ class LLMProvider:
             "available": self.is_available(),
             "last_error": self._last_error,
             "has_api_key": bool(self.api_key),
+            "circuit_breaker": self.circuit_breaker.stats,
+        }
+
+    def get_provider_info(self) -> Dict[str, Any]:
+        """Retorna informacion completa del provider con estado del circuit breaker.
+
+        Los Nords consultan las runas del Yggdrasil para conocer el estado
+        de los caminos entre los nueve mundos.
+        """
+        return {
+            "name": self.name,
+            "model": self.model,
+            "type": self.provider_type,
+            "base_url": self.base_url,
+            "available": self.is_available(),
+            "circuit_breaker": self.circuit_breaker.stats,
+            "last_error": self._last_error,
+            "has_api_key": bool(self.api_key),
+            "chat_timeout": self.chat_timeout,
         }
 
     def __repr__(self):

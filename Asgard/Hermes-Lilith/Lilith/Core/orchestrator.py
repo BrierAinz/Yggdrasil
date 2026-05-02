@@ -25,6 +25,8 @@ from Lilith.Core.config import (
     SYSTEM_PROMPT,
 )
 from Lilith.Core.dynamic_tools import DynamicToolRegistry, ToolSource
+from Lilith.Core.error_handler import LilithError, format_error, sanitize_output, setup_global_error_handler
+from Lilith.Core.lilith_logger import get_logger
 from Lilith.Core.llm_provider import LLMProvider, get_provider
 from Lilith.Core.skill_registry import get_skill_registry
 from Lilith.MCP.manager import MCPManager, get_mcp_manager
@@ -40,7 +42,7 @@ from Lilith.tools.network import execute_tool as execute_network_tool
 from Lilith.tools.system import execute_tool as execute_system_tool
 from Lilith.tools.windows import execute_tool as execute_windows_tool
 
-logger = logging.getLogger("Lilith.Orchestrator")
+logger = get_logger("lilith.orchestrator")
 
 TOOL_EXECUTORS = {
     "screenshot": execute_desktop_tool,
@@ -129,6 +131,9 @@ class LilithOrchestrator:
     """
 
     def __init__(self, provider: LLMProvider = None):
+        # Instalar error handler global — las Norns vigilan el Yggdrasil
+        setup_global_error_handler()
+
         if provider is not None:
             self.client = provider
         else:
@@ -276,13 +281,21 @@ class LilithOrchestrator:
             return self._tool_registry.get_stats()
 
     def get_provider_info(self) -> dict:
-        """Retorna informacion del provider activo."""
+        """Retorna informacion del provider activo con estado del circuit breaker."""
         info = {
             "name": self.client.name,
             "model": self.client.model,
             "type": self.client.provider_type,
             "available": self.client.is_available(),
         }
+        # Incluir circuit breaker stats si el provider es un LLMProvider real
+        from .resilience import CircuitBreaker
+        cb = getattr(self.client, "circuit_breaker", None)
+        if isinstance(cb, CircuitBreaker):
+            info["circuit_breaker"] = cb.stats
+        info["last_error"] = getattr(self.client, "_last_error", None)
+        info["has_api_key"] = bool(getattr(self.client, "api_key", None))
+        info["chat_timeout"] = getattr(self.client, "chat_timeout", 120.0)
         with self._registry_lock:
             info["tools"] = self._tool_registry.get_stats()
         return info
@@ -408,6 +421,7 @@ class LilithOrchestrator:
 
         Usa DynamicToolRegistry para descubrir tools disponibles (nativas + MCP)
         y TOOL_EXECUTORS + registry para la ejecucion.
+        Protegido por circuit breaker, retry y error handler global.
         """
         system_content = self._build_system_prompt(user_input)
         if self.messages and self.messages[0]["role"] == "system":
@@ -424,10 +438,19 @@ class LilithOrchestrator:
             if self.tool_call_count > MAX_TOOL_CALLS:
                 return "Demasiadas llamadas a tools. Parece que hay un loop infinito."
 
-            response = self.client.chat(self.messages, tools=available_tools)
+            try:
+                response = self.client.chat(self.messages, tools=available_tools)
+            except LilithError as e:
+                logger.error("LilithError en chat: %s", e)
+                return sanitize_output(format_error(e, context=self.client.name))
+            except Exception as e:
+                logger.error("Error inesperado en llamada LLM: %s", e)
+                return sanitize_output(format_error(e, context="LLM chat"))
 
             if "error" in response:
-                return f"Error: {response['error']}"
+                # Sanitizar el error antes de mostrarlo
+                error_msg = sanitize_output(str(response["error"]))
+                return f"Error: {error_msg}"
 
             choices = response.get("choices", [])
             if not choices:
@@ -439,6 +462,8 @@ class LilithOrchestrator:
 
             if not tool_calls:
                 response_content = message.get("content", "")
+                # Sanitizar respuesta antes de mostrar al usuario
+                response_content = sanitize_output(response_content)
                 self.messages.append({"role": "assistant", "content": response_content})
                 try:
                     self.memory.add_episode(
@@ -458,7 +483,7 @@ class LilithOrchestrator:
                 if isinstance(tool_args, str):
                     try:
                         tool_args = json.loads(tool_args)
-                    except:
+                    except Exception:
                         tool_args = {}
 
                 tools_used.append(tool_name)

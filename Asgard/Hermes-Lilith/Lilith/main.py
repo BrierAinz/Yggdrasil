@@ -30,6 +30,10 @@ from Lilith.Scheduler.task_scheduler import TaskScheduler, TaskStatus, get_sched
 from Lilith.Swarm.manager import get_swarm_manager
 from Lilith.tools.dashboard import handle_dashboard_command
 from Lilith.tools.mcp_connect import handle_mcp_command
+from Lilith.Core.graceful_shutdown import (
+    check_crash_recovery, clear_crash_marker, register_shutdown_hook,
+    save_crash_marker, setup_graceful_shutdown,
+)
 from Lilith.Core.skill_registry import get_skill_registry
 
 
@@ -140,6 +144,23 @@ class LilithCLI:
         self.skill_registry = get_skill_registry()
         # Iniciar BackgroundConsolidator en segundo plano
         self._consolidator: Optional[BackgroundConsolidator] = None
+
+        # ── Graceful Shutdown & Crash Recovery ──
+        def _on_shutdown():
+            """Salva sesión y detiene consolidador al cerrar."""
+            try:
+                self.orch.close()
+            except Exception:
+                pass
+            try:
+                self.memory.save()
+            except Exception:
+                pass
+            clear_crash_marker()
+
+        register_shutdown_hook(_on_shutdown)
+        setup_graceful_shutdown()
+        save_crash_marker(self.session_id)
 
     def p(self, msg, style=S.INFO):
         print(f"{style}{msg}{C.RESET}")
@@ -743,6 +764,14 @@ class LilithCLI:
 
     def run(self):
         clear()
+
+        # ── Crash Recovery ──────────────────────────────────────────
+        # Si Lilith cerró inesperadamente, ofrecemos restaurar la sesión
+        recovered = check_crash_recovery()
+        if recovered:
+            self.p(f" ⚠ Sesion previa detectada ({recovered})", S.WARNING)
+            self.p(" Usar /session load <id> para restaurar", S.DIM)
+        # ─────────────────────────────────────────────────────────────
 
         self.p(" Conectando con el Ether...", S.DIM)
         try:
