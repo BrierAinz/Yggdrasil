@@ -19,7 +19,9 @@ class Translator:
     ):
         self.source_lang = source_lang
         self.target_lang = target_lang
-        self.cache_dir = cache_dir or Path.home() / ".cache" / "autosub"
+        self.cache_dir = (
+            Path(cache_dir) if cache_dir else Path.home() / ".cache" / "autosub"
+        )
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self._db_path = self.cache_dir / "translations.db"
         self._init_db()

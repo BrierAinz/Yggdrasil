@@ -4,6 +4,53 @@
    Ultra-Premium Visual Enhancement
    ============================================ */
 
+/* Realm SVG Icons */
+.realm-icon-svg {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+.realm-tree-node:hover .realm-icon-svg,
+.feature-item:hover .realm-icon-svg {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+/* Hero image */
+.hero-banner {
+    width: 100%;
+    max-width: 960px;
+    margin: 2rem auto;
+    display: block;
+}
+
+/* Agent avatar */
+.agent-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-violet);
+    flex-shrink: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.agent-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+}
+
+/* Logo SVG */
+.logo-svg {
+    height: 32px;
+    width: auto;
+    vertical-align: middle;
+}
+
+/* Favicon */
+link[rel="icon"] svg {
+    fill: var(--accent-violet);
+}
+
 
 
 /* ============================================

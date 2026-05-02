@@ -78,6 +78,13 @@ jobs:
       - name: Run pytest (vanaheim-framework)
         run: pytest Vanaheim/vanaheim-framework/tests
 
+      - name: Install AutoSub dependencies
+        run: |
+          pip install -e Muspelheim/AutoSub
+
+      - name: Run pytest (autosub)
+        run: pytest Muspelheim/AutoSub/tests
+
   type-check:
     name: Type check (pyright)
     runs-on: ubuntu-latest
