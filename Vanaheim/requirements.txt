@@ -1,6 +1,6 @@
 # Vanaheim Framework
 pydantic>=2.0
-python-dotenv>=1.0
+python-dotenv>=1.2.2
 
 # Bot dependencies
 python-telegram-bot>=20.0
