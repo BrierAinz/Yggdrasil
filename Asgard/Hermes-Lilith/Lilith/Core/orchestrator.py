@@ -195,7 +195,10 @@ class LilithOrchestrator:
 
         Combina tools nativas y MCP en formato OpenAI function calling.
         Si el registry esta vacio (no deberia pasar), cae a ALL_TOOLS hardcoded.
+        Si _force_no_tools es True (batch mode), retorna lista vacia.
         """
+        if getattr(self, "_force_no_tools", False):
+            return []
         with self._registry_lock:
             tools = self._tool_registry.get_openai_tools()
         if tools:

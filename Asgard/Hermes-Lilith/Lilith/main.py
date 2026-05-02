@@ -1352,12 +1352,45 @@ Example:
     parser.add_argument(
         "--cwd", type=Path, help="Change working directory before starting"
     )
+    parser.add_argument(
+        "--batch", metavar="PROMPT",
+        help="Non-interactive mode: send PROMPT, print response, exit"
+    )
+    parser.add_argument(
+        "--batch-json", action="store_true",
+        help="With --batch, output result as JSON"
+    )
+    parser.add_argument(
+        "--batch-stream", action="store_true",
+        help="With --batch, stream tokens to stdout"
+    )
+    parser.add_argument(
+        "--batch-no-tools", action="store_true",
+        help="With --batch, disable tool use (text-only)"
+    )
+    parser.add_argument(
+        "--batch-sys", metavar="SYSTEM_PROMPT",
+        help="With --batch, custom system prompt"
+    )
 
     args = parser.parse_args()
 
     if args.version:
-        print("Lilith v3.0.0 - Dark Fantasy Edition")
+        print("Lilith v4.0.0 - Dark Fantasy Edition")
         sys.exit(0)
+
+    # ── Batch Mode ──────────────────────────────────────────────
+    if args.batch:
+        from Lilith.batch import run_batch
+        exit_code = run_batch(
+            prompt=args.batch,
+            model=args.model,
+            stream=args.batch_stream,
+            json_output=args.batch_json,
+            system_prompt=args.batch_sys,
+            no_tools=args.batch_no_tools,
+        )
+        sys.exit(exit_code)
 
     if args.cwd:
         os.chdir(args.cwd)
