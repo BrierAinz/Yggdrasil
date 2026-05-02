@@ -465,7 +465,7 @@ class LilithCLI:
             self.print_banner(model_name)
         else:
             self.p(
-                f" Lilith v2.1 | {model_name} | {len(Lilith_tools.ALL_TOOLS)} tools",
+                f" Lilith v3.0 | {model_name} | {len(Lilith_tools.ALL_TOOLS)} tools",
                 S.TITLE,
             )
             self.div()
@@ -578,7 +578,7 @@ class LilithCLI:
 
                 elif cmd == "memory":
                     self.div()
-                    self.p(" MEMORIAS DE LILITH v2.0 ", S.TITLE)
+                    self.p(" MEMORIAS DE LILITH v3.0 ", S.TITLE)
                     self.div()
 
                     # Stats generales
@@ -999,7 +999,7 @@ Example:
     args = parser.parse_args()
 
     if args.version:
-        print("Lilith v2.1.0 - Dark Fantasy Edition")
+        print("Lilith v3.0.0 - Dark Fantasy Edition")
         sys.exit(0)
 
     if args.cwd:
