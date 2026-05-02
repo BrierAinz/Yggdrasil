@@ -5,6 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import typer
+from autosub.batch import BatchProcessor
+from autosub.config import AutoSubConfig
 from autosub.exporter import export_segments
 from autosub.pipeline import Pipeline
 from autosub.transcriber import Transcriber
@@ -129,6 +131,67 @@ def pipeline(
 
 
 @app.command()
+def batch(
+    directory: str = typer.Argument(..., help="Directory to scan for media files"),
+    language: str = typer.Option(
+        None, "--lang", "-l", help="Source language (auto-detect)"
+    ),
+    target_lang: str = typer.Option(None, "--translate", "-t", help="Target language"),
+    model: str = typer.Option("base", "--model", "-m", help="Whisper model size"),
+    format: str = typer.Option(
+        "srt", "--format", "-f", help="Output format: srt, vtt, txt"
+    ),
+    output_dir: str = typer.Option(None, "--output-dir", "-o", help="Output directory"),
+    recursive: bool = typer.Option(
+        False, "--recursive", "-r", help="Scan subdirectories"
+    ),
+):
+    """Batch process all media files in a directory."""
+    bp = BatchProcessor(model_size=model)
+    try:
+        results = bp.process_batch(
+            directory=directory,
+            language=language,
+            target_lang=target_lang,
+            output_format=format,
+            output_dir=output_dir,
+            recursive=recursive,
+            console=console,
+        )
+    except (FileNotFoundError, ValueError) as e:
+        console.print(f"[red]Error: {e}[/]")
+        raise typer.Exit(code=1)
+
+
+@app.command()
+def config(
+    show: bool = typer.Option(False, "--show", "-s", help="Show current config"),
+    path: str = typer.Option(None, "--path", "-p", help="Path to config file"),
+):
+    """Manage AutoSub configuration (TOML)."""
+    if show or path is None:
+        cfg = (
+            AutoSubConfig.find_config()
+            if path is None
+            else AutoSubConfig.from_toml(path)
+        )
+        console.print("[bold green]AutoSub Configuration[/]")
+        table = Table()
+        table.add_column("Setting", style="cyan")
+        table.add_column("Value", style="white")
+        table.add_row("model_size", cfg.model_size)
+        table.add_row("device", cfg.device)
+        table.add_row("compute_type", cfg.compute_type)
+        table.add_row("default_language", cfg.default_language or "(auto)")
+        table.add_row("default_translate_to", cfg.default_translate_to or "(none)")
+        table.add_row("default_format", cfg.default_format)
+        table.add_row("cache_dir", cfg.cache_dir or "(default)")
+        table.add_row("output_dir", cfg.output_dir or "(same as input)")
+        table.add_row("batch_recursive", str(cfg.batch_recursive))
+        console.print(table)
+
+
+@app.command()
 def info():
     """Show AutoSub configuration and system info."""
     console.print("[bold green]AutoSub[/] v0.1.0")
@@ -139,6 +202,11 @@ def info():
     t = Transcriber()
     table.add_row("Default model", t.model_size)
     table.add_row("GPU available", str(t._has_gpu()))
+
+    cfg = AutoSubConfig.find_config()
+    table.add_row(
+        "Config source", "defaults" if cfg.model_size == "base" else "autosub.toml"
+    )
 
     console.print(table)
 
