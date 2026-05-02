@@ -2,7 +2,7 @@
 Swarm Executor - Ejecutor de tools para agentes swarm
 =====================================================
 Conecta SwarmAgent con el LLM y las tools reales del sistema.
-Reutiliza LMStudioClient y TOOL_EXECUTORS del orchestrator.
+Usa LLMProvider con fallback automatico en lugar de LMStudioClient directo.
 """
 import json
 import sys
@@ -14,7 +14,7 @@ if str(_project_root) not in sys.path:
     sys.path.insert(0, str(_project_root))
 
 from Lilith.Core.config import MAX_TOOL_CALLS
-from Lilith.Core.llm_client import LMStudioClient
+from Lilith.Core.llm_provider import LLMProvider, get_provider
 from Lilith.Swarm.prompts import build_agent_prompt
 from Lilith.tools import ALL_TOOLS
 from Lilith.tools.browser import execute_tool as execute_browser_tool
@@ -65,10 +65,14 @@ TOOL_EXECUTORS = {
 
 
 class SwarmExecutor:
-    """Ejecutor de tareas para agentes swarm usando LLM real."""
+    """Ejecutor de tareas para agentes swarm usando LLM con fallback.
 
-    def __init__(self, llm_client: Optional[LMStudioClient] = None):
-        self.client = llm_client or LMStudioClient()
+    Acepta opcionalmente un LLMProvider para control expliito, o usa
+    get_provider() para fallback automatico entre providers.
+    """
+
+    def __init__(self, llm_client: Optional[LLMProvider] = None):
+        self.client = llm_client or get_provider()
         self.max_tool_calls = MAX_TOOL_CALLS
 
     def execute_task(
@@ -215,6 +219,5 @@ class SwarmExecutor:
             }
 
     def close(self):
-        """Cierra recursos."""
-        if self.client:
-            self.client.close()
+        """Cierra recursos. LLMProvider no necesita close (usa httpx function-scoped)."""
+        pass

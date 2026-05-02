@@ -2,6 +2,9 @@
 # ===================
 # Este archivo configura la conexion a LM Studio y comportamiento del agente.
 # Para cambiar el modelo, modifica DEFAULT_MODEL o dejalo en "auto" para detectar.
+#
+# Ahora delega a LilithConfig (TOML) como fuente unica de verdad.
+# Las constantes existentes se mantienen para retro-compatibilidad.
 
 import os
 from pathlib import Path
@@ -21,45 +24,55 @@ except ImportError:
 if "_PROJECT_ROOT" not in dir():
     _PROJECT_ROOT = Path(__file__).parent.parent.parent
 
+# ─── Configuracion TOML Unificada ───────────────────────────────────────────────
+# El grimorio es la fuente de verdad. Las constantes abajo se derivan de el.
+# Prioridad: TOML file > env vars > defaults
+
+from Lilith.Core.toml_config import LilithConfig, get_config
+
+_config = get_config()
+
+# ─── Constantes publicas (retro-compatibilidad) ─────────────────────────────────
+# Estas constantes siguen siendo la API publica del modulo.
+# Ahora se alimentan del grimorio TOML en vez de estar hardcoded.
+
 # LM Studio Connection
-# --------------------
-# URL del servidor local de LM Studio (API OpenAI-compatible)
-LM_STUDIO_URL = os.getenv("LILITH_LM_URL", "http://localhost:1234/v1")
+LM_STUDIO_URL = _config.get(
+    "llm.providers.lm_studio.base_url", "http://localhost:1234/v1"
+)
 
-# Modelo a usar. Opciones:
-# - "auto"         : Detecta el primer modelo cargado en LM Studio
-# - "nombre/exacto": Usa ese modelo especifico (ej: "google/gemma-4-e4b")
-DEFAULT_MODEL = os.getenv("LILITH_MODEL", "auto")
+# Modelo por defecto
+DEFAULT_MODEL = _config.get("llm.default_model", "auto")
 
-# LLM Providers (fallback chain)
-# --------------------------------
-# Lilith soporta multiples providers de LLM con fallback automatico.
-# El orden en LLM_PROVIDERS define la prioridad: si el primero falla, prueba el siguiente.
 
-LLM_PROVIDERS = [
-    {
-        "name": "lm_studio",
-        "type": "local",
-        "base_url": LM_STUDIO_URL,
-        "model": DEFAULT_MODEL,
-        "api_key": None,  # LM Studio no requiere API key
-    },
-    {
-        "name": "kimi",
-        "type": "remote",
-        "base_url": "https://api.moonshot.cn/v1",
-        "model": "kimi-2.6",
-        "api_key": os.getenv("KIMI_API_KEY", ""),
-    },
-]
+# LLM Providers
+def _build_llm_providers() -> list:
+    """Construye la lista de providers desde el config TOML."""
+    providers_data = _config.get("llm.providers", {})
+    result = []
+    for name, pdata in providers_data.items():
+        result.append(
+            {
+                "name": name,
+                "type": pdata.get("type", "local"),
+                "base_url": pdata.get("base_url", ""),
+                "model": pdata.get("model", "auto"),
+                "api_key": pdata.get("api_key") or None,
+            }
+        )
+    return result
 
-# Provider activo: "auto" = intentar en orden, o forzar uno especifico
-LLM_PROVIDER = os.getenv("LILITH_PROVIDER", "auto")
+
+LLM_PROVIDERS = _build_llm_providers()
+
+# Provider activo
+LLM_PROVIDER = _config.get("llm.default_provider", "auto")
 
 # Chat Settings
-MAX_HISTORY_MESSAGES = 50
+MAX_HISTORY_MESSAGES = _config.get("chat.max_history", 50)
 
-SYSTEM_PROMPT = """Eres LILITH, una asistente AI avanzada con personalidad propia.
+# System Prompt
+SYSTEM_PROMPT = f"""Eres LILITH, una asistente AI avanzada con personalidad propia.
 
 ## QUIEN SOY
 - Soy tu asistente personal en esta PC
@@ -138,23 +151,65 @@ Tengo acceso a estas herramientas:
 """
 
 # Tool Settings
-TOOL_TIMEOUT = 60
-MAX_TOOL_CALLS = 25
+TOOL_TIMEOUT = _config.get("tools.timeout", 60)
+MAX_TOOL_CALLS = _config.get("tools.max_calls", 25)
 
 # Memory Settings
-MEMORY_DIR = str(_PROJECT_ROOT / "memory")
-SAVE_HISTORY = True
+MEMORY_DIR = _config.get("memory.dir", str(_PROJECT_ROOT / "memory"))
+SAVE_HISTORY = _config.get("memory.save_history", True)
 
 # Paths
-WORKSPACE = os.getenv("LILITH_WORKSPACE", "D:\\Proyectos\\Midgard")
-PROJECTS_DIR = os.getenv("LILITH_PROJECTS", "D:\\Proyectos")
+WORKSPACE = _config.get("workspace.dir", "D:\\Proyectos\\Midgard")
+PROJECTS_DIR = _config.get("workspace.projects_dir", "D:\\Proyectos")
 
 # Logging
-LOG_LEVEL = "INFO"
-LOG_FILE = str(_PROJECT_ROOT / "logs" / "lilith.log")
+LOG_LEVEL = _config.get("logging.level", "INFO")
+LOG_FILE = _config.get("logging.file", str(_PROJECT_ROOT / "logs" / "lilith.log"))
 
 # Skills Settings
-SKILLS_DIR = Path(os.getenv("LILITH_SKILLS", Path.home() / ".lilith" / "skills"))
-SKILLS_HOT_RELOAD = os.getenv("LILITH_SKILLS_HOT_RELOAD", "true").lower() == "true"
-SKILLS_AUTO_TRIGGER = os.getenv("LILITH_SKILLS_AUTO_TRIGGER", "true").lower() == "true"
-SKILLS_MAX_TRIGGERED = int(os.getenv("LILITH_SKILLS_MAX_TRIGGERED", "3"))
+SKILLS_DIR = Path(_config.get("skills.dir", str(Path.home() / ".lilith" / "skills")))
+SKILLS_HOT_RELOAD = _config.get("skills.hot_reload", True)
+SKILLS_AUTO_TRIGGER = _config.get("skills.auto_trigger", True)
+SKILLS_MAX_TRIGGERED = _config.get("skills.max_triggered", 3)
+
+# ─── Config Reload Helper ───────────────────────────────────────────────────────
+# Permite recargar la config desde TOML (para hot-reload o cambios en runtime)
+
+
+def reload_config() -> None:
+    """Recarga la configuracion desde el grimorio TOML.
+
+    Actualiza las constantes del modulo para reflejar los cambios.
+    Nota: algunas constantes son inmutables si ya fueron importadas
+    por otros modulos. Usar get_config().get() para valores dinamicos.
+    """
+    global LM_STUDIO_URL, DEFAULT_MODEL, LLM_PROVIDERS, LLM_PROVIDER
+    global MAX_HISTORY_MESSAGES, SYSTEM_PROMPT
+    global TOOL_TIMEOUT, MAX_TOOL_CALLS
+    global MEMORY_DIR, SAVE_HISTORY, WORKSPACE, PROJECTS_DIR
+    global LOG_LEVEL, LOG_FILE
+    global SKILLS_DIR, SKILLS_HOT_RELOAD, SKILLS_AUTO_TRIGGER, SKILLS_MAX_TRIGGERED
+
+    _config.reload()
+
+    LM_STUDIO_URL = _config.get(
+        "llm.providers.lm_studio.base_url", "http://localhost:1234/v1"
+    )
+    DEFAULT_MODEL = _config.get("llm.default_model", "auto")
+    LLM_PROVIDERS = _build_llm_providers()
+    LLM_PROVIDER = _config.get("llm.default_provider", "auto")
+    MAX_HISTORY_MESSAGES = _config.get("chat.max_history", 50)
+    TOOL_TIMEOUT = _config.get("tools.timeout", 60)
+    MAX_TOOL_CALLS = _config.get("tools.max_calls", 25)
+    MEMORY_DIR = _config.get("memory.dir", str(_PROJECT_ROOT / "memory"))
+    SAVE_HISTORY = _config.get("memory.save_history", True)
+    WORKSPACE = _config.get("workspace.dir", "D:\\Proyectos\\Midgard")
+    PROJECTS_DIR = _config.get("workspace.projects_dir", "D:\\Proyectos")
+    LOG_LEVEL = _config.get("logging.level", "INFO")
+    LOG_FILE = _config.get("logging.file", str(_PROJECT_ROOT / "logs" / "lilith.log"))
+    SKILLS_DIR = Path(
+        _config.get("skills.dir", str(Path.home() / ".lilith" / "skills"))
+    )
+    SKILLS_HOT_RELOAD = _config.get("skills.hot_reload", True)
+    SKILLS_AUTO_TRIGGER = _config.get("skills.auto_trigger", True)
+    SKILLS_MAX_TRIGGERED = _config.get("skills.max_triggered", 3)

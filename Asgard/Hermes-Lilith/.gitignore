@@ -38,6 +38,9 @@ logs/
 .env.local
 .env.production
 
+# Lilith config (may contain API keys or local paths)
+config.toml
+
 # Memory & Data (generated at runtime)
 memory/
 *.db

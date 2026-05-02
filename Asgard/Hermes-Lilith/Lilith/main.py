@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import argparse
 
-import Lilith.Core.llm_client as llm
+import Lilith.Core.llm_provider as llm_provider
 import Lilith.Core.orchestrator as orch
 import Lilith.tools as Lilith_tools
 from Lilith.Agents.agent_manager import AgentCapability, AgentManager, get_agent_manager
@@ -197,11 +197,11 @@ class LilithCLI:
             try:
                 # Si se pide LLM, inicializar executor
                 if use_llm and not mgr._executor:
-                    from Lilith.Core.llm_client import LMStudioClient
+                    from Lilith.Core.llm_provider import get_provider
                     from Lilith.Swarm.executor import SwarmExecutor
 
-                    client = LMStudioClient()
-                    executor = SwarmExecutor(client)
+                    provider = get_provider()
+                    executor = SwarmExecutor(provider)
                     mgr._executor = executor
                     mgr._use_llm = True
                 agent_ids = mgr.spawn_swarm(task=task, num_agents=num)
@@ -438,27 +438,29 @@ class LilithCLI:
         clear()
 
         self.p(" Conectando con el Ether...", S.DIM)
-        if not llm.test_connection():
+        try:
+            provider = llm_provider.get_provider()
+        except ConnectionError as e:
             if not self.no_banner:
                 self.print_banner("Sin conexion")
             else:
-                self.p(" [ERROR] No hay conexion con LM Studio.", S.ERROR)
+                self.p(" [ERROR] No hay conexion con ningun provider LLM.", S.ERROR)
             self.p("", "")
             self.p(" ╔════════ ERROR ARCANO ════════╗", S.ERROR)
             self.p(" ║                                ║", S.ERROR)
-            self.p(" ║  No puedo conectar con LM    ║", S.ERROR)
-            self.p(" ║  Studio. Asegurate de:        ║", S.ERROR)
+            self.p(" ║  No puedo conectar con ningun  ║", S.ERROR)
+            self.p(" ║  provider LLM. Asegurate de:   ║", S.ERROR)
             self.p(" ║  1. Abrir LM Studio           ║", S.ERROR)
+            self.p(" ║     o configurar API remota   ║", S.ERROR)
             self.p(" ║  2. Cargar un modelo          ║", S.ERROR)
             self.p(" ║  3. Activar Local Server     ║", S.ERROR)
             self.p(" ║                                ║", S.ERROR)
+            self.p(f" ║  Detalle: {str(e)[:30]:<28} ║", S.ERROR)
             self.p(" ╚═══════════════════════════════════╝", S.ERROR)
             self.p("")
             return
 
-        client = llm.LMStudioClient()
-        model_name = client.model
-        client.close()
+        model_name = f"{provider.name}/{provider.model}"
         if not self.no_banner:
             self.print_banner(model_name)
         else:
@@ -545,6 +547,15 @@ class LilithCLI:
                     self.div()
                     self.p(f"  Mensajes: {self.msg_count}", S.INFO)
                     self.p(f"  Tools: {len(Lilith_tools.ALL_TOOLS)}", S.INFO)
+                    # Mostrar info del provider LLM activo
+                    try:
+                        prov_info = self.orch.get_provider_info()
+                        self.p(
+                            f"  LLM: {prov_info['name']}/{prov_info['model']} ({prov_info['type']})",
+                            S.INFO,
+                        )
+                    except Exception:
+                        self.p("  LLM: (sin info)", S.WARNING)
                     stats = self.memory.get_stats()
                     self.p(f"  Episodios: {stats['episodes']}", S.INFO)
                     self.p(f"  Comprimidos: {stats['compressed_episodes']}", S.INFO)
