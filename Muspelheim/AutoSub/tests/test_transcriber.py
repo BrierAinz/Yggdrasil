@@ -1,7 +1,7 @@
 """Tests for autosub.transcriber module."""
 
 import pytest
-from autosub.transcriber import Segment, Transcriber
+from autosub.transcriber import LanguageInfo, Segment, Transcriber
 
 
 class TestSegment:
@@ -19,6 +19,19 @@ class TestSegment:
         assert "hello" in result
         assert "1.00" in result
         assert "3.00" in result
+
+
+class TestLanguageInfo:
+    """Tests for the LanguageInfo dataclass."""
+
+    def test_language_info_fields(self):
+        li = LanguageInfo(language="es", language_probability=0.95)
+        assert li.language == "es"
+        assert li.language_probability == 0.95
+
+    def test_language_info_english(self):
+        li = LanguageInfo(language="en", language_probability=0.88)
+        assert li.language == "en"
 
 
 class TestTranscriber:
@@ -44,6 +57,11 @@ class TestTranscriber:
         t = Transcriber(model_size="tiny")
         with pytest.raises(FileNotFoundError):
             t.transcribe("/nonexistent/file.wav")
+
+    def test_detect_language_invalid_path_raises(self):
+        t = Transcriber(model_size="tiny")
+        with pytest.raises(FileNotFoundError):
+            t.detect_language("/nonexistent/file.wav")
 
     def test_has_gpu_returns_bool(self):
         result = Transcriber._has_gpu()

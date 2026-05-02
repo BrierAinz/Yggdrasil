@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 
 @dataclass
@@ -15,6 +16,14 @@ class Segment:
 
     def __str__(self) -> str:
         return f"[{self.start:.2f}s → {self.end:.2f}s] {self.text}"
+
+
+@dataclass
+class LanguageInfo:
+    """Detected language information from transcription."""
+
+    language: str
+    language_probability: float
 
 
 class Transcriber:
@@ -56,7 +65,39 @@ class Transcriber:
         except ImportError:
             return False
 
-    def transcribe(self, audio_path: str, language: str | None = None) -> list[Segment]:
+    def detect_language(self, audio_path: str) -> LanguageInfo:
+        """Detect the language of an audio file without full transcription.
+
+        Args:
+            audio_path: Path to the audio/video file.
+
+        Returns:
+            LanguageInfo with detected language and confidence.
+
+        Raises:
+            FileNotFoundError: If the audio file does not exist.
+        """
+        path = Path(audio_path)
+        if not path.exists():
+            raise FileNotFoundError(f"Audio file not found: {audio_path}")
+
+        self._load_model()
+        segments_iter, info = self._model.transcribe(
+            str(path),
+            word_timestamps=False,
+            vad_filter=True,
+        )
+        # Consume iterator to trigger language detection
+        _ = list(segments_iter)
+
+        return LanguageInfo(
+            language=info.language,
+            language_probability=info.language_probability,
+        )
+
+    def transcribe(
+        self, audio_path: str, language: str | None = None
+    ) -> list[Segment] | tuple[list[Segment], LanguageInfo]:
         """Transcribe an audio/video file and return timed segments.
 
         Args:
@@ -64,13 +105,12 @@ class Transcriber:
             language: Language code (e.g. 'en', 'es'). None for auto-detect.
 
         Returns:
-            List of Segment objects with text and timing.
+            If language is specified: list of Segment objects.
+            If language is None: tuple of (segments, LanguageInfo).
 
         Raises:
             FileNotFoundError: If the audio file does not exist.
         """
-        from pathlib import Path
-
         path = Path(audio_path)
         if not path.exists():
             raise FileNotFoundError(f"Audio file not found: {audio_path}")
@@ -82,7 +122,17 @@ class Transcriber:
             word_timestamps=True,
             vad_filter=True,
         )
-        return [
+        segments = [
             Segment(text=s.text.strip(), start=s.start, end=s.end)
             for s in segments_iter
         ]
+
+        # If language was auto-detected, include detection info
+        if language is None:
+            lang_info = LanguageInfo(
+                language=info.language,
+                language_probability=info.language_probability,
+            )
+            return segments, lang_info
+
+        return segments
