@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "📚 Documentation"
+    url: "https://brierainz.github.io/Yggdrasil/"
+    about: "Check the documentation site for guides, API reference, and architecture details."
+  - name: "💬 Questions & Discussions"
+    url: "https://github.com/BrierAinz/Yggdrasil/discussions"
+    about: "Ask questions, share ideas, or show off what you've built."

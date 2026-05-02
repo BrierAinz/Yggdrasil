@@ -1,0 +1,59 @@
+name: Feature Request
+description: Suggest an idea or enhancement for Yggdrasil
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > 🌳 Suggest a feature or enhancement for the Yggdrasil ecosystem!
+
+  - type: dropdown
+    id: realm
+    attributes:
+      label: Which Realm?
+      description: Which realm would this feature belong to?
+      options:
+        - "🏰 Asgard (Core Technology)"
+        - "🤖 Vanaheim (AI Agents)"
+        - "✨ Alfheim (UI Prototypes)"
+        - "📚 Svartalfheim (Knowledge Base)"
+        - "🔥 Muspelheim (Active Development)"
+        - "❄️ Niflheim (Resources)"
+        - "🌍 Midgard (Personal Apps)"
+        - "🐉 Jotunheim (Massive Projects)"
+        - "🌐 Cross-realm / Infrastructure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Motivation
+      description: What problem does this feature solve? What's the current limitation?
+      placeholder: "I'm frustrated when... / It would be great if Yggdrasil could..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe your ideal solution. How should it work?
+      placeholder: "It would be awesome if..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What alternative solutions or features have you considered?
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Screenshots, mockups, links, examples from other projects, etc.

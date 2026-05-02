@@ -1,0 +1,44 @@
+# CODEOWNERS — Yggdrasil Ecosystem
+# Each realm has a designated owner for code review purposes.
+
+# Default owner for everything
+* @BrierAinz
+
+# Core Technology — Hermes-Lilith backend
+/Asgard/ @BrierAinz
+/Asgard/lilith-core/ @BrierAinz
+/Asgard/lilith-memory/ @BrierAinz
+/Asgard/lilith-tools/ @BrierAinz
+/Asgard/lilith-orchestrator/ @BrierAinz
+/Asgard/lilith-api/ @BrierAinz
+/Asgard/lilith-cli/ @BrierAinz
+
+# AI Agents — Telegram bot, bridge, framework
+/Vanaheim/ @BrierAinz
+
+# UI Prototypes — Dashboard, VSCode extension
+/Alfheim/ @BrierAinz
+
+# Knowledge Base — Docs, playbooks, ADRs
+/Svartalfheim/ @BrierAinz
+
+# Active Development — Sprint projects
+/Muspelheim/ @BrierAinz
+
+# Resources — Datasets, models
+/Niflheim/ @BrierAinz
+
+# Personal Apps — Finished daily-use apps
+/Midgard/ @BrierAinz
+
+# Massive Projects — Long-term builds
+/Jotunheim/ @BrierAinz
+
+# Graveyard — Archived projects
+/Helheim/ @BrierAinz
+
+# Infrastructure
+/.github/ @BrierAinz
+/website/ @BrierAinz
+/docs/ @BrierAinz
+/scripts/ @BrierAinz
