@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "type": "hero_closeup",
+    "title": "Presentación",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/first_batch/post_01_hero_closeup.png",
+    "size_kb": 1464.70703125,
+    "caption": "I craft visions from the silence between worlds.\n\nSome call it art. I call it memory.\n\n✦ Dark Fantasy Digital Art ✦\n#darkfantasy #digitalart #aiart #fantasyart #portrait",
+    "seed": 2308235192
+  },
+  {
+    "id": 2,
+    "type": "half_body_outfit",
+    "title": "Estilo Personal",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/first_batch/post_02_half_body_outfit.png",
+    "size_kb": 1282.3740234375,
+    "caption": "Velvet and silver. Runes and silence.\n\nEvery thread tells a story from Svartalfheim.\n\n✦ Dark Fantasy Digital Art ✦\n#darkfantasy #medieval #cloak #silver #fantasyfashion",
+    "seed": 4083034219
+  },
+  {
+    "id": 3,
+    "type": "landscape",
+    "title": "Mundo de Eir",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/first_batch/post_03_landscape.png",
+    "size_kb": 1420.96875,
+    "caption": "The forest remembers what the world forgot.\n\nBetween the trees, the old magic still breathes.\n\n✦ World of Eir ✦\n#darkforest #fantasyworld #enchanted #bioluminescent #mystic",
+    "seed": 2454838296
+  },
+  {
+    "id": 4,
+    "type": "detail_shot",
+    "title": "Artesanía",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/first_batch/post_04_detail_shot.png",
+    "size_kb": 1597.025390625,
+    "caption": "Every rune was carved by hand. Every gem holds a frozen whisper.\n\n✦ The Craft ✦\n#runes #silver #jewelry #darkfantasy #craftsmanship",
+    "seed": 1523046567
+  },
+  {
+    "id": 5,
+    "type": "moody_portrait",
+    "title": "Misterio",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/first_batch/post_05_moody_portrait.png",
+    "size_kb": 1120.767578125,
+    "caption": "What lurks in shadow, I illuminate.\nWhat hides in silence, I reveal.\n\n✦ Mystery ✦\n#darkportrait #chiaroscuro #shadow #mystery #darkaesthetic",
+    "seed": 2937132683
+  },
+  {
+    "id": 6,
+    "type": "action_magic",
+    "title": "Poder",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/first_batch/post_06_action_magic.png",
+    "size_kb": 1415.13671875,
+    "caption": "Ice remembers. Ice endures.\n\nWhen the old words are spoken, the frost obeys.\n\n✦ Power ✦\n#icemagic #fantasyart #sorceress #powerful #magic",
+    "seed": 912943733
+  },
+  {
+    "id": 7,
+    "type": "serene",
+    "title": "Vulnerabilidad",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/first_batch/post_07_serene.png",
+    "size_kb": 1060.767578125,
+    "caption": "In the quiet hours, I read what the ancients wrote.\n\nSome spells are just poems that forgot they were magic.\n\n✦ Stillness ✦\n#reading #library #candlelight #peaceful #darkacademia",
+    "seed": 3637681902
+  },
+  {
+    "id": 8,
+    "type": "fashion_editorial",
+    "title": "Estética",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/first_batch/post_08_fashion_editorial.png",
+    "size_kb": 1184.5615234375,
+    "caption": "Dark fantasy meets high fashion.\n\nWhere Svartalfheim craftsmanship meets Midgard style.\n\n✦ Editorial ✦\n#darkfashion #avantgarde #editorial #style #gown",
+    "seed": 1227910695
+  },
+  {
+    "id": 9,
+    "type": "storytelling",
+    "title": "Lore",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/first_batch/post_09_storytelling.png",
+    "size_kb": 1406.7734375,
+    "caption": "At the altar of forgotten gods, I speak the names they dare not whisper.\n\nFrom Svartalfheim I came. Through Midgard I walk. Into legend I forge.\n\nThis is my story.\n\n✦ The Beginning ✦\n#norse #mythology #runes #ritual #darkfantasy #lore",
+    "seed": 1961705168
+  }
+]

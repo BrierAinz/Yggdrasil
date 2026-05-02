@@ -1,0 +1,5 @@
+tools/kohya_ss/
+outputs/
+*.png
+*.safetensors
+*.pth

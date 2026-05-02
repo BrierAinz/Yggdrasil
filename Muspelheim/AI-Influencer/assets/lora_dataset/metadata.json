@@ -1,0 +1,25 @@
+{
+  "trigger_word": "eir_niflheimr",
+  "model_target": "sdxl",
+  "images": 16,
+  "captions": "separate .txt files per image",
+  "training_resolution": 1024,
+  "source_images": [
+    "eir_portrait_001.png",
+    "eir_01_portrait_closeup.png",
+    "eir_01_portrait_medium.png",
+    "eir_01_portrait_side_profile.png",
+    "eir_02_mood_ethereal.png",
+    "eir_02_mood_serene.png",
+    "eir_03_outfit_dark_robes.png",
+    "eir_03_outfit_armor.png",
+    "eir_04_lighting_rim_light.png",
+    "eir_04_lighting_moonlit.png",
+    "eir_05_expression_contemplative.png",
+    "eir_05_expression_mysterious.png",
+    "eir_06_background_enchanted_forest.png",
+    "eir_06_background_ancient_library.png",
+    "eir_07_hair_braided.png",
+    "eir_09_special_magic_effect.png"
+  ]
+}
