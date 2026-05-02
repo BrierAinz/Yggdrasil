@@ -3,7 +3,7 @@ pydantic>=2.0
 python-dotenv>=1.0
 
 # Bot dependencies
-python-telegram-bot>=20.0
+python-telegram-bot>=22.7
 beautifulsoup4>=4.12
 lxml>=4.9
 selenium>=4.15
