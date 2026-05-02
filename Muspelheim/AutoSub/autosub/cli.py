@@ -6,6 +6,7 @@ from pathlib import Path
 
 import typer
 from autosub.exporter import export_segments
+from autosub.pipeline import Pipeline
 from autosub.transcriber import Transcriber
 from autosub.translator import Translator
 from rich.console import Console
@@ -93,6 +94,38 @@ def translate(
 
     out_path.write_text(result, encoding="utf-8")
     console.print(f"[green]Written to: {out_path}[/]")
+
+
+@app.command()
+def pipeline(
+    input_file: str = typer.Argument(..., help="Path to audio/video file"),
+    language: str = typer.Option(None, "--lang", "-l", help="Source language"),
+    target_lang: str = typer.Option(None, "--translate", "-t", help="Target language"),
+    model: str = typer.Option("base", "--model", "-m", help="Whisper model size"),
+    format: str = typer.Option(
+        "srt", "--format", "-f", help="Output format: srt, vtt, txt"
+    ),
+    output: str = typer.Option(None, "--output", "-o", help="Output file path"),
+):
+    """Full pipeline: transcribe → translate → export."""
+    pipe = Pipeline(model_size=model)
+    try:
+        result = pipe.run(
+            input_path=input_file,
+            language=language,
+            target_lang=target_lang,
+            output_format=format,
+            output_path=output,
+            console=console,
+        )
+        console.print(f"[bold green]✓ Pipeline complete[/]")
+        console.print(f"  Segments: {result.segments_count}")
+        console.print(f"  Output: {result.output_path}")
+        if result.translated:
+            console.print(f"  Translated to: {result.target_lang}")
+    except FileNotFoundError as e:
+        console.print(f"[red]Error: {e}[/]")
+        raise typer.Exit(code=1)
 
 
 @app.command()
