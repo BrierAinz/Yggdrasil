@@ -1,0 +1,16 @@
+{
+  "created": "2025-05-02T00:00:00",
+  "platforms": {
+    "instagram": {"followers": 0, "following": 0, "posts": 0},
+    "tiktok": {"followers": 0, "following": 0, "posts": 0},
+    "twitter": {"followers": 0, "following": 0, "posts": 0},
+    "patreon": {"patrons": 0, "income": 0},
+    "civitai": {"downloads": 0, "favorites": 0}
+  },
+  "daily": [],
+  "content": {
+    "generated": 0,
+    "posted": 0,
+    "engagement_rate": 0
+  }
+}
