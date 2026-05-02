@@ -280,6 +280,11 @@ class DashboardServer:
             "swarm_status": self._handle_swarm_status,
             "mcp_status": self._handle_mcp_status,
             "memory_search": self._handle_memory_search,
+            "memory_stats": self._handle_memory_stats,
+            "memory_entities": self._handle_memory_entities,
+            "memory_facts": self._handle_memory_facts,
+            "memory_graph": self._handle_memory_graph,
+            "memory_episodes": self._handle_memory_episodes,
             "ping": self._handle_ping,
         }
 
@@ -408,6 +413,152 @@ class DashboardServer:
 
         return {"type": "memory_results", "results": []}
 
+    def _handle_memory_stats(self, data: Dict) -> Dict:
+        """Retorna estadísticas de la memoria de Lilith."""
+        try:
+            if self.lilith and hasattr(self.lilith, "memory"):
+                mem = self.lilith.memory
+                # Support both EnhancedMemory and basic memory
+                if hasattr(mem, "get_stats"):
+                    stats = mem.get_stats()
+                elif hasattr(mem, "db"):
+                    # Fallback: query counts directly from SQLite
+                    import sqlite3
+                    with sqlite3.connect(mem.db) as conn:
+                        episodes = conn.execute("SELECT COUNT(*) FROM episodes WHERE compressed = 0").fetchone()[0]
+                        compressed = conn.execute("SELECT COUNT(*) FROM episodes WHERE compressed = 1").fetchone()[0]
+                        summaries = conn.execute("SELECT COUNT(*) FROM summaries").fetchone()[0]
+                        entities = conn.execute("SELECT COUNT(*) FROM entities").fetchone()[0]
+                        facts = conn.execute("SELECT COUNT(*) FROM facts").fetchone()[0]
+                        errors = conn.execute("SELECT COUNT(*) FROM errors").fetchone()[0]
+                        stats = {
+                            "episodes": episodes,
+                            "compressed_episodes": compressed,
+                            "summaries": summaries,
+                            "entities": entities,
+                            "facts": facts,
+                            "errors": errors,
+                        }
+                else:
+                    stats = {"episodes": 0, "entities": 0, "facts": 0, "errors": 0, "summaries": 0, "compressed_episodes": 0}
+                return {"type": "memory_stats", "stats": stats}
+        except Exception as e:
+            return {"type": "error", "message": f"Memory stats error: {e}"}
+
+        return {"type": "memory_stats", "stats": {}}
+
+    def _handle_memory_entities(self, data: Dict) -> Dict:
+        """Retorna entidades de la memoria."""
+        try:
+            if self.lilith and hasattr(self.lilith, "memory"):
+                mem = self.lilith.memory
+                entity_type = data.get("entity_type", None)
+                min_mentions = data.get("min_mentions", 1)
+                if hasattr(mem, "get_entities"):
+                    entities = mem.get_entities(entity_type=entity_type, min_mentions=min_mentions)
+                else:
+                    entities = []
+                # Serialize non-JSON-safe values
+                for e in entities:
+                    if "embedding" in e:
+                        del e["embedding"]
+                    if "context" in e and e["context"] and not isinstance(e["context"], str):
+                        e["context"] = str(e["context"])
+                return {"type": "memory_entities", "entities": entities}
+        except Exception as e:
+            return {"type": "error", "message": f"Memory entities error: {e}"}
+
+        return {"type": "memory_entities", "entities": []}
+
+    def _handle_memory_facts(self, data: Dict) -> Dict:
+        """Retorna hechos/hechos de la memoria."""
+        try:
+            if self.lilith and hasattr(self.lilith, "memory"):
+                mem = self.lilith.memory
+                category = data.get("category", None)
+                if hasattr(mem, "get_facts"):
+                    facts = mem.get_facts(category=category)
+                else:
+                    facts = []
+                return {"type": "memory_facts", "facts": facts}
+        except Exception as e:
+            return {"type": "error", "message": f"Memory facts error: {e}"}
+
+        return {"type": "memory_facts", "facts": []}
+
+    def _handle_memory_graph(self, data: Dict) -> Dict:
+        """Retorna datos del grafo de conocimiento para visualización."""
+        try:
+            if self.lilith and hasattr(self.lilith, "memory"):
+                mem = self.lilith.memory
+                graph_data = {"nodes": [], "edges": []}
+
+                # Get graph from knowledge graph if available
+                if hasattr(mem, "graph"):
+                    g = mem.graph
+                    # Get all entities as nodes
+                    entities = mem.get_entities() if hasattr(mem, "get_entities") else []
+                    for e in entities:
+                        node = {
+                            "id": e.get("name", e.get("id", "")),
+                            "label": e.get("name", ""),
+                            "type": e.get("type", "unknown"),
+                            "mentions": e.get("mentions", 1),
+                            "first_seen": e.get("first_seen", ""),
+                            "last_seen": e.get("last_seen", ""),
+                        }
+                        graph_data["nodes"].append(node)
+
+                    # Get edges from knowledge graph
+                    if hasattr(g, "get_all_edges"):
+                        edges = g.get_all_edges()
+                        for edge in edges:
+                            graph_data["edges"].append({
+                                "source": edge.get("source", edge[0] if isinstance(edge, (list, tuple)) else ""),
+                                "target": edge.get("target", edge[1] if isinstance(edge, (list, tuple)) else ""),
+                                "relation": edge.get("relation", edge[2] if isinstance(edge, (list, tuple)) else "related"),
+                                "strength": edge.get("strength", 1.0),
+                            })
+                    elif hasattr(g, "edges"):
+                        # Try direct attribute access
+                        for src, targets in getattr(g, "edges", {}).items():
+                            if isinstance(targets, dict):
+                                for tgt, info in targets.items():
+                                    graph_data["edges"].append({
+                                        "source": src,
+                                        "target": tgt,
+                                        "relation": info.get("relation", "related") if isinstance(info, dict) else "related",
+                                        "strength": info.get("strength", 1.0) if isinstance(info, dict) else 1.0,
+                                    })
+                return {"type": "memory_graph", "graph": graph_data}
+        except Exception as e:
+            return {"type": "error", "message": f"Memory graph error: {e}"}
+
+        return {"type": "memory_graph", "graph": {"nodes": [], "edges": []}}
+
+    def _handle_memory_episodes(self, data: Dict) -> Dict:
+        """Retorna episodios recientes de la memoria."""
+        try:
+            if self.lilith and hasattr(self.lilith, "memory"):
+                mem = self.lilith.memory
+                count = data.get("count", 20)
+                session_id = data.get("session_id", None)
+                if hasattr(mem, "get_recent_episodes"):
+                    episodes = mem.get_recent_episodes(count=count, session_id=session_id)
+                elif hasattr(mem, "get_full_history"):
+                    episodes = mem.get_full_history(limit=count)
+                else:
+                    episodes = []
+                # Remove embedding blobs for serialization
+                for ep in episodes:
+                    if "embedding" in ep:
+                        del ep["embedding"]
+                return {"type": "memory_episodes", "episodes": episodes, "count": len(episodes)}
+        except Exception as e:
+            return {"type": "error", "message": f"Memory episodes error: {e}"}
+
+        return {"type": "memory_episodes", "episodes": [], "count": 0}
+
     def _handle_ping(self, data: Dict) -> Dict:
         """Responde a ping."""
         return {"type": "pong", "timestamp": time.time()}
@@ -524,6 +675,46 @@ def _make_http_handler(dashboard: DashboardServer):
 
             if path == "/api/chat_history":
                 self._send_json(dashboard._chat_history)
+                return
+
+            # ── Memory API Endpoints ──────────────────────────────────
+            if path == "/api/memory/stats":
+                result = dashboard._handle_memory_stats({})
+                self._send_json(result.get("stats", result))
+                return
+
+            if path == "/api/memory/entities":
+                entity_type = urllib.parse.parse_qs(parsed.query).get("type", [None])[0]
+                min_mentions = int(urllib.parse.parse_qs(parsed.query).get("min_mentions", ["1"])[0])
+                result = dashboard._handle_memory_entities({"entity_type": entity_type, "min_mentions": min_mentions})
+                self._send_json(result.get("entities", []))
+                return
+
+            if path == "/api/memory/facts":
+                category = urllib.parse.parse_qs(parsed.query).get("category", [None])[0]
+                result = dashboard._handle_memory_facts({"category": category})
+                self._send_json(result.get("facts", []))
+                return
+
+            if path == "/api/memory/graph":
+                result = dashboard._handle_memory_graph({})
+                self._send_json(result.get("graph", {"nodes": [], "edges": []}))
+                return
+
+            if path == "/api/memory/episodes":
+                count = int(urllib.parse.parse_qs(parsed.query).get("count", ["20"])[0])
+                session_id = urllib.parse.parse_qs(parsed.query).get("session_id", [None])[0]
+                result = dashboard._handle_memory_episodes({"count": count, "session_id": session_id})
+                self._send_json(result.get("episodes", []))
+                return
+
+            if path == "/api/memory/search":
+                query = urllib.parse.parse_qs(parsed.query).get("q", [""])[0]
+                if query:
+                    result = dashboard._handle_memory_search({"query": query})
+                    self._send_json(result.get("results", []))
+                else:
+                    self._send_json({"error": "Missing query parameter 'q'"})
                 return
 
             # Archivos estáticos

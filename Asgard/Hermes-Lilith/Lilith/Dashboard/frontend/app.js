@@ -487,6 +487,21 @@ function handleMessage(data) {
         case 'memory_results':
             updateMemoryResults(data.results || []);
             break;
+        case 'memory_stats':
+            updateMemoryStats(data.stats || {});
+            break;
+        case 'memory_entities':
+            updateMemoryEntities(data.entities || []);
+            break;
+        case 'memory_facts':
+            updateMemoryFacts(data.facts || []);
+            break;
+        case 'memory_graph':
+            updateMemoryGraph(data.graph || {nodes: [], edges: []});
+            break;
+        case 'memory_episodes':
+            updateMemoryEpisodes(data.episodes || []);
+            break;
         case 'pong':
             // Heartbeat OK
             break;
@@ -698,12 +713,46 @@ function updateMcpStatus(data) {
 
 // ── Memory Search ────────────────────────────────────────────────────────────
 function searchMemory(query) {
+    if (typeof query !== 'string') {
+        // Called from HTML button with no args — read from input
+        const input = document.getElementById('memory-search-input');
+        query = input ? input.value.trim() : '';
+    }
     if (!query || query.length < 2) return;
-    send({ type: 'memory_search', query: query });
+
+    // Show search results panel, hide tabs
+    const searchResults = document.getElementById('memory-search-results');
+    const tabContents = document.querySelectorAll('.memory-tab-content');
+    tabContents.forEach(tc => tc.classList.remove('active'));
+    if (searchResults) searchResults.classList.remove('hidden');
+    searchResults.innerHTML = '<div class="memory-item"><span class="mem-key">⌬ Searching the archives...</span></div>';
+
+    // Try WebSocket first, fall back to HTTP API
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        send({ type: 'memory_search', query: query });
+    } else {
+        fetch(`${CONFIG.httpUrl}/api/memory/search?q=${encodeURIComponent(query)}`)
+            .then(r => r.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    updateMemoryResults(data);
+                } else {
+                    updateMemoryResults(data.results || []);
+                }
+            })
+            .catch(() => {
+                const container = document.getElementById('memory-search-results');
+                if (container) {
+                    container.innerHTML = '<div class="memory-item"><span class="mem-key">∅ The void is unreachable</span></div>';
+                }
+            });
+    }
 }
 
 function updateMemoryResults(results) {
-    const container = document.getElementById('memory-results');
+    // Update the search results container
+    const container = document.getElementById('memory-search-results') || document.getElementById('memory-results');
+    if (!container) return;
     container.innerHTML = '';
 
     if (!results || results.length === 0) {
@@ -724,6 +773,424 @@ function updateMemoryResults(results) {
         `;
         container.appendChild(div);
     });
+}
+
+// ── Memory Tab Switching ───────────────────────────────────────────────────
+function switchMemoryTab(tabName) {
+    // Update tab button active states
+    document.querySelectorAll('.memory-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+    });
+
+    // Hide all tab content panels
+    document.querySelectorAll('.memory-tab-content').forEach(tc => {
+        tc.classList.remove('active');
+    });
+
+    // Hide search results
+    const searchResults = document.getElementById('memory-search-results');
+    if (searchResults) searchResults.classList.add('hidden');
+
+    // Show the selected tab
+    const tabContent = document.getElementById(`memory-tab-${tabName}`);
+    if (tabContent) tabContent.classList.add('active');
+
+    // Fetch data for the selected tab
+    fetchMemoryData(tabName);
+}
+
+function fetchMemoryData(tabName) {
+    const endpoints = {
+        'graph': '/api/memory/graph',
+        'entities': '/api/memory/entities',
+        'facts': '/api/memory/facts',
+        'episodes': '/api/memory/episodes',
+    };
+
+    const url = endpoints[tabName];
+    if (!url) return;
+
+    // Also fetch stats to update the stat bar
+    fetchMemoryStats();
+
+    fetch(`${CONFIG.httpUrl}${url}`)
+        .then(r => r.json())
+        .then(data => {
+            switch (tabName) {
+                case 'graph':
+                    updateMemoryGraph(data.nodes && data.edges ? data : { nodes: data || [], edges: [] });
+                    break;
+                case 'entities':
+                    updateMemoryEntities(Array.isArray(data) ? data : []);
+                    break;
+                case 'facts':
+                    updateMemoryFacts(Array.isArray(data) ? data : []);
+                    break;
+                case 'episodes':
+                    updateMemoryEpisodes(Array.isArray(data) ? data : []);
+                    break;
+            }
+        })
+        .catch(err => {
+            console.warn('[Dashboard] Memory fetch error (' + tabName + '):', err);
+        });
+}
+
+function fetchMemoryStats() {
+    fetch(`${CONFIG.httpUrl}/api/memory/stats`)
+        .then(r => r.json())
+        .then(data => updateMemoryStats(data))
+        .catch(err => {
+            console.warn('[Dashboard] Memory stats fetch error:', err);
+        });
+}
+
+// ── Memory Stats ─────────────────────────────────────────────────────────────
+function updateMemoryStats(stats) {
+    if (!stats) return;
+
+    const setStat = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) {
+            const text = typeof val === 'number' ? val : (val || '0');
+            el.textContent = el.title.charAt(0) === 'ᚠ' || el.title.charAt(0) === 'ᚨ' || el.title.charAt(0) === 'ᛇ' || el.title.charAt(0) === 'ᚠ'
+                ? `${el.title.split(' ')[0]} ${text}`.replace(el.title.split(' ')[0], el.title.split(' ')[0])
+                : text;
+            el.textContent = text;
+        }
+    };
+
+    // Update stat chips in the stats bar
+    const episodes = stats.episodes || 0;
+    const entities = stats.entities || 0;
+    const facts = stats.facts || 0;
+    const errors = stats.errors || 0;
+
+    const episodesEl = document.getElementById('mem-stat-episodes');
+    if (episodesEl) episodesEl.textContent = `ᚠ ${episodes}`;
+
+    const entitiesEl = document.getElementById('mem-stat-entities');
+    if (entitiesEl) entitiesEl.textContent = `ᚨ ${entities}`;
+
+    const factsEl = document.getElementById('mem-stat-facts');
+    if (factsEl) factsEl.textContent = `ᛇ ${facts}`;
+
+    const errorsEl = document.getElementById('mem-stat-errors');
+    if (errorsEl) errorsEl.textContent = `ᚺ ${errors}`;
+}
+
+// ── Memory Entities ──────────────────────────────────────────────────────────
+function updateMemoryEntities(entities) {
+    const container = document.getElementById('memory-entities-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (!entities || entities.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'memory-item';
+        empty.innerHTML = '<span class="mem-key">∅ No entities found in the void</span>';
+        container.appendChild(empty);
+        return;
+    }
+
+    entities.forEach((entity, idx) => {
+        const div = document.createElement('div');
+        div.className = 'memory-item memory-entity';
+        div.style.animationDelay = `${idx * 0.03}s`;
+        const name = escapeHtml(entity.name || entity.id || 'Unknown');
+        const type = escapeHtml(entity.type || 'unknown');
+        const mentions = entity.mentions || 1;
+        const firstSeen = entity.first_seen || '';
+        const lastSeen = entity.last_seen || '';
+
+        div.innerHTML = `
+            <div class="entity-header">
+                <span class="entity-name">${name}</span>
+                <span class="entity-type">${type}</span>
+                <span class="entity-mentions">ᚨ ${mentions}</span>
+            </div>
+            <div class="entity-meta">
+                ${firstSeen ? `<span class="entity-dates">First: ${escapeHtml(firstSeen)}</span>` : ''}
+                ${lastSeen ? `<span class="entity-dates">Last: ${escapeHtml(lastSeen)}</span>` : ''}
+            </div>
+            ${entity.context ? `<div class="entity-context">${escapeHtml(typeof entity.context === 'string' ? entity.context : '')}</div>` : ''}
+        `;
+        container.appendChild(div);
+    });
+}
+
+// ── Memory Facts ──────────────────────────────────────────────────────────────
+function updateMemoryFacts(facts) {
+    const container = document.getElementById('memory-facts-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (!facts || facts.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'memory-item';
+        empty.innerHTML = '<span class="mem-key">∅ No facts inscribed in the archives</span>';
+        container.appendChild(empty);
+        return;
+    }
+
+    facts.forEach((fact, idx) => {
+        const div = document.createElement('div');
+        div.className = 'memory-item memory-fact';
+        div.style.animationDelay = `${idx * 0.03}s`;
+        const category = escapeHtml(fact.category || fact.type || 'general');
+        const content = escapeHtml(fact.content || fact.text || fact.fact || '');
+        const confidence = fact.confidence !== undefined ? (fact.confidence * 100).toFixed(1) + '%' : '';
+
+        div.innerHTML = `
+            <span class="fact-category">[${category}]</span>
+            <div class="fact-content">${content}</div>
+            ${confidence ? `<span class="fact-confidence">⌬ ${confidence}</span>` : ''}
+            ${fact.source ? `<span class="fact-source">— ${escapeHtml(fact.source)}</span>` : ''}
+        `;
+        container.appendChild(div);
+    });
+}
+
+// ── Memory Graph ─────────────────────────────────────────────────────────────
+// Graph visualization state
+let graphNodes = [];
+let graphEdges = [];
+let graphZoom = 1;
+let graphOffsetX = 0;
+let graphOffsetY = 0;
+let graphDragging = null;
+let graphPanning = false;
+let graphLastMouse = { x: 0, y: 0 };
+
+function updateMemoryGraph(graphData) {
+    if (!graphData) return;
+    graphNodes = (graphData.nodes || []).map((n, i) => ({
+        ...n,
+        x: n.x || (Math.cos(i * 2.4) * 120 + 200),
+        y: n.y || (Math.sin(i * 2.4) * 100 + 150),
+        vx: 0,
+        vy: 0,
+    }));
+    graphEdges = graphData.edges || [];
+    graphZoom = 1;
+    graphOffsetX = 0;
+    graphOffsetY = 0;
+    drawMemoryGraph();
+}
+
+function drawMemoryGraph() {
+    const canvas = document.getElementById('memory-graph-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+    ctx.translate(W / 2 + graphOffsetX, H / 2 + graphOffsetY);
+    ctx.scale(graphZoom, graphZoom);
+    ctx.translate(-W / 2, -H / 2);
+
+    // Draw edges
+    ctx.strokeStyle = '#9966ff30';
+    ctx.lineWidth = 1;
+    graphEdges.forEach(edge => {
+        const srcNode = graphNodes.find(n => n.id === edge.source || n.label === edge.source);
+        const tgtNode = graphNodes.find(n => n.id === edge.target || n.label === edge.target);
+        if (srcNode && tgtNode) {
+            ctx.beginPath();
+            ctx.moveTo(srcNode.x, srcNode.y);
+            ctx.lineTo(tgtNode.x, tgtNode.y);
+            ctx.stroke();
+
+            // Draw relation label at midpoint
+            if (edge.relation) {
+                const mx = (srcNode.x + tgtNode.x) / 2;
+                const my = (srcNode.y + tgtNode.y) / 2;
+                ctx.font = '9px monospace';
+                ctx.fillStyle = '#8888aa60';
+                ctx.textAlign = 'center';
+                ctx.fillText(edge.relation, mx, my);
+            }
+        }
+    });
+
+    // Draw nodes
+    const typeColors = {
+        'person': '#ff3366',
+        'place': '#00ff88',
+        'concept': '#9966ff',
+        'event': '#ffcc00',
+        'unknown': '#3366ff',
+    };
+
+    graphNodes.forEach(node => {
+        const color = typeColors[node.type] || typeColors['unknown'];
+        const radius = 4 + Math.min((node.mentions || 1) * 1.5, 18);
+        const label = node.label || node.id || '?';
+
+        // Glow
+        ctx.shadowColor = color + '60';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = color + '90';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        // Border
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // Label
+        ctx.font = '10px monospace';
+        ctx.fillStyle = '#e0e0e0';
+        ctx.textAlign = 'center';
+        ctx.fillText(label, node.x, node.y + radius + 12);
+    });
+
+    ctx.restore();
+}
+
+function memoryGraphZoom(factor) {
+    graphZoom = Math.max(0.2, Math.min(5, graphZoom * factor));
+    drawMemoryGraph();
+}
+
+function memoryGraphReset() {
+    graphZoom = 1;
+    graphOffsetX = 0;
+    graphOffsetY = 0;
+    drawMemoryGraph();
+}
+
+// ── Memory Episodes ──────────────────────────────────────────────────────────
+function updateMemoryEpisodes(episodes) {
+    const container = document.getElementById('memory-episodes-list');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (!episodes || episodes.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'memory-item';
+        empty.innerHTML = '<span class="mem-key">∅ No episodes recorded in the chronicle</span>';
+        container.appendChild(empty);
+        return;
+    }
+
+    episodes.forEach((episode, idx) => {
+        const div = document.createElement('div');
+        div.className = 'memory-item memory-episode';
+        div.style.animationDelay = `${idx * 0.03}s`;
+        const role = escapeHtml(episode.role || 'unknown');
+        const content = escapeHtml(episode.content || episode.text || '');
+        const timestamp = episode.timestamp || episode.created_at || '';
+        const session = episode.session_id || '';
+
+        div.innerHTML = `
+            <div class="episode-header">
+                <span class="episode-role">${role === 'user' ? '▻ MORTAL' : '◈ LILITH'}</span>
+                ${session ? `<span class="episode-session">ᛏ ${escapeHtml(session.substring(0, 8))}</span>` : ''}
+                ${timestamp ? `<span class="episode-time">${escapeHtml(typeof timestamp === 'number' ? new Date(timestamp * 1000).toLocaleString() : timestamp)}</span>` : ''}
+            </div>
+            <div class="episode-content">${content}</div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// ── Memory Graph Canvas Interaction ──────────────────────────────────────────
+function setupGraphInteraction() {
+    const canvas = document.getElementById('memory-graph-canvas');
+    if (!canvas) return;
+
+    canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const factor = e.deltaY < 0 ? 1.1 : 0.9;
+        memoryGraphZoom(factor);
+    }, { passive: false });
+
+    canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.clientX - rect.left - rect.width / 2 - graphOffsetX) / graphZoom + rect.width / 2;
+        const my = (e.clientY - rect.top - rect.height / 2 - graphOffsetY) / graphZoom + rect.height / 2;
+
+        // Check if clicking on a node
+        graphDragging = null;
+        for (const node of graphNodes) {
+            const r = 4 + Math.min((node.mentions || 1) * 1.5, 18);
+            const dx = mx - node.x;
+            const dy = my - node.y;
+            if (dx * dx + dy * dy < r * r) {
+                graphDragging = node;
+                break;
+            }
+        }
+        if (!graphDragging) {
+            graphPanning = true;
+        }
+        graphLastMouse = { x: e.clientX, y: e.clientY };
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+        if (graphDragging) {
+            const rect = canvas.getBoundingClientRect();
+            const mx = (e.clientX - rect.left - rect.width / 2 - graphOffsetX) / graphZoom + rect.width / 2;
+            const my = (e.clientY - rect.top - rect.height / 2 - graphOffsetY) / graphZoom + rect.height / 2;
+            graphDragging.x = mx;
+            graphDragging.y = my;
+            drawMemoryGraph();
+        } else if (graphPanning) {
+            graphOffsetX += e.clientX - graphLastMouse.x;
+            graphOffsetY += e.clientY - graphLastMouse.y;
+            drawMemoryGraph();
+        }
+        graphLastMouse = { x: e.clientX, y: e.clientY };
+    });
+
+    canvas.addEventListener('mouseup', () => {
+        graphDragging = null;
+        graphPanning = false;
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        graphDragging = null;
+        graphPanning = false;
+    });
+
+    // Tooltip on hover
+    const tooltip = document.getElementById('graph-tooltip');
+    canvas.addEventListener('mousemove', (e) => {
+        if (graphDragging || graphPanning || !tooltip) return;
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.clientX - rect.left - rect.width / 2 - graphOffsetX) / graphZoom + rect.width / 2;
+        const my = (e.clientY - rect.top - rect.height / 2 - graphOffsetY) / graphZoom + rect.height / 2;
+
+        for (const node of graphNodes) {
+            const r = 4 + Math.min((node.mentions || 1) * 1.5, 18);
+            const dx = mx - node.x;
+            const dy = my - node.y;
+            if (dx * dx + dy * dy < r * r) {
+                tooltip.classList.remove('hidden');
+                tooltip.style.left = (e.clientX + 12) + 'px';
+                tooltip.style.top = (e.clientY - 8) + 'px';
+                tooltip.innerHTML = `
+                    <strong>${escapeHtml(node.label || node.id)}</strong><br>
+                    Type: ${escapeHtml(node.type || 'unknown')}<br>
+                    Mentions: ${node.mentions || 0}
+                `;
+                return;
+            }
+        }
+        tooltip.classList.add('hidden');
+    });
+}
+
+// ── Fetch All Memory Data (called on init) ───────────────────────────────────
+function fetchAllMemoryData() {
+    fetchMemoryStats();
+    fetchMemoryData('graph');
 }
 
 // ── Status Updates ──────────────────────────────────────────────────────────
@@ -1019,8 +1486,10 @@ function init() {
     // Core functionality
     setupPaneFocus();
     setupKeyboard();
+    setupGraphInteraction();
     addChatMessage('system', '⌬ The void stirs... connecting to Lilith ⌬');
     connect();
+    fetchAllMemoryData();
 }
 
 // ── Start ────────────────────────────────────────────────────────────────────

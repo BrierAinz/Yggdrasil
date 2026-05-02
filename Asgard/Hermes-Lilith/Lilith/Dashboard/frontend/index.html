@@ -160,12 +160,48 @@
                     <span class="pane-rune">&#x16A0;</span>
                     <span class="pane-title">Memory</span>
                     <span class="pane-rune">&#x16A0;</span>
+                    <div class="memory-tabs">
+                        <button class="memory-tab active" data-tab="graph" onclick="switchMemoryTab('graph')">&#x16A0; Graph</button>
+                        <button class="memory-tab" data-tab="entities" onclick="switchMemoryTab('entities')">&#x16A2; Entities</button>
+                        <button class="memory-tab" data-tab="facts" onclick="switchMemoryTab('facts')">&#x16CF; Facts</button>
+                        <button class="memory-tab" data-tab="episodes" onclick="switchMemoryTab('episodes')">&#x16B7; Episodes</button>
+                    </div>
                 </div>
                 <div class="pane-body">
                     <div class="memory-search">
                         <input type="text" id="memory-search-input" placeholder="Search the archives..." autocomplete="off">
+                        <button id="memory-search-btn" onclick="searchMemory()">&#x27A4;</button>
                     </div>
-                    <div id="memory-results" class="memory-list"></div>
+                    <div class="memory-stats-bar" id="memory-stats-bar">
+                        <span class="stat-chip" id="mem-stat-episodes" title="Episodes">&#x16A2; 0</span>
+                        <span class="stat-chip" id="mem-stat-entities" title="Entities">&#x16A2; 0</span>
+                        <span class="stat-chip" id="mem-stat-facts" title="Facts">&#x16CF; 0</span>
+                        <span class="stat-chip" id="mem-stat-errors" title="Errors">&#x16BA; 0</span>
+                    </div>
+                    <!-- Memory Tab: Graph -->
+                    <div id="memory-tab-graph" class="memory-tab-content active">
+                        <canvas id="memory-graph-canvas" width="600" height="400"></canvas>
+                        <div id="graph-tooltip" class="graph-tooltip hidden"></div>
+                        <div class="graph-controls">
+                            <button class="graph-btn" onclick="memoryGraphZoom(1.2)" title="Zoom in">&#x2B;</button>
+                            <button class="graph-btn" onclick="memoryGraphZoom(0.8)" title="Zoom out">&#x2212;</button>
+                            <button class="graph-btn" onclick="memoryGraphReset()" title="Reset view">&#x21BA;</button>
+                        </div>
+                    </div>
+                    <!-- Memory Tab: Entities -->
+                    <div id="memory-tab-entities" class="memory-tab-content">
+                        <div id="memory-entities-list" class="memory-list"></div>
+                    </div>
+                    <!-- Memory Tab: Facts -->
+                    <div id="memory-tab-facts" class="memory-tab-content">
+                        <div id="memory-facts-list" class="memory-list"></div>
+                    </div>
+                    <!-- Memory Tab: Episodes -->
+                    <div id="memory-tab-episodes" class="memory-tab-content">
+                        <div id="memory-episodes-list" class="memory-list"></div>
+                    </div>
+                    <!-- Search results (replaces tabs when searching) -->
+                    <div id="memory-search-results" class="memory-list hidden"></div>
                 </div>
             </div>
         </main>
