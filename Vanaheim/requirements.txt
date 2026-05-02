@@ -4,7 +4,7 @@ python-dotenv>=1.0
 
 # Bot dependencies
 python-telegram-bot>=20.0
-beautifulsoup4>=4.12
+beautifulsoup4>=4.14.3
 lxml>=4.9
 selenium>=4.15
 requests>=2.28.0
