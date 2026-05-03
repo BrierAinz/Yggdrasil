@@ -85,6 +85,13 @@ jobs:
       - name: Run pytest (autosub)
         run: pytest Muspelheim/AutoSub/tests
 
+      - name: Install ForgeMaster dependencies
+        run: |
+          pip install -e Niflheim/ForgeMaster
+
+      - name: Run pytest (forgemaster)
+        run: pytest Niflheim/ForgeMaster/tests
+
   type-check:
     name: Type check (pyright)
     runs-on: ubuntu-latest
