@@ -2,7 +2,8 @@
 
 Each realm has a dedicated render method that produces a Rich renderable
 showing common information (projects, git status, test status, last commit)
-plus realm-specific details.
+plus realm-specific details, file count, total size, key files, and recent
+git activity.
 """
 
 from __future__ import annotations
@@ -10,11 +11,13 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from rich.console import Group
 from rich.markup import escape
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 from textual.widgets import Static
+from tui.git_utils import GitActivity, get_git_activity
 from tui.scanner import (
     REALMS,
     GitStatus,
@@ -48,6 +51,69 @@ _TEST_ICON = {
     ProjTestStatus.FAIL: "[red]fail[/]",
     ProjTestStatus.UNKNOWN: "[dim]unknown[/]",
 }
+
+# Key files to look for in each project directory
+_KEY_FILE_NAMES = ["README.md", "REGLAS.md", "pyproject.toml", "README.rst", "setup.py"]
+
+
+def _count_files(directory: Path) -> int:
+    """Count all files recursively in a directory (excluding hidden dirs)."""
+    if not directory.is_dir():
+        return 0
+    count = 0
+    try:
+        for entry in directory.rglob("*"):
+            if entry.is_file() and not any(
+                p.startswith(".") or p == "__pycache__"
+                for p in entry.relative_to(directory).parts
+            ):
+                count += 1
+    except OSError:
+        pass
+    return count
+
+
+def _total_size(directory: Path) -> int:
+    """Calculate total file size in bytes recursively (excluding hidden dirs)."""
+    if not directory.is_dir():
+        return 0
+    total = 0
+    try:
+        for entry in directory.rglob("*"):
+            if entry.is_file() and not any(
+                p.startswith(".") or p == "__pycache__"
+                for p in entry.relative_to(directory).parts
+            ):
+                try:
+                    total += entry.stat().st_size
+                except OSError:
+                    pass
+    except OSError:
+        pass
+    return total
+
+
+def _format_size(size_bytes: int) -> str:
+    """Format bytes into a human-readable string."""
+    if size_bytes < 1024:
+        return f"{size_bytes} B"
+    elif size_bytes < 1024 * 1024:
+        return f"{size_bytes / 1024:.1f} KB"
+    elif size_bytes < 1024 * 1024 * 1024:
+        return f"{size_bytes / (1024 * 1024):.1f} MB"
+    else:
+        return f"{size_bytes / (1024 * 1024 * 1024):.1f} GB"
+
+
+def _find_key_files(directory: Path) -> list[str]:
+    """Find key configuration files in a directory."""
+    found: list[str] = []
+    if not directory.is_dir():
+        return found
+    for name in _KEY_FILE_NAMES:
+        if (directory / name).is_file():
+            found.append(name)
+    return found
 
 
 # ---------------------------------------------------------------------------
@@ -163,16 +229,23 @@ class RealmDetailView(Static):
         # Common info table (projects, git, tests, last commit)
         table = self._build_common_table(status, color)
 
+        # Realm overview panel (description, file count, total size, key files)
+        overview = self._build_realm_overview(status, color)
+
         # Realm-specific section
         specific = self._build_realm_specific(status, color)
 
+        # Git activity section
+        git_section = self._build_git_activity(status, color)
+
         # Assemble panel content
         panel_content_items: list = [header, table]
+        if overview is not None:
+            panel_content_items.append(overview)
         if specific is not None:
             panel_content_items.append(specific)
-
-        # Use a Group to render the items inside a Panel
-        from rich.console import Group
+        if git_section is not None:
+            panel_content_items.append(git_section)
 
         panel = Panel(
             Group(*panel_content_items),
@@ -222,6 +295,87 @@ class RealmDetailView(Static):
 
         if not status.projects:
             table.add_row("[dim]No projects found[/]", "", "", "", "")
+
+        return table
+
+    # ------------------------------------------------------------------
+    # Realm overview (description, file count, total size, key files)
+    # ------------------------------------------------------------------
+
+    def _build_realm_overview(self, status: RealmStatus, color: str) -> Table | None:
+        """Build a table showing realm description, file count, total size, and key files."""
+        realm_path = status.path
+        if not realm_path.is_dir():
+            return None
+
+        # Count files and total size in the realm directory
+        file_count = _count_files(realm_path)
+        total_size = _total_size(realm_path)
+        size_str = _format_size(total_size)
+
+        # Find key files at the realm root level
+        key_files = _find_key_files(realm_path)
+
+        table = Table(
+            title="Overview",
+            title_style=f"bold {color}",
+            show_header=True,
+            header_style=f"bold {color}",
+            expand=True,
+        )
+        table.add_column("Metric", ratio=1)
+        table.add_column("Value", ratio=2)
+
+        table.add_row("Description", escape(status.description))
+        table.add_row("File Count", str(file_count))
+        table.add_row("Total Size", size_str)
+        table.add_row(
+            "Key Files", ", ".join(key_files) if key_files else "[dim]none[/]"
+        )
+        return table
+
+    # ------------------------------------------------------------------
+    # Git activity (recent commits, status)
+    # ------------------------------------------------------------------
+
+    def _build_git_activity(self, status: RealmStatus, color: str) -> Table | None:
+        """Build a table showing recent git activity for the realm directory."""
+        realm_path = status.path
+        if not realm_path.is_dir():
+            return None
+
+        activity = get_git_activity(realm_path)
+        if not activity.is_git_repo:
+            return None
+
+        table = Table(
+            title="Git Activity",
+            title_style=f"bold {color}",
+            show_header=True,
+            header_style=f"bold {color}",
+            expand=True,
+        )
+        table.add_column("Hash", style="cyan", width=8)
+        table.add_column("Message", ratio=3)
+
+        if activity.recent_commits:
+            for commit in activity.recent_commits[:10]:
+                table.add_row(
+                    escape(commit.hash[:8] if len(commit.hash) >= 8 else commit.hash),
+                    escape(commit.message),
+                )
+        else:
+            table.add_row("[dim]—[/]", "[dim]No commits[/]")
+
+        # Add status line if dirty
+        if activity.dirty:
+            # Show up to 5 status lines
+            for line in activity.status_lines[:5]:
+                table.add_row("", Text.from_markup(f"[yellow]{escape(line)}[/]"))
+            if len(activity.status_lines) > 5:
+                table.add_row(
+                    "", f"[dim]… and {len(activity.status_lines) - 5} more[/]"
+                )
 
         return table
 

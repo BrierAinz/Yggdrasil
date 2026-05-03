@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -92,7 +93,7 @@ class ModelScanner:
     def __init__(self) -> None:
         pass
 
-    def scan(self, paths: list[str | Path]) -> ScanResult:
+    def scan(self, paths: Sequence[str | Path]) -> ScanResult:
         """Scan given paths for model files.
 
         Args:

@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import os
 import shutil
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
@@ -93,7 +94,7 @@ class DiskScanner:
     def __init__(self) -> None:
         self._model_scanner = ModelScanner()
 
-    def scan_usage(self, paths: list[str | Path]) -> DiskUsage:
+    def scan_usage(self, paths: Sequence[str | Path]) -> DiskUsage:
         """Calculate disk usage for given paths, separating model vs. other files.
 
         Args:
@@ -134,7 +135,7 @@ class DiskScanner:
             other_bytes=other_size,
         )
 
-    def scan_model_sizes(self, paths: list[str | Path]) -> list[ModelInfo]:
+    def scan_model_sizes(self, paths: Sequence[str | Path]) -> list[ModelInfo]:
         """Scan paths and return model files sorted by size (descending).
 
         Args:
@@ -147,7 +148,7 @@ class DiskScanner:
         models = sorted(result.models, key=lambda m: m.size_bytes, reverse=True)
         return models
 
-    def scan_directory_usage(self, paths: list[str | Path]) -> dict[str, int]:
+    def scan_directory_usage(self, paths: Sequence[str | Path]) -> dict[str, int]:
         """Calculate per-directory model sizes.
 
         Args:
@@ -177,7 +178,7 @@ class DiskScanner:
             pass
         return total
 
-    def _filesystem_stats(self, paths: list[str | Path]) -> tuple[int, int, int]:
+    def _filesystem_stats(self, paths: Sequence[str | Path]) -> tuple[int, int, int]:
         """Get filesystem total, used, and free bytes for the given paths.
 
         Falls back to sum of file sizes if statvfs is unavailable (e.g. Windows).
@@ -213,7 +214,7 @@ class DuplicateFinder:
         """
         self.size_tolerance = size_tolerance
 
-    def find_duplicates(self, paths: list[str | Path]) -> list[DuplicateGroup]:
+    def find_duplicates(self, paths: Sequence[str | Path]) -> list[DuplicateGroup]:
         """Find groups of duplicate model files.
 
         Two files are considered duplicates if they share the same
@@ -274,7 +275,9 @@ class DuplicateFinder:
         duplicate_groups.sort(key=lambda g: g.total_wasted_bytes, reverse=True)
         return duplicate_groups
 
-    def find_exact_duplicates(self, paths: list[str | Path]) -> list[DuplicateGroup]:
+    def find_exact_duplicates(
+        self, paths: Sequence[str | Path]
+    ) -> list[DuplicateGroup]:
         """Find files with identical content (hash-based deduplication).
 
         This reads file contents and computes hashes, so it is slower
@@ -344,7 +347,7 @@ class DuplicateFinder:
         duplicate_groups.sort(key=lambda g: g.total_wasted_bytes, reverse=True)
         return duplicate_groups
 
-    def generate_cleanup_report(self, paths: list[str | Path]) -> CleanupReport:
+    def generate_cleanup_report(self, paths: Sequence[str | Path]) -> CleanupReport:
         """Generate a full cleanup report with duplicate detection.
 
         Args:

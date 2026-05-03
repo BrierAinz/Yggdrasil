@@ -8,9 +8,8 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-from typer.testing import CliRunner
-
 from forgemaster.cli import app
+from typer.testing import CliRunner
 
 runner = CliRunner()
 
@@ -23,7 +22,7 @@ class TestVersion:
         result = runner.invoke(app, ["version"])
         assert result.exit_code == 0
         assert "ForgeMaster" in result.output
-        assert "v0.1.0" in result.output
+        assert "v1.0.0" in result.output
 
 
 # ─── Scan Command ────────────────────────────────────────────────────────────
@@ -89,15 +88,18 @@ class TestListCommand:
         """List with models in catalog."""
         with patch("forgemaster.catalog.Catalog") as MockCatalog:
             mock_cat = MagicMock()
-            mock_model = MagicMock()
-            mock_model.name = "test-model"
-            mock_model.format = "gguf"
-            mock_model.size_bytes = 1024
-            mock_model.architecture = "llama"
-            mock_model.quantization = "Q4_K_M"
-            mock_model.scanned_at = None
-            mock_model.id = 1
-            mock_cat.list_models.return_value = [mock_model]
+            # list_models returns a list of dicts
+            mock_cat.list_models.return_value = [
+                {
+                    "id": 1,
+                    "name": "test-model",
+                    "format": "gguf",
+                    "size_bytes": 1024,
+                    "architecture": "llama",
+                    "quantization": "Q4_K_M",
+                    "scanned_at": None,
+                }
+            ]
             MockCatalog.return_value = mock_cat
             result = runner.invoke(app, ["list"])
             assert result.exit_code == 0
@@ -165,21 +167,22 @@ class TestCheckCommand:
 
 class TestGPUCommand:
     def test_gpu_not_available(self):
-        """GPU command when nvidia-smi not available."""
+        """GPU command when no GPU is available."""
         with patch("forgemaster.gpu.GPUMonitor") as MockMonitor:
             mock_monitor = MagicMock()
-            mock_monitor.is_available.return_value = False
+            mock_monitor.get_gpu_info.return_value = []
+            mock_monitor.get_fallback_message.return_value = "No GPU detected."
             MockMonitor.return_value = mock_monitor
             result = runner.invoke(app, ["gpu"])
             assert result.exit_code == 1
+            assert "No GPU detected" in result.output
 
     def test_gpu_available(self):
-        """GPU command when nvidia-smi is available."""
+        """GPU command when an NVIDIA GPU is available."""
         from forgemaster.gpu import GPUInfo
 
         with patch("forgemaster.gpu.GPUMonitor") as MockMonitor:
             mock_monitor = MagicMock()
-            mock_monitor.is_available.return_value = True
             mock_monitor.get_gpu_info.return_value = [
                 GPUInfo(
                     name="NVIDIA GeForce RTX 3060",
@@ -189,6 +192,7 @@ class TestGPUCommand:
                     temperature=45,
                     utilization_pct=30,
                     driver_version="535.104.05",
+                    gpu_type="nvidia",
                 )
             ]
             mock_monitor.get_gpu_processes.return_value = []

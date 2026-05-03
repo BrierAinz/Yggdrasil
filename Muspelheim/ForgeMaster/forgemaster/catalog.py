@@ -90,13 +90,13 @@ class Catalog:
 
     def _create_tables(self) -> None:
         """Create database tables if they don't exist."""
-        cursor = self._conn.cursor()
+        cursor = self.conn.cursor()
         cursor.execute(_CREATE_MODELS_TABLE)
         cursor.execute(_CREATE_GPU_PROFILES_TABLE)
         cursor.execute(_CREATE_MODELS_INDEX)
         cursor.execute(_CREATE_MODELS_FORMAT_INDEX)
         cursor.execute(_CREATE_MODELS_ARCH_INDEX)
-        self._conn.commit()
+        self.conn.commit()
 
     def close(self) -> None:
         """Close the database connection."""
@@ -147,7 +147,7 @@ class Catalog:
             ),
         )
         self.conn.commit()
-        return cursor.lastrowid
+        return cursor.lastrowid or 0
 
     def get_model(self, model_id: int) -> Optional[dict[str, Any]]:
         """Get a model by ID.
@@ -265,7 +265,7 @@ class Catalog:
             (profile.name, profile.vram_total_gb, profile.vram_available_gb),
         )
         self.conn.commit()
-        return cursor.lastrowid
+        return cursor.lastrowid or 0
 
     def get_gpu_profiles(self) -> list[GPUProfile]:
         """Get all GPU profiles.
@@ -291,10 +291,12 @@ class Catalog:
         """Count total number of models in the catalog."""
         cursor = self.conn.cursor()
         cursor.execute("SELECT COUNT(*) FROM models")
-        return cursor.fetchone()[0]
+        result = cursor.fetchone()
+        return int(result[0]) if result else 0
 
     def total_size_bytes(self) -> int:
         """Get total size of all models in the catalog."""
         cursor = self.conn.cursor()
         cursor.execute("SELECT COALESCE(SUM(size_bytes), 0) FROM models")
-        return cursor.fetchone()[0]
+        result = cursor.fetchone()
+        return int(result[0]) if result else 0

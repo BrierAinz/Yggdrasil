@@ -1,6 +1,6 @@
 [project]
 name = "forgemaster"
-version = "0.1.0"
+version = "1.0.0"
 description = "Niflheim resource manager — LLM models, VRAM, disk usage"
 requires-python = ">=3.11"
 dependencies = [
@@ -9,10 +9,11 @@ dependencies = [
     "psutil>=5.9",
     "httpx>=0.25",
     "safetensors>=0.4",
+    "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0", "pytest-cov"]
+dev = ["pytest>=7.0", "pytest-cov", "mypy>=1.0"]
 
 [project.scripts]
 forgemaster = "forgemaster.cli:app"
@@ -25,3 +26,7 @@ line-length = 88
 
 [tool.isort]
 profile = "black"
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true

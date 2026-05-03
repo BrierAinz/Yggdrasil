@@ -2,16 +2,27 @@
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from typing import Optional
 
 import typer
+from forgemaster.logging import configure_logging
 from rich import print as rprint
 from rich.console import Console
 from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.progress import (
+    BarColumn,
+    DownloadColumn,
+    Progress,
+    SpinnerColumn,
+    TaskProgressColumn,
+    TextColumn,
+    TransferSpeedColumn,
+)
 from rich.table import Table
+from rich.tree import Tree
 
 app = typer.Typer(
     name="forgemaster",
@@ -20,6 +31,20 @@ app = typer.Typer(
 )
 
 console = Console()
+
+
+@app.callback()
+def main(
+    verbose: bool = typer.Option(
+        False, "--verbose", "-v", help="Enable debug-level logging"
+    ),
+    quiet: bool = typer.Option(
+        False, "--quiet", "-q", help="Suppress info-level logs (warnings only)"
+    ),
+) -> None:
+    """ForgeMaster — Niflheim resource manager for LLM models, VRAM, and disk."""
+    configure_logging(verbose=verbose, quiet=quiet)
+
 
 # Default scan paths for the user's system
 DEFAULT_PATHS = [
@@ -139,10 +164,10 @@ def list_models(
 
     fmt_filter = None if fmt == "all" else fmt
     if fmt_filter:
-        models = [m for m in models if m.format == fmt_filter]
+        models = [m for m in models if m["format"] == fmt_filter]
 
     if architecture != "all":
-        models = [m for m in models if m.architecture == architecture]
+        models = [m for m in models if m["architecture"] == architecture]
 
     table = Table(title="📋 Cataloged Models", show_lines=True)
     table.add_column("ID", style="dim", justify="right")
@@ -155,14 +180,14 @@ def list_models(
 
     for model in models:
         table.add_row(
-            str(model.id) if hasattr(model, "id") else "-",
-            model.name,
-            model.format or "unknown",
-            _format_size(model.size_bytes) if model.size_bytes else "N/A",
-            model.architecture or "unknown",
-            model.quantization or "unknown",
-            str(model.scanned_at)[:19]
-            if hasattr(model, "scanned_at") and model.scanned_at
+            str(model["id"]) if "id" in model else "-",
+            model["name"],
+            model["format"] or "unknown",
+            _format_size(model["size_bytes"]) if model["size_bytes"] else "N/A",
+            model["architecture"] or "unknown",
+            model["quantization"] or "unknown",
+            str(model["scanned_at"])[:19]
+            if "scanned_at" in model and model["scanned_at"]
             else "-",
         )
 
@@ -300,12 +325,12 @@ def gpu():
     from forgemaster.gpu import GPUMonitor
 
     monitor = GPUMonitor()
-    if not monitor.is_available():
-        console.print("[bold red]nvidia-smi not available.[/] No GPU detected.")
-        raise typer.Exit(1)
-
     gpu_infos = monitor.get_gpu_info()
-    processes = monitor.get_gpu_processes()
+
+    if not gpu_infos:
+        console.print("[bold red]No GPU detected.[/]")
+        console.print(monitor.get_fallback_message())
+        raise typer.Exit(1)
 
     for info in gpu_infos:
         # VRAM bar
@@ -316,8 +341,15 @@ def gpu():
         filled = int(bar_len * vram_used_pct / 100)
         bar = f"[green]{'█' * filled}[/][dim]{'░' * (bar_len - filled)}[/]"
 
+        # GPU type badge
+        type_badge = {
+            "nvidia": "[green]NVIDIA[/]",
+            "amd": "[red]AMD[/]",
+            "apple": "[magenta]Apple Silicon[/]",
+        }.get(info.gpu_type, "")
+
         panel = Panel(
-            f"[bold]{info.name}[/]\n\n"
+            f"[bold]{info.name}[/] {type_badge}\n\n"
             f"VRAM:   {bar} {_format_size(info.vram_used_mb * 1024 * 1024)} / {_format_size(info.vram_total_mb * 1024 * 1024)} ({vram_used_pct:.0f}%)\n"
             f"Temp:   {info.temperature}°C\n"
             f"Util:   {info.utilization_pct}%\n"
@@ -327,16 +359,22 @@ def gpu():
         )
         console.print(panel)
 
-    if processes:
-        table = Table(title="🔥 GPU Processes")
-        table.add_column("PID", style="dim", justify="right")
-        table.add_column("Name", style="cyan")
-        table.add_column("GPU Memory", justify="right", style="yellow")
-        for proc in processes:
-            table.add_row(
-                str(proc.pid), proc.name, _format_size(proc.gpu_memory_mb * 1024 * 1024)
-            )
-        console.print(table)
+    # Only show processes for NVIDIA GPUs
+    nvidia_gpus = [g for g in gpu_infos if g.gpu_type == "nvidia"]
+    if nvidia_gpus:
+        processes = monitor.get_gpu_processes()
+        if processes:
+            table = Table(title="🔥 GPU Processes")
+            table.add_column("PID", style="dim", justify="right")
+            table.add_column("Name", style="cyan")
+            table.add_column("GPU Memory", justify="right", style="yellow")
+            for proc in processes:
+                table.add_row(
+                    str(proc.pid),
+                    proc.name,
+                    _format_size(proc.gpu_memory_mb * 1024 * 1024),
+                )
+            console.print(table)
 
 
 # ─── Duplicates Command ──────────────────────────────────────────────────────
@@ -365,12 +403,18 @@ def find_duplicates(
 
     with Progress(
         SpinnerColumn(),
-        TextColumn("[progress.description]Scanning..."),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TaskProgressColumn(),
         console=console,
     ) as progress:
-        task = progress.add_task("Finding duplicates", total=None)
+        scan_task = progress.add_task("Scanning files...", total=None)
         dupes = finder.find_duplicates(scan_paths)
-        progress.update(task, completed=True)
+        progress.update(scan_task, completed=True, total=1)
+
+        if dupes:
+            hash_task = progress.add_task("Computing hashes...", total=len(dupes))
+            progress.update(hash_task, advance=len(dupes))
 
     if not dupes:
         console.print("[green]No duplicates found![/]")
@@ -423,23 +467,31 @@ def download(
     force: bool = typer.Option(
         False, "--force", "-f", help="Force re-download even if file exists"
     ),
+    list_only: bool = typer.Option(
+        False, "--list-only", "-l", help="List available files without downloading"
+    ),
 ):
     """Download a model from HuggingFace Hub."""
+    import logging
+
     from forgemaster.downloader import DownloadConfig, ModelDownloader
 
+    log = logging.getLogger("forgemaster.cli")
     config = DownloadConfig(
         model_id=model_id,
         revision=revision,
-        cache_dir=Path(output) if output else None,
+        cache_dir=str(Path(output))
+        if output
+        else os.path.join(os.path.expanduser("~"), ".cache", "huggingface", "hub"),
         force_download=force,
     )
 
-    downloader = ModelDownloader(config)
+    downloader = ModelDownloader()
 
-    # First, list available files
+    # Fetch available files
     console.print(f"[bold]Fetching file list for [cyan]{model_id}[/]...")
     try:
-        files = downloader.list_model_files()
+        files = downloader.list_model_files(config)
     except Exception as e:
         console.print(f"[red]Error listing files: {e}[/]")
         raise typer.Exit(1)
@@ -448,28 +500,48 @@ def download(
         console.print("[yellow]No files found for this model.[/]")
         raise typer.Exit(1)
 
+    # Display file tree
     console.print(f"[green]Found {len(files)} file(s)[/]")
-    for f in files[:10]:
-        console.print(f"  • {f}")
-    if len(files) > 10:
-        console.print(f"  ... and {len(files) - 10} more")
+    tree = Tree(f"[bold cyan]{model_id}[/] [dim](revision: {revision})[/]")
+    for f in files:
+        tree.add(f"[green]{f}[/]")
+    console.print(tree)
 
-    # Download with progress
-    with Progress(console=console) as progress:
-        task = progress.add_task("Downloading", total=100)
+    # If --list-only, stop here
+    if list_only:
+        log.debug("--list-only requested, skipping download")
+        return
+
+    # Download with progress — show total size if available
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        TaskProgressColumn(),
+        DownloadColumn(),
+        TransferSpeedColumn(),
+        console=console,
+    ) as progress:
+        task = progress.add_task("Downloading", total=None)
 
         def on_progress(p):
-            progress.update(task, completed=int(p.progress_pct))
+            total = int(p.total_bytes) if p.total_bytes else None
+            downloaded = int(p.downloaded_bytes) if p.downloaded_bytes else 0
+            progress.update(task, completed=downloaded, total=total)
+            if total and not progress.tasks[0].description.endswith(""):
+                progress.update(task, description=f"Downloading {model_id}")
 
         try:
-            results = downloader.download_model(progress_callback=on_progress)
+            results = downloader.download_model(config, progress_callback=on_progress)
         except Exception as e:
             console.print(f"[red]Download failed: {e}[/]")
             raise typer.Exit(1)
 
     console.print(f"[bold green]Download complete![/]")
     for r in results:
-        console.print(f"  ✓ {r.model_id} → {r.downloaded_bytes or 'N/A'} bytes")
+        console.print(
+            f"  ✓ {r} ({_format_size(r.stat().st_size) if r.exists() else 'N/A'})"
+        )
 
 
 # ─── Version Command ──────────────────────────────────────────────────────────
@@ -481,6 +553,60 @@ def version():
     from forgemaster import __version__
 
     console.print(f"⚒️  ForgeMaster v{__version__}")
+
+
+# ─── Config Command ──────────────────────────────────────────────────────────
+
+
+config_app = typer.Typer(
+    name="config",
+    help="⚙️  View and edit ForgeMaster configuration.",
+    no_args_is_help=True,
+)
+app.add_typer(config_app, name="config")
+
+
+@config_app.command(name="show")
+def config_show():
+    """Show current configuration."""
+    from forgemaster.config import load_config
+
+    cfg = load_config()
+
+    table = Table(title="⚙️  ForgeMaster Configuration", show_lines=True)
+    table.add_column("Key", style="bold cyan")
+    table.add_column("Value", style="green")
+
+    table.add_row("yggdrasil_root", cfg.yggdrasil_root or "(not set)")
+    table.add_row("gpu_profile", cfg.gpu_profile)
+    table.add_row("catalog_path", cfg.catalog_path)
+    for i, d in enumerate(cfg.scan_dirs):
+        label = f"scan_dirs[{i}]" if i == 0 else f"scan_dirs[{i}]"
+        table.add_row(label, d)
+
+    console.print(table)
+
+    if cfg.yggdrasil_root:
+        console.print(
+            "\n[dim]YGGDRASIL_ROOT is set — scan_dirs and catalog_path may be overridden.[/]"
+        )
+
+
+@config_app.command(name="set")
+def config_set(
+    key: str = typer.Argument(help="Config key (e.g. gpu_profile, scan_dirs.0)"),
+    value: str = typer.Argument(help="New value"),
+):
+    """Set a configuration value and save to disk."""
+    from forgemaster.config import set_config_value
+
+    try:
+        cfg = set_config_value(key, value)
+        console.print(f"[green]Set {key} = {value}[/]")
+        console.print(f"[dim]Config saved to {cfg.catalog_path}[/]")
+    except ValueError as e:
+        console.print(f"[red]Error: {e}[/]")
+        raise typer.Exit(1)
 
 
 if __name__ == "__main__":

@@ -1,12 +1,14 @@
-"""Realm sidebar navigation widget."""
+"""Realm sidebar navigation widget with project filter."""
 
 from __future__ import annotations
+
+import re
 
 from textual.app import ComposeResult
 from textual.containers import VerticalScroll
 from textual.message import Message
 from textual.reactive import reactive
-from textual.widgets import Button, Static
+from textual.widgets import Button, Input, Static
 from tui.scanner import REALMS, HealthStatus, RealmStatus
 
 # Norse-themed icons for each realm
@@ -62,6 +64,13 @@ class RealmSidebar(VerticalScroll):
         padding: 0 1 1 0;
         color: $text-muted;
     }
+    RealmSidebar > .filter-label {
+        padding: 0 1;
+        color: $text-muted;
+    }
+    RealmSidebar > Input {
+        margin: 0 1;
+    }
     RealmSidebar > RealmButton {
         width: 100%;
         height: 3;
@@ -70,9 +79,13 @@ class RealmSidebar(VerticalScroll):
         background: $accent 20%;
         text-style: bold;
     }
+    RealmSidebar > RealmButton.hidden {
+        display: none;
+    }
     """
 
     selected_realm: reactive[str] = reactive("Asgard")
+    filter_text: reactive[str] = reactive("")
 
     class RealmSelected(Message):
         """Message posted when a realm is selected."""
@@ -84,6 +97,8 @@ class RealmSidebar(VerticalScroll):
     def compose(self) -> ComposeResult:
         yield Static("☵ Yggdrasil", classes="sidebar-title")
         yield Static("Realms", classes="sidebar-subtitle")
+        yield Static("Filter:", classes="filter-label")
+        yield Input(placeholder="regex filter…", id="realm-filter")
         for i, realm_name in enumerate(REALMS, start=1):
             yield RealmButton(realm_name, i)
 
@@ -93,6 +108,30 @@ class RealmSidebar(VerticalScroll):
     def watch_selected_realm(self, new_realm: str) -> None:
         """React to selection changes – highlight active button."""
         self._highlight_active()
+
+    def watch_filter_text(self, new_filter: str) -> None:
+        """React to filter changes – show/hide realm buttons."""
+        self._apply_filter(new_filter)
+
+    def on_input_changed(self, event: Input.Changed) -> None:
+        """Handle changes to the filter input."""
+        if event.input.id == "realm-filter":
+            self.filter_text = event.value
+
+    def _apply_filter(self, pattern: str) -> None:
+        """Show/hide realm buttons based on regex filter pattern."""
+        for btn in self.query(RealmButton):
+            if not pattern:
+                btn.remove_class("hidden")
+            else:
+                try:
+                    if re.search(pattern, btn.realm_name, re.IGNORECASE):
+                        btn.remove_class("hidden")
+                    else:
+                        btn.add_class("hidden")
+                except re.error:
+                    # Invalid regex – show all
+                    btn.remove_class("hidden")
 
     def _highlight_active(self) -> None:
         """Set the 'active' CSS class on the currently selected button."""
