@@ -1,0 +1,135 @@
+/* Yggdrasil Dashboard – Dark Norse Theme */
+
+/* ── Screen & Layout ─────────────────────────────────────────── */
+
+Screen {
+    background: $background;
+}
+
+#main-grid {
+    layout: horizontal;
+    height: 1fr;
+}
+
+/* ── Header ──────────────────────────────────────────────────── */
+
+DashboardHeader {
+    background: #1a1b26;
+    color: #e0e0e0;
+    height: 3;
+    padding: 0 1;
+}
+
+DashboardHeader .logo {
+    color: #c8a23e;
+    text-style: bold;
+}
+
+DashboardHeader .timestamp {
+    color: #6a6f87;
+    text-align: right;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────── */
+
+RealmSidebar {
+    width: 28;
+    background: #1e1f2a;
+    border-right: thick #c8a23e;
+    padding: 1 0;
+}
+
+RealmSidebar > .sidebar-title {
+    text-align: center;
+    text-style: bold;
+    padding: 0 1;
+    color: #c8a23e;
+}
+
+RealmSidebar > .sidebar-subtitle {
+    text-align: center;
+    padding: 0 1 1 0;
+    color: #6a6f87;
+}
+
+RealmSidebar > RealmButton {
+    width: 100%;
+    height: 3;
+    text-align: left;
+    padding: 0 1;
+    border: none;
+    background: transparent;
+    color: #a9b1d6;
+}
+
+RealmSidebar > RealmButton:hover {
+    background: #292e42;
+    color: #c0caef;
+}
+
+RealmSidebar > RealmButton.active {
+    background: #292e42;
+    color: #c8a23e;
+    text-style: bold;
+    border-left: tall #c8a23e;
+}
+
+/* ── Content Area ────────────────────────────────────────────── */
+
+#content-area {
+    height: 1fr;
+    padding: 0 2;
+    overflow-y: auto;
+    background: #1a1b26;
+}
+
+RealmDetailView {
+    height: auto;
+    padding: 1 2;
+    color: #a9b1d6;
+}
+
+/* ── Footer ──────────────────────────────────────────────────── */
+
+Footer {
+    background: #1e1f2a;
+    color: #6a6f87;
+    border-top: tall #c8a23e;
+}
+
+Footer .footer--key {
+    background: #292e42;
+    color: #c8a23e;
+}
+
+Footer .footer--description {
+    color: #6a6f87;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+
+ScrollBar {
+    background: #1a1b26;
+}
+
+ScrollBar > .scrollbar--thumb {
+    background: #3a3d5a;
+}
+
+ScrollBar > .scrollbar--thumb:hover {
+    background: #c8a23e;
+}
+
+/* ── General helpers ─────────────────────────────────────────── */
+
+.bold {
+    text-style: bold;
+}
+
+.accent {
+    color: #c8a23e;
+}
+
+.muted {
+    color: #6a6f87;
+}
