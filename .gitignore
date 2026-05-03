@@ -69,5 +69,21 @@ Asgard/]
 *.sqlite3
 *.db
 *.sqlite
+*.db-journal
 **/chroma.sqlite3
 **/chroma/*.sqlite3
+
+# Tool caches (do not track skill caches)
+.minimax/
+.claude/
+.hermes/
+
+# VS Code extension build artifacts
+Alfheim/VSCode_Extension_Lilith/out/
+*.vsix
+
+# Vanaheim runtime/registry
+Vanaheim/bot_registry.json
+
+# State files
+.yggdrasil_state.json
