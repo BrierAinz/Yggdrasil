@@ -351,7 +351,7 @@ architecture diagram, realm table, Quick Start. Good foundation.
 ### Enhancement Checklist
 
 #### 9a. Animated Demo (GIF/Video)
-Add an animated GIF showing Hermes-Lilith in action via Telegram.
+Add an animated GIF showing Lilith in action via Telegram.
 - Record with asciinema (CLI) or LICEcap/Peek (GUI)
 - Keep under 5MB, 15-30 seconds
 - Host in docs/assets/ or embed from external URL

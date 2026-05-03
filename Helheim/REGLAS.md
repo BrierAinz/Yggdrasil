@@ -1,61 +1,48 @@
-# ⚰️ Reglas de Helheim - Cripta de Proyectos
+# ⚖️ REGLAS — Helheim
 
-> **Propósito:** Proyectos abandonados, versiones antiguas, código muerto
+Leyes del reino de los muertos. Lo que entra, no sale sin permiso del Arquitecto.
 
----
+## 📜 Reglas del Reino
 
-## ✅ Sí Permitido
-- Proyectos abandonados
-- Versiones viejas de sistemas
-- Código que ya no funciona
-- Intentos fallidos con valor histórico
+1. **Helheim es exclusivamente de archivo.** No se desarrolla, no se modifica, no se ejecuta nada aquí. Es el reposo final.
+2. **Los artefactos se comprimen.** Los directorios legacy se almacenan como archivos `.tar.gz`. No se mantienen directorios expandidos en Helheim a menos que el Arquitecto lo ordene.
+3. **Graveyard.md es el registro sagrado.** Todo proyecto que llegue a Helheim debe tener su epitafio registrado en `Graveyard.md`: nombre, fecha de muerte, causa, y si aplica, ubicación del archivo comprimido.
+4. **No se elimina permanentemente sin registro.** Si algo se purga (como ocurrió con `Quarantine_2026-04-29/`), se documenta en Graveyard.md que existió y fue destruido.
+5. **La resurrección es posible pero rara.** Solo el Arquitecto puede autorizar sacar un proyecto de Helheim. Si se hace, se documenta en Graveyard.md con fecha y destino.
+6. **Archives_Lilith_Legacy es un archivo, NO un directorio.** Es un tar.gz de 852MB. No se extrae in situ. Si se necesita contenido, se extre temporalmente en otro reino y se trabaja ahí.
 
-## ❌ Prohibido
-- Desarrollo activo (no se edita nada aquí)
-- Proyectos que pueden resucitarse (usar fork)
-- Datos sensibles (incluso muertos)
-- Archivos temporales
+## 📂 Directorios y Archivos
 
----
+| Path | Tipo | Descripción |
+|---|---|---|
+| `Archives_Lilith_Legacy_2026-04-29.tar.gz` | Archivo comprimido (852MB) | El monolito legado de Lilith, sellado. **No es un directorio — no se navega como tal.** |
+| `Graveyard.md` | Documento | Registro de proyectos muertos. Epitafios del ecosistema. |
+| ~~`Quarantine_2026-04-29/`~~ | **PURGADO** | Fue evaluado y destruido. Ya no existe. Documentado en Graveyard.md. |
 
-## Estructura
-```
-Helheim/
-├── README.md
-├── Graveyard.md        # Índice de lo que murió y por qué
-├── Abandoned/          # Proyectos abandonados
-├── Deprecated/         # Versiones viejas
-│   ├── Lilith_v1.0/
-│   └── Cortana_v2.0/
-└── Obsolete/           # Código que ya no funciona
-```
+## 🔄 Triggers de Migración (Entrada)
 
----
+| Si un artefecto… | Entonces tráelo a Helheim como… |
+|---|---|
+| Un proyecto es abandonado sin esperanza de resurrección | `archivo.tar.gz` + epitafio en Graveyard.md |
+| Un directorio legacy que ya no se consulta | `archivo.tar.gz` + epitafio en Graveyard.md |
+| Un dataset o modelo obsoleto | Archivo comprimido bajo naming de fecha |
+| Una rama de experimentación fallida | Archivo comprimido + lección aprendida en Graveyard.md |
 
-## Ritual de Entrada
+## 🔄 Triggers de Migración (Salida)
 
-Cuando un proyecto muere:
+| Si el Arquitecto decide… | Entonces… |
+|---|---|
+| Resucitar un proyecto | Se extrae del tar.gz, se mueve al reino destino, se registra la resurrección en Graveyard.md |
+| Consultar contenido del archivo | Se extrae temporalmente en workspace, nunca se modifica el tar.gz original |
 
-1. **Último commit**: `[ARCHIVADO] Razón: X`
-2. **Mover a Helheim/** manteniendo estructura
-3. **Actualizar Graveyard.md**:
-   ```markdown
-   ## 2026-03-21 - Proyecto X
-   - **Fecha de muerte**: 2026-03-21
-   - **Razón**: [abandono/fallo/reemplazo]
-   - **Lecciones**: Lo que se aprendió
-   - **Rescatable**: Sí/No - Qué se podría reusar
-   ```
+## 🚫 Prohibiciones
+
+- ❌ **Desarrollo activo** — Helheim no es workspace; es cementerio
+- ❌ **Directorios expandidos** — Todo se comprime en tar.gz
+- ❌ **Modificación de archivos archivados** — El muerto no se reescribe
+- ❌ **Eliminar el tar.gz sin consolidar Graveyard.md** — Todo debe tener epitafio
+- ❌ **Crear subcarpetas de proyectos activos** — Solo archivos comprimidos y documentación
 
 ---
 
-## Reglas Específicas
-
-1. **Read-only**: No se desarrolla, solo se archiva
-2. **Epitafio obligatorio**: Cada proyecto necesita razón de muerte
-3. **Resucitación posible**: Como fork nuevo, no revival in-place
-4. **Revisión anual**: ¿Algo merece resucitar?
-
----
-
-*Cripta de Proyectos - Aquí descansan los caídos*
+*Los muertos no hablan. Pero Graveyard.md habla por ellos. Y lo que está escrito en Helheim, solo el Arquitecto puede deshacerlo.*

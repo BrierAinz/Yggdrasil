@@ -34,7 +34,7 @@ class BrierAinz:
 ### 🌳 Current Project: [Yggdrasil](https://github.com/BrierAinz/Yggdrasil)
 
 A personal project ecosystem organized under the **Norse Nine Realms** metaphor.
-The crown jewel is **Hermes-Lilith** — a local-first AI agent with vector memory,
+The crown jewel is **Lilith** — a local-first AI agent with vector memory,
 sub-agent delegation, task scheduling, RAG pipeline, and Telegram control.
 
 [![Yggdrasil](https://img.shields.io/badge/🌳_Yggdrasil-Ecosystem-F59E0B?style=for-the-badge)](https://github.com/BrierAinz/Yggdrasil)
@@ -46,7 +46,7 @@ sub-agent delegation, task scheduling, RAG pipeline, and Telegram control.
 
 | | Realm | Purpose |
 |---|-------|---------|
-| 🏰 | [Asgard](https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard) | Core Technology — Hermes-Lilith, Gateway, Memory |
+| 🏰 | [Asgard](https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard) | Core Technology — Lilith, Gateway, Memory |
 | 🤖 | [Vanaheim](https://github.com/BrierAinz/Yggdrasil/tree/main/Vanaheim) | AI Agents — Telegram Bot, Agent Framework |
 | ✨ | [Alfheim](https://github.com/BrierAinz/Yggdrasil/tree/main/Alfheim) | UI Prototypes — Dashboard, VSCode Extension |
 | 📚 | [Svartalfheim](https://github.com/BrierAinz/Yggdrasil/tree/main/Svartalfheim) | Knowledge Base — Docs, Playbooks, ADRs |

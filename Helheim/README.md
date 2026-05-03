@@ -1,25 +1,28 @@
-# Helheim - Reino de los Muertos
+# 💀 Helheim
 
-> **Estado:** ARCHIVO / CUARENTENA
-> **Tamano:** Legacy pesado + cuarentena
-> **Remasterizado:** 2026-04-29
+El reino de los muertos. Donde los proyectos yacen en silencio eterno, sellados bajo tierra.
 
-## Contenido
+Helheim es el cementerio del ecosistema Yggdrasil. Aquí descansan los proyectos que fallaron, los artefactos que cumplieron su ciclo, y los archivos legacy que ya no sirven pero que la memoria del árbol exige conservar. No se trabaja en Helheim — se archiva. Lo que entra aquí no vuelve a vivir, aunque el Norns puede decidir resucitarlo si el destino lo exige.
 
-| Directorio | Contenido |
-|------------|-----------|
-| Archives_Lilith_Legacy_2026-04-29/ | Codigo muerto del monolito Lilith |
-| Quarantine_2026-04-29/ | Basura regenerable (node_modules, pycache, etc.) |
+> 📝 **NOTA:** La cuarentena `Quarantine_2026-04-29/` fue purgada por completo y ya no existe. Su contenido fue evaluado, archivado o destruido según correspondía.
 
-## Reglas
+## 📂 Estructura del Reino
 
-1. **SOLO LECTURA** - No desarrollo activo
-2. Puede resucitar proyectos (mover a Muspelheim)
-3. Cuarentena puede purgarse con `rmdir /s Quarantine_2026-04-29`
-4. Legacy preservado por historial
+```
+Helheim/
+├── Archives_Lilith_Legacy_2026-04-29.tar.gz   # (852MB) Archivo comprimido del monolito legado de Lilith. NO es un directorio.
+└── Graveyard.md                                # Registro de proyectos muertos. Sus epitafios.
+```
 
-## Notas Post-Remasterizacion
+## ⚔️ Estado
 
-- Monolito Lilith archivado completo
-- 60,000+ archivos basura en cuarentena
-- Helheim es el cementerio ordenado de Yggdrasil
+**Inactivo — Reino sellado.** Helheim recibe pero no produce. Solo el Archivero puede abrir las puertas.
+
+## 🔗 Vínculos
+
+- [Graveyard.md](./Graveyard.md) — El registro de los caídos. Cada proyecto, su epitafio.
+- [Archives — Lilith Legacy](./Archives_Lilith_Legacy_2026-04-29.tar.gz) — El monolito comprimido. Extraer solo con autorización del Arquitecto.
+
+---
+
+*Última actualización: 2026-05-02*

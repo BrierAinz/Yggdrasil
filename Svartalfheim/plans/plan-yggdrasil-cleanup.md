@@ -98,7 +98,7 @@ Todos los realm READMEs deben tener formato consistente:
 - [ ] Alfheim/README.md — Actualizar con dashboard HTMX
 - [ ] Vanaheim/README.md — Actualizar con vanaheim-framework modular
 - [ ] Muspelheim/README.md — Añadir AI-Influencer, AutoSub, docs
-- [ ] Niflheim/README.md — Actualizar con ForgeMaster, datasets info
+- [x] Niflheim/README.md — Actualizar con ForgeMaster movido a Muspelheim
 - [ ] Midgard/README.md — Actualizar con Finanzas, Habits, Recipes
 - [ ] Helheim/README.md — Republicar Graveyard actualizado
 - [ ] Jotunheim/README.md — Actualizar estado (vacío pero con propósito)

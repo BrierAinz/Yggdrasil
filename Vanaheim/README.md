@@ -102,7 +102,7 @@ Vanaheim/
 | Agente | Modelo | Provider | Especialidad | Contexto |
 |--------|--------|----------|-------------|----------|
 | **Shalltear** | llama-3.3-70b | Venice | Clasificacion, parsing NL, triaje | 32k |
-| **Adam** | qwen2.5-coder:7b | Ollama (local) | Codigo, tests, refactoring | 32k |
+| **Adan** | qwen2.5-coder:7b | Ollama (local) | Codigo, tests, refactoring | 32k |
 | **Eva** | grok-4-fast-reasoning | xAI/Grok | Analisis, documentacion, research | 128k |
 | **Crystal** | kimi-for-coding | Kimi | Conversacion, asistencia general | 8k (fallback Ollama) |
 | **Odin** | kimi-for-coding | Kimi | Investigacion profunda, analisis masivo | 262k |

@@ -27,7 +27,7 @@
 
 Yggdrasil is not a monorepo — it is a **living ecosystem** where every project has a purpose, a lifecycle, and a destination realm. Inspired by Norse cosmology, each of the **Nine Realms** serves a distinct function in the development lifecycle.
 
-The crown jewel is **Hermes-Lilith**: a local-first AI agent that runs entirely on your hardware via LM Studio, with no cloud lock-in. Control it from anywhere through Telegram. It remembers conversations with vector embeddings, delegates tasks to sub-agents, schedules jobs, and can literally control your PC.
+The crown jewel is **Lilith**: a local-first AI agent that runs entirely on your hardware via LM Studio, with no cloud lock-in. Control it from anywhere through Telegram. It remembers conversations with vector embeddings, delegates tasks to sub-agents, schedules jobs, and can literally control your PC.
 
 ### Key Principles
 
@@ -106,13 +106,13 @@ pre-commit run --all-files
 
 | Realm | Purpose | Projects |
 |-------|---------|----------|
-| 🏰 **Asgard** | Core Technology | Hermes-Lilith, Gateway, Memory, Scheduler |
+| 🏰 **Asgard** | Core Technology | Lilith, API, Memory, Tools, CLI, Gateway |
 | 🤖 **Vanaheim** | AI Agents | Telegram Bot, Bridge, Agent Framework |
-| ✨ **Alfheim** | UI Prototypes | VSCode Extension, Visual Experiments |
+| ✨ **Alfheim** | UI Prototypes | HTMX Dashboard, TUI Dashboard, VSCode Extension |
 | 📚 **Svartalfheim** | Knowledge Base | Docs, Playbooks, Architecture Decisions |
-| 🔥 **Muspelheim** | Active Development | Sprint projects, quick experiments |
-| ❄️ **Niflheim** | Resources | Datasets, Models, Assets |
-| 🌍 **Midgard** | Personal Apps | Finished applications for daily use |
+| 🔥 **Muspelheim** | Active Development | AI Influencer (Eir), AutoSub, ForgeMaster |
+| ❄️ **Niflheim** | Resources & Tools | Datasets, Models, Configs |
+| 🌍 **Midgard** | Personal Apps | Finanzas, HabitForge, RecipeAlchemist |
 | 🐉 **Jotunheim** | Massive Projects | Long-term builds (>1 month) |
 | ☠️ **Helheim** | Graveyard | Archived, dead, or quarantined projects |
 
@@ -132,7 +132,7 @@ Telegram Bot  ---------→  VSCode Ext  ---------→  CLI
       └────────────────────────────────────┘
                           ↓
       ┌────────────────────────────────────┐
-      │      Hermes-Lilith (Orchestrator)       │
+      │      Lilith (Orchestrator)                  │
       │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐  │
       │  │Memory│ │Agents│ │Sched.│ │Plugin│  │
       │  └──────┘ └──────┘ └──────┘ └──────┘  │
@@ -145,7 +145,7 @@ Telegram Bot  ---------→  VSCode Ext  ---------→  CLI
 
 ---
 
-## Hermes-Lilith Features
+## Lilith Features
 
 | Feature | Description |
 |---------|-------------|
@@ -163,7 +163,7 @@ Telegram Bot  ---------→  VSCode Ext  ---------→  CLI
 
 ### Modular Package Structure (v4.0+)
 
-Hermes-Lilith is now a modular package ecosystem:
+Lilith is now a modular package ecosystem:
 
 | Package | Purpose | Key Exports |
 |---------|---------|-------------|
@@ -183,7 +183,7 @@ The `Lilith/Swarm/` module provides:
 
 </details>
 
-[Agent specs →](https://brierainz.github.io/Yggdrasil/hermes-lilith.html)
+See the [Lilith agent specs](https://brierainz.github.io/Yggdrasil/hermes-lilith.html) for full details.
 
 ---
 
@@ -193,7 +193,7 @@ The `Lilith/Swarm/` module provides:
 |------|-----|-----|--------|-------------|
 | Minimum | 16GB | — | 7B (Q4) | Functional |
 | Recommended | 32GB+ | 4GB+ VRAM | 13-27B | Fast, good context |
-| Reference | 48GB DDR4 | RTX 3060 4GB | Up to 27B | Comfortable |
+| Reference | 48GB DDR4 | RTX 3060 12GB | Up to 27B | Comfortable |
 
 ---
 

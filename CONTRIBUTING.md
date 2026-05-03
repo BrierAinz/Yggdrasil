@@ -44,7 +44,7 @@ Agent logic changes should include:
 - Updated capability descriptions
 - Test scenarios in `tests/`
 
-### Hermes-Lilith (CLI Agent)
+### Lilith (CLI Agent)
 
 Python code follows PEP 8 with these exceptions:
 - Line length: 100 characters

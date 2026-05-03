@@ -6,7 +6,7 @@ Step-by-step guides for each realm in the ecosystem.
 
 ## Asgard — Core Technology
 
-### Setup Hermes-Lilith from scratch
+### Setup Lilith from scratch
 
 ```bash
 # 1. Clone

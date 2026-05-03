@@ -1,4 +1,4 @@
-# ForgeMaster — Gestión de Recursos de Niflheim
+# ForgeMaster — Gestión de Recursos de Muspelheim
 
 > **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task.
 
@@ -8,13 +8,13 @@
 
 **Tech Stack:** Python 3.11+, Typer, Rich, SQLite, psutil, httpx, safetensors (para metadata).
 
-**Realm:** Niflheim/ForgeMaster/
+**Realm:** Muspelheim/ForgeMaster/
 
 ---
 
 ## Task 1: Scaffold del proyecto
 
-Files: `Niflheim/ForgeMaster/`, pyproject.toml con typer, rich, psutil, httpx, safetensors, pyyaml.
+Files: `Muspelheim/ForgeMaster/`, pyproject.toml con typer, rich, psutil, httpx, safetensors, pyyaml.
 
 **Commit:** `feat(forgemaster): scaffold project`
 

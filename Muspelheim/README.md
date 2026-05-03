@@ -1,27 +1,42 @@
-# Muspelheim - Reino del Fuego
+# 🔥 Muspelheim — El Reino del Fuego Primordial
 
-> **Estado:** ACTIVO
-> **Tamano:** 5 KB | 4 archivos
-> **Remasterizado:** 2026-04-29
+> *"Donde las forjas arden sin tregua y las llamas crean lo que aún no existe."*
 
-## Proposito
+Muspelheim es el reino de la creación ardiente: generación de contenido, entrenamiento de modelos, subtítulos automáticos, plantillas y documentación. Aquí se forjan las herramientas que prenden fuego al mundo digital. **ForgeMaster** fue migrado desde Niflheim — el código ejecutable pertenece al fuego.
 
-Desarrollo activo, sprint mode, experimentos en curso. Maximo 3 proyectos simultaneos.
+---
 
-## Proyectos Activos
+## 📂 Árbol del Reino
 
-| Proyecto | Inicio | Estado |
-|----------|--------|--------|
-| [Vacante] | - | Listo para semilla |
+```
+Muspelheim/
+├── AI-Influencer/                  # Proyecto Eir — Entrenamiento LoRA v0.1.0 (FASE 0)
+├── AutoSub/                        # Generador de subtítulos v0.1.0 (COMPLETE)
+├── AutoMode/                       # Plantillas y modos automáticos
+├── ForgeMaster/                    # Gestión de modelos LLM, VRAM, disk — CLI tool
+└── Docs/                           # Documentación del reino
+```
 
-## Reglas
+---
 
-1. Maximo 3 proyectos a la vez
-2. Cada proyecto maximo 2 semanas
-3. Sin basura (todo se limpia al migrar)
-4. Todo proyecto debe tener README.md
+## 📊 Estado de los Proyectos
 
-## Notas Post-Remasterizacion
+| Proyecto | Versión | Estado | Notas |
+|---|---|---|---|
+| AI-Influencer (Eir) | v0.1.0 | 🌱 FASE 0 | Entrenamiento LoRA para influencer IA |
+| AutoSub | v0.1.0 | ✅ COMPLETO | Generador de subtítulos |
+| AutoMode | — | 🔧 EN CURSO | Plantillas y modos |
+| ForgeMaster | — | 🔧 ACTIVO | Gestión de modelos LLM — migrado desde Niflheim |
+| Docs | — | 📖 ACTIVO | Documentación general |
 
-- Limpio y listo para sprints
-- Sin proyectos estancados
+---
+
+## 🔗 Enlaces Relacionados
+
+- [Asgard](../Asgard/) — El núcleo de Lilith
+- [Alfheim](../Alfheim/) — Las interfaces luminosas
+- [Niflheim](../Niflheim/) — Los recursos congelados (ForgeMaster fue extraído de aquí)
+
+---
+
+*Última actualización: 2026-05-02*

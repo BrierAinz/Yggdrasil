@@ -35,7 +35,7 @@ Lee cada plan completo desde `Svartalfheim/plans/plan-XX-nombre.md` antes de emp
 ### Prioridad 1 — Utilidad inmediata
 
 1. **plan-01-autosub.md** → `Muspelheim/AutoSub/` — Generador de subtítulos (Whisper → SRT)
-2. **plan-18-forgemaster.md** → `Niflheim/ForgeMaster/` — Gestión de modelos LLM/VRAM
+2. **plan-18-forgemaster.md** → `Muspelheim/ForgeMaster/` — Gestión de modelos LLM/VRAM
 3. **plan-13-terminaldashboard.md** → `Alfheim/TerminalDashboard/` — TUI del ecosistema
 
 ### Prioridad 2 — Agentes de IA

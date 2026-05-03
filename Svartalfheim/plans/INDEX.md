@@ -49,7 +49,7 @@
 
 | # | Plan | Proyecto | Realm | Descripción |
 |---|------|----------|-------|-------------|
-| 18 | [ForgeMaster](plan-18-forgemaster.md) | ForgeMaster | Niflheim | Gestión de modelos LLM, VRAM, y disk usage |
+| 18 | [ForgeMaster](plan-18-forgemaster.md) | ForgeMaster | Muspelheim | Gestión de modelos LLM, VRAM, y disk usage |
 
 ---
 

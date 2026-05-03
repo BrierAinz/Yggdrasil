@@ -1,7 +1,7 @@
 # 📜 Reglas de Yggdrasil - El Árbol del Mundo
 
-> **Versión:** 2.0
-> **Fecha:** 2026-04-29 (Remasterizacion completa)
+> **Versión:** 3.0
+> **Fecha:** 2026-05-02 (Organización profesional, actualización de realidades)
 > **Aplicable a:** Todo el ecosistema Yggdrasil
 
 ---
@@ -18,7 +18,7 @@ Idea → Muspelheim → [Reino Destino] → Helheim (si muere)
 ```
 
 ### 3. Límite de Proyectos Activos
-- **Muspelheim**: Máximo 3 proyectos simultáneos
+- **Muspelheim**: Máximo 4 proyectos simultáneos
 - **Jotunheim**: Máximo 2 gigantes activos
 - Cualquier otro reino: Sin límite estricto, pero mantener organizado
 
@@ -28,15 +28,17 @@ Idea → Muspelheim → [Reino Destino] → Helheim (si muere)
 
 | Reino | Regla Principal | Trigger de Salida |
 |-------|-----------------|-------------------|
-| **Asgard** | Dashboards/scripts solo | N/A (permanente) |
-| **Alfheim** | Todo es experimental | Migrar cuando esté listo |
-| **Midgard** | Solo proyectos personales | N/A (destino final) |
-| **Svartalfheim** | Solo conocimiento/docs | N/A (permanente) |
-| **Vanaheim** | Experimentos de IA/agentes | Migrar cuando esté estable |
+| **Asgard** | Tecnología core (Lilith, API, Memory, CLI, Gateway) | N/A (permanente) |
+| **Alfheim** | Prototipos UI y experimentos visuales | Migrar cuando esté listo |
+| **Midgard** | Apps personales terminadas | N/A (destino final) |
+| **Svartalfheim** | Documentación, planes, conocimiento | N/A (permanente) |
+| **Vanaheim** | Agentes IA, framework, bots | Migrar cuando esté estable |
 | **Jotunheim** | Proyectos >1 mes de duración | Completar o a Helheim |
-| **Muspelheim** | Máx 3 proyectos, sprint mode | Completar/migrar en 2 semanas |
-| **Niflheim** | Assets/configs sin código | N/A (recursos) |
+| **Muspelheim** | Máx 4 proyectos, sprint mode | Completar/migrar en 2 semanas |
+| **Niflheim** | Recursos, modelos, datasets, assets | N/A (recursos) |
 | **Helheim** | Read-only, no desarrollo | N/A (cementerio) |
+
+> **Nota:** Asgard es el reino de la **tecnología core** — no solo dashboards. Contiene Lilith (el agente IA central), los paquetes modulares (lilith-core, lilith-memory, lilith-tools, etc.), el gateway, y los dashboards.
 
 ---
 
@@ -46,12 +48,14 @@ Idea → Muspelheim → [Reino Destino] → Helheim (si muere)
 
 | Desde | Hacia | Condición |
 |-------|-------|-----------|
+| Muspelheim | Asgard | Componente core maduro |
 | Muspelheim | Midgard | App personal lista |
 | Muspelheim | Jotunheim | Proyecto crece >1 mes |
 | Muspelheim | Helheim | Falla o abandono |
 | Alfheim | Midgard/Jotunheim | Prototipo validado |
 | Vanaheim | Svartalfheim | Conocimiento maduro |
-| Vanaheim | Midgard | Agente/IA lista |
+| Vanaheim | Asgard/Midgard | Agente/IA lista para producción |
+| Niflheim | Muspelheim | Herramienta en desarrollo activo |
 | Cualquiera | Helheim | Proyecto muere |
 
 ### Proceso de Migración
@@ -68,23 +72,34 @@ Idea → Muspelheim → [Reino Destino] → Helheim (si muere)
 
 ### Proyectos
 ```
-[tipo]_[nombre]_[estado]/
+PascalCase para proyectos principales, snake_case para módulos Python.
 
 Ejemplos:
-- app_piano_autoplayer/
-- engine_story_v2/
-- exp_ml_vision_wip/
-- lib_utils_stable/
+- AI-Influencer/          # Proyecto principal
+- AutoSub/                # Proyecto principal
+- ForgeMaster/            # Proyecto principal
+- lilith-core/            # Módulo Python
+- lilith-memory/          # Módulo Python
+- vanaheim-framework/     # Framework Python
+```
+
+### Paquetes Python
+```
+snake_case con guión para dirs, sin guión para imports.
+
+Ejemplos:
+- Dir: lilith-core/  → Import: from lilith_core import ...
+- Dir: vanaheim-framework/  → Import: from vanaheim import ...
 ```
 
 ### Archivos
 ```
-[fecha]_[tipo]_[descripcion].[ext]
+snake_case para código Python, PascalCase para docs importantes.
 
 Ejemplos:
-- 20260321_design_api_v2.md
-- 20260320_bugfix_memory.py
-- 20260319_checkpoint_001.json
+- memory_store.py
+- REGLAS.md, README.md
+- plan-01-autosub.md
 ```
 
 ### Commits
@@ -92,9 +107,11 @@ Ejemplos:
 [REINO] [tipo]: descripcion
 
 Ejemplos:
+- [ASGARD] feat(lilith-core): add memory store
 - [MUSPELHEIM] feat: implement checkpointing
 - [SVARTALFHEIM] docs: add RAG guide
 - [MIDGARD] fix: piano autoplayer delay
+- [NIFLHEIM] feat(forgemaster): add model manager
 ```
 
 ---
@@ -104,25 +121,26 @@ Ejemplos:
 ### Todo proyecto debe tener:
 ```
 proyecto/
-├── README.md              # Obligatorio
-├── REGLAS.md             # Reglas específicas (opcional)
-├── src/ o código/        # Implementación
-├── docs/                 # Documentación
-└── archive/              # Versiones viejas
+├── README.md              # Obligatorio — descripción, estado, cómo usar
+├── pyproject.toml         # Paquetes Python (si aplica)
+├── tests/                 # Tests (si aplica)
+├── src/                   # Código fuente (si aplica)
+└── docs/                  # Documentación adicional (opcional)
 ```
 
 ### Prohibido:
-- Archivos sueltos en raíz del reino
+- Archivos sueltos en raíz del reino (scripts de un solo uso van a Svartalfheim/Scripts/)
 - `temp/`, `tmp/`, `borrar/` permanentes
 - Duplicados entre reinos
-- Binarios sin código fuente
+- Binarios grandes sin `.gitignore`
+- Tokens, claves API, contraseñas en código (usar `.env` + `.gitignore`)
 
 ---
 
 ## 🔒 Seguridad y Límites
 
 ### Prohibido en todo Yggdrasil:
-- Tokens, claves API, contraseñas (usar .env o Config/)
+- Tokens, claves API, contraseñas en código (usar `.env` + `.gitignore`)
 - Archivos >100MB sin LFS
 - Malware, exploits, contenido ilegal
 - Datos personales de terceros
@@ -142,9 +160,10 @@ proyecto/
 - Verificar Helheim: ¿algo para resucitar?
 
 ### Trimestral
-- Revisar todos los READMEs
+- Revisar todos los READMEs y REGLAS
 - Actualizar reglas si es necesario
 - Backup de Svartalfheim (Knowledge Base)
+- Verificar que la estructura real coincide con la documentada
 
 ---
 
@@ -153,14 +172,14 @@ proyecto/
 ```
 ¿Qué estoy creando?
 │
-├─→ Dashboard/monitoreo → Asgard
+├─→ Agente IA core / API / CLI → Asgard
 ├─→ Prototipo UI/visual → Alfheim
 ├─→ App para mi uso → Midgard
-├─→ Documentación/conocimiento → Svartalfheim
-├─→ Experimento IA/agente → Vanaheim
+├─→ Documentación/planes/conocimiento → Svartalfheim
+├─→ Agente experimental / bot → Vanaheim
 ├─→ Proyecto grande >1 mes → Jotunheim
 ├─→ Desarrollo activo/sprint → Muspelheim
-├─→ Assets/configs/templates → Niflheim
+├─→ Assets/modelos/datasets → Niflheim
 └─→ Proyecto muerto/archivar → Helheim
 ```
 
@@ -175,16 +194,27 @@ proyecto/
 | Sin README | Proyecto invisible hasta que lo tenga |
 | Duplicar entre reinos | Eliminación del duplicado |
 | Token expuesto | 1 mes de purgatorio en Helheim |
+| README desactualizado >1 mes | Reescritura obligatoria |
 
 ---
 
 **Yggdrasil crece con orden o no crece.** 🌳
 
-*Ultima actualizacion: 2026-04-29*
+*Ultima actualizacion: 2026-05-02*
 
 ---
 
 ## Historial de Cambios
+
+### v3.0 - 2026-05-02 (Organización profesional)
+- **Asgard redefinido:** De "Dashboards/scripts solo" a "Tecnología core" — refleja su rol real
+- **Nomenclatura actualizada:** PascalCase para proyectos, snake_case para módulos Python (refleja uso real)
+- **Archivos sueltos:** Prohibidos en raíz de reino, scripts van a Svartalfheim/Scripts/
+- **Ruta de migración Asgard:** Agregado Muspelheim → Asgard para componentes core
+- **Ruta de migración Niflheim:** Agregado Niflheim → Muspelheim para herramientas en desarrollo
+- **ForgeMaster:** Migrado de Niflheim a Muspelheim (proyecto en desarrollo activo, no es recurso)
+- **Estructura mínima:** Actualizada para incluir pyproject.toml y tests/
+- **Sanciones:** Agregada sanción por README desactualizado
 
 ### v2.0 - 2026-04-29 (Remasterizacion completa)
 - **Limpieza masiva:** Eliminados 60,000+ archivos basura (node_modules, pycache, map, tmp)

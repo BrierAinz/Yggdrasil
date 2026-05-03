@@ -1,30 +1,33 @@
-# Niflheim - Reino de la Niebla
+# ❄️ Niflheim
 
-> **Estado:** ACTIVO
-> **Tamano:** 4.3 GB | 12 archivos
-> **Remasterizado:** 2026-04-29
+El reino de la niebla y el hielo. Donde los datos se congelan en silencio y los modelos esperan su despertar.
 
-## Proposito
+Niflheim almacena los recursos de inteligencia artificial: datasets, modelos preentrenados y los artefactos de niebla que alimentan las venas del árbol. Aquí nada se ejecuta — todo descansa. Es el almacén glacial donde las criaturas de silicona aguardan ser invocadas. **Nada de código vive en Niflheim.** El código es fuego y pertenece a Muspelheim.
 
-Recursos, assets, modelos de IA, datasets, y configuraciones. Sin codigo ejecutable.
+> ✅ **MIGRACIÓN COMPLETADA:** `ForgeMaster/` fue trasladado a `Muspelheim/ForgeMaster/`. Niflheim ahora cumple su regla de solo-recursos. `scripts/model_manager.py` permanece como utilidad de infraestructura del propio realm.
 
-## Contenido
+## 📂 Estructura del Reino
 
-| Directorio | Proposito |
-|------------|-----------|
-| Models/ | Modelos LLM (GGUF, etc.) |
-| Datasets/ | Datos de entrenamiento |
-| Assets/ | Imagenes, audio, video |
-| Configs/ | Configuraciones compartidas |
+```
+Niflheim/
+├── Datasets/
+│   └── cifar-10-batches-py/          # Dataset CIFAR-10. Los ojos congelados de la criatura.
+├── Models/
+│   └── Lilith_v5_models/              # Modelos preentrenados de Lilith v5.
+└── scripts/
+    └── model_manager.py               # Utilidad de infraestructura local (gestiona modelos del realm).
+```
 
-## Reglas
+## ⚔️ Estado
 
-1. Solo archivos de datos/configs
-2. Sin codigo fuente (eso va a Asgard/Vanaheim)
-3. Modelos >100MB usar LFS si se versiona
-4. Limpiar mensualmente assets obsoletos
+**Limpio.** Niflheim ahora es un reino puro de recursos. Solo datos, modelos y utilidades de gestión del propio realm.
 
-## Notas Post-Remasterizacion
+## 🔗 Vínculos
 
-- Reino activado con estructura definida
-- Models/ y Datasets/ son los principales ocupantes de espacio
+- [Models — Lilith v5](./Models/Lilith_v5_models/) — La manifestación congelada de Lilith.
+- [Datasets — CIFAR-10](./Datasets/cifar-10-batches-py/) — Datos de entrenamiento, preservados en el hielo.
+- [ForgeMaster → Muspelheim](../Muspelheim/ForgeMaster/) — Herramienta de gestión de modelos (migrada a Muspelheim).
+
+---
+
+*Última actualización: 2026-05-02*

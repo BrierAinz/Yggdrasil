@@ -1,6 +1,6 @@
 # Yggdrasil API Reference
 
-Hermes-Lilith exposes two HTTP APIs for integration with external tools and UIs.
+Lilith exposes two HTTP APIs for integration with external tools and UIs.
 
 ---
 

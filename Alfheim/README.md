@@ -1,46 +1,39 @@
-# Alfheim - Reino de la Luz
+# 🌿 Alfheim — El Reino de la Luz Eterna
 
-> **Estado:** ACTIVO
-> **Tamano:** 47 KB | 1 JS
-> **Remasterizado:** 2026-04-29
+> *"Donde las interfaces brillan como el sol de la aurora, y cada pixel es un reflejo del Bifröst."*
 
-## Proposito
+Alfheim es el reino de las interfaces visuales: dashboards, extensiones, prototipos y todas las ventanas por las que los mortales contemplan la inteligencia de Yggdrasil. Aquí se tejen las pantallas, se forjan los componentes, y la usabilidad es ley sagrada.
 
-Prototipos visuales, interfaces graficas, y experimentos de frontend.
+---
 
-## Proyectos
-
-| Proyecto | Tecnologia | Estado |
-|----------|------------|--------|
-| ui-seed | Electron + React | Semilla activa |
-
-## Estructura
+## 📂 Árbol del Reino
 
 ```
 Alfheim/
-└── ui-seed/
-    ├── main.js              # Proceso principal Electron
-    ├── package.json         # Dependencias
-    ├── preload.js           # Bridge seguro
-    └── renderer/
-        └── index.html       # UI inicial
+├── TerminalDashboard/              # TUI Python Textual v0.1.0
+├── VSCode_Extension_Lilith/        # Extensión VSCode (TypeScript)
+├── dashboard/                      # Webapp HTMX + Alpine.js + Jinja2 v1.0.0
+└── ui-seed/                        # Prototipo Electron + React
 ```
 
-## Uso
+---
 
-```bash
-cd Alfheim/ui-seed
-npm install
-npm start
-```
+## 📊 Estado de los Proyectos
 
-## Roadmap
+| Proyecto | Versión | Estado | Tecnología |
+|---|---|---|---|
+| TerminalDashboard | v0.1.0 | 🌱 DESARROLLO | Python Textual TUI |
+| VSCode_Extension_Lilith | — | 🔧 DESARROLLO | TypeScript |
+| dashboard | v1.0.0 | ⚡ ACTIVO | Python + HTMX + Alpine.js + Jinja2 |
+| ui-seed | — | 🧪 PROTOTIPO | Electron + React |
 
-- [ ] Orquestador visual para Lilith
-- [ ] Dashboard de bots (Vanaheim)
-- [ ] Visualizador de memoria/contexto
+---
 
-## Notas Post-Remasterizacion
+## 🔗 Enlaces Relacionados
 
-- Semilla creada desde cero (electron + react)
-- Listo para expansion
+- [Asgard](../Asgard/) — El núcleo de Lilith
+- [Muspelheim](../Muspelheim/) — Las forjas creativas
+
+---
+
+*Última actualización: 2026-05-02*
