@@ -1,18 +1,16 @@
 # ForgeMaster
 
-CLI tool for managing Niflheim resources: LLM models, datasets, checkpoints, VRAM monitoring, and disk usage.
+⚒️ Niflheim resource manager for LLM models, VRAM monitoring, and disk usage.
 
 ## Features
 
-- **Model Scanner**: Scan directories for LLM models and extract metadata
-- **SQLite Catalog**: Persistent storage for model metadata
-- **VRAM Calculator**: Estimate VRAM requirements for model inference
-- **Disk Analyzer**: Find duplicates and suggest cleanup actions
-- **GPU Monitor**: Real-time GPU status via nvidia-smi
-- **Model Downloader**: Search and download models from HuggingFace
-- **Rich CLI**: Colored tables and formatted output
+- **Model Scanner**: Find GGUF, safetensors, and PyTorch models across LM Studio, ComfyUI, and HuggingFace caches
+- **VRAM Calculator**: Estimate GPU memory needed for inference
+- **GPU Monitor**: Real-time nvidia-smi integration for RTX 3060 12GB
+- **Disk Usage**: Find duplicates and suggest cleanup
+- **Model Download**: Helper for HuggingFace model downloads
 
-## Installation
+## Install
 
 ```bash
 pip install -e ".[dev]"
@@ -21,16 +19,8 @@ pip install -e ".[dev]"
 ## Usage
 
 ```bash
-forgemaster --help
-forgemaster scan /path/to/models
-forgemaster list
-forgemaster stats
-forgemaster gpu-status
-```
-
-## Development
-
-```bash
-pip install -e ".[dev]"
-pytest tests/ -v
+forgemaster scan          # Scan for models
+forgemaster list          # List all models
+forgemaster stats         # Disk usage statistics
+forgemaster check llama-7b  # Can I run this model?
 ```
