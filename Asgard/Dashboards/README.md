@@ -15,13 +15,13 @@ Dashboard de telemetría web para el ecosistema Yggdrasil.
 ### Opción 1: Script (Recomendado)
 
 ```bash
-D:\Proyectos\Yggdrasil\Asgard\Dashboards\start_dashboard.bat
+./Asgard/Dashboards/start_dashboard.bat
 ```
 
 ### Opción 2: Manual
 
 ```bash
-cd D:\Proyectos\Yggdrasil\Asgard\Dashboards\web
+cd Asgard/Dashboards/web
 npm install
 npm run dev
 ```

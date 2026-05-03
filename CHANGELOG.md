@@ -14,21 +14,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CONTRIBUTING.md` with realm-specific guidelines
 - `CHANGELOG.md`
 - `uninstall.bat` for clean removal of Lilith CLI
+- Eir AI Influencer project (Muspelheim) — ComfyUI setup, LoRA pipeline, IG captions
+- Swarm lifecycle documentation (dual architecture: v4 legacy + v5 refactored)
 
 ### Changed
+- **CI**: Fixed ForgeMaster workflow path from `Niflheim/` to `Muspelheim/`
 - **Website**: Replaced all `YOUR_USERNAME` placeholders with `BrierAinz`
-- **Website**: Updated installation instructions to match current project structure
+- **Website**: Updated installation instructions to match current project structure (Asgard/Lilith v5)
 - **Website**: Fixed duplicated "Configure environment" step in setup page
+- **Website**: Migrated visible references from Hermes to Lilith (HTML, CSS classes, env vars)
+- **README**: Rewrote with current ecosystem state — dual Swarm architecture, v5 packages, realm table
+- **README**: Updated Quick Start to reference `Asgard/Lilith` instead of `Asgard/Hermes-Lilith`
 - **CLI**: Rewrote `install.bat` with PowerShell PATH registration (avoids `setx` truncation bug)
 - **CLI**: Added reinstall detection and PowerShell wrapper (`lilith.ps1`)
 - **CLI**: Added argparse to `Lilith/main.py` with `--help`, `--version`, `--no-banner`, `--streaming`, `--cwd`
 - **README**: Added real badges (License, Python, Stars, Last Commit, Repo Size)
 - **README**: Updated all links to point to correct paths
+- **TerminalDashboard**: Replaced hardcoded `/mnt/d/Proyectos/Yggdrasil` with env var `YGGDRASIL_ROOT` + auto-detection
+- **setup.sh**: Reformatted with proper line breaks for `pip install -e` commands
+- **Vanaheim**: Removed duplicate loose agent files (`adan_vanaheim.py`, etc.) — canonical versions in subdirs
 - `main` branch renamed from `master`
 
+### Fixed
+- **CI**: ForgeMaster test path corrected (`Niflheim/ForgeMaster` → `Muspelheim/ForgeMaster`)
+- **Website**: `HERMES_PATH` env var renamed to `LILITH_PATH` in setup page
+- **Website**: Code snippets updated from `Asgard/Hermes-Lilith` to `Asgard/Lilith`
+- **Dashboards**: Replaced hardcoded `D:\Proyectos\Yggdrasil` paths with relative paths in README
+
 ### Removed
+- `health-check.py` duplicate (hyphen version, 1533 bytes) — kept `health_check.py` (4532 bytes)
 - SQLite database files from git tracking (`chroma.sqlite3`)
 - Obsolete `pip install -e Asgard/lilith-core` references from documentation
+- Tracked `.pyc` and `__pycache__` files from root and Bots_Lilith_v5
+- `.yggdrasil_state.json` removed from git tracking (gitignored)
+- Duplicate Vanaheim agents (standalone files superseded by subdirectory versions)
+- `.egg-info` and `.pytest_cache` from git tracking
 
 ## [2.1.0] - 2026-04-30
 

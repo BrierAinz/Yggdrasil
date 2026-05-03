@@ -147,7 +147,9 @@ class TestRealmScanner:
 
     def test_default_base_path(self) -> None:
         scanner = RealmScanner()
-        assert scanner.base_path == Path("/mnt/d/Proyectos/Yggdrasil")
+        # Default path should resolve to Yggdrasil root (auto-detected from file location)
+        assert scanner.base_path.is_absolute()
+        assert scanner.base_path.name == "Yggdrasil"
 
     def test_custom_base_path(self) -> None:
         scanner = RealmScanner(base_path="/custom/path")

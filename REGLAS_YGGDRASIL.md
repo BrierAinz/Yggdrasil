@@ -1,7 +1,7 @@
 # 📜 Reglas de Yggdrasil - El Árbol del Mundo
 
-> **Versión:** 3.0
-> **Fecha:** 2026-05-02 (Organización profesional, actualización de realidades)
+> **Versión:** 3.1
+> **Fecha:** 2026-05-03 (Refinamiento post-limpieza)
 > **Aplicable a:** Todo el ecosistema Yggdrasil
 
 ---
@@ -28,17 +28,19 @@ Idea → Muspelheim → [Reino Destino] → Helheim (si muere)
 
 | Reino | Regla Principal | Trigger de Salida |
 |-------|-----------------|-------------------|
-| **Asgard** | Tecnología core (Lilith, API, Memory, CLI, Gateway) | N/A (permanente) |
-| **Alfheim** | Prototipos UI y experimentos visuales | Migrar cuando esté listo |
+| **Asgard** | Tecnología core (Lilith v5, Swarm, API, Memory, CLI, Gateway) | N/A (permanente) |
+| **Alfheim** | Prototipos UI y experimentos visuales (TUI Dashboard, HTMX) | Migrar cuando esté listo |
 | **Midgard** | Apps personales terminadas | N/A (destino final) |
 | **Svartalfheim** | Documentación, planes, conocimiento | N/A (permanente) |
 | **Vanaheim** | Agentes IA, framework, bots | Migrar cuando esté estable |
 | **Jotunheim** | Proyectos >1 mes de duración | Completar o a Helheim |
-| **Muspelheim** | Máx 4 proyectos, sprint mode | Completar/migrar en 2 semanas |
+| **Muspelheim** | Máx 4 proyectos, sprint mode (Eir, ForgeMaster, AutoSub ✓) | Completar/migrar en 2 semanas |
 | **Niflheim** | Recursos, modelos, datasets, assets | N/A (recursos) |
 | **Helheim** | Read-only, no desarrollo | N/A (cementerio) |
 
-> **Nota:** Asgard es el reino de la **tecnología core** — no solo dashboards. Contiene Lilith (el agente IA central), los paquetes modulares (lilith-core, lilith-memory, lilith-tools, etc.), el gateway, y los dashboards.
+> **Nota:** Asgard es el reino de la **tecnología core** — no solo dashboards. Contiene Lilith v5 (el agente IA central, refactorizado en paquetes modulares), la arquitectura dual del Swarm (v4 legacy en `Hermes-Lilith/Lilith/Swarm/` + v5 refactored en `Lilith/src/core/agents/swarm/`), los paquetes modulares (lilith-core, lilith-memory, lilith-tools, etc.), el gateway, y los dashboards.
+
+> **Nota:** `Asgard/Hermes-Lilith/` es el monolito legado v4. NO se renombra ni se modifica — sirve como referencia. El desarrollo activo está en `Asgard/Lilith/`.
 
 ---
 
@@ -200,7 +202,21 @@ proyecto/
 
 **Yggdrasil crece con orden o no crece.** 🌳
 
-*Ultima actualizacion: 2026-05-02*
+*Ultima actualizacion: 2026-05-03*
+
+---
+
+## Historial de Cambios
+
+### v3.1 - 2026-05-03 (Refinamiento post-limpieza)
+- **CI corregido:** ForgeMaster path de Niflheim a Muspelheim
+- **Paths hardcodeados eliminados:** TerminalDashboard usa env var + auto-detect
+- **Website actualizado:** Hermes → Lilith en paths, env vars, comandos
+- **Vanaheim limpiado:** Agentes duplicados eliminados (subdirs son canónicos)
+- **Archivos basura:** health-check.py, __pycache__, .pyc, .egg-info, bot_registry.json eliminados del tracking
+- **REGLAS actualizadas:** Swarm dual architecture documentada, proyectos activos en Muspelheim
+- **README reescrito:** Refleja estado actual del ecosistema (v5, dual Swarm, realm table)
+- **CHANGELOG completado:** Entrada Unreleased con todos los fixes recientes
 
 ---
 

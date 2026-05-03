@@ -84,7 +84,7 @@ Variables de entorno (opcional):
 ```cmd
 set LILITH_MODEL=google/gemma-4-e4b
 set LILITH_LM_URL=http://localhost:1234/v1
-set LILITH_WORKSPACE=D:\Proyectos\Midgard
+set LILITH_WORKSPACE=D:\Proyectos\Yggdrasil
 ```
 
 O editar directamente: `Lilith/Core/config.py`

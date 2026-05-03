@@ -55,4 +55,4 @@
 
 ---
 
-*Las runas fueron talladas el 2026-05-02*
+*Las runas fueron talladas el 2026-05-03*

@@ -112,10 +112,14 @@ class RealmScanner:
 
         Args:
             base_path: Path to the Yggdrasil root directory. Defaults to
-                /mnt/d/Proyectos/Yggdrasil/
+                the YGGDRASIL_ROOT env var or auto-detection from this file's location.
         """
         if base_path is None:
-            base_path = "/mnt/d/Proyectos/Yggdrasil"
+            import os
+
+            base_path = os.environ.get(
+                "YGGDRASIL_ROOT", Path(__file__).resolve().parents[2]
+            )
         self.base_path = Path(base_path)
 
     def scan_all(self) -> dict[str, RealmStatus]:

@@ -46,8 +46,8 @@ git clone https://github.com/BrierAinz/Yggdrasil.git
 cd Yggdrasil
 
 # Configure environment
-cp Asgard/Hermes-Lilith/.env.example Asgard/Hermes-Lilith/.env
-# Edit .env with your Telegram bot token and chat ID
+cp Asgard/Lilith/.env.example Asgard/Lilith/.env
+# Edit .env with your Telegram bot token, chat ID, and model settings
 
 # Start LM Studio with a loaded model on localhost:1234
 
@@ -78,17 +78,17 @@ python -m venv .venv
 source .venv/bin/activate  # Linux/macOS
 # .venv\Scripts\activate   # Windows
 
-# Install core dependencies
-pip install -r requirements.txt
+# Install all Lilith modules
+pip install -e Asgard/lilith-core \
+    -e Asgard/lilith-memory \
+    -e Asgard/lilith-tools \
+    -e Asgard/lilith-orchestrator \
+    -e Asgard/lilith-api \
+    -e Asgard/lilith-cli \
+    -e Vanaheim/vanaheim-framework
 
-# Install each Lilith module in dependency order
-pip install -e Asgard/lilith-core
-pip install -e Asgard/lilith-memory
-pip install -e Asgard/lilith-tools
-pip install -e Asgard/lilith-orchestrator
-pip install -e Asgard/lilith-api
-pip install -e Asgard/lilith-cli
-pip install -e Vanaheim/vanaheim-framework
+# Or use the setup script
+bash setup.sh
 
 # Run tests
 pytest
@@ -104,17 +104,17 @@ pre-commit run --all-files
 
 ## The Nine Realms
 
-| Realm | Purpose | Projects |
-|-------|---------|----------|
-| 🏰 **Asgard** | Core Technology | Lilith, API, Memory, Tools, CLI, Gateway |
-| 🤖 **Vanaheim** | AI Agents | Telegram Bot, Bridge, Agent Framework |
-| ✨ **Alfheim** | UI Prototypes | HTMX Dashboard, TUI Dashboard, VSCode Extension |
-| 📚 **Svartalfheim** | Knowledge Base | Docs, Playbooks, Architecture Decisions |
-| 🔥 **Muspelheim** | Active Development | AI Influencer (Eir), AutoSub, ForgeMaster |
+| Realm | Purpose | Key Projects |
+|-------|---------|-------------|
+| 🏰 **Asgard** | Core Technology | Lilith v5 (agent), Swarm, API, Memory, Tools, CLI, Gateway |
+| 🤖 **Vanaheim** | AI Agents | Telegram Bot (Bifrost), VanirAgent Framework, Agent Pantheon |
+| ✨ **Alfheim** | UI Prototypes | HTMX Dashboard (stable), TerminalDashboard (TUI), VSCode Extension |
+| 📚 **Svartalfheim** | Knowledge Base | Docs, Playbooks, ADRs, Architecture Decisions |
+| 🔥 **Muspelheim** | Active Development | AI Influencer (Eir), AutoSub (complete), ForgeMaster |
 | ❄️ **Niflheim** | Resources & Tools | Datasets, Models, Configs |
 | 🌍 **Midgard** | Personal Apps | Finanzas, HabitForge, RecipeAlchemist |
-| 🐉 **Jotunheim** | Massive Projects | Long-term builds (>1 month) |
-| ☠️ **Helheim** | Graveyard | Archived, dead, or quarantined projects |
+| 🐉 **Jotunheim** | Massive Projects | Long-term builds (>1 month) — currently empty |
+| ☠️ **Helheim** | Graveyard | Archived: Lilith Legacy Monolith (814MB tar.gz) |
 
 [Explore all realms →](https://brierainz.github.io/Yggdrasil/realms.html)
 
@@ -127,16 +127,16 @@ You (Telegram)
       ↓
 Telegram Bot  ---------→  VSCode Ext  ---------→  CLI
       ↓                        ↓                  ↓
-      ┌────────────────────────────────────┐
-      │         Gateway (FastAPI :8000)          │
-      └────────────────────────────────────┘
+      ┌────────────────────────────────────────────┐
+      │            Gateway (FastAPI :8000)           │
+      └────────────────────────────────────────────┘
                           ↓
-      ┌────────────────────────────────────┐
-      │      Lilith (Orchestrator)                  │
-      │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐  │
-      │  │Memory│ │Agents│ │Sched.│ │Plugin│  │
-      │  └──────┘ └──────┘ └──────┘ └──────┘  │
-      └────────────────────────────────────┘
+      ┌────────────────────────────────────────────┐
+      │         Lilith Orchestrator (v5)             │
+      │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐       │
+      │  │Memory│ │Agents│ │Sched.│ │Plugin│       │
+      │  └──────┘ └──────┘ └──────┘ └──────┘       │
+      └────────────────────────────────────────────┘
                           ↓
                     LM Studio (localhost:1234)
 ```
@@ -151,6 +151,7 @@ Telegram Bot  ---------→  VSCode Ext  ---------→  CLI
 |---------|-------------|
 | 🔍 **Vector Memory** | Sentence-transformer embeddings + SQLite. Auto-compression, entity extraction, semantic retrieval. |
 | 🤖 **Sub-Agent Delegation** | Spawn autonomous coding agents with isolated contexts for parallel workstreams. |
+| 🐝 **Swarm Coordination** | Multi-agent orchestration with MessageBus, conflict resolution, and parallel task execution. |
 | 📅 **Task Scheduler** | Cron-like scheduling with persistent SQLite backend and REST API. |
 | 🔑 **PC Control** | File system, process management, Windows automation, browser, screenshots. |
 | 📚 **RAG Pipeline** | Document ingestion, chunking, embedding, semantic search for knowledge bases. |
@@ -161,9 +162,9 @@ Telegram Bot  ---------→  VSCode Ext  ---------→  CLI
 <details>
 <summary><b>🔍 Technical Architecture Details</b></summary>
 
-### Modular Package Structure (v4.0+)
+### Modular Package Structure (v5)
 
-Lilith is now a modular package ecosystem:
+Lilith is built as a modular package ecosystem:
 
 | Package | Purpose | Key Exports |
 |---------|---------|-------------|
@@ -174,16 +175,24 @@ Lilith is now a modular package ecosystem:
 | `lilith-api` | FastAPI Gateway + WebSocket | `Gateway`, health endpoints |
 | `lilith-cli` | Terminal interface | `LilithCLI`, batch mode |
 
-### Swarm Coordination (Phase 3)
+### Dual Layout
 
-The `Lilith/Swarm/` module provides:
-- **MessageBus**: Thread-safe pub/sub for inter-agent communication
-- **SwarmAgent**: Autonomous agents with status tracking and file locking
-- **SwarmManager**: Lifecycle management, conflict detection, background coordination
+Lilith exists in two versions within Asgard:
+- **`Asgard/Lilith/`** — Refactored v5 (active, modular packages)
+- **`Asgard/Hermes-Lilith/`** — Legacy v4 monolith (archived, not renamed for git history)
+
+### Swarm Coordination
+
+Two implementations exist:
+
+| Location | Version | Architecture |
+|----------|---------|-------------|
+| `Hermes-Lilith/Lilith/Swarm/` | v4 Legacy | agent, manager, message_bus, conflict_resolver, executor, database |
+| `Lilith/src/core/agents/swarm/` | v5 Refactored | swarm, coordinator, task_planner, base, complexity_router, fallback_chain, output_validator, review_chain |
 
 </details>
 
-See the [Lilith agent specs](https://brierainz.github.io/Yggdrasil/hermes-lilith.html) for full details.
+See the [Lilith agent specs](https://brierainz.github.io/Yggdrasil/lilith.html) for full details.
 
 ---
 
