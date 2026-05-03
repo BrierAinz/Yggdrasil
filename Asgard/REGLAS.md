@@ -38,6 +38,14 @@
 | `lilith-orchestrator/` | Orquestador v1.0.0 |
 | `lilith-tools/` | Herramientas v1.0.0 |
 
+### Notas sobre Swarm
+
+El módulo Swarm existe en **dos ubicaciones** con arquitecturas distintas:
+- `Hermes-Lilith/Lilith/Swarm/` — Implementación v4 (legacy): agent, manager, message_bus, conflict_resolver, executor, database, prompts. Usa la arquitectura de swarm original.
+- `Lilith/src/core/agents/swarm/` — Implementación v5 (refactorizada): swarm, coordinator, task_planner, base, complexity_router, fallback_chain, output_validator, review_chain. Usa la nueva arquitectura modular.
+
+Ambas versiones están **activas y distintas**. No se deben sincronizar entre sí.
+
 ---
 
 ## 🔄 Disparadores de Migración

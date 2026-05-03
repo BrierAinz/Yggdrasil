@@ -87,10 +87,10 @@ jobs:
 
       - name: Install ForgeMaster dependencies
         run: |
-          pip install -e Niflheim/ForgeMaster
+          pip install -e Muspelheim/ForgeMaster
 
       - name: Run pytest (forgemaster)
-        run: pytest Niflheim/ForgeMaster/tests
+        run: pytest Muspelheim/ForgeMaster/tests
 
       - name: Install TerminalDashboard dependencies
         run: |

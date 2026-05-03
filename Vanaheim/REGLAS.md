@@ -39,6 +39,14 @@ Vanaheim/
 └── server.py            # Entry point del Bifrost Gateway
 ```
 
+### Limpiado (2026-05-03)
+
+Se eliminaron archivos duplicados sueltos en `Agents/` que eran versiones antiguas de los agentes ya organizados en subdirectorios:
+- `adan_vanaheim.py` → reemplazado por `Adan/agent.py`
+- `eva_vanaheim.py` → reemplazado por `Eva/agent.py`
+- `odin_vanaheim.py` → reemplazado por `Odin/agent.py`
+- `base_agent.py` → reemplazado por `Base/vanir_agent.py`
+
 ---
 
 ## Reglas Específicas

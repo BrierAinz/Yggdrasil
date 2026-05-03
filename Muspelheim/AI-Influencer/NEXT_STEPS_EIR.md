@@ -1,8 +1,22 @@
 # Eir — Instrucciones para la Siguiente Instancia
 
-> **Estado actual**: FASE 0 COMPLETADA. LoRA entrenado solo hasta epoch 5 (de 15). FASE 1 pendiente.
+> **Estado actual**: FASE 0 COMPLETADA. FASE 1 en progreso. LoRA v2 listo para entrenar.
+> **Última actualización**: Mayo 2026 (sesión autónoma de 5h)
 
 ---
+
+## PROGRESO REALIZADO (sesión autónoma)
+
+- [x] PLAN_COMPLETO.md creado — Plan detallado de 3 fases (~16KB)
+- [x] LoRA v2 config optimizada — `config/lora/eir_v2_optimized.toml`
+- [x] Script de entrenamiento listo — `scripts/train_eir_v2.sh` (pre-flight checks + dry-run)
+- [x] Script de evaluación de checkpoints — `scripts/evaluate_lora_checkpoints.py`
+- [x] Prompts v2 creados — `config/prompts/eir_prompts_v2.json` (9 posts IG + templates)
+- [x] Captions del dataset mejorados — los 16 archivos .txt + metadata.json actualizados
+- [x] 6 imágenes de test generadas — `outputs/test_batch_lora/` (LoRA epoch 10)
+- [x] Investigación de técnicas 2025-2026 completada
+- [x] ComfyUI verificado funcional en localhost:8188
+- [x] LoRA epoch 10 copiado a ComfyUI models/loras/
 
 ## FASE 0 — COMPLETADA
 
@@ -11,91 +25,62 @@
 - [x] 28 imágenes de referencia (16 para LoRA dataset, 12 adicionales)
 - [x] 9 posts de Instagram con captions generadas
 - [x] Trigger word: `eir_niflheimr`
-- [x] Kohya_ss instalado (PyTorch venv necesita fix para re-entrenar)
+- [x] Kohya_ss instalado (PyTorch 2.11.0+cu130 FUNCIONAL)
 - [x] Cuenta conceptual @eir.creates definida
-- [x] LoRA entrenado hasta epoch 5 (checkpoint en `/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/lora/`)
+- [x] LoRA entrenado hasta epoch 5 (y checkpoint epoch 10 + final disponibles)
 
 ## DATOS CRÍTICOS
 
-- **Hardware**: RTX 3060 12GB VRAM + 48GB RAM
-- **ComfyUI**: `~/comfy/ComfyUI` con venv propio, puerto 8188
-- **Kohya_ss**: Instalado pero PyTorch venv.ro necesita fix (`pip install torch torchvision --force-reinstall` dentro del venv)
-- **LoRA actual**: Solo epoch 5 de 15 — PRODUCE IMÁGENES PERO CALIDAD ES BÁSICA
-- **Imágenes de referencia**: `/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/assets/reference/`
-- **Config LoRA**: `/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/config/lora/`
-- **Captions**: `/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/assets/captions/`
+- **Hardware**: RTX 3060 12GB VRAM + 48GB RAM + AMD Ryzen 5 5500
+- **ComfyUI**: `~/comfy/ComfyUI` (python3 directo, NO venv), puerto 8188
+  - Start: `cd ~/comfy/ComfyUI && python3 main.py --listen --port 8188`
+- **Kohya_ss**: `/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/tools/kohya_ss/`
+  - PyTorch 2.11.0+cu130 FUNCIONAL en venv
+  - **NO usar AdamW8bit** — bitsandbytes tiene error con libnvJitLink.so.13 (CUDA 13)
+  - **USAR AdamW normal** — funciona perfecto con 12GB VRAM
+  - Python: `tools/kohya_ss/venv/bin/python3`
+- **LoRA actual**: epoch 5, 10, y final en `/assets/lora_output/`
+- **LoRA en ComfyUI**: `~/comfy/ComfyUI/models/loras/eir_niflheimr_lora_r32_epoch10.safetensors`
+- **Dataset**: 16 imágenes 1024x1024 + 16 captions mejorados en `assets/lora_dataset/eir_niflheimr/`
+- **Negative prompts optimizados**: en `config/prompts/eir_prompts_v2.json`
+- **Test images**: `outputs/test_batch_lora/` (6 imágenes generadas con epoch 10)
 
----
+## PRÓXIMOS PASOS — LISTO PARA EJECUTAR
 
-## FASE 1 — Crear Cuentas Sociales y Publicar
+### PASO 1: Entrenar LoRA v2
 
-### 1.1 Crear cuentas sociales (@eir.creates)
-
-**Plataformas prioridad (en orden):**
-1. **Instagram** — @eir.creates (principal, arte digital dark fantasy)
-2. **Twitter/X** — @eir_creates (secondary, vox populi del proyecto)
-3. **TikTok** — @eir.creates (video content, time-lapses de generación)
-
-**Configuración:**
-- Foto de perfil: Generar con ComfyUI usando el LoRA epoch 5 (retrato estilo dark fantasy)
-- Bio: "Norse goddess of creation. Digital art from the void. 🎨⚔️ 🔮"
-- Link en bio: https://brierainz.github.io/Yggdrasil/ (sitio del ecosistema)
-- Tema: Dark fantasy, mitología nórdica, arte digital con IA, proceso creativo
-
-**NOTA**: NO publicar hasta tener al menos 6 imágenes de calidad aceptable.
-
-### 1.2 Re-entrenar LoRA (OPCIONAL pero recomendado)
-
-El LoRA actual solo tiene 5 epochs. Para mejorar calidad:
 ```bash
-# 1. Iniciar ComfyUI
-cd ~/comfy/ComfyUI && source venv/bin/activate && python main.py --listen --port 8188 &
+# Dry run (verificar todo sin entrenar):
+bash /mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/scripts/train_eir_v2.sh --dry-run
 
-# 2. Fix Kohya venv (si no funciona)
-cd ~/kohya_ss && source venv/bin/activate
-pip install torch torchvision --force-reinstall
-
-# 3. Re-entrenar LoRA completo (15 epochs)
-# Usar la config existente en config/lora/
+# Entrenar para real (~45-60 min en RTX 3060 12GB):
+bash /mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/scripts/train_eir_v2.sh
 ```
 
-### 1.3 Generar primer batch de imágenes
+**Parámetros v2 optimizados:**
+- dim=32, alpha=16, dropout=0.1
+- AdamW (LR 2e-4 UNet, 1e-4 TE)
+- cosine schedule, warmup 100 steps
+- min_snr_gamma=5, keep_tokens=1
+- 1800 steps, save cada 100 steps
+- bf16, xformers, gradient checkpointing
 
-Usar ComfyUI con el LoRA (epoch 5 o re-entrenado) para generar al menos 6-9 imágenes de alta calidad con prompts como:
+### PASO 2: Evaluar Checkpoints
 
-Prompt base: `eir_niflheimr, dark fantasy portrait, norse goddess, ice magic, glowing runes, ultrarealistic, 4k`
+```bash
+# Después de entrenar, con ComfyUI corriendo:
+python3 /mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/scripts/evaluate_lora_checkpoints.py
+```
 
-Variantes:
-- Retrato dramático con fondo de aurora boreal
-- Creando arte en un taller nórdico
-- De pie ante el pozo de Mimir
-- Con pincel mágico pintando el Yggdrasil
-- Cuerpo completo en paisaje invernal nórdico
-- Close-up con ojos brillantes (efecto ice-blue)
+Genera 1 imagen de test por checkpoint (18 total). Elegir el mejor visualmente (generalmente step 800-1400).
 
-### 1.4 Publicar primer batch
+### PASO 3: Generar Batch Completo
 
-Los 9 posts ya tienen captions generadas. Publicar en Instagram con:
-- Imágenes generadas con ComfyUI + LoRA
-- Captions del archivo `assets/captions/`
-- Hashtags: #DarkFantasyArt #NorseMythology #AIart #DigitalArt #EirNiflheimr #Yggdrasil
-- Horario: 1-2 posts por día, no spam
+Usar `config/prompts/eir_prompts_v2.json` con ComfyUI API para generar las 9 posts de IG + extras.
 
----
+### PASO 4: Crear Cuentas (TU PARTE)
 
-## FASE 2 — Crecimiento
-
-### 2.1 Contenido recurrente
-- **Process videos**: Time-lapses de generación de imágenes en ComfyUI
-- **Before/After**: Raw SDXL vs LoRA-fine-tuned
-- **Mythology threads**: Hilos sobre Eir y otras diosas nórdicas
-- **Behind the scenes**: Mostrar los prompts, los parámetros, el workflow
-
-### 2.2 Monetización (futuro)
-- Ver `MONETIZATION.md` para la estrategia completa
-- Print-on-demand (Redbubble, Society6)
-- Commissions
-- Patreon/Ko-fi para supporters
+Ver PLAN_COMPLETO.md sección 1.2 para bios, handles, y estrategia.
 
 ---
 
@@ -103,17 +88,44 @@ Los 9 posts ya tienen captions generadas. Publicar en Instagram con:
 
 | Archivo | Contenido |
 |---------|-----------|
+| `PLAN_COMPLETO.md` | **Plan detallado de 3 fases** (NUEVO) |
+| `NEXT_STEPS_EIR.md` | Este archivo — instrucciones para siguiente sesión |
+| `config/lora/eir_v2_optimized.toml` | **Config LoRA v2 optimizada** (NUEVO) |
+| `scripts/train_eir_v2.sh` | **Script de entrenamiento v2** (NUEVO) |
+| `scripts/evaluate_lora_checkpoints.py` | **Evaluador de checkpoints** (NUEVO) |
+| `config/prompts/eir_prompts_v2.json` | **Prompts v2 + negative prompts + captions** (NUEVO) |
 | `README.md` | Visión general del proyecto |
 | `PIPELINE.md` | Pipeline de generación completo |
 | `LORA_TRAINING.md` | Guía de entrenamiento LoRA paso a paso |
 | `PLATFORMS.md` | Estrategia por plataforma |
 | `MONETIZATION.md` | Plan de monetización |
 | `ACCOUNTS_GUIDE.md` | Guía de configuración de cuentas |
-| `config/lora/` | Configs de entrenamiento LoRA |
-| `outputs/lora/` | Checkpoints LoRA generados |
-| `assets/reference/` | 28 imágenes de referencia |
-| `assets/captions/` | 9 captions de Instagram |
+| `outputs/test_batch_lora/` | 6 imágenes de test con LoRA epoch 10 |
+| `assets/lora_dataset/eir_niflheimr/` | 16 imágenes + 16 captions mejorados |
 
 ---
 
-*Generado por la instancia anterior. Buena suerte, siguiente instancia. 🎨冰⚡*
+## NOTAS DE OPTIMIZACIÓN
+
+### LoRA Training (investigación 2025-2026)
+1. **dim=32, alpha=16** — sweet spot para character consistency
+2. **AdamW** con LR 2e-4, TE LR 1e-4 — más estable que Prodigy para primer training
+3. **min_snr_gamma=5** — reduce noise bias en SDXL
+4. **tag_dropout=0.05** — mejora trigger word dependency
+5. **keep_tokens=1** — trigger word SIEMPRE primero en caption
+6. **cosine con warmup 100 steps** — mejor que constant LR
+7. **1800 steps** — óptimo para 16 imágenes
+8. **NO usar AdamW8bit/bitsandbytes** — error con CUDA 13 (libnvJitLink.so.13)
+
+### Social Media (investigación 2025-2026)
+1. **Carousel posts (5-10 slides)** = 3x reach en IG
+2. **Process/BTS content** = 3-5x más engagement
+3. **Character-driven accounts** crecen más rápido que generic AI art
+4. **Lore/worldbuilding** impulsa parasocial engagement
+5. **5-15 hashtags** en IG (no 30)
+6. **IG Reels** = #1 discovery tool 2025-2026
+7. **TikTok**: process videos >> static images
+
+---
+
+*Actualizado sesión autónoma Mayo 2026. Todo listo para entrenar LoRA v2. Ejecutar `train_eir_v2.sh` cuando se decida. 🎨冰⚡*

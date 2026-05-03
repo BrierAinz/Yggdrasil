@@ -1,0 +1,80 @@
+# ============================================================
+# Eir Niflheimr LoRA v2 — Optimized Training Config
+# ============================================================
+# Target: Character consistency for AI influencer @eir.creates
+# Base model: Juggernaut XL v9 (SDXL)
+# Trigger word: eir_niflheimr (MUST be first in every caption)
+#
+# CHANGES FROM v1:
+#   - Added min_snr_gamma=5 (reduces noise bias in SDXL)
+#   - Added network_dropout=0.1 (prevents overfitting)
+#   - Added keep_tokens=1 (preserves trigger word position)
+#   - Added shuffle_caption=true (improves tag flexibility)
+#   - Changed optimizer to AdamW (bitsandbytes has CUDA 13 issues)
+#   - Increased LR to 2e-4 with UNet/TE split
+#   - Changed to max_train_steps=1800 (vs epoch-based)
+#   - Save every 100 steps for granular checkpoint selection
+# ============================================================
+
+[Model]
+pretrained_model_name_or_path = "/home/brierainz/comfy/ComfyUI/models/checkpoints/Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"
+
+[Network]
+network_module = "networks.lora"
+network_dim = 32
+network_alpha = 16
+network_dropout = 0.1
+network_args = []
+
+[Training]
+output_dir = "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/assets/lora_output"
+output_name = "eir_niflheimr_v2_lora"
+save_model_as = "safetensors"
+save_precision = "bf16"
+
+max_train_steps = 1800
+save_every_n_steps = 100
+save_state = false
+
+train_batch_size = 1
+gradient_checkpointing = true
+mixed_precision = "bf16"
+full_bf16 = true
+
+seed = 42
+
+[Optimizer]
+optimizer_type = "AdamW"
+learning_rate = 2e-4
+text_encoder_lr = 1e-4
+unet_lr = 2e-4
+weight_decay = 0.01
+
+lr_scheduler = "cosine"
+lr_warmup_steps = 100
+min_lr_ratio = 0.1
+
+[Dataset]
+train_data_dir = "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/assets/lora_dataset/eir_niflheimr"
+resolution = "1024,1024"
+enable_bucket = true
+bucket_reso_steps = 64
+min_bucket_reso = 512
+max_bucket_reso = 2048
+
+cache_latents = true
+cache_text_encoder_outputs = true
+
+keep_tokens = 1
+shuffle_caption = true
+tag_dropout = 0.05
+
+[NoiseSchedule]
+min_snr_gamma = 5
+
+[Misc]
+xformers = true
+sdpa = true
+persistent_workers = true
+max_data_loader_n_workers = 2
+log_prefix = "eir_v2"
