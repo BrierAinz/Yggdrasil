@@ -1,12 +1,12 @@
 ---
 sidebar_position: 4
-title: Lilith v4.0
-description: "Lilith v4.0: dark-fantasy CLI agent with hybrid memory and swarm intelligence"
+title: Lilith v5.0
+description: "Lilith v5.0: dark-fantasy CLI agent with hybrid memory, batch mode, and swarm intelligence"
 ---
 
-# Lilith v4.0
+# Lilith v5.0
 
-A **dark-fantasy CLI agent** that runs entirely on your hardware. Hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, skills with hot-reload, and real-time dashboard. No cloud lock-in. No subscription. Control your PC from Telegram or the terminal.
+A **dark-fantasy CLI agent** that runs entirely on your hardware. Hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, batch mode, skills with hot-reload, and real-time dashboard. No cloud lock-in. No subscription. Control your PC from Telegram or the terminal.
 
 ```bash
 $ cd Asgard/Lilith
@@ -25,13 +25,13 @@ Lilith is built on a simple belief: **your data should stay on your machine**. T
 - **48GB RAM + RTX 3060** can run models up to ~27B parameters with CPU offload.
 - **Multi-provider** — automatic fallback from LM Studio to Kimi to any OpenAI-compatible API.
 - **Model auto-detection** — "auto" in config picks the best loaded model from LM Studio.
-- **330+ tests** passing — Core, Memory, Swarm, MCP, Dashboard, TOML Config, E2E.
+- **838 tests passing** — Core, Memory, Swarm, MCP, Dashboard, CLI, TOML Config, Batch, E2E.
 
 :::
 
 ## How it works
 
-Lilith v4.0 is organized in Six Realinos — each a module with its own law, all nourished by the same roots. The Orchestrator coordinates Skills, Memory, LLM Providers, Swarm, MCP, and Tools through a unified TOML configuration.
+Lilith v5.0 is organized in Six Realinos — each a module with its own law, all nourished by the same roots. The Orchestrator coordinates Skills, Memory, LLM Providers, Swarm, MCP, and Tools through a unified TOML configuration.
 
 ```
 You (Telegram App) → Telegram Bot (Vanaheim) → [HTTP] → Gateway (FastAPI :8000) → Lilith (Orchestrator) → LM Studio (Local LLM)
@@ -121,6 +121,7 @@ Control Lilith through the terminal CLI or remotely via Telegram. Both interface
 | `/dashboard` | Start/stop the real-time web dashboard |
 | `/stream` | Toggle streaming mode on/off |
 | `/plugins` | List available plugins and tools |
+| `/batch <prompt>` | Run Lilith in batch mode with no interactive session |
 | `(any text)` | Sent to Lilith for processing with full context |
 
 ## Recommended Specs
@@ -131,7 +132,7 @@ Lilith is designed to run on consumer hardware. You don't need a data center.
 |---|---------|-------------|-----------------|
 | RAM | 16GB | 32GB+ | 48GB DDR4 |
 | CPU | Any modern | 6+ core | AMD Ryzen 5 5500 (6c/12t) |
-| GPU | — | NVIDIA 4GB+ VRAM | NVIDIA RTX 3060 4GB |
+| GPU | — | NVIDIA 12GB+ VRAM | NVIDIA RTX 3060 12GB |
 | Disk | ~10GB free | SSD | Dual SSD setup |
 | Models | 7B params (Q4) | 13-27B params | 27B comfortably |
 | Experience | Slow but functional | Fast responses, good context | Smooth |

@@ -1,131 +1,140 @@
 # Eir — Instrucciones para la Siguiente Instancia
 
-> **Estado actual**: FASE 0 COMPLETADA. FASE 1 en progreso. LoRA v2 listo para entrenar.
-> **Última actualización**: Mayo 2026 (sesión autónoma de 5h)
+> **Estado actual**: FASE 1 COMPLETADA. LoRA v2 entrenado, evaluado, y 24 imágenes + 6 assets de perfil generados.
+> **Última actualización**: Mayo 3, 2026 — Sesión autónoma completada
 
 ---
 
-## PROGRESO REALIZADO (sesión autónoma)
+## LoRA v2 — Entrenado y Evaluado
 
-- [x] PLAN_COMPLETO.md creado — Plan detallado de 3 fases (~16KB)
-- [x] LoRA v2 config optimizada — `config/lora/eir_v2_optimized.toml`
-- [x] Script de entrenamiento listo — `scripts/train_eir_v2.sh` (pre-flight checks + dry-run)
-- [x] Script de evaluación de checkpoints — `scripts/evaluate_lora_checkpoints.py`
-- [x] Prompts v2 creados — `config/prompts/eir_prompts_v2.json` (9 posts IG + templates)
-- [x] Captions del dataset mejorados — los 16 archivos .txt + metadata.json actualizados
-- [x] 6 imágenes de test generadas — `outputs/test_batch_lora/` (LoRA epoch 10)
-- [x] Investigación de técnicas 2025-2026 completada
-- [x] ComfyUI verificado funcional en localhost:8188
-- [x] LoRA epoch 10 copiado a ComfyUI models/loras/
+### Resultados del Entrenamiento
+- **Modelo base**: Juggernaut-XL v9 (SDXL)
+- **Config**: dim=32, alpha=16, AdamW, min_snr_gamma=5, network_dropout=0.1, cosine schedule
+- **Steps**: 1800 (save cada 100)
+- **Loss final**: ~0.086 (descenso estable de 0.12 → 0.086)
+- **19 checkpoints** guardados (step 100-1800 + final)
 
-## FASE 0 — COMPLETADA
+### Checkpoint Ganador: **step 1400**
+- Face Anatomy: 9/10 | Character Consistency: 10/10 | Quality: 9/10 | Artifacts: 8/10
+- **Promedio: 9.0** (empatado con step 600, pero 1400 tiene mejor generalización)
+- Archivo: `~/comfy/ComfyUI/models/loras/eir_niflheimr_v2_best.safetensors`
+- Nombre ComfyUI: `eir_niflheimr_v2_best.safetensors`
+- **strength_model**: 0.8 | **strength_clip**: 0.8
 
-- [x] ComfyUI v0.20.1 instalado en ~/comfy/ComfyUI
-- [x] Juggernaut XL v9 + SDXL + VAE configurados
-- [x] 28 imágenes de referencia (16 para LoRA dataset, 12 adicionales)
-- [x] 9 posts de Instagram con captions generadas
-- [x] Trigger word: `eir_niflheimr`
-- [x] Kohya_ss instalado (PyTorch 2.11.0+cu130 FUNCIONAL)
-- [x] Cuenta conceptual @eir.creates definida
-- [x] LoRA entrenado hasta epoch 5 (y checkpoint epoch 10 + final disponibles)
+### Problemas Resueltos en Esta Sesión
+1. **torchview incompatibilidad** — torch 2.11.0+cu130 vs torchvision 0.21.0+cu124 → Instalado torchvision 0.26.0+cu130
+2. **pip faltante en venv** → Restaurado con get-pip.py
+3. **Estructura de dataset incorrecta** → Corregido a formato Kohya: `eir_db/20_eir_niflheimr/`
+4. **Argumentos CLI inválidos** → Eliminados --tag_dropout, --weight_decay CLI, --min_lr_ratio, --persistent_workers; corregido weight_decay a `--optimizer_args weight_decay=0.01`
 
-## DATOS CRÍTICOS
+---
 
-- **Hardware**: RTX 3060 12GB VRAM + 48GB RAM + AMD Ryzen 5 5500
-- **ComfyUI**: `~/comfy/ComfyUI` (python3 directo, NO venv), puerto 8188
-  - Start: `cd ~/comfy/ComfyUI && python3 main.py --listen --port 8188`
-- **Kohya_ss**: `/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/tools/kohya_ss/`
-  - PyTorch 2.11.0+cu130 FUNCIONAL en venv
-  - **NO usar AdamW8bit** — bitsandbytes tiene error con libnvJitLink.so.13 (CUDA 13)
-  - **USAR AdamW normal** — funciona perfecto con 12GB VRAM
-  - Python: `tools/kohya_ss/venv/bin/python3`
-- **LoRA actual**: epoch 5, 10, y final en `/assets/lora_output/`
-- **LoRA en ComfyUI**: `~/comfy/ComfyUI/models/loras/eir_niflheimr_lora_r32_epoch10.safetensors`
-- **Dataset**: 16 imágenes 1024x1024 + 16 captions mejorados en `assets/lora_dataset/eir_niflheimr/`
-- **Negative prompts optimizados**: en `config/prompts/eir_prompts_v2.json`
-- **Test images**: `outputs/test_batch_lora/` (6 imágenes generadas con epoch 10)
+## Imágenes Generadas
 
-## PRÓXIMOS PASOS — LISTO PARA EJECUTAR
+### Feed Posts (18 imágenes) — `outputs/feed_batch_v2/`
+| # | Nombre | Tipo | Dimensión | Descripción |
+|---|--------|------|-----------|-------------|
+| 01 | introducing_eir | Portrait | 832x1216 | Close-up con aurora boreal |
+| 02 | ice_warrior | Full body | 832x1216 | Armadura con runas brillantes |
+| 03 | forest_path | Landscape | 1216x832 | Caminando en bosque nevado |
+| 04 | rune_mage | Portrait | 832x1216 | Biblioteca mágica con runas |
+| 05 | winter_throne | Portrait | 832x1216 | Trono de hielo |
+| 06 | casual_dark | Portrait | 832x1216 | outfit casual interior |
+| 07 | aurora_night | Landscape | 1216x832 | Precipio con aurora |
+| 08 | frost_flower | Close-up | 832x1216 | Manos con flor de escarcha |
+| 09 | training_grounds | Landscape | 1216x832 | Patiendo con espada |
+| 10 | crystal_cave | Portrait | 832x1216 | Cueva de cristales brillantes |
+| 11 | blacksmith | Landscape | 1216x832 | Forjando espada rúnica |
+| 12 | reflection | Landscape | 1216x832 | Reflejo en lago congelado |
+| 13 | ice_dragon | Landscape | 1216x832 | Frente a cráneo de dragón |
+| 14 | moonlit_walk | Landscape | 1216x832 | Pueblo nevado nocturno |
+| 15 | candle_study | Portrait | 832x1216 | Estudio a la luz de vela |
+| 16 | storm_summoner | Landscape | 1216x832 | Invocando tormenta de hielo |
+| 17 | traveler_rest | Landscape | 1216x832 | Fogata en nieve |
+| 18 | sunset_ridge | Landscape | 1216x832 | Atardecer en montaña |
 
-### PASO 1: Entrenar LoRA v2
+### Profile Assets (6 imágenes) — `outputs/profile_assets/`
+| Nombre | Dimensión | Uso |
+|--------|-----------|-----|
+| avatar_1x1 | 1024x1024 | Foto de perfil IG/TikTok |
+| banner_wide | 1344x576 | Banner de X/Twitter |
+| story_cover_1 | 1080x1920 | Historia dramática (cicatriz, lluvia) |
+| story_cover_2 | 1080x1920 | Historia etérea (ojos cerrados, escarcha) |
+| highlight_icon_1 | 512x512 | Ícono highlight: ojo de hielo |
+| highlight_icon_2 | 512x512 | Ícono highlight: mechón violeta |
 
-```bash
-# Dry run (verificar todo sin entrenar):
-bash /mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/scripts/train_eir_v2.sh --dry-run
+---
 
-# Entrenar para real (~45-60 min en RTX 3060 12GB):
-bash /mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/scripts/train_eir_v2.sh
+## ComfyUI — Configuración Actual
+
+- **URL**: http://localhost:8188
+- **Directorio**: `~/comfy/ComfyUI/`
+- **venv**: `~/comfy/ComfyUI/.venv/`
+- **Modelo base**: Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors
+- **LoRA principal**: `eir_niflheimr_v2_best.safetensors` (step 1400)
+- **v1 LoRA** (fallback): `eir_niflheimr_lora_r32_epoch10.safetensors`
+- **Workflow API**: `workflows/eir_lora_portrait_api.json`
+
+---
+
+## Siguientes Pasos (FASE 2)
+
+### Inmediato (requiere acción manual)
+1. **Abrir cuenta de Instagram** como @eir.creates
+   - Avatar: `outputs/profile_assets/v2_profile_avatar_1x1_00001_.png` (recortar a 320x320)
+   - Bio: Ver `docs/VOICE_AND_PERSONALITY.md`
+2. **Abrir cuenta de X/Twitter** como @eir_creates
+   - Banner: `outputs/profile_assets/v2_profile_banner_wide_00001_.png`
+3. **Abrir cuenta de TikTok** como @eir.creates
+
+### Contenido — Semana 1 (Lanzamiento)
+- Post 1 (Lunes): Carousel 3 slides con `01_introducing_eir`, `05_winter_throne`, `07_aurora_night`
+- Post 2 (Miércoles): `08_frost_flower` como close-up artístico
+- Post 3 (Viernes): `03_forest_path` como landscape
+- Stories diarias con `story_cover_1` y `story_cover_2`
+- Ver calendario completo en `docs/CONTENT_CALENDAR.md`
+
+### Contenido — Semana 2-3
+- Post 4-9 usando imágenes 04-09
+- Ver `docs/CONTENT_CALENDAR.md` para orden y captions
+- Ver `docs/HASHTAG_STRATEGY.md` para hashtags optimizados
+
+---
+
+## Estructura del Proyecto
+
 ```
-
-**Parámetros v2 optimizados:**
-- dim=32, alpha=16, dropout=0.1
-- AdamW (LR 2e-4 UNet, 1e-4 TE)
-- cosine schedule, warmup 100 steps
-- min_snr_gamma=5, keep_tokens=1
-- 1800 steps, save cada 100 steps
-- bf16, xformers, gradient checkpointing
-
-### PASO 2: Evaluar Checkpoints
-
-```bash
-# Después de entrenar, con ComfyUI corriendo:
-python3 /mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/scripts/evaluate_lora_checkpoints.py
-```
-
-Genera 1 imagen de test por checkpoint (18 total). Elegir el mejor visualmente (generalmente step 800-1400).
-
-### PASO 3: Generar Batch Completo
-
-Usar `config/prompts/eir_prompts_v2.json` con ComfyUI API para generar las 9 posts de IG + extras.
-
-### PASO 4: Crear Cuentas (TU PARTE)
-
-Ver PLAN_COMPLETO.md sección 1.2 para bios, handles, y estrategia.
-
----
-
-## ARCHIVOS CLAVE
-
-| Archivo | Contenido |
-|---------|-----------|
-| `PLAN_COMPLETO.md` | **Plan detallado de 3 fases** (NUEVO) |
-| `NEXT_STEPS_EIR.md` | Este archivo — instrucciones para siguiente sesión |
-| `config/lora/eir_v2_optimized.toml` | **Config LoRA v2 optimizada** (NUEVO) |
-| `scripts/train_eir_v2.sh` | **Script de entrenamiento v2** (NUEVO) |
-| `scripts/evaluate_lora_checkpoints.py` | **Evaluador de checkpoints** (NUEVO) |
-| `config/prompts/eir_prompts_v2.json` | **Prompts v2 + negative prompts + captions** (NUEVO) |
-| `README.md` | Visión general del proyecto |
-| `PIPELINE.md` | Pipeline de generación completo |
-| `LORA_TRAINING.md` | Guía de entrenamiento LoRA paso a paso |
-| `PLATFORMS.md` | Estrategia por plataforma |
-| `MONETIZATION.md` | Plan de monetización |
-| `ACCOUNTS_GUIDE.md` | Guía de configuración de cuentas |
-| `outputs/test_batch_lora/` | 6 imágenes de test con LoRA epoch 10 |
-| `assets/lora_dataset/eir_niflheimr/` | 16 imágenes + 16 captions mejorados |
-
----
-
-## NOTAS DE OPTIMIZACIÓN
-
-### LoRA Training (investigación 2025-2026)
-1. **dim=32, alpha=16** — sweet spot para character consistency
-2. **AdamW** con LR 2e-4, TE LR 1e-4 — más estable que Prodigy para primer training
-3. **min_snr_gamma=5** — reduce noise bias en SDXL
-4. **tag_dropout=0.05** — mejora trigger word dependency
-5. **keep_tokens=1** — trigger word SIEMPRE primero en caption
-6. **cosine con warmup 100 steps** — mejor que constant LR
-7. **1800 steps** — óptimo para 16 imágenes
-8. **NO usar AdamW8bit/bitsandbytes** — error con CUDA 13 (libnvJitLink.so.13)
-
-### Social Media (investigación 2025-2026)
-1. **Carousel posts (5-10 slides)** = 3x reach en IG
-2. **Process/BTS content** = 3-5x más engagement
-3. **Character-driven accounts** crecen más rápido que generic AI art
-4. **Lore/worldbuilding** impulsa parasocial engagement
-5. **5-15 hashtags** en IG (no 30)
-6. **IG Reels** = #1 discovery tool 2025-2026
-7. **TikTok**: process videos >> static images
-
----
-
-*Actualizado sesión autónoma Mayo 2026. Todo listo para entrenar LoRA v2. Ejecutar `train_eir_v2.sh` cuando se decida. 🎨冰⚡*
+AI-Influencer/
+├── assets/
+│   ├── lora_dataset/
+│   │   ├── eir_niflheimr/          # Dataset original (16 imágenes + captions)
+│   │   └── eir_db/                 # Dataset en formato Kohya (20_eir_niflheimr/)
+│   ├── lora_output/                # 19 checkpoints v2 + v1
+│   └── reference_images/           # 28 imágenes de referencia
+├── config/
+│   ├── lora/
+│   │   └── eir_v2_optimized.toml   # Config de entrenamiento v2
+│   └── prompts/
+│       ├── eir_prompts_v2.json      # 9 posts con prompts y captions
+│       ├── eir_content_plan.json    # Plan expandido (9 posts + stories + profile)
+│       └── generation_config.json   # Negative prompts y configuración
+├── docs/
+│   ├── CONTENT_CALENDAR.md         # Calendario 3 semanas
+│   ├── HASHTAG_STRATEGY.md         # Estrategia de hashtags
+│   ├── VOICE_AND_PERSONALITY.md    # Guía de voz y personalidad
+│   ├── FASE2_GROWTH.md             # Plan de crecimiento
+│   └── TRAINING_LOG_V2.md          # Log de entrenamiento
+├── outputs/
+│   ├── test_batch_lora/            # 6 imágenes test v1
+│   ├── eval_checkpoints/           # 17 imágenes de evaluación de checkpoints
+│   ├── feed_batch_v2/              # 18 imágenes feed v2 (BEST)
+│   └── profile_assets/             # 6 imágenes de perfil
+├── scripts/
+│   ├── train_eir_v2.sh             # Script de entrenamiento (CORREGIDO)
+│   ├── generate_batch_v2.py        # Generador batch via ComfyUI API
+│   ├── evaluate_checkpoints.py     # Evaluador de checkpoints
+│   └── post_training_pipeline.py   # Pipeline post-entrenamiento
+├── workflows/
+│   └── eir_lora_portrait_api.json  # Workflow ComfyUI API
+├── NEXT_STEPS_EIR.md               # Este archivo
+└── PLAN_COMPLETO.md                 # Plan general FASE 0-2
