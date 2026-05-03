@@ -18,7 +18,7 @@ class GitStatus(str, Enum):
     NO_REPO = "no_repo"
 
 
-class TestStatus(str, Enum):
+class ProjTestStatus(str, Enum):
     """Test status for a realm or project."""
 
     PASS = "pass"
@@ -79,7 +79,7 @@ class RealmStatus:
     path: Path
     project_count: int = 0
     git_status: GitStatus = GitStatus.NO_REPO
-    test_status: TestStatus = TestStatus.UNKNOWN
+    test_status: ProjTestStatus = ProjTestStatus.UNKNOWN
     last_commit_date: str = ""
     health: HealthStatus = HealthStatus.DOWN
     projects: list[ProjectInfo] = field(default_factory=list)
@@ -273,18 +273,18 @@ class RealmScanner:
             return GitStatus.CLEAN
         return GitStatus.DIRTY
 
-    def _aggregate_test_status(self, projects: list[ProjectInfo]) -> TestStatus:
+    def _aggregate_test_status(self, projects: list[ProjectInfo]) -> ProjTestStatus:
         """Aggregate test status from all projects in a realm.
 
         Since running tests is expensive, we default to UNKNOWN unless
         we find pytest results caches.
         """
-        return TestStatus.UNKNOWN
+        return ProjTestStatus.UNKNOWN
 
     def _determine_health(
         self,
         git_status: GitStatus,
-        test_status: TestStatus,
+        test_status: ProjTestStatus,
         projects: list[ProjectInfo],
     ) -> HealthStatus:
         """Determine overall health based on git and test status."""
@@ -294,7 +294,7 @@ class RealmScanner:
         if git_status == GitStatus.DIRTY:
             return HealthStatus.DEGRADED
 
-        if test_status == TestStatus.FAIL:
+        if test_status == ProjTestStatus.FAIL:
             return HealthStatus.DEGRADED
 
         return HealthStatus.HEALTHY

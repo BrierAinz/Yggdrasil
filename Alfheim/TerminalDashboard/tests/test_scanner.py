@@ -12,9 +12,9 @@ from tui.scanner import (
     GitStatus,
     HealthStatus,
     ProjectInfo,
+    ProjTestStatus,
     RealmScanner,
     RealmStatus,
-    TestStatus,
 )
 
 
@@ -68,7 +68,7 @@ class TestRealmStatus:
             path=Path("/tmp/Asgard"),
             project_count=3,
             git_status=GitStatus.CLEAN,
-            test_status=TestStatus.UNKNOWN,
+            test_status=ProjTestStatus.UNKNOWN,
             health=HealthStatus.HEALTHY,
         )
         assert r.name == "Asgard"
@@ -163,13 +163,13 @@ class TestGitStatus:
         assert GitStatus.NO_REPO.value == "no_repo"
 
 
-class TestTestStatus:
-    """Test TestStatus enum."""
+class TestProjTestStatus:
+    """Test ProjTestStatus enum."""
 
     def test_values(self) -> None:
-        assert TestStatus.PASS.value == "pass"
-        assert TestStatus.FAIL.value == "fail"
-        assert TestStatus.UNKNOWN.value == "unknown"
+        assert ProjTestStatus.PASS.value == "pass"
+        assert ProjTestStatus.FAIL.value == "fail"
+        assert ProjTestStatus.UNKNOWN.value == "unknown"
 
 
 class TestHealthStatus:

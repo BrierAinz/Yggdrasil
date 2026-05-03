@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Eir — AI Art Influencer -->
+  <!-- Norse goddess of Healing/Creation -->
+  <!-- Frost/ice blue + violet palette -->
+
+  <!-- Outer glow -->
+  <circle cx="100" cy="100" r="90" fill="rgba(51,102,255,0.03)" stroke="rgba(51,102,255,0.12)" stroke-width="1"/>
+  <circle cx="100" cy="100" r="78" fill="none" stroke="rgba(170,85,255,0.06)" stroke-width="0.5" stroke-dasharray="3,7"/>
+
+  <!-- Ice crystal formation as halo -->
+  <g stroke="rgba(51,102,255,0.3)" stroke-width="1" opacity="0.5">
+    <line x1="100" y1="20" x2="100" y2="35"/>
+    <line x1="72" y1="28" x2="80" y2="42"/>
+    <line x1="128" y1="28" x2="120" y2="42"/>
+    <line x1="52" y1="48" x2="65" y2="55"/>
+    <line x1="148" y1="48" x2="135" y2="55"/>
+  </g>
+
+  <!-- Ethereal female silhouette -->
+  <path d="M100,38 Q82,42 74,58 Q68,72 70,88 Q72,100 76,110 L68,140 Q72,155 80,165 Q90,175 100,178 Q110,175 120,165 Q128,155 132,140 L124,110 Q128,100 130,88 Q132,72 126,58 Q118,42 100,38 Z"
+        fill="rgba(51,102,255,0.06)" stroke="rgba(170,85,255,0.4)" stroke-width="1.2"/>
+
+  <!-- Face - closed eyes (creative meditation) -->
+  <path d="M88,80 Q92,78 96,80" stroke="rgba(51,102,255,0.6)" stroke-width="1.2" fill="none"/>
+  <path d="M104,80 Q108,78 112,80" stroke="rgba(51,102,255,0.6)" stroke-width="1.2" fill="none"/>
+
+  <!-- Gentle smile -->
+  <path d="M92,92 Q100,97 108,92" stroke="rgba(170,85,255,0.3)" stroke-width="0.8" fill="none"/>
+
+  <!-- Flowing hair with frost particles -->
+  <g stroke="rgba(51,102,255,0.3)" stroke-width="0.8" fill="none" opacity="0.5">
+    <path d="M74,55 Q60,65 50,90 Q45,110 48,135"/>
+    <path d="M70,60 Q55,75 48,100 Q44,120 50,150"/>
+    <path d="M126,55 Q140,65 150,90 Q155,110 152,135"/>
+    <path d="M130,60 Q145,75 152,100 Q156,120 150,150"/>
+  </g>
+
+  <!-- Paintbrush / stylus (art tool) -->
+  <g transform="translate(138,105) rotate(30)">
+    <line x1="0" y1="0" x2="30" y2="-25" stroke="rgba(170,85,255,0.4)" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="33" cy="-27" r="3" fill="rgba(51,102,255,0.3)" stroke="rgba(170,85,255,0.4)" stroke-width="0.8"/>
+    <!-- Sparkle from brush tip -->
+    <g stroke="rgba(51,102,255,0.5)" stroke-width="0.6" opacity="0.6">
+      <line x1="33" y1="-35" x2="33" y2="-38"/>
+      <line x1="40" y1="-27" x2="43" y2="-27"/>
+      <line x1="38" y1="-32" x2="40" y2="-34"/>
+    </g>
+  </g>
+
+  <!-- Rune ᛇ (Eihwaz - yew, resilience) -->
+  <g stroke="rgba(51,102,255,0.4)" stroke-width="1.2" stroke-linecap="round" transform="translate(55,115)">
+    <line x1="0" y1="-8" x2="0" y2="8"/>
+    <line x1="-5" y1="-3" x2="5" y2="3"/>
+  </g>
+
+  <!-- Frost particles floating around -->
+  <g fill="rgba(51,102,255,0.4)" font-family="serif" font-size="9">
+    <text x="32" y="70">❄</text>
+    <text x="155" y="65" opacity="0.6">❄</text>
+    <text x="42" y="155" opacity="0.4">❄</text>
+    <text x="148" y="160" opacity="0.3">❄</text>
+  </g>
+
+  <!-- Violet runes floating -->
+  <g fill="rgba(170,85,255,0.2)" font-family="serif" font-size="10">
+    <text x="28" y="100">ᚠ</text>
+    <text x="168" y="95">ᛊ</text>
+    <text x="40" y="130">ᛏ</text>
+    <text x="155" y="135">ᚱ</text>
+  </g>
+
+  <!-- Base mist -->
+  <ellipse cx="100" cy="185" rx="55" ry="12" fill="rgba(51,102,255,0.05)"/>
+</svg>

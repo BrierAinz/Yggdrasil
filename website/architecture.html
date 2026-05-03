@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Architecture — Yggdrasil</title>
-    <meta name="description" content="Full architecture diagram of the Yggdrasil ecosystem — Nine Realms, Gateway REST API, Hermes-Lilith core, and component relationships.">
-    <meta name="keywords" content="Yggdrasil, Hermes-Lilith, AI agent, local LLM, LM Studio, Telegram bot, Python, open source, Norse mythology, personal ecosystem">
+    <meta name="description" content="Full architecture diagram of the Yggdrasil ecosystem — Nine Realms, Gateway REST API, Lilith core, and component relationships.">
+    <meta name="keywords" content="Yggdrasil, Lilith, AI agent, local LLM, LM Studio, Telegram bot, Python, open source, Norse mythology, personal ecosystem">
     <meta name="author" content="BrierAinz">
     <meta name="theme-color" content="#0B0F19">
     <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;&#127795;&lt;/text&gt;&lt;/svg&gt;">
     <link rel="apple-touch-icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;&#127795;&lt;/text&gt;&lt;/svg&gt;">
     <meta property="og:title" content="Architecture — Yggdrasil">
-    <meta property="og:description" content="Interactive system architecture diagram of Yggdrasil. Explore how Hermes-Lilith, the Gateway, Telegram Bot, and sub-agents connect.">
+    <meta property="og:description" content="Interactive system architecture diagram of Yggdrasil. Explore how Lilith, the Gateway, Telegram Bot, and sub-agents connect.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://brierainz.github.io/Yggdrasil/architecture.html">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Architecture — Yggdrasil">
-    <meta name="twitter:description" content="Interactive system architecture diagram of Yggdrasil. Explore how Hermes-Lilith, the Gateway, Telegram Bot, and sub-agents connect.">
+    <meta name="twitter:description" content="Interactive system architecture diagram of Yggdrasil. Explore how Lilith, the Gateway, Telegram Bot, and sub-agents connect.">
     <link rel="canonical" href="https://brierainz.github.io/Yggdrasil/architecture.html">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,7 +35,7 @@
             <div class="nav-links">
 <a href="index.html" class="nav-link">Home</a>
                 <a href="realms.html" class="nav-link">Realms</a>
-                <a href="hermes-lilith.html" class="nav-link">Hermes-Lilith</a>
+                <a href="hermes-lilith.html" class="nav-link">Lilith</a>
                 <a href="midgard-apps.html" class="nav-link">Midgard Apps</a>
                 <a href="vanaheim-agents.html" class="nav-link">Vanaheim Agents</a>
                 <a href="architecture.html" class="nav-link">Architecture</a>
@@ -54,7 +54,7 @@
             <div class="hero-badge">System Design</div>
             <h1>Architecture</h1>
             <p class="hero-subtitle">
-                A complete map of the Yggdrasil ecosystem — from the Nine Realms directory structure to the REST Gateway, every component that makes Hermes-Lilith v3.0 work, including Multi-Provider LLM, Swarm Intelligence, MCP, Skills, and the real-time Dashboard.
+                A complete map of the Yggdrasil ecosystem — from the Nine Realms directory structure to the REST Gateway, every component that makes Lilith v4.0 work, including Multi-Provider LLM, Swarm Intelligence, MCP, Skills, and the real-time Dashboard.
             </p>
         </div>
     </section>
@@ -70,9 +70,9 @@
             <pre class="code-block"><code>Yggdrasil/
 │
 ├── Asgard/                           ← Core Technology (permanent)
-│   ├── Hermes-Lilith/                  CLI agent, memory, orchestrator
+│   ├── Lilith/                  CLI agent, memory, orchestrator
 │   │   ├── Lilith/                       Core modules (Core, Swarm, MCP,
-│   │   │                                 Dashboard, Hermes, RAG, Scheduler, Plugins)
+│   │   │                                 Dashboard, Lilith, RAG, Scheduler, Plugins)
 │   │   ├── memory/                       Hybrid memory (vector + graph + FTS5)
 │   │   └── skills/                       Hot-reloadable skill packs
 │   ├── lilith-orchestrator/gateway/    FastAPI REST Gateway
@@ -159,7 +159,7 @@
                     <div>FastAPI receives the request, generates a session ID (<code>gateway_{user_id}_{timestamp}</code>), and routes to the appropriate handler.</div>
                 </div>
                 <div class="lifecycle-row">
-                    <div><strong>4. Hermes-Lilith</strong></div>
+                    <div><strong>4. Lilith</strong></div>
                     <div>The orchestrator loads the conversation context, queries hybrid memory (vector + graph + FTS5) for relevant past interactions, checks Skills for applicable routines, and builds the full prompt.</div>
                 </div>
                 <div class="lifecycle-row">
@@ -168,7 +168,7 @@
                 </div>
                 <div class="lifecycle-row">
                     <div><strong>6. Skill / Tool Execution</strong></div>
-                    <div>If the model requests a tool or skill, Hermes-Lilith dispatches it — native tools, MCP connections, dynamic tool calls, or spawns a Swarm agent for parallel work.</div>
+                    <div>If the model requests a tool or skill, Lilith dispatches it — native tools, MCP connections, dynamic tool calls, or spawns a Swarm agent for parallel work.</div>
                 </div>
                 <div class="lifecycle-row">
                     <div><strong>7. Dashboard</strong></div>
@@ -225,9 +225,9 @@
                 <div style="color: var(--text-dim); font-family: var(--font-mono); font-size: 0.75rem;">↓ Internal API ↓</div>
                 <!-- Layer 3: Core -->
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-                    <div class="arch-node hermes-node">
+                    <div class="arch-node lilith-node">
                         <span class="node-icon">⚡</span>
-                        <span>Hermes-Lilith</span>
+                        <span>Lilith</span>
                         <span class="node-sub">Orchestrator</span>
                     </div>
                     <div class="arch-node" style="border-color: rgba(167,139,250,0.4); background: rgba(167,139,250,0.06);">

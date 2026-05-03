@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- ForgeMaster — Build & Deploy Agent -->
+  <!-- Anvil + hammer + sparks, warm gold/orange palette -->
+
+  <circle cx="100" cy="100" r="90" fill="rgba(199,164,74,0.04)" stroke="rgba(199,164,74,0.15)" stroke-width="1"/>
+  <circle cx="100" cy="100" r="78" fill="none" stroke="rgba(212,160,32,0.08)" stroke-width="0.5" stroke-dasharray="5,6"/>
+
+  <!-- Anvil shape (body) -->
+  <path d="M70,115 L65,140 L135,140 L130,115 Z" fill="rgba(199,164,74,0.08)" stroke="#C7A44A" stroke-width="1.5"/>
+  <path d="M60,140 L55,155 L145,155 L140,140 Z" fill="rgba(199,164,74,0.06)" stroke="#C7A44A" stroke-width="1"/>
+  <!-- Anvil top -->
+  <rect x="68" y="108" rx="2" ry="2" width="64" height="8" fill="rgba(199,164,74,0.1)" stroke="#C7A44A" stroke-width="1.2"/>
+  <!-- Horn -->
+  <path d="M132,108 Q138,105 140,100 Q142,95 138,90 L130,108 Z" fill="rgba(199,164,74,0.06)" stroke="#C7A44A" stroke-width="1"/>
+
+  <!-- Hammer (raised, mid-strike) -->
+  <g transform="translate(85,70) rotate(-35)">
+    <!-- Handle -->
+    <rect x="-2" y="10" width="4" height="30" rx="1" fill="rgba(200,164,74,0.15)" stroke="#C7A44A" stroke-width="1"/>
+    <!-- Head -->
+    <rect x="-10" y="0" width="20" height="12" rx="2" fill="rgba(199,164,74,0.12)" stroke="#C7A44A" stroke-width="1.5"/>
+  </g>
+
+  <!-- Sparks flying from impact -->
+  <g stroke="#C7A44A" stroke-width="0.8" opacity="0.6">
+    <line x1="100" y1="108" x2="110" y2="95"/>
+    <line x1="100" y1="108" x2="115" y2="100"/>
+    <line x1="100" y1="108" x2="92" y2="93"/>
+    <line x1="100" y1="108" x2="85" y2="97"/>
+    <line x1="100" y1="108" x2="105" y2="88"/>
+  </g>
+  <g fill="#C7A44A" opacity="0.5">
+    <circle cx="112" cy="93" r="1.5"/>
+    <circle cx="117" cy="100" r="1"/>
+    <circle cx="88" cy="92" r="1.2"/>
+    <circle cx="83" cy="98" r="0.8"/>
+    <circle cx="107" cy="86" r="1"/>
+  </g>
+
+  <!-- Rune ᛏ (Tiwaz - victory, the warrior) -->
+  <g stroke="#C7A44A" stroke-width="1.2" stroke-linecap="round" opacity="0.35" transform="translate(155,55)">
+    <line x1="0" y1="-10" x2="0" y2="10"/>
+    <line x1="-8" y1="-10" x2="8" y2="-10"/>
+  </g>
+
+  <!-- Forge glow at base -->
+  <ellipse cx="100" cy="158" rx="40" ry="6" fill="rgba(199,164,74,0.08)"/>
+  <ellipse cx="100" cy="158" rx="25" ry="3" fill="rgba(255,100,50,0.06)"/>
+
+  <!-- Smoke wisps -->
+  <g stroke="rgba(199,164,74,0.15)" stroke-width="0.8" fill="none">
+    <path d="M85,90 Q80,75 85,60 Q90,48 82,35"/>
+    <path d="M95,88 Q90,70 95,55 Q100,42 93,28"/>
+    <path d="M108,92 Q113,78 108,62 Q103,48 110,35"/>
+  </g>
+
+  <!-- Floating runes -->
+  <g fill="rgba(199,164,74,0.2)" font-family="serif" font-size="10">
+    <text x="30" y="60">ᚠ</text>
+    <text x="165" y="120">ᛟ</text>
+    <text x="35" y="130">ᚺ</text>
+    <text x="160" y="70">ᛗ</text>
+  </g>
+</svg>

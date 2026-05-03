@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hermes-Lilith — Yggdrasil</title>
-    <meta name="description" content="Hermes-Lilith v3.0: a dark-fantasy CLI agent with hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, skills framework, and real-time dashboard. Runs on your hardware.">
-    <meta name="keywords" content="Yggdrasil, Hermes-Lilith, AI agent, local LLM, LM Studio, Kimi, Telegram bot, swarm, MCP, skills, memory embeddings, dark fantasy, Python, Norse mythology">
+    <title>Lilith — Yggdrasil</title>
+    <meta name="description" content="Lilith v4.0: a dark-fantasy CLI agent with hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, skills framework, and real-time dashboard. Runs on your hardware.">
+    <meta name="keywords" content="Yggdrasil, Lilith, AI agent, local LLM, LM Studio, Kimi, Telegram bot, swarm, MCP, skills, memory embeddings, dark fantasy, Python, Norse mythology">
     <meta name="author" content="BrierAinz">
     <meta name="theme-color" content="#0B0F19">
     <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;&#127795;&lt;/text&gt;&lt;/svg&gt;">
     <link rel="apple-touch-icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;text y='.9em' font-size='90'&gt;&#127795;&lt;/text&gt;&lt;/svg&gt;">
-    <meta property="og:title" content="Hermes-Lilith v3.0 — Dark Fantasy AI Agent">
-    <meta property="og:description" content="Hermes-Lilith v3.0: hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, skills framework, real-time dashboard. A dark-fantasy CLI agent for your hardware.">
+    <meta property="og:title" content="Lilith v4.0 — Dark Fantasy AI Agent">
+    <meta property="og:description" content="Lilith v4.0: hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, skills framework, real-time dashboard. A dark-fantasy CLI agent for your hardware.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://brierainz.github.io/Yggdrasil/hermes-lilith.html">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Hermes-Lilith — Dark Fantasy AI Agent">
-    <meta name="twitter:description" content="Hermes-Lilith is a local-first AI assistant that runs on your hardware via LM Studio. Control it via Telegram with vector memory, RAG, and sub-agent delegation.">
+    <meta name="twitter:title" content="Lilith — Dark Fantasy AI Agent">
+    <meta name="twitter:description" content="Lilith is a local-first AI assistant that runs on your hardware via LM Studio. Control it via Telegram with vector memory, RAG, and sub-agent delegation.">
     <link rel="canonical" href="https://brierainz.github.io/Yggdrasil/hermes-lilith.html">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,7 +35,7 @@
             <div class="nav-links">
 <a href="index.html" class="nav-link">Home</a>
                 <a href="realms.html" class="nav-link">Realms</a>
-                <a href="hermes-lilith.html" class="nav-link">Hermes-Lilith</a>
+                <a href="hermes-lilith.html" class="nav-link">Lilith</a>
                 <a href="midgard-apps.html" class="nav-link">Midgard Apps</a>
                 <a href="vanaheim-agents.html" class="nav-link">Vanaheim Agents</a>
                 <a href="architecture.html" class="nav-link">Architecture</a>
@@ -52,7 +52,7 @@
     <section class="hero" style="padding-top: 8rem; padding-bottom: 3rem;">
         <div class="hero-inner">
             <div class="hero-badge">Asgard / Core</div>
-            <h1>Hermes-Lilith <span style="font-size:0.5em;color:var(--accent-gold);">v3.0</span></h1>
+            <h1>Lilith <span style="font-size:0.5em;color:var(--accent-gold);">v4.0</span></h1>
             <p class="hero-subtitle">
                 A <strong>dark-fantasy CLI agent</strong> that runs entirely on your hardware. Hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, skills with hot-reload, and real-time dashboard. No cloud lock-in. No subscription. Control your PC from Telegram or the terminal.
             </p>
@@ -70,7 +70,7 @@
             <div class="section-label">Philosophy</div>
             <h2>Why local-first?</h2>
             <p class="section-desc">
-                Hermes-Lilith is built on a simple belief: <strong>your data should stay on your machine</strong>. The LLM runs through LM Studio (localhost:1234). Memory is stored in local SQLite. Files never leave your drive. Telegram is just the remote control — the brain is at home.
+                Lilith is built on a simple belief: <strong>your data should stay on your machine</strong>. The LLM runs through LM Studio (localhost:1234). Memory is stored in local SQLite. Files never leave your drive. Telegram is just the remote control — the brain is at home.
             </p>
 
             <div class="callout">
@@ -107,7 +107,7 @@
             <div class="section-label">Architecture</div>
             <h2>How it works</h2>
             <p class="section-desc">
-                Lilith v3.0 is organized in Six Realinos — each a module with its own law, all nourished by the same roots. The Orchestrator coordinates Skills, Memory, LLM Providers, Swarm, MCP, and Tools through a unified TOML configuration.
+                Lilith v4.0 is organized in Six Realinos — each a module with its own law, all nourished by the same roots. The Orchestrator coordinates Skills, Memory, LLM Providers, Swarm, MCP, and Tools through a unified TOML configuration.
             </p>
 
             <div class="arch-diagram">
@@ -129,9 +129,9 @@
                     <span class="node-sub">FastAPI :8000</span>
                 </div>
                 <div class="arch-arrow">→</div>
-                <div class="arch-node hermes-node">
+                <div class="arch-node lilith-node">
                     <span class="node-icon">⚡</span>
-                    <span>Hermes-Lilith</span>
+                    <span>Lilith</span>
                     <span class="node-sub">Orchestrator</span>
                 </div>
                 <div class="arch-arrow">→</div>
@@ -383,7 +383,7 @@
                 </div>
                 <div class="lifecycle-row">
                     <div><code>(any text)</code></div>
-                    <div>Sent to Hermes-Lilith for processing with full context</div>
+                    <div>Sent to Lilith for processing with full context</div>
                 </div>
             </div>
         </div>
@@ -394,7 +394,7 @@
             <div class="section-label">Hardware</div>
             <h2>Recommended Specs</h2>
             <p class="section-desc">
-                Hermes-Lilith is designed to run on consumer hardware. You don't need a data center.
+                Lilith is designed to run on consumer hardware. You don't need a data center.
             </p>
 
             <div class="cards-grid">
