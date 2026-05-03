@@ -1,186 +1,72 @@
-# ForgeMaster — Gestión de Recursos de Muspelheim
+# ForgeMaster — Plan de Arranque v1.0
 
-> **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task.
+> **Estado actual:** v0.1.0, 176 tests pasando, 8 comandos CLI funcionales
+> **Ubicacion:** `Muspelheim/ForgeMaster`
 
-**Goal:** CLI que gestiona los recursos de Niflheim: modelos LLM, datasets, checkpoints, VRAM monitoring, disk usage. Sabe qué modelos tienes, cuánto espacio ocupan, y cuánta VRAM necesitas para correrlos.
+## FASE 1 — Release Blockers (2-3 sesiones)
 
-**Architecture:** Scanner de directorios → metadata extraction → SQLite catalog → optimization suggestions → Rich CLI. Integrado con ComfyUI (modelos de imagen) y LM Studio/KoboldCpp (modelos de texto).
+### 1.1 LICENSE + CHANGELOG
+- [ ] Crear `LICENSE` (MIT, igual que pyproject.toml)
+- [ ] Crear `CHANGELOG.md` con entrada v0.1.0
 
-**Tech Stack:** Python 3.11+, Typer, Rich, SQLite, psutil, httpx, safetensors (para metadata).
+### 1.2 README Completo
+- [ ] Instalacion (`pip install -e .`)
+- [ ] Comandos con ejemplos (`forgemaster scan`, `forgemaster gpu`, etc.)
+- [ ] Configuracion (paths por defecto, GPU profiles)
+- [ ] Screenshots/salida de ejemplo con Rich
 
-**Realm:** Muspelheim/ForgeMaster/
+### 1.3 Config File Support
+- [ ] Crear `forgemaster/config.py` con carga de `~/.forgemaster/config.yaml`
+- [ ] Defaults: scan_dirs, gpu_profile, catalog_path
+- [ ] Comando `forgemaster config` para ver/editar
 
----
+### 1.4 Test Infrastructure
+- [ ] Crear `tests/conftest.py` con fixtures compartidos
+- [ ] Agregar `pytest-asyncio` a dev deps (si se necesita async)
 
-## Task 1: Scaffold del proyecto
+### 1.5 Type Checking
+- [ ] Agregar `mypy` o `pyright` a dev deps
+- [ ] Crear `pyproject.toml` config para type checking
+- [ ] Ejecutar y corregir errores
 
-Files: `Muspelheim/ForgeMaster/`, pyproject.toml con typer, rich, psutil, httpx, safetensors, pyyaml.
+## FASE 2 — Feature Gaps (2-3 sesiones)
 
-**Commit:** `feat(forgemaster): scaffold project`
+### 2.1 Structured Logging
+- [ ] Modulo `forgemaster/logging.py` con Rich handler
+- [ ] Log levels: DEBUG, INFO, WARNING, ERROR
+- [ ] Opcion `--verbose` / `--quiet` en CLI
 
----
+### 2.2 Model Metadata desde Archivos
+- [ ] Leer GGUF headers para architecture real
+- [ ] Leer safetensors metadata
+- [ ] Leer config.json de HuggingFace
+- [ ] Fallback a filename parsing (actual)
 
-## Task 2: Model scanner y catalog
+### 2.3 Download --list-only
+- [ ] Flag `forgemaster download --list-only <model_id>`
+- [ ] Mostrar archivos disponibles sin descargar
 
-Escanea directorios de modelos y extrae metadata:
-- LM Studio models: `~/.cache/lm-studio/models/`
-- ComfyUI models: `~/comfy/ComfyUI/models/`
-- HuggingFace cache: `~/.cache/huggingface/`
+### 2.4 CI Pipeline
+- [ ] GitHub Actions: lint (ruff), type-check, test
+- [ ] Reutilizar workflow existente de Yggdrasil
 
-```python
-@dataclass
-class ModelInfo:
-    name: str
-    path: str
-    size_bytes: int
-    format: str  # gguf, safetensors, pt, onnx
-    architecture: str  # llama, stable-diffusion, whisper...
-    parameters: str | None  # "7B", "13B", "70B"
-    context_length: int | None
-    quantization: str | None  # Q4_K_M, Q5_K_M, FP16...
-    vram_required_gb: float | None
-    download_date: date | None
-    source: str  # lm_studio, huggingface, manual
+## FASE 3 — Polish (1-2 sesiones)
 
-class ModelScanner:
-    def scan(self, paths: list[str]) -> list[ModelInfo]:
-        """Scan directories for model files."""
-        ...
+### 3.1 Shell Completion
+- [ ] Configurar Typer shell completions (bash, zsh, fish)
 
-    def extract_metadata(self, model_path: str) -> ModelInfo:
-        """Extract metadata from model file/directory."""
-        ...
-```
+### 3.2 Cross-Platform GPU
+- [ ] Fallback para AMD (rocm-smi) y Apple Silicon
+- [ ] Mensaje graceful quando nvidia-smi no disponible
 
-**Commit:** `feat(forgemaster): model scanner and catalog`
+### 3.3 Progress Bars
+- [ ] Rich progress para SHA256 en dupes scan
+- [ ] Rich progress para download (ya existe parcial)
 
----
-
-## Task 3: SQLite catalog
-
-```sql
-CREATE TABLE models (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    path TEXT UNIQUE NOT NULL,
-    size_bytes INTEGER NOT NULL,
-    format TEXT,
-    architecture TEXT,
-    parameters TEXT,
-    context_length INTEGER,
-    quantization TEXT,
-    vram_required_gb REAL,
-    download_date DATE,
-    source TEXT,
-    tags TEXT,  -- JSON array
-    notes TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE gpu_profiles (
-    id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,  -- "RTX 3060 12GB"
-    vram_total_gb REAL NOT NULL,
-    vram_available_gb REAL  -- after system allocation
-);
-```
-
-**Commit:** `feat(forgemaster): SQLite catalog`
+### 3.4 Version Bump
+- [ ] Actualizar `__init__.py` y `pyproject.toml` a v1.0.0
+- [ ] Tag `v1.0.0` en git
 
 ---
 
-## Task 4: VRAM calculator
-
-Calcula VRAM necesaria para un modelo:
-- GGUF: overhead por quantization level
-- Safetensors: tamaño del tensor × precision
-- KV cache: context_length × batch_size × precision
-- ComfyUI: estimación para SDXL, Flux, etc.
-
-```python
-class VRAMCalculator:
-    def calculate(self, model: ModelInfo, context_length: int = 4096, batch_size: int = 1) -> VRAMEstimate:
-        """Calculate VRAM needed to run a model."""
-        ...
-
-    def can_run(self, model: ModelInfo, gpu: GPUProfile) -> bool:
-        """Check if model fits in GPU VRAM."""
-        ...
-
-    def suggest_offload(self, model: ModelInfo, gpu: GPUProfile) -> OffloadStrategy:
-        """Suggest GPU/CPU offload strategy if model doesn't fit."""
-        ...
-```
-
-**Commit:** `feat(forgemaster): VRAM calculator`
-
----
-
-## Task 5: Disk usage y cleanup
-
-```bash
-forgemaster scan                     # scanar modelos
-forgemaster list                     # listar todos los modelos
-forgemaster list --type llm          # solo LLMs
-forgemaster list --type diffusion    # solo modelos de imagen
-forgemaster stats                    # disk usage, count by type
-forgemaster duplicates              # encontrar modelos duplicados/parecidos
-forgemaster cleanup                  # sugerir modelos para eliminar
-forgemaster check llama-7b-q5        # ¿puedo correr este modelo?
-```
-
-**Commit:** `feat(forgemaster): disk usage and cleanup suggestions`
-
----
-
-## Task 6: GPU monitoring
-
-Integración con nvidia-smi para RTX 3060:
-- VRAM usage actual
-- Running processes en GPU
-- Temperature
-- Disponibilidad para correr nuevos modelos
-
-```python
-class GPUMonitor:
-    def status(self) -> GPUStatus:
-        """Current GPU status."""
-        ...
-
-    def available_vram(self) -> float:
-        """Available VRAM in GB."""
-        ...
-```
-
-**Commit:** `feat(forgemaster): GPU monitoring (nvidia-smi)`
-
----
-
-## Task 7: Model download helper
-
-Ayuda a descargar modelos de HuggingFace:
-```bash
-forgemaster download "TheBloke/Llama-2-7B-GGUF" --quant Q5_K_M
-forgemaster download "stabilityai/stable-diffusion-xl-base-1.0"
-forgemaster recommend --vram 12 --type llm   # recomienda modelos para tu GPU
-```
-
-**Commit:** `feat(forgemaster): model download helper`
-
----
-
-## Task 8: Rich CLI con tablas coloreadas
-
-Rich output para todas las operaciones:
-- Tabla de modelos con colores por formato
-- Barra de VRAM con uso/disponible
-- Disk usage pie chart (ASCII)
-- Warning si modelo excede VRAM
-
-**Commit:** `feat(forgemaster): Rich CLI with colored output`
-
----
-
-## Task 9: Tests + CI
-
-**Commit:** `ci(forgemaster): add test workflow`
+*Fecha: 2026-05-03*

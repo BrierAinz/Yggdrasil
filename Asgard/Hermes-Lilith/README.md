@@ -1,4 +1,8 @@
-# 🜏 Lilith — Dark Fantasy CLI Agent
+# 🜏 Lilith — Dark Fantasy CLI Agent (Legacy v4)
+
+> **⚠️ LEGACY — This is the v4 monolith archive. Active development has moved to `Asgard/Lilith/` (v5, modular packages).**
+>
+> This directory is preserved for reference and git history. Paths containing `D:\Proyectos\Midgard` are stale (the project was originally called Midgard; it was renamed to Yggdrasil). Do not modify this directory — all changes go to `Asgard/Lilith/`.
 
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-4B0082?style=flat-square&logo=python)
 ![Tests](https://img.shields.io/badge/Tests-330%20passing-00C853?style=flat-square&logo=pytest)
