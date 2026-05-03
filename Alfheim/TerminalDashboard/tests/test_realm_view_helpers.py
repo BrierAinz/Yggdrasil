@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
 from tui.widgets.realm_views import (
     _count_files,
     _find_key_files,

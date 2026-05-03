@@ -56,9 +56,7 @@ class LogViewer(RichLog):
         """
         ts = self._timestamp()
         self.write(
-            Text(f"[{ts}] ", style="dim")
-            + Text("ℹ️  ", style="cyan")
-            + Text(message, style="cyan")
+            Text(f"[{ts}] ", style="dim") + Text("ℹ️  ", style="cyan") + Text(message, style="cyan")
         )
 
     def warning(self, message: str) -> None:

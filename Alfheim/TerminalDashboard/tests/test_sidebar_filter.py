@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-from unittest.mock import MagicMock
 
 import pytest
 from tui.scanner import REALMS
@@ -25,7 +24,7 @@ class TestSidebarFilter:
 
     def test_apply_filter_empty_shows_all(self) -> None:
         """Empty filter shows all realm buttons."""
-        sidebar = self._make_sidebar()
+        self._make_sidebar()
         # No filter – all buttons should be visible
         # We test the logic directly
         for realm_name in REALMS:

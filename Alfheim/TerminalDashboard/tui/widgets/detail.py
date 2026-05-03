@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from textual.reactive import reactive
 from textual.widgets import Static
+
 from tui.scanner import REALMS, GitStatus, HealthStatus, ProjTestStatus, RealmStatus
 from tui.widgets.sidebar import REALM_ICONS
 
@@ -104,9 +105,7 @@ class RealmDetailView(Static):
         if status.projects:
             lines.append("")
             for proj in status.projects:
-                branch_text = (
-                    f"[dim]{proj.branch}[/]" if proj.branch else "[dim]no branch[/]"
-                )
+                branch_text = f"[dim]{proj.branch}[/]" if proj.branch else "[dim]no branch[/]"
                 dirty = "[yellow]✗[/]" if proj.uncommitted_changes else "[green]✓[/]"
                 lines.append(f"    {dirty} {proj.name}  {branch_text}")
         elif status.health == HealthStatus.DOWN:

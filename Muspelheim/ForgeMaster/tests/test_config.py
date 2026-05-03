@@ -5,13 +5,12 @@ from __future__ import annotations
 import os
 import tempfile
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 import yaml
+
 from forgemaster.config import (
     DEFAULT_CATALOG_PATH,
-    DEFAULT_CONFIG_FILE,
     DEFAULT_GPU_PROFILE,
     DEFAULT_SCAN_DIRS,
     Config,
@@ -164,7 +163,7 @@ class TestSaveConfig:
             result = save_config(cfg, cfg_path)
             assert result.exists()
             # Read it back
-            with open(result) as f:
+            with result.open() as f:
                 loaded = yaml.safe_load(f)
             assert loaded["scan_dirs"] == ["/a", "/b"]
             assert loaded["gpu_profile"] == "RTX 4090"
@@ -226,9 +225,7 @@ class TestSetConfigValue:
     def test_set_catalog_path(self):
         with tempfile.TemporaryDirectory() as tmp:
             cfg_path = Path(tmp) / "config.yaml"
-            cfg = set_config_value(
-                "catalog_path", "/custom/catalog.db", config_path=cfg_path
-            )
+            cfg = set_config_value("catalog_path", "/custom/catalog.db", config_path=cfg_path)
             assert cfg.catalog_path == "/custom/catalog.db"
 
 

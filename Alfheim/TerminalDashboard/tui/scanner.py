@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import subprocess
 from dataclasses import dataclass, field
-from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any
@@ -279,9 +278,7 @@ class RealmScanner:
             pass
         return ""
 
-    def _aggregate_git_status(
-        self, projects: list[ProjectInfo], realm_path: Path
-    ) -> GitStatus:
+    def _aggregate_git_status(self, projects: list[ProjectInfo], realm_path: Path) -> GitStatus:
         """Aggregate git status from all projects in a realm."""
         if not projects:
             # Check if the realm itself is a git repo

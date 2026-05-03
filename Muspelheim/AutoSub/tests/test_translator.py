@@ -1,9 +1,5 @@
 """Tests for autosub.translator module."""
 
-import tempfile
-from pathlib import Path
-
-import pytest
 from autosub.transcriber import Segment
 from autosub.translator import Translator
 
@@ -23,7 +19,7 @@ class TestTranslatorInit:
 
     def test_translator_init_creates_cache_dir(self, tmp_path):
         cache_dir = tmp_path / "test_cache"
-        t = Translator(target_lang="es", cache_dir=cache_dir)
+        Translator(target_lang="es", cache_dir=cache_dir)
         assert cache_dir.exists()
         assert (cache_dir / "translations.db").exists()
 
@@ -32,7 +28,7 @@ class TestTranslatorCache:
     """Tests for the SQLite translation cache."""
 
     def test_cache_creates_db(self, tmp_path):
-        t = Translator(target_lang="es", cache_dir=tmp_path)
+        Translator(target_lang="es", cache_dir=tmp_path)
         db_path = tmp_path / "translations.db"
         assert db_path.exists()
 
@@ -63,7 +59,7 @@ class TestTranslatorSegments:
 
     def test_translate_segments_preserves_timing(self, tmp_path):
         t = Translator(target_lang="es", cache_dir=tmp_path)
-        segments = [Segment(text="hello world", start=0.0, end=2.5)]
+        [Segment(text="hello world", start=0.0, end=2.5)]
         # We don't call translate on actual API in tests,
         # just verify structure is preserved
         result = t.translate_segments([])

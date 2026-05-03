@@ -1,7 +1,8 @@
 """Tool de navegacion web con Playwright (fallback a requests+regex)."""
+
 import re
 import urllib.request
-from typing import Any, Dict
+from typing import Any
 
 from lilith_tools.base import BaseTool
 
@@ -29,7 +30,7 @@ class BrowserTool(BaseTool):
 
     def execute(
         self, url: str = "", max_chars: int = 3000, use_playwright: bool = True
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         if not url:
             return {"error": "URL vacia"}
         if not url.startswith(("http://", "https://")):
@@ -43,7 +44,7 @@ class BrowserTool(BaseTool):
                 pass
         return self._requests_fetch(url, max_chars)
 
-    def _playwright_fetch(self, url: str, max_chars: int) -> Dict[str, Any]:
+    def _playwright_fetch(self, url: str, max_chars: int) -> dict[str, Any]:
         from playwright.sync_api import sync_playwright
 
         with sync_playwright() as p:
@@ -62,7 +63,7 @@ class BrowserTool(BaseTool):
             "engine": "playwright",
         }
 
-    def _requests_fetch(self, url: str, max_chars: int) -> Dict[str, Any]:
+    def _requests_fetch(self, url: str, max_chars: int) -> dict[str, Any]:
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
             with urllib.request.urlopen(req, timeout=20) as resp:

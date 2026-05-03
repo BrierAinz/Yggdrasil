@@ -6,10 +6,15 @@ import asyncio
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Callable, Coroutine
+from typing import TYPE_CHECKING, Any, Callable
 
-from tui.health import HealthMonitor, SystemHealth
+from tui.health import HealthMonitor
 from tui.scanner import RealmScanner
+
+
+if TYPE_CHECKING:
+    from collections.abc import Coroutine
+
 
 logger = logging.getLogger(__name__)
 
@@ -29,17 +34,12 @@ class ChangeRecord:
     @property
     def is_significant(self) -> bool:
         """Whether the change is significant enough to warrant a flash."""
-        if isinstance(self.old_value, (int, float)) and isinstance(
-            self.new_value, (int, float)
-        ):
+        if isinstance(self.old_value, (int, float)) and isinstance(self.new_value, (int, float)):
             # Numeric change > 5% is significant (or crossing zero)
             if self.old_value == 0 and self.new_value != 0:
                 return True
             if self.old_value != 0:
-                return (
-                    abs(self.new_value - self.old_value) / max(abs(self.old_value), 1)
-                    > 0.05
-                )
+                return abs(self.new_value - self.old_value) / max(abs(self.old_value), 1) > 0.05
             return abs(self.new_value) > 0.05
         # Non-numeric changes are always significant
         return self.old_value != self.new_value
@@ -141,9 +141,7 @@ class DashboardUpdater:
 
         try:
             realms = self.realm_scanner.scan_all()
-            snapshot["realms"] = {
-                name: status.to_dict() for name, status in realms.items()
-            }
+            snapshot["realms"] = {name: status.to_dict() for name, status in realms.items()}
         except Exception as exc:
             logger.warning("Realm scan failed: %s", exc)
             snapshot["realms"] = self._current_snapshot.get("realms", {})
@@ -158,9 +156,7 @@ class DashboardUpdater:
         snapshot["timestamp"] = datetime.now().isoformat()
         return snapshot
 
-    def detect_changes(
-        self, old: Snapshot, new: Snapshot, prefix: str = ""
-    ) -> list[ChangeRecord]:
+    def detect_changes(self, old: Snapshot, new: Snapshot, prefix: str = "") -> list[ChangeRecord]:
         """Detect changes between two snapshots.
 
         Recursively compares nested dicts. String-digit keys at the top level
@@ -175,20 +171,14 @@ class DashboardUpdater:
             new_val = new.get(key)
 
             if old_val is None and new_val is not None:
-                changes.append(
-                    ChangeRecord(key=full_key, old_value=None, new_value=new_val)
-                )
+                changes.append(ChangeRecord(key=full_key, old_value=None, new_value=new_val))
             elif old_val is not None and new_val is None:
-                changes.append(
-                    ChangeRecord(key=full_key, old_value=old_val, new_value=None)
-                )
+                changes.append(ChangeRecord(key=full_key, old_value=old_val, new_value=None))
             elif isinstance(old_val, dict) and isinstance(new_val, dict):
                 # Recurse into nested dicts
                 changes.extend(self.detect_changes(old_val, new_val, prefix=full_key))
             elif old_val != new_val:
-                changes.append(
-                    ChangeRecord(key=full_key, old_value=old_val, new_value=new_val)
-                )
+                changes.append(ChangeRecord(key=full_key, old_value=old_val, new_value=new_val))
 
         return changes
 
@@ -268,7 +258,7 @@ class DashboardUpdater:
                         except Exception as exc:
                             logger.warning("Change callback error: %s", exc)
             except Exception as exc:
-                logger.error("Refresh loop error: %s", exc)
+                logger.exception("Refresh loop error: %s", exc)
 
             await asyncio.sleep(self.interval_seconds)
 

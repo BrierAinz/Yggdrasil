@@ -1,8 +1,9 @@
 """Tool de busqueda web usando DuckDuckGo HTML (sin API key)."""
+
 import re
 import urllib.parse
 import urllib.request
-from typing import Any, Dict
+from typing import Any
 
 from lilith_tools.base import BaseTool
 
@@ -10,8 +11,7 @@ from lilith_tools.base import BaseTool
 class WebSearchTool(BaseTool):
     name = "web_search"
     description = (
-        "Busca en la web usando DuckDuckGo. "
-        "Parametros: query (str), max_results (int, default 5)"
+        "Busca en la web usando DuckDuckGo. Parametros: query (str), max_results (int, default 5)"
     )
     parameters = {
         "query": {"type": "string", "description": "Termino de busqueda"},
@@ -22,7 +22,7 @@ class WebSearchTool(BaseTool):
         },
     }
 
-    def execute(self, query: str = "", max_results: int = 5) -> Dict[str, Any]:
+    def execute(self, query: str = "", max_results: int = 5) -> dict[str, Any]:
         if not query:
             return {"error": "Query vacia"}
         try:

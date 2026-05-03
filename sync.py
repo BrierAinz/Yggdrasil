@@ -1,20 +1,36 @@
 #!/usr/bin/env python3
 """Sincroniza metadatos entre reinos de Yggdrasil."""
+
 import json
 from pathlib import Path
-import sys
+
 
 YGGDRASIL = Path(__file__).parent.resolve()
 STATE_FILE = YGGDRASIL / ".yggdrasil_state.json"
 
 
-EXCLUDE_DIRS = {"__pycache__", "node_modules", ".git", "Archives", "Archives_Lilith_Monolith", "Archives_Lilith_Legacy"}
+EXCLUDE_DIRS = {
+    "__pycache__",
+    "node_modules",
+    ".git",
+    "Archives",
+    "Archives_Lilith_Monolith",
+    "Archives_Lilith_Legacy",
+}
+
 
 def scan_realms() -> dict:
     realms = {}
     for realm in [
-        "Asgard", "Vanaheim", "Alfheim", "Svartalfheim",
-        "Muspelheim", "Niflheim", "Midgard", "Jotunheim", "Helheim",
+        "Asgard",
+        "Vanaheim",
+        "Alfheim",
+        "Svartalfheim",
+        "Muspelheim",
+        "Niflheim",
+        "Midgard",
+        "Jotunheim",
+        "Helheim",
     ]:
         path = YGGDRASIL / realm
         if not path.exists():

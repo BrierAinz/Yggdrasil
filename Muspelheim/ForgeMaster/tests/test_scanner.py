@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 import tempfile
 from pathlib import Path
 
@@ -155,9 +154,7 @@ class TestModelScanner:
     def test_guess_architecture(self, scanner):
         assert scanner._guess_architecture("llama-7b.gguf") == "llama"
         assert scanner._guess_architecture("mistral-7b.gguf") == "mistral"
-        assert (
-            scanner._guess_architecture("stable-diffusion-v1.5") == "stable-diffusion"
-        )
+        assert scanner._guess_architecture("stable-diffusion-v1.5") == "stable-diffusion"
         assert scanner._guess_architecture("whisper-small.pt") == "whisper"
         assert scanner._guess_architecture("random-model.bin") == ""
 
@@ -189,13 +186,12 @@ class TestModelScanner:
             assert info.vram_required_gb > 0
 
     def test_multiple_scan_paths(self, scanner):
-        with tempfile.TemporaryDirectory() as tmpdir1:
-            with tempfile.TemporaryDirectory() as tmpdir2:
-                (Path(tmpdir1) / "model1.gguf").write_bytes(b"\x00" * 1024)
-                (Path(tmpdir2) / "model2.safetensors").write_bytes(b"\x00" * 1024)
+        with tempfile.TemporaryDirectory() as tmpdir1, tempfile.TemporaryDirectory() as tmpdir2:
+            (Path(tmpdir1) / "model1.gguf").write_bytes(b"\x00" * 1024)
+            (Path(tmpdir2) / "model2.safetensors").write_bytes(b"\x00" * 1024)
 
-                result = scanner.scan([tmpdir1, tmpdir2])
-                assert len(result.models) == 2
+            result = scanner.scan([tmpdir1, tmpdir2])
+            assert len(result.models) == 2
 
     def test_scan_result_dataclass(self):
         result = ScanResult()

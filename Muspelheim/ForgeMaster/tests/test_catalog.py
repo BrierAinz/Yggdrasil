@@ -71,9 +71,7 @@ class TestCatalog:
     def test_list_models(self, catalog):
         models = [
             ModelInfo(name="llama-7b", path="/m1", format="gguf", architecture="llama"),
-            ModelInfo(
-                name="mistral-7b", path="/m2", format="gguf", architecture="mistral"
-            ),
+            ModelInfo(name="mistral-7b", path="/m2", format="gguf", architecture="mistral"),
             ModelInfo(
                 name="sd-v1.5",
                 path="/m3",
@@ -179,19 +177,13 @@ class TestCatalog:
 
 class TestGPUProfile:
     def test_add_gpu_profile(self, catalog):
-        profile = GPUProfile(
-            name="RTX 4090", vram_total_gb=24.0, vram_available_gb=22.0
-        )
+        profile = GPUProfile(name="RTX 4090", vram_total_gb=24.0, vram_available_gb=22.0)
         profile_id = catalog.add_gpu_profile(profile)
         assert profile_id > 0
 
     def test_get_gpu_profiles(self, catalog):
-        profile1 = GPUProfile(
-            name="RTX 4090", vram_total_gb=24.0, vram_available_gb=22.0
-        )
-        profile2 = GPUProfile(
-            name="RTX 3090", vram_total_gb=24.0, vram_available_gb=22.0
-        )
+        profile1 = GPUProfile(name="RTX 4090", vram_total_gb=24.0, vram_available_gb=22.0)
+        profile2 = GPUProfile(name="RTX 3090", vram_total_gb=24.0, vram_available_gb=22.0)
 
         catalog.add_gpu_profile(profile1)
         catalog.add_gpu_profile(profile2)

@@ -1,18 +1,18 @@
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Optional
 
 
 class BotConfig:
-    def __init__(self, bot_name: str, config_dir: Path = None):
+    def __init__(self, bot_name: str, config_dir: Optional[Path] = None):
         self.bot_name = bot_name
         self.config_dir = config_dir or Path.home() / ".vanaheim" / bot_name
         self.config_dir.mkdir(parents=True, exist_ok=True)
         self.config_file = self.config_dir / "config.json"
         self._data = self._load()
 
-    def _load(self) -> Dict[str, Any]:
+    def _load(self) -> dict[str, Any]:
         if self.config_file.exists():
             return json.loads(self.config_file.read_text(encoding="utf-8"))
         return {}

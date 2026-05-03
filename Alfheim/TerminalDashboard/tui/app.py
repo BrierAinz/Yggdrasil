@@ -8,9 +8,11 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal
 from textual.widgets import Footer, Static
+
 from tui.scanner import REALMS, RealmScanner, RealmStatus
 from tui.widgets.detail import RealmDetailView
 from tui.widgets.sidebar import RealmSidebar
+
 
 # Mapping of number keys (1-9) to realm names
 _REALM_KEYS: dict[str, str] = {str(i): name for i, name in enumerate(REALMS, start=1)}
@@ -119,9 +121,7 @@ class YggdrasilDashboard(App):
 
     # ── Realm message from sidebar click ──────────────────────
 
-    def on_realm_sidebar_realm_selected(
-        self, message: RealmSidebar.RealmSelected
-    ) -> None:
+    def on_realm_sidebar_realm_selected(self, message: RealmSidebar.RealmSelected) -> None:
         """Handle realm selection from the sidebar buttons."""
         self._switch_realm(message.realm_name)
 

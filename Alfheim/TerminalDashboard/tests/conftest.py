@@ -3,11 +3,16 @@
 from __future__ import annotations
 
 import tempfile
-from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
 import pytest
 from tui.scanner import REALMS, RealmScanner
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
 
 # ---------------------------------------------------------------------------
 # temp_yggdrasil – creates a temp directory tree of 9 realms with sample files
@@ -67,9 +72,7 @@ def temp_yggdrasil(tmp_path: Path) -> Path:
 
     # Validate that all 9 REALMS are represented
     for realm_name in REALMS:
-        assert (
-            realm_name in realm_projects
-        ), f"Missing fixture data for realm: {realm_name}"
+        assert realm_name in realm_projects, f"Missing fixture data for realm: {realm_name}"
 
     for realm_name, projects in realm_projects.items():
         realm_dir = root / realm_name
@@ -78,9 +81,7 @@ def temp_yggdrasil(tmp_path: Path) -> Path:
             proj_dir = realm_dir / proj_name
             proj_dir.mkdir()
             for fname in files:
-                (proj_dir / fname).write_text(
-                    f"# {proj_name} – {fname}\n", encoding="utf-8"
-                )
+                (proj_dir / fname).write_text(f"# {proj_name} – {fname}\n", encoding="utf-8")
 
     return root
 
@@ -98,9 +99,7 @@ def mock_gpu() -> MagicMock:
     The patch is applied to ``subprocess.run`` in ``tui.health`` so that
     ``HealthMonitor._get_gpu_info`` receives deterministic data.
     """
-    nvidia_output = (
-        "NVIDIA GeForce RTX 3060, 45, 12288, 6144, 6144, 65, 40, 120.5, 170.0"
-    )
+    nvidia_output = "NVIDIA GeForce RTX 3060, 45, 12288, 6144, 6144, 65, 40, 120.5, 170.0"
     mock_result = MagicMock()
     mock_result.returncode = 0
     mock_result.stdout = nvidia_output

@@ -1,7 +1,7 @@
 import json
 import sqlite3
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Optional
 
 
 class MemoryStore:
@@ -88,7 +88,7 @@ class MemoryStore:
         self,
         content: str,
         embedding: Optional[bytes] = None,
-        metadata: Optional[Dict] = None,
+        metadata: Optional[dict] = None,
     ):
         """Insert a new memory entry.
 
@@ -112,7 +112,7 @@ class MemoryStore:
         self,
         content: str,
         embedding: Optional[bytes] = None,
-        metadata: Optional[Dict] = None,
+        metadata: Optional[dict] = None,
     ):
         """Alias for :meth:`add` — insert a new memory entry.
 
@@ -121,7 +121,7 @@ class MemoryStore:
         """
         return self.add(content=content, embedding=embedding, metadata=metadata)
 
-    def search(self, query: str, limit: int = 5) -> List[Dict]:
+    def search(self, query: str, limit: int = 5) -> list[dict]:
         """Search memories whose content matches ``query`` (substring).
 
         Args:
@@ -144,7 +144,7 @@ class MemoryStore:
             if self._conn is None:
                 conn.close()
 
-    def recent(self, limit: int = 10) -> List[Dict]:
+    def recent(self, limit: int = 10) -> list[dict]:
         """Return the most recent memory entries.
 
         Args:

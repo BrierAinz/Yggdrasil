@@ -4,15 +4,19 @@ from __future__ import annotations
 
 import json
 import struct
-from pathlib import Path
+from typing import TYPE_CHECKING
 
-import pytest
 from forgemaster.metadata import (
     get_model_metadata,
     read_gguf_metadata,
     read_hf_config,
     read_safetensors_metadata,
 )
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 

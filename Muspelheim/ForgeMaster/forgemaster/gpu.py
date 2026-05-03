@@ -16,9 +16,8 @@ import logging
 import platform
 import re
 import subprocess
-import sys
 from dataclasses import dataclass
-from typing import Optional
+
 
 logger = logging.getLogger(__name__)
 
@@ -74,8 +73,8 @@ class GPUMonitor:
     """
 
     def __init__(self) -> None:
-        self._available: Optional[bool] = None
-        self._driver_version: Optional[str] = None
+        self._available: bool | None = None
+        self._driver_version: str | None = None
 
     # ------------------------------------------------------------------
     # NVIDIA GPU detection
@@ -92,11 +91,7 @@ class GPUMonitor:
         if self._available is not None:
             return self._available
 
-        if self._check_nvidia():
-            self._available = True
-        elif self._check_amd():
-            self._available = True
-        elif self._check_apple():
+        if self._check_nvidia() or self._check_amd() or self._check_apple():
             self._available = True
         else:
             self._available = False
@@ -227,8 +222,8 @@ class GPUMonitor:
             return []
 
         processes: list[GPUProcess] = []
-        for line in result.stdout.strip().splitlines():
-            line = line.strip()
+        for raw_line in result.stdout.strip().splitlines():
+            line = raw_line.strip()
             if not line:
                 continue
             parts = [p.strip() for p in line.split(",")]
@@ -244,14 +239,12 @@ class GPUMonitor:
                 )
                 processes.append(proc)
             except (ValueError, IndexError) as exc:
-                logger.warning(
-                    "Failed to parse nvidia-smi process line: %s (%s)", line, exc
-                )
+                logger.warning("Failed to parse nvidia-smi process line: %s (%s)", line, exc)
                 continue
 
         return processes
 
-    def get_driver_version(self) -> Optional[str]:
+    def get_driver_version(self) -> str | None:
         """Get the GPU driver version.
 
         Returns:
@@ -325,8 +318,8 @@ class GPUMonitor:
             return []
 
         gpus: list[GPUInfo] = []
-        for line in result.stdout.strip().splitlines():
-            line = line.strip()
+        for raw_line in result.stdout.strip().splitlines():
+            line = raw_line.strip()
             if not line:
                 continue
             parts = [p.strip() for p in line.split(",")]
@@ -415,17 +408,13 @@ class GPUMonitor:
         vram_totals: list[int] = []
         vram_useds: list[int] = []
         if vram_result.returncode == 0:
-            for line in vram_result.stdout.strip().splitlines():
-                line = line.strip()
+            for raw_line in vram_result.stdout.strip().splitlines():
+                line = raw_line.strip()
                 # Lines like: "Total VRAM (GPU0): 20480 MB"
-                total_match = re.search(
-                    r"Total VRAM.*?:\s*(\d+)\s*(?:MB|MIB)", line, re.IGNORECASE
-                )
+                total_match = re.search(r"Total VRAM.*?:\s*(\d+)\s*(?:MB|MIB)", line, re.IGNORECASE)
                 if total_match:
                     vram_totals.append(int(total_match.group(1)))
-                used_match = re.search(
-                    r"Used VRAM.*?:\s*(\d+)\s*(?:MB|MIB)", line, re.IGNORECASE
-                )
+                used_match = re.search(r"Used VRAM.*?:\s*(\d+)\s*(?:MB|MIB)", line, re.IGNORECASE)
                 if used_match:
                     vram_useds.append(int(used_match.group(1)))
 
@@ -507,9 +496,7 @@ class GPUMonitor:
             displays_data = data.get("SPDisplaysDataType", [])
             if isinstance(displays_data, list):
                 for entry in displays_data:
-                    name = entry.get(
-                        "spdisplays_ndrvs", entry.get("_name", "Apple Silicon GPU")
-                    )
+                    name = entry.get("spdisplays_ndrvs", entry.get("_name", "Apple Silicon GPU"))
                     # Apple Silicon uses unified memory; spdisplays_vram is a string
                     vram_str = entry.get("spdisplays_vram", "")
                     vram_total_mb = self._parse_vram_string(vram_str)

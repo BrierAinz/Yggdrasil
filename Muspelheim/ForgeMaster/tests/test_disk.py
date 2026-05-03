@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import os
 import tempfile
 from pathlib import Path
 
@@ -17,6 +16,7 @@ from forgemaster.disk import (
     DuplicateGroup,
 )
 from forgemaster.scanner import ModelInfo
+
 
 # ── Fixtures ────────────────────────────────────────────────────────────
 
@@ -229,7 +229,6 @@ class TestDiskScanner:
 
     def test_scan_usage_other_bytes(self, disk_scanner, tmp_model_dir):
         usage = disk_scanner.scan_usage([str(tmp_model_dir)])
-        # other_bytes = total_size_in_tree - model_bytes
         assert usage.other_bytes >= 0
         # The .txt file is non-model, so other_bytes > 0
         assert usage.other_bytes > 0
@@ -435,9 +434,7 @@ class TestDuplicateFinder:
         models = [
             ModelInfo(name="model-Q4", path="/a/Q4.gguf", size_bytes=1000),
             ModelInfo(name="model-Q8", path="/b/Q8.gguf", size_bytes=1050),  # within 5%
-            ModelInfo(
-                name="model-FP16", path="/c/FP16.safetensors", size_bytes=2000
-            ),  # too far
+            ModelInfo(name="model-FP16", path="/c/FP16.safetensors", size_bytes=2000),  # too far
         ]
         groups = duplicate_finder._group_by_similar_size(models)
         # Should get two groups: [2000] and [1050, 1000]
@@ -452,15 +449,9 @@ class TestDuplicateFinder:
     def test_wasted_bytes_calculation(self, duplicate_finder):
         """Three copies of the same model: 2x wasted."""
         models = [
-            ModelInfo(
-                name="llama-7b-Q4_0", path="/a/llama.gguf", size_bytes=4_000_000_000
-            ),
-            ModelInfo(
-                name="llama-7b-Q8_0", path="/b/llama.gguf", size_bytes=4_000_000_000
-            ),
-            ModelInfo(
-                name="llama-7b-Q5_K_M", path="/c/llama.gguf", size_bytes=4_000_000_000
-            ),
+            ModelInfo(name="llama-7b-Q4_0", path="/a/llama.gguf", size_bytes=4_000_000_000),
+            ModelInfo(name="llama-7b-Q8_0", path="/b/llama.gguf", size_bytes=4_000_000_000),
+            ModelInfo(name="llama-7b-Q5_K_M", path="/c/llama.gguf", size_bytes=4_000_000_000),
         ]
         groups = duplicate_finder.find_duplicates_from_models(models)
         assert len(groups) == 1

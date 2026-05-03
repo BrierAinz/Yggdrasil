@@ -5,8 +5,8 @@ from __future__ import annotations
 import subprocess
 from unittest.mock import MagicMock, patch
 
-import pytest
 from forgemaster.gpu import GPUInfo, GPUMonitor, GPUProcess
+
 
 # ---------------------------------------------------------------------------
 # Sample nvidia-smi output mocks
@@ -68,7 +68,7 @@ FAKE_APPLE_JSON = (
     '"spdisplays_vram":"16 GB","spdisplays_gmux-version":"1.0"}]}'
 )
 
-FAKE_APPLE_PLAIN_TEXT = "Chipset Model: Apple M1 Pro\n" "    VRAM (Dynamic): 16384 MB\n"
+FAKE_APPLE_PLAIN_TEXT = "Chipset Model: Apple M1 Pro\n    VRAM (Dynamic): 16384 MB\n"
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -165,8 +165,6 @@ class TestGPUProcess:
 
 
 # ---------------------------------------------------------------------------
-# GPUMonitor.is_available()
-# ---------------------------------------------------------------------------
 
 
 class TestGPUMonitorIsAvailable:
@@ -225,9 +223,11 @@ class TestGPUMonitorIsAvailable:
     def test_not_available_on_timeout(self, mock_run):
         mock_run.side_effect = subprocess.TimeoutExpired(cmd="nvidia-smi", timeout=10)
         monitor = GPUMonitor()
-        with patch.object(monitor, "_check_amd", return_value=False):
-            with patch.object(monitor, "_check_apple", return_value=False):
-                assert monitor.is_available() is False
+        with (
+            patch.object(monitor, "_check_amd", return_value=False),
+            patch.object(monitor, "_check_apple", return_value=False),
+        ):
+            assert monitor.is_available() is False
 
     @patch("forgemaster.gpu.subprocess.run")
     def test_caches_availability(self, mock_run):
@@ -286,16 +286,16 @@ class TestGPUMonitorGetGpuInfo:
     def test_returns_empty_when_all_backends_unavailable(self, mock_run):
         mock_run.side_effect = FileNotFoundError("not found")
         monitor = GPUMonitor()
-        with patch.object(monitor, "_check_amd", return_value=False):
-            with patch.object(monitor, "_check_apple", return_value=False):
-                gpus = monitor.get_gpu_info()
-                assert gpus == []
+        with (
+            patch.object(monitor, "_check_amd", return_value=False),
+            patch.object(monitor, "_check_apple", return_value=False),
+        ):
+            gpus = monitor.get_gpu_info()
+            assert gpus == []
 
     @patch("forgemaster.gpu.subprocess.run")
     def test_skips_malformed_lines(self, mock_run):
-        csv_output = (
-            "NVIDIA GeForce RTX 3060, 12288, 4096, 8192, 45, 12, 535.129.06\nbadline"
-        )
+        csv_output = "NVIDIA GeForce RTX 3060, 12288, 4096, 8192, 45, 12, 535.129.06\nbadline"
         mock_run.return_value = _mock_run(csv_output)
         monitor = GPUMonitor()
         gpus = monitor.get_gpu_info()
@@ -423,10 +423,12 @@ class TestGPUMonitorApple:
         """Apple Silicon detection should be skipped on Linux."""
         mock_run.side_effect = FileNotFoundError("not found")
         monitor = GPUMonitor()
-        with patch.object(monitor, "_check_nvidia", return_value=False):
-            with patch.object(monitor, "_check_amd", return_value=False):
-                gpus = monitor.get_gpu_info()
-                assert gpus == []
+        with (
+            patch.object(monitor, "_check_nvidia", return_value=False),
+            patch.object(monitor, "_check_amd", return_value=False),
+        ):
+            gpus = monitor.get_gpu_info()
+            assert gpus == []
 
     @patch("forgemaster.gpu.platform.system", return_value="Darwin")
     @patch("forgemaster.gpu.subprocess.run")
@@ -452,11 +454,6 @@ class TestGPUMonitorApple:
         # The JSON parsing will fail, but plain text fallback should find "Apple M1 Pro"
         apple_gpus = [g for g in gpus if g.gpu_type == "apple"]
         assert len(apple_gpus) >= 1
-
-
-# ---------------------------------------------------------------------------
-# GPUMonitor.get_gpu_processes()
-# ---------------------------------------------------------------------------
 
 
 class TestGPUMonitorGetGpuProcesses:
@@ -502,18 +499,11 @@ class TestGPUMonitorGetGpuProcesses:
     def test_handles_timeout(self, mock_run):
         mock_run.side_effect = [
             _mock_run(FAKE_GPU_NAME_CSV),  # is_available check succeeds
-            subprocess.TimeoutExpired(
-                cmd="nvidia-smi", timeout=10
-            ),  # process query times out
+            subprocess.TimeoutExpired(cmd="nvidia-smi", timeout=10),  # process query times out
         ]
         monitor = GPUMonitor()
         procs = monitor.get_gpu_processes()
         assert procs == []
-
-
-# ---------------------------------------------------------------------------
-# GPUMonitor.get_driver_version()
-# ---------------------------------------------------------------------------
 
 
 class TestGPUMonitorGetDriverVersion:
@@ -528,57 +518,57 @@ class TestGPUMonitorGetDriverVersion:
     def test_returns_none_when_unavailable(self, mock_run):
         mock_run.side_effect = FileNotFoundError("nvidia-smi not found")
         monitor = GPUMonitor()
-        with patch.object(monitor, "_check_amd", return_value=False):
-            with patch.object(monitor, "_check_apple", return_value=False):
-                assert monitor.get_driver_version() is None
+        with (
+            patch.object(monitor, "_check_amd", return_value=False),
+            patch.object(monitor, "_check_apple", return_value=False),
+        ):
+            assert monitor.get_driver_version() is None
 
     @patch("forgemaster.gpu.subprocess.run")
     def test_returns_none_when_no_gpus(self, mock_run):
         # All backends fail
         mock_run.side_effect = FileNotFoundError("not found")
         monitor = GPUMonitor()
-        with patch.object(monitor, "_check_amd", return_value=False):
-            with patch.object(monitor, "_check_apple", return_value=False):
-                assert monitor.get_driver_version() is None
-
-
-# ---------------------------------------------------------------------------
-# GPUMonitor.get_fallback_message()
-# ---------------------------------------------------------------------------
+        with (
+            patch.object(monitor, "_check_amd", return_value=False),
+            patch.object(monitor, "_check_apple", return_value=False),
+        ):
+            assert monitor.get_driver_version() is None
 
 
 class TestGPUMonitorFallbackMessage:
     def test_no_gpu_message(self):
         monitor = GPUMonitor()
-        with patch.object(monitor, "_check_nvidia", return_value=False):
-            with patch.object(monitor, "_check_amd", return_value=False):
-                with patch.object(monitor, "_check_apple", return_value=False):
-                    msg = monitor.get_fallback_message()
-                    assert "No GPU detected" in msg
-                    assert "NVIDIA" in msg
-                    assert "AMD" in msg
-                    assert "Apple Silicon" in msg
+        with (
+            patch.object(monitor, "_check_nvidia", return_value=False),
+            patch.object(monitor, "_check_amd", return_value=False),
+            patch.object(monitor, "_check_apple", return_value=False),
+        ):
+            msg = monitor.get_fallback_message()
+            assert "No GPU detected" in msg
+            assert "NVIDIA" in msg
+            assert "AMD" in msg
+            assert "Apple Silicon" in msg
 
     def test_amd_detected_message(self):
         monitor = GPUMonitor()
-        with patch.object(monitor, "_check_nvidia", return_value=False):
-            with patch.object(monitor, "_check_amd", return_value=True):
-                msg = monitor.get_fallback_message()
-                assert "AMD GPU" in msg
-                assert "rocm-smi" in msg
+        with (
+            patch.object(monitor, "_check_nvidia", return_value=False),
+            patch.object(monitor, "_check_amd", return_value=True),
+        ):
+            msg = monitor.get_fallback_message()
+            assert "AMD GPU" in msg
+            assert "rocm-smi" in msg
 
     def test_apple_detected_message(self):
         monitor = GPUMonitor()
-        with patch.object(monitor, "_check_nvidia", return_value=False):
-            with patch.object(monitor, "_check_amd", return_value=False):
-                with patch.object(monitor, "_check_apple", return_value=True):
-                    msg = monitor.get_fallback_message()
-                    assert "Apple Silicon" in msg
-
-
-# ---------------------------------------------------------------------------
-# GPUMonitor.refresh()
-# ---------------------------------------------------------------------------
+        with (
+            patch.object(monitor, "_check_nvidia", return_value=False),
+            patch.object(monitor, "_check_amd", return_value=False),
+            patch.object(monitor, "_check_apple", return_value=True),
+        ):
+            msg = monitor.get_fallback_message()
+            assert "Apple Silicon" in msg
 
 
 class TestGPUMonitorRefresh:
@@ -607,11 +597,13 @@ class TestGPUMonitorRefresh:
 
         mock_run.side_effect = side_effect
         monitor = GPUMonitor()
-        with patch.object(monitor, "_check_amd", return_value=False):
-            with patch.object(monitor, "_check_apple", return_value=False):
-                assert monitor.is_available() is False
-                monitor.refresh()
-                assert monitor.is_available() is True
+        with (
+            patch.object(monitor, "_check_amd", return_value=False),
+            patch.object(monitor, "_check_apple", return_value=False),
+        ):
+            assert monitor.is_available() is False
+            monitor.refresh()
+            assert monitor.is_available() is True
 
 
 # ---------------------------------------------------------------------------
@@ -660,9 +652,7 @@ class TestGPUMonitorIntegration:
     @patch("forgemaster.gpu.subprocess.run")
     def test_float_values_in_csv(self, mock_run):
         """nvidia-smi may return float values even with nounits."""
-        csv_output = (
-            "NVIDIA GeForce RTX 3060, 12288.0, 4096.5, 8191.5, 45, 12, 535.129.06"
-        )
+        csv_output = "NVIDIA GeForce RTX 3060, 12288.0, 4096.5, 8191.5, 45, 12, 535.129.06"
         mock_run.return_value = _mock_run(csv_output)
         monitor = GPUMonitor()
         gpus = monitor.get_gpu_info()

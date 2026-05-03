@@ -16,9 +16,9 @@ Usage:
 from __future__ import annotations
 
 import logging
-from typing import Optional
 
 from rich.logging import RichHandler
+
 
 # Module-level flag so we only configure once
 _CONFIGURED = False
@@ -35,7 +35,7 @@ _LEVEL_MAP: dict[tuple[bool, bool], int] = {
 def configure_logging(
     verbose: bool = False,
     quiet: bool = False,
-    level: Optional[int] = None,
+    level: int | None = None,
 ) -> None:
     """Configure the root ForgeMaster logger with a RichHandler.
 

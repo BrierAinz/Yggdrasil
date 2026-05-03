@@ -4,19 +4,22 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any
 
-from forgemaster.scanner import ModelInfo
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from forgemaster.scanner import ModelInfo
 
 
 @dataclass
 class GPUProfile:
     """GPU profile for VRAM tracking."""
 
-    id: Optional[int] = None
+    id: int | None = None
     name: str = ""
     vram_total_gb: float = 0.0
     vram_available_gb: float = 0.0
@@ -75,7 +78,7 @@ class Catalog:
             db_path: Path to SQLite database file. Use ':memory:' for in-memory DB.
         """
         self.db_path = str(db_path)
-        self._conn: Optional[sqlite3.Connection] = None
+        self._conn: sqlite3.Connection | None = None
 
     @property
     def conn(self) -> sqlite3.Connection:
@@ -104,9 +107,7 @@ class Catalog:
             self._conn.close()
             self._conn = None
 
-    def add_model(
-        self, model: ModelInfo, tags: Optional[dict] = None, notes: str = ""
-    ) -> int:
+    def add_model(self, model: ModelInfo, tags: dict | None = None, notes: str = "") -> int:
         """Add a model to the catalog.
 
         Args:
@@ -149,7 +150,7 @@ class Catalog:
         self.conn.commit()
         return cursor.lastrowid or 0
 
-    def get_model(self, model_id: int) -> Optional[dict[str, Any]]:
+    def get_model(self, model_id: int) -> dict[str, Any] | None:
         """Get a model by ID.
 
         Args:
@@ -169,8 +170,8 @@ class Catalog:
 
     def list_models(
         self,
-        format: Optional[str] = None,
-        architecture: Optional[str] = None,
+        format: str | None = None,
+        architecture: str | None = None,
         limit: int = 100,
         offset: int = 0,
     ) -> list[dict[str, Any]]:

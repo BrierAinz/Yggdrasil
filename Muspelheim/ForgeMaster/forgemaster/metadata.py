@@ -17,7 +17,8 @@ from __future__ import annotations
 import json
 import struct
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
+
 
 # ─── GGUF constants ──────────────────────────────────────────────────────────
 
@@ -134,7 +135,6 @@ def read_gguf_metadata(path: str | Path) -> dict[str, Any]:
     if magic != GGUF_MAGIC:
         return result
 
-    # Header: magic(4) + version(4) + tensor_count(8) + metadata_kv_count(8)
     version = struct.unpack_from("<I", data, 4)[0]
     if version < 2:
         return result

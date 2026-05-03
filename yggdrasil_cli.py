@@ -17,7 +17,6 @@ Comandos:
   migrate     - Migrar proyecto entre reinos (interactivo)
 """
 
-import os
 import shutil
 import subprocess
 import sys
@@ -34,6 +33,7 @@ from rich.table import Table
 from rich.text import Text
 from rich.theme import Theme
 from rich.tree import Tree
+
 
 # ── Theme & Console ──────────────────────────────────────────────
 yggdrasil_theme = Theme(
@@ -129,9 +129,9 @@ def print_banner():
 # ── Helpers ──────────────────────────────────────────────────────
 def _human_size(size_bytes: int) -> str:
     if size_bytes >= 1024**3:
-        return f"{size_bytes / 1024 ** 3:.1f} GB"
+        return f"{size_bytes / 1024**3:.1f} GB"
     elif size_bytes >= 1024**2:
-        return f"{size_bytes / 1024 ** 2:.0f} MB"
+        return f"{size_bytes / 1024**2:.0f} MB"
     else:
         return f"{size_bytes / 1024:.0f} KB"
 
@@ -195,8 +195,7 @@ def status():
         py_count = _count_files(rpath, "*.py")
         js_count = _count_files(rpath, "*.js")
 
-        if size_bytes > max_size:
-            max_size = size_bytes
+        max_size = max(max_size, size_bytes)
 
         if fcount > 2:
             status_str = "ACTIVO"
@@ -347,7 +346,7 @@ def clean():
         console=console,
         transient=True,
     ) as progress:
-        task = progress.add_task("Purging corruption...", total=None)
+        progress.add_task("Purging corruption...", total=None)
         for realm in REALMS:
             rpath = YGGDRASIL_ROOT / realm
             if not rpath.exists():
@@ -359,9 +358,7 @@ def clean():
                             try:
                                 fpath.unlink()
                                 cleaned += 1
-                                removed_items.append(
-                                    str(fpath.relative_to(YGGDRASIL_ROOT))
-                                )
+                                removed_items.append(str(fpath.relative_to(YGGDRASIL_ROOT)))
                             except Exception:
                                 pass
                     for dpath in rpath.rglob(pattern[1:]):
@@ -369,9 +366,7 @@ def clean():
                             try:
                                 shutil.rmtree(dpath)
                                 cleaned += 1
-                                removed_items.append(
-                                    str(dpath.relative_to(YGGDRASIL_ROOT))
-                                )
+                                removed_items.append(str(dpath.relative_to(YGGDRASIL_ROOT)))
                             except Exception:
                                 pass
                 else:
@@ -380,9 +375,7 @@ def clean():
                             try:
                                 shutil.rmtree(dpath)
                                 cleaned += 1
-                                removed_items.append(
-                                    str(dpath.relative_to(YGGDRASIL_ROOT))
-                                )
+                                removed_items.append(str(dpath.relative_to(YGGDRASIL_ROOT)))
                             except Exception:
                                 pass
 
@@ -442,9 +435,7 @@ def backup():
         src = YGGDRASIL_ROOT / "Svartalfheim"
         dst = backup_dir / "Svartalfheim"
         if src.exists():
-            shutil.copytree(
-                src, dst, ignore=shutil.ignore_patterns("*.pyc", "__pycache__")
-            )
+            shutil.copytree(src, dst, ignore=shutil.ignore_patterns("*.pyc", "__pycache__"))
             backed_up.append(("Svartalfheim", "realm"))
 
         # Backup configs
@@ -570,14 +561,10 @@ def migrate():
         color = REALM_COLORS.get(r, "white")
         rpath = YGGDRASIL_ROOT / r
         projects = [
-            d.name
-            for d in sorted(rpath.iterdir())
-            if d.is_dir() and not d.name.startswith(".")
+            d.name for d in sorted(rpath.iterdir()) if d.is_dir() and not d.name.startswith(".")
         ]
         proj_str = ", ".join(projects[:5]) + ("..." if len(projects) > 5 else "")
-        console.print(
-            f"  [{color}]{r}[/]  [dim]({len(projects)} proyectos: {proj_str})[/]"
-        )
+        console.print(f"  [{color}]{r}[/]  [dim]({len(projects)} proyectos: {proj_str})[/]")
 
     # Source realm
     source = Prompt.ask(
@@ -590,11 +577,7 @@ def migrate():
         return
 
     src_path = YGGDRASIL_ROOT / source
-    projects = [
-        d
-        for d in sorted(src_path.iterdir())
-        if d.is_dir() and not d.name.startswith(".")
-    ]
+    projects = [d for d in sorted(src_path.iterdir()) if d.is_dir() and not d.name.startswith(".")]
 
     if not projects:
         console.print(f"[warning]{source} no tiene proyectos para migrar.[/]")
@@ -648,13 +631,11 @@ def migrate():
     try:
         new_location = dest_path / project.name
         if new_location.exists():
-            console.print(
-                f"[error]Ya existe un proyecto llamado '{project.name}' en {dest}.[/]"
-            )
+            console.print(f"[error]Ya existe un proyecto llamado '{project.name}' en {dest}.[/]")
             return
 
         shutil.move(str(project), str(new_location))
-        console.print(f"\n[bold success]✓ Migracion completada:[/]")
+        console.print("\n[bold success]✓ Migracion completada:[/]")
         console.print(
             f"  [realm]{project.name}[/] movido de "
             f"[{REALM_COLORS.get(source, 'white')}]{source}[/] "

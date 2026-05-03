@@ -1,7 +1,8 @@
 """Tool de ejecucion de codigo Python sandboxed."""
+
 import subprocess
 import tempfile
-from typing import Any, Dict
+from typing import Any
 
 from lilith_tools.base import BaseTool
 
@@ -21,7 +22,7 @@ class CodingTool(BaseTool):
         },
     }
 
-    def execute(self, code: str = "", timeout: int = 10) -> Dict[str, Any]:
+    def execute(self, code: str = "", timeout: int = 10) -> dict[str, Any]:
         if not code:
             return {"error": "Codigo vacio"}
         blocked = [

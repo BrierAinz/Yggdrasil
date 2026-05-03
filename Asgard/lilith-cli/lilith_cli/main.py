@@ -2,6 +2,7 @@ import argparse
 import sys
 from pathlib import Path
 
+
 __version__ = "2.1.0"
 
 
@@ -23,9 +24,7 @@ def run_api_mode(api_url: str, model_override: str | None = None):
     print("[API] Conectado a Lilith API")
     try:
         health = client.health()
-        print(
-            f"[API] Status: {health['status']} | Tools: {health['tools']} | v{health['version']}"
-        )
+        print(f"[API] Status: {health['status']} | Tools: {health['tools']} | v{health['version']}")
     except Exception as e:
         print(f"[API] Error conectando: {e}")
         print("[API] Tip: inicia la API con 'python3 -m uvicorn lilith_api.main:app'")
@@ -99,12 +98,8 @@ def main():
     parser.add_argument("--config", type=Path, help="Path to config directory")
     parser.add_argument("--model", help="Override model")
     parser.add_argument("--version", action="store_true", help="Show version")
-    parser.add_argument(
-        "--local", action="store_true", help="Modo local directo (sin API)"
-    )
-    parser.add_argument(
-        "--api-url", default="http://localhost:8000", help="URL de la API"
-    )
+    parser.add_argument("--local", action="store_true", help="Modo local directo (sin API)")
+    parser.add_argument("--api-url", default="http://localhost:8000", help="URL de la API")
     args = parser.parse_args()
 
     if args.version:

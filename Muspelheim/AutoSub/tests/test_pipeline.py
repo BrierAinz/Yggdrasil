@@ -1,7 +1,5 @@
 """Tests for autosub.pipeline module."""
 
-from pathlib import Path
-
 import pytest
 from autosub.pipeline import Pipeline, PipelineResult
 

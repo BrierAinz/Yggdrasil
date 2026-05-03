@@ -123,8 +123,9 @@ class TestHealthMonitor:
         # Override nvidia to avoid calling nvidia-smi
         monitor._nvidia_available = False
 
-        with patch.object(monitor, "_get_gpu_info", return_value=[]), patch.object(
-            monitor, "_get_python_processes", return_value=[]
+        with (
+            patch.object(monitor, "_get_gpu_info", return_value=[]),
+            patch.object(monitor, "_get_python_processes", return_value=[]),
         ):
             health = monitor.get_health()
 
@@ -159,9 +160,11 @@ class TestHealthMonitor:
 
         monitor = HealthMonitor(disk_path="/nonexistent")
 
-        with patch.object(monitor, "_get_gpu_info", return_value=[]), patch.object(
-            monitor, "_get_python_processes", return_value=[]
-        ), patch("tui.health.psutil", mock_psutil):
+        with (
+            patch.object(monitor, "_get_gpu_info", return_value=[]),
+            patch.object(monitor, "_get_python_processes", return_value=[]),
+            patch("tui.health.psutil", mock_psutil),
+        ):
             # We need to ensure psutil.disk_usage triggers FileNotFoundError inside
             # Since we're already passing the mock, disk values should be 0
             health = monitor.get_health()
@@ -179,9 +182,7 @@ class TestHealthMonitor:
     def test_get_gpu_info_with_nvidia(self, mock_run: MagicMock) -> None:
         """Test GPU info parsing from nvidia-smi output."""
         # Simulate RTX 3060 12GB output
-        nvidia_output = (
-            "NVIDIA GeForce RTX 3060, 45, 12288, 6144, 6144, 65, 40, 120.5, 170.0"
-        )
+        nvidia_output = "NVIDIA GeForce RTX 3060, 45, 12288, 6144, 6144, 65, 40, 120.5, 170.0"
         mock_result = MagicMock()
         mock_result.returncode = 0
         mock_result.stdout = nvidia_output

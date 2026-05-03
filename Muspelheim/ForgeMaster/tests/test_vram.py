@@ -125,9 +125,7 @@ class TestVRAMCalculator:
             parameters=70_000_000_000,
             quantization="F32",
         )
-        rtx_3060 = GPUProfile(
-            name="RTX 3060", vram_total_gb=12.0, vram_available_gb=10.0
-        )
+        rtx_3060 = GPUProfile(name="RTX 3060", vram_total_gb=12.0, vram_available_gb=10.0)
         result = calculator.can_run(large_model, rtx_3060)
         assert result is False
 
@@ -146,9 +144,7 @@ class TestVRAMCalculator:
             parameters=70_000_000_000,
             quantization="Q4_0",
         )
-        rtx_3060 = GPUProfile(
-            name="RTX 3060", vram_total_gb=12.0, vram_available_gb=10.0
-        )
+        rtx_3060 = GPUProfile(name="RTX 3060", vram_total_gb=12.0, vram_available_gb=10.0)
         strategy = calculator.suggest_offload(large_model, rtx_3060)
         # Should suggest partial offload
         assert strategy.cpu_layers > 0

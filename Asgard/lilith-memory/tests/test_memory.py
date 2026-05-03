@@ -2,6 +2,7 @@ import sqlite3
 
 from lilith_memory.store import MemoryStore
 
+
 # ------------------------------------------------------------------
 # Existing tests (kept for regression)
 # ------------------------------------------------------------------

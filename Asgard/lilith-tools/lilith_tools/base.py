@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any
 
 
 @dataclass
@@ -13,13 +13,13 @@ class ToolResult:
 class BaseTool(ABC):
     name: str = ""
     description: str = ""
-    parameters: Dict[str, Any] = None
+    parameters: dict[str, Any] = None
 
     @abstractmethod
     def execute(self, **kwargs) -> ToolResult:
         pass
 
-    def validate(self, params: Dict[str, Any]) -> bool:
+    def validate(self, params: dict[str, Any]) -> bool:
         if not self.parameters:
             return True
         for key, config in self.parameters.items():

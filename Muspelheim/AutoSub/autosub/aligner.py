@@ -69,9 +69,7 @@ class Aligner:
 
         return words
 
-    def realign(
-        self, words: list[list[Word]], max_gap: float = 0.5
-    ) -> list[list[Word]]:
+    def realign(self, words: list[list[Word]], max_gap: float = 0.5) -> list[list[Word]]:
         """Re-segment words into natural phrase boundaries.
 
         Splits segments at long pauses and merges short segments.

@@ -7,6 +7,7 @@ Supports uvloop for improved async performance on Unix systems.
 
 import os
 
+
 # Install uvloop before importing the FastAPI app — it must be set before
 # the asyncio event loop is created.  uvloop is optional and only available
 # on Unix; if it's missing we silently fall back to the default event loop.
@@ -19,6 +20,7 @@ except ImportError:
     print("[run] uvloop not available — using default asyncio event loop")
 
 import uvicorn
+
 
 # ---------------------------------------------------------------------------
 # Environment-driven configuration

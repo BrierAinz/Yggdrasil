@@ -8,6 +8,7 @@ Cleans:  __pycache__ dirs, .pyc files, .pytest_cache dirs,
 import shutil
 from pathlib import Path
 
+
 ROOT = Path(__file__).resolve().parent.parent
 
 PATTERNS = [

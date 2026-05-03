@@ -6,6 +6,7 @@ from tui import __version__
 from tui.cli import app
 from typer.testing import CliRunner
 
+
 runner = CliRunner()
 
 

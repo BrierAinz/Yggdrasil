@@ -10,7 +10,6 @@ import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,6 +17,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from jinja2 import Environment, FileSystemLoader
 from sse_starlette.sse import EventSourceResponse
+
 
 logger = logging.getLogger("alfheim-dashboard")
 
@@ -330,9 +330,7 @@ def create_app() -> FastAPI:
             "realms": MOCK_REALMS,
             "total_files": sum(r["file_count"] for r in MOCK_REALMS.values()),
             "total_dirs": sum(r["dir_count"] for r in MOCK_REALMS.values()),
-            "active_realms": sum(
-                1 for r in MOCK_REALMS.values() if r["status"] == "active"
-            ),
+            "active_realms": sum(1 for r in MOCK_REALMS.values() if r["status"] == "active"),
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
@@ -397,9 +395,7 @@ def create_app() -> FastAPI:
                 # Heartbeat every 30 seconds
                 yield {
                     "event": "heartbeat",
-                    "data": json.dumps(
-                        {"timestamp": datetime.now(timezone.utc).isoformat()}
-                    ),
+                    "data": json.dumps({"timestamp": datetime.now(timezone.utc).isoformat()}),
                 }
                 # Also emit a mock log event occasionally
                 # TODO: connect to real backend for live logs
@@ -423,7 +419,7 @@ def create_app() -> FastAPI:
                     "type": "response",
                     "agent": "odin",
                     "emoji": "🧠",
-                    "message": f"Recibido: \"{msg.get('message', data)}\". Procesando...",
+                    "message": f'Recibido: "{msg.get("message", data)}". Procesando...',
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 }
                 await websocket.send_json(response)

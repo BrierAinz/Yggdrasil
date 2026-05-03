@@ -2,14 +2,9 @@
 
 from __future__ import annotations
 
-import os
-import sys
 from pathlib import Path
-from typing import Optional
 
 import typer
-from forgemaster.logging import configure_logging
-from rich import print as rprint
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import (
@@ -24,6 +19,9 @@ from rich.progress import (
 from rich.table import Table
 from rich.tree import Tree
 
+from forgemaster.logging import configure_logging
+
+
 app = typer.Typer(
     name="forgemaster",
     help="⚒️  ForgeMaster — Niflheim resource manager for LLM models, VRAM, and disk.",
@@ -35,9 +33,7 @@ console = Console()
 
 @app.callback()
 def main(
-    verbose: bool = typer.Option(
-        False, "--verbose", "-v", help="Enable debug-level logging"
-    ),
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable debug-level logging"),
     quiet: bool = typer.Option(
         False, "--quiet", "-q", help="Suppress info-level logs (warnings only)"
     ),
@@ -68,15 +64,13 @@ def _format_size(size_bytes: int | float) -> str:
 
 @app.command()
 def scan(
-    paths: Optional[list[str]] = typer.Option(
+    paths: list[str] | None = typer.Option(
         None,
         "--path",
         "-p",
         help="Paths to scan (default: HF cache, LM Studio, ComfyUI)",
     ),
-    catalog: bool = typer.Option(
-        False, "--catalog", "-c", help="Save results to catalog database"
-    ),
+    catalog: bool = typer.Option(False, "--catalog", "-c", help="Save results to catalog database"),
 ):
     """Scan directories for model files (GGUF, safetensors, PyTorch)."""
     from forgemaster.scanner import ModelScanner
@@ -123,9 +117,7 @@ def scan(
         )
 
     console.print(table)
-    console.print(
-        f"\n[bold]{len(result.models)}[/] models found across {len(scan_paths)} path(s)"
-    )
+    console.print(f"\n[bold]{len(result.models)}[/] models found across {len(scan_paths)} path(s)")
 
     if catalog:
         from forgemaster.catalog import Catalog
@@ -146,9 +138,7 @@ def list_models(
     fmt: str = typer.Option(
         "all", "--format", "-f", help="Filter by format: gguf, safetensors, pt, all"
     ),
-    architecture: str = typer.Option(
-        "all", "--arch", "-a", help="Filter by architecture"
-    ),
+    architecture: str = typer.Option("all", "--arch", "-a", help="Filter by architecture"),
 ):
     """List all cataloged models with Rich table output."""
     from forgemaster.catalog import Catalog
@@ -186,9 +176,7 @@ def list_models(
             _format_size(model["size_bytes"]) if model["size_bytes"] else "N/A",
             model["architecture"] or "unknown",
             model["quantization"] or "unknown",
-            str(model["scanned_at"])[:19]
-            if "scanned_at" in model and model["scanned_at"]
-            else "-",
+            str(model["scanned_at"])[:19] if model.get("scanned_at") else "-",
         )
 
     console.print(table)
@@ -200,9 +188,7 @@ def list_models(
 
 @app.command()
 def stats(
-    paths: Optional[list[str]] = typer.Option(
-        None, "--path", "-p", help="Paths to analyze"
-    ),
+    paths: list[str] | None = typer.Option(None, "--path", "-p", help="Paths to analyze"),
 ):
     """Show disk usage statistics and model distribution."""
     from forgemaster.disk import DiskScanner
@@ -235,9 +221,7 @@ def stats(
         table = Table(title="📁 Per-Directory Breakdown")
         table.add_column("Directory", style="cyan")
         table.add_column("Model Size", justify="right", style="yellow")
-        for dir_path, size in sorted(
-            dir_usage.items(), key=lambda x: x[1], reverse=True
-        ):
+        for dir_path, size in sorted(dir_usage.items(), key=lambda x: x[1], reverse=True):
             table.add_row(str(dir_path), _format_size(size))
         console.print(table)
 
@@ -247,10 +231,8 @@ def stats(
 
 @app.command()
 def check(
-    model_name: str = typer.Argument(
-        ..., help="Model name to check VRAM compatibility"
-    ),
-    gpu_vram: Optional[int] = typer.Option(
+    model_name: str = typer.Argument(..., help="Model name to check VRAM compatibility"),
+    gpu_vram: int | None = typer.Option(
         None, "--gpu-vram", "-g", help="GPU VRAM in MB (default: auto-detect)"
     ),
 ):
@@ -334,9 +316,7 @@ def gpu():
 
     for info in gpu_infos:
         # VRAM bar
-        vram_used_pct = (
-            info.vram_used_mb / info.vram_total_mb * 100 if info.vram_total_mb else 0
-        )
+        vram_used_pct = info.vram_used_mb / info.vram_total_mb * 100 if info.vram_total_mb else 0
         bar_len = 30
         filled = int(bar_len * vram_used_pct / 100)
         bar = f"[green]{'█' * filled}[/][dim]{'░' * (bar_len - filled)}[/]"
@@ -382,12 +362,10 @@ def gpu():
 
 @app.command(name="dupes")
 def find_duplicates(
-    paths: Optional[list[str]] = typer.Option(
+    paths: list[str] | None = typer.Option(
         None, "--path", "-p", help="Paths to scan for duplicates"
     ),
-    cleanup: bool = typer.Option(
-        False, "--cleanup", "-c", help="Generate cleanup recommendations"
-    ),
+    cleanup: bool = typer.Option(False, "--cleanup", "-c", help="Generate cleanup recommendations"),
 ):
     """Find duplicate or similar model files."""
     from forgemaster.disk import DuplicateFinder
@@ -440,7 +418,7 @@ def find_duplicates(
 
     if cleanup:
         report = finder.generate_cleanup_report(scan_paths)
-        console.print(f"\n[bold]Cleanup recommendations:[/]")
+        console.print("\n[bold]Cleanup recommendations:[/]")
         for action in report.actions:
             console.print(
                 f"  • [yellow]{action.reason}[/]: {action.path} ({_format_size(action.size_bytes)})"
@@ -458,12 +436,8 @@ def download(
     model_id: str = typer.Argument(
         ..., help="HuggingFace model ID (e.g. 'TheBloke/Llama-2-7B-GGUF')"
     ),
-    revision: str = typer.Option(
-        "main", "--revision", "-r", help="Model revision/branch"
-    ),
-    output: Optional[str] = typer.Option(
-        None, "--output", "-o", help="Output directory"
-    ),
+    revision: str = typer.Option("main", "--revision", "-r", help="Model revision/branch"),
+    output: str | None = typer.Option(None, "--output", "-o", help="Output directory"),
     force: bool = typer.Option(
         False, "--force", "-f", help="Force re-download even if file exists"
     ),
@@ -482,7 +456,7 @@ def download(
         revision=revision,
         cache_dir=str(Path(output))
         if output
-        else os.path.join(os.path.expanduser("~"), ".cache", "huggingface", "hub"),
+        else str(Path("~").expanduser() / ".cache" / "huggingface" / "hub"),
         force_download=force,
     )
 
@@ -494,7 +468,7 @@ def download(
         files = downloader.list_model_files(config)
     except Exception as e:
         console.print(f"[red]Error listing files: {e}[/]")
-        raise typer.Exit(1)
+        raise typer.Exit(1) from None
 
     if not files:
         console.print("[yellow]No files found for this model.[/]")
@@ -535,13 +509,11 @@ def download(
             results = downloader.download_model(config, progress_callback=on_progress)
         except Exception as e:
             console.print(f"[red]Download failed: {e}[/]")
-            raise typer.Exit(1)
+            raise typer.Exit(1) from None
 
-    console.print(f"[bold green]Download complete![/]")
+    console.print("[bold green]Download complete![/]")
     for r in results:
-        console.print(
-            f"  ✓ {r} ({_format_size(r.stat().st_size) if r.exists() else 'N/A'})"
-        )
+        console.print(f"  ✓ {r} ({_format_size(r.stat().st_size) if r.exists() else 'N/A'})")
 
 
 # ─── Version Command ──────────────────────────────────────────────────────────
@@ -606,7 +578,7 @@ def config_set(
         console.print(f"[dim]Config saved to {cfg.catalog_path}[/]")
     except ValueError as e:
         console.print(f"[red]Error: {e}[/]")
-        raise typer.Exit(1)
+        raise typer.Exit(1) from None
 
 
 if __name__ == "__main__":

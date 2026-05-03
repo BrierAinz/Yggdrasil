@@ -3,13 +3,19 @@
 from __future__ import annotations
 
 import re
+from typing import TYPE_CHECKING
 
-from textual.app import ComposeResult
 from textual.containers import VerticalScroll
 from textual.message import Message
 from textual.reactive import reactive
 from textual.widgets import Button, Input, Static
+
 from tui.scanner import REALMS, HealthStatus, RealmStatus
+
+
+if TYPE_CHECKING:
+    from textual.app import ComposeResult
+
 
 # Norse-themed icons for each realm
 REALM_ICONS: dict[str, str] = {

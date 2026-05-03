@@ -5,6 +5,7 @@ Servidor FastAPI que expone LilithOrchestrator via REST.
 Conecta el Bot Telegram (y futuros clients) con el motor de Hermes-Lilith.
 Endpoints criticos implementados; el resto devuelven stubs seguros.
 """
+
 import asyncio
 import os
 import sys
@@ -12,7 +13,8 @@ import traceback
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
+
 
 # Use orjson for faster JSON serialization; fall back to stdlib json if unavailable
 try:
@@ -38,6 +40,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+
 # ───────────────────────────────────────────────────────────────────────────────
 # TEMPORARY: Bridge to legacy Hermes-Lilith monolith.
 # This sys.path hack allows importing from the old codebase during the
@@ -56,6 +59,7 @@ from Lilith.Core.orchestrator import LilithOrchestrator
 from Lilith.memory.enhanced import get_memory
 from Lilith.tools.files import execute_tool as file_tool
 from Lilith.tools.system import execute_tool as system_tool
+
 
 # RAG
 try:
@@ -116,15 +120,11 @@ def _get_orchestrator() -> LilithOrchestrator:
     return _global_orch
 
 
-def _chat_sync(text: str, history: Optional[List[Dict]], user_id: str) -> str:
+def _chat_sync(text: str, history: Optional[list[dict]], user_id: str) -> str:
     """Ejecuta chat de forma sincrona (para thread pool)."""
     orch = _get_orchestrator()
     # Reconstruir historial
-    system_msg = (
-        orch.messages[0]
-        if orch.messages
-        else {"role": "system", "content": SYSTEM_PROMPT}
-    )
+    system_msg = orch.messages[0] if orch.messages else {"role": "system", "content": SYSTEM_PROMPT}
     orch.messages = [system_msg]
     if history:
         for msg in history[-25:]:
@@ -142,11 +142,7 @@ def _chat_sync(text: str, history: Optional[List[Dict]], user_id: str) -> str:
 def _pregunta_rapida_sync(text: str, user_id: str) -> str:
     """Pregunta rapida sin tool-calling."""
     orch = _get_orchestrator()
-    system_msg = (
-        orch.messages[0]
-        if orch.messages
-        else {"role": "system", "content": SYSTEM_PROMPT}
-    )
+    system_msg = orch.messages[0] if orch.messages else {"role": "system", "content": SYSTEM_PROMPT}
     orch.messages = [system_msg, {"role": "user", "content": text}]
     orch.tool_call_count = 0
     orch.session_id = f"gateway_fast_{user_id}"
@@ -163,9 +159,7 @@ def _pregunta_rapida_sync(text: str, user_id: str) -> str:
         }
         import httpx
 
-        r = httpx.post(
-            f"{client.base_url}/chat/completions", json=payload, timeout=30.0
-        )
+        r = httpx.post(f"{client.base_url}/chat/completions", json=payload, timeout=30.0)
         r.raise_for_status()
         data = r.json()
         content = data["choices"][0]["message"].get("content", "")
@@ -177,7 +171,7 @@ def _pregunta_rapida_sync(text: str, user_id: str) -> str:
 
 
 def _pc_fs_sync(
-    op: str, path: str, dst: str, cmd: str, steps: Optional[List], user_id: str
+    op: str, path: str, dst: str, cmd: str, steps: Optional[list], user_id: str
 ) -> dict:
     """Ejecuta operaciones de filesystem de forma sincrona."""
     try:
@@ -188,9 +182,7 @@ def _pc_fs_sync(
                 "output": _json_dumps(result),
             }
         elif op == "mkdir":
-            import os as _os
-
-            _os.makedirs(path, exist_ok=True)
+            Path(path).mkdir(parents=True, exist_ok=True)
             return {"success": True, "output": f"Carpeta creada: {path}"}
         elif op == "read":
             result = file_tool("read_file", {"path": path})
@@ -224,8 +216,7 @@ def _pc_fs_sync(
             result = system_tool("run_terminal", {"command": cmd})
             return {
                 "success": True,
-                "output": result.get("output", "")
-                or result.get("error", "(sin salida)"),
+                "output": result.get("output", "") or result.get("error", "(sin salida)"),
             }
         elif op == "batch":
             outputs = []
@@ -305,9 +296,7 @@ async def api_telegram_chat(request: Request):
 
     loop = asyncio.get_event_loop()
     async with _orch_lock:
-        response = await loop.run_in_executor(
-            _executor, _chat_sync, text, history, user_id
-        )
+        response = await loop.run_in_executor(_executor, _chat_sync, text, history, user_id)
 
     return {"ok": True, "reply": response, "agent": "Lilith", "chat_id": chat_id}
 
@@ -316,7 +305,7 @@ async def api_telegram_chat(request: Request):
 async def api_telegram_confirm(request: Request):
     """Confirmar operacion pendiente para Telegram."""
     body = _json_loads(await request.body())
-    token = body.get("token", "")
+    body.get("token", "")
     approved = body.get("approved", False)
     return {
         "ok": True,
@@ -329,7 +318,7 @@ async def api_telegram_confirm(request: Request):
 async def api_telegram_pc_confirm(request: Request):
     """Confirmar operacion PC para Telegram."""
     body = _json_loads(await request.body())
-    token = body.get("token", "")
+    body.get("token", "")
     approved = body.get("approved", False)
     return {
         "ok": approved,
@@ -359,9 +348,7 @@ async def api_pc_fs(request: Request):
         pass
 
     loop = asyncio.get_event_loop()
-    result = await loop.run_in_executor(
-        _executor, _pc_fs_sync, op, path, dst, cmd, steps, user_id
-    )
+    result = await loop.run_in_executor(_executor, _pc_fs_sync, op, path, dst, cmd, steps, user_id)
     return result
 
 
@@ -409,8 +396,7 @@ async def api_memory_semantic():
         return {
             "user_profile": prefs or {},
             "entities": [
-                {"name": e["name"], "type": e["type"], "mentions": e["mentions"]}
-                for e in entities
+                {"name": e["name"], "type": e["type"], "mentions": e["mentions"]} for e in entities
             ],
         }
     except Exception as e:
@@ -499,9 +485,7 @@ async def api_agents_list():
         return {
             "ok": True,
             "agents": [
-                a.to_dict()
-                if hasattr(a, "to_dict")
-                else {"id": a.agent_id, "name": a.name}
+                a.to_dict() if hasattr(a, "to_dict") else {"id": a.agent_id, "name": a.name}
                 for a in agents
             ],
         }
@@ -521,9 +505,7 @@ async def api_agents_create(request: Request):
         )
         return {
             "ok": True,
-            "agent": agent.to_dict()
-            if hasattr(agent, "to_dict")
-            else {"id": agent.agent_id},
+            "agent": agent.to_dict() if hasattr(agent, "to_dict") else {"id": agent.agent_id},
         }
     except Exception as e:
         return {"ok": False, "error": str(e)}
@@ -672,7 +654,7 @@ async def api_attention_clear(request: Request):
 
 @app.post("/api/attention/add")
 async def api_attention_add(request: Request):
-    body = _json_loads(await request.body())
+    _json_loads(await request.body())
     return {"ok": True, "id": "stub-" + str(int(datetime.now().timestamp()))}
 
 

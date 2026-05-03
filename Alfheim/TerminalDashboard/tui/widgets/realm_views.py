@@ -8,7 +8,6 @@ git activity.
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from rich.console import Group
@@ -17,19 +16,20 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 from textual.widgets import Static
-from tui.git_utils import GitActivity, get_git_activity
+
+from tui.git_utils import get_git_activity
 from tui.scanner import (
-    REALMS,
     GitStatus,
     HealthStatus,
-    ProjectInfo,
     ProjTestStatus,
     RealmScanner,
     RealmStatus,
 )
 
+
 if TYPE_CHECKING:
-    pass
+    from pathlib import Path
+
 
 # ---------------------------------------------------------------------------
 # Emjoji / icon shortcuts (avoid heavy dependency on emoji fonts)
@@ -64,8 +64,7 @@ def _count_files(directory: Path) -> int:
     try:
         for entry in directory.rglob("*"):
             if entry.is_file() and not any(
-                p.startswith(".") or p == "__pycache__"
-                for p in entry.relative_to(directory).parts
+                p.startswith(".") or p == "__pycache__" for p in entry.relative_to(directory).parts
             ):
                 count += 1
     except OSError:
@@ -81,8 +80,7 @@ def _total_size(directory: Path) -> int:
     try:
         for entry in directory.rglob("*"):
             if entry.is_file() and not any(
-                p.startswith(".") or p == "__pycache__"
-                for p in entry.relative_to(directory).parts
+                p.startswith(".") or p == "__pycache__" for p in entry.relative_to(directory).parts
             ):
                 try:
                     total += entry.stat().st_size
@@ -210,7 +208,7 @@ class RealmDetailView(Static):
             # the first mount via ``render()``.
             pass
 
-    def render(self) -> object:  # noqa: D401
+    def render(self) -> object:
         """Render the widget content (called by Textual on mount)."""
         return getattr(self, "_content", "[dim]No realm selected[/]")
 
@@ -329,9 +327,7 @@ class RealmDetailView(Static):
         table.add_row("Description", escape(status.description))
         table.add_row("File Count", str(file_count))
         table.add_row("Total Size", size_str)
-        table.add_row(
-            "Key Files", ", ".join(key_files) if key_files else "[dim]none[/]"
-        )
+        table.add_row("Key Files", ", ".join(key_files) if key_files else "[dim]none[/]")
         return table
 
     # ------------------------------------------------------------------
@@ -373,9 +369,7 @@ class RealmDetailView(Static):
             for line in activity.status_lines[:5]:
                 table.add_row("", Text.from_markup(f"[yellow]{escape(line)}[/]"))
             if len(activity.status_lines) > 5:
-                table.add_row(
-                    "", f"[dim]… and {len(activity.status_lines) - 5} more[/]"
-                )
+                table.add_row("", f"[dim]… and {len(activity.status_lines) - 5} more[/]")
 
         return table
 
@@ -428,9 +422,7 @@ class RealmDetailView(Static):
 
         # Provider count: count projects that look like provider modules
         provider_projects = [
-            p
-            for p in status.projects
-            if "provider" in p.name.lower() or "api" in p.name.lower()
+            p for p in status.projects if "provider" in p.name.lower() or "api" in p.name.lower()
         ]
 
         table.add_row("Lilith Status", escape(lilith_status))
@@ -480,9 +472,7 @@ class RealmDetailView(Static):
         table.add_column("Value", ratio=2)
 
         app_projects = [
-            p
-            for p in status.projects
-            if "app" in p.name.lower() or "dashboard" in p.name.lower()
+            p for p in status.projects if "app" in p.name.lower() or "dashboard" in p.name.lower()
         ]
 
         table.add_row("App/Dashboard Projects", str(len(app_projects)))
@@ -540,8 +530,7 @@ class RealmDetailView(Static):
             p
             for p in status.projects
             if any(
-                kw in p.name.lower()
-                for kw in ("ui", "tui", "dashboard", "prototype", "frontend")
+                kw in p.name.lower() for kw in ("ui", "tui", "dashboard", "prototype", "frontend")
             )
         ]
 
@@ -597,9 +586,7 @@ class RealmDetailView(Static):
         resource_projects = [
             p
             for p in status.projects
-            if any(
-                kw in p.name.lower() for kw in ("resource", "model", "asset", "data")
-            )
+            if any(kw in p.name.lower() for kw in ("resource", "model", "asset", "data"))
         ]
 
         table.add_row("Resource/Model Projects", str(len(resource_projects)))

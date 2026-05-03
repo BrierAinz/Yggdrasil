@@ -122,10 +122,7 @@ class Transcriber:
             word_timestamps=True,
             vad_filter=True,
         )
-        segments = [
-            Segment(text=s.text.strip(), start=s.start, end=s.end)
-            for s in segments_iter
-        ]
+        segments = [Segment(text=s.text.strip(), start=s.start, end=s.end) for s in segments_iter]
 
         # If language was auto-detected, include detection info
         if language is None:

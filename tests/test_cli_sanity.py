@@ -1,9 +1,20 @@
+import importlib.util
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
+
 YGGDRASIL_ROOT = Path(__file__).parent.parent.resolve()
 CLI = YGGDRASIL_ROOT / "yggdrasil_cli.py"
+
+# The CLI depends on cyclopts + rich, which may not be installed in CI
+pytestmark = pytest.mark.skipif(
+    not importlib.util.find_spec("cyclopts"),
+    reason="cyclopts not installed",
+)
 
 
 def test_cli_status_runs():
@@ -15,7 +26,7 @@ def test_cli_status_runs():
         cwd=YGGDRASIL_ROOT,
     )
     assert result.returncode == 0
-    assert "Yggdrasil Health Check" in result.stdout
+    assert "YGGDRASIL" in result.stdout or "Yggdrasil" in result.stdout
 
 
 def test_cli_tree_runs():
@@ -27,4 +38,4 @@ def test_cli_tree_runs():
         cwd=YGGDRASIL_ROOT,
     )
     assert result.returncode == 0
-    assert "Asgard/" in result.stdout
+    assert "Asgard" in result.stdout

@@ -4,11 +4,10 @@ Setup Yggdrasil - Instalador global del ecosistema
 Ejecutar desde la raiz de Yggdrasil:  python setup_yggdrasil.py
 """
 
-import json
-import os
 import subprocess
 import sys
 from pathlib import Path
+
 
 YGGDRASIL_ROOT = Path(__file__).parent.resolve()
 REALMS = [
@@ -47,9 +46,7 @@ def check_python():
 def check_node():
     print("[CHECK] Node.js...")
     try:
-        out = subprocess.run(
-            ["node", "--version"], capture_output=True, text=True, timeout=5
-        )
+        out = subprocess.run(["node", "--version"], capture_output=True, text=True, timeout=5)
         print(f"  [OK] Node {out.stdout.strip()}")
         return True
     except FileNotFoundError:
@@ -87,9 +84,7 @@ def setup_asgard():
     if setup.exists():
         print("  [INFO] Configurando comando global 'lilith'...")
         try:
-            subprocess.run(
-                [sys.executable, str(setup)], cwd=str(lilith), timeout=30, check=True
-            )
+            subprocess.run([sys.executable, str(setup)], cwd=str(lilith), timeout=30, check=True)
             print("  [OK] Comando 'lilith' configurado")
         except Exception as e:
             print(f"  [WARN] No se pudo configurar comando global: {e}")
@@ -102,11 +97,7 @@ def setup_vanaheim():
         print("  [SKIP] Directorio Bots no encontrado")
         return
 
-    bots = [
-        d
-        for d in bots_dir.iterdir()
-        if d.is_dir() and (d / "requirements.txt").exists()
-    ]
+    bots = [d for d in bots_dir.iterdir() if d.is_dir() and (d / "requirements.txt").exists()]
     if not bots:
         print("  [INFO] Ningun bot con requirements.txt encontrado")
         return
@@ -115,9 +106,7 @@ def setup_vanaheim():
         print(f"  [INFO] Bot: {bot.name}")
         # No instalamos automaticamente para evitar conflictos de dependencias
         # Solo verificamos que exista
-        print(
-            f"    [OK] Listo (instalar manualmente con: pip install -r requirements.txt)"
-        )
+        print("    [OK] Listo (instalar manualmente con: pip install -r requirements.txt)")
 
 
 def setup_alfheim():

@@ -4,12 +4,9 @@ from __future__ import annotations
 
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
-import pytest
 from rich.panel import Panel
 from rich.table import Table
-from rich.text import Text
 from tui.scanner import (
     REALMS,
     GitStatus,
@@ -26,6 +23,7 @@ from tui.widgets.realm_views import (
     REALM_STYLES,
     RealmDetailView,
 )
+
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -173,9 +171,7 @@ class TestRealmDetailViewSetRealm:
             (realm_path / "new-project").mkdir()
             widget.refresh_data()
             assert widget.status is not None
-            assert (
-                widget.status.project_count == 1
-            )  # still 1 because scanner reads it fresh
+            assert widget.status.project_count == 1  # still 1 because scanner reads it fresh
 
 
 # ---------------------------------------------------------------------------
@@ -194,9 +190,7 @@ class TestRenderMethods:
         return widget
 
     def test_build_common_table_returns_table(self) -> None:
-        status = _make_status(
-            projects=[_make_project("proj-a"), _make_project("proj-b")]
-        )
+        status = _make_status(projects=[_make_project("proj-a"), _make_project("proj-b")])
         widget = self._widget_with_status(status)
         table = widget._build_common_table(status, "green")
         assert isinstance(table, Table)

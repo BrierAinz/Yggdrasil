@@ -6,12 +6,13 @@ theming for monitoring the nine realms and agents of Yggdrasil.
 
 from __future__ import annotations
 
-from lilith_cli.tui.agent_view import AgentMonitorView
-from lilith_cli.tui.log_view import LogViewer
-from lilith_cli.tui.realm_view import RealmStatusView
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.widgets import Footer, Header, TabbedContent, TabPane
+
+from lilith_cli.tui.agent_view import AgentMonitorView
+from lilith_cli.tui.log_view import LogViewer
+from lilith_cli.tui.realm_view import RealmStatusView
 
 
 class YggdrasilDashboard(App[None]):

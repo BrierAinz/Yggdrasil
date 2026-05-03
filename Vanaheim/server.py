@@ -10,11 +10,13 @@ Uso:
     python server.py --port 9000
     python server.py --host 0.0.0.0 --port 9000
 """
+
 import argparse
 import json
 import logging
 import sys
 from pathlib import Path
+
 
 # Añadir directorio actual al path para imports
 _current_dir = Path(__file__).parent.resolve()
@@ -38,7 +40,7 @@ def load_config():
     }
 
     try:
-        with open(config_path, "r", encoding="utf-8") as f:
+        with config_path.open(encoding="utf-8") as f:
             config = json.load(f)
         logger.info(f"[Bifrost] Loaded config from {config_path}")
         return config
@@ -46,7 +48,7 @@ def load_config():
         logger.warning(f"[Bifrost] Config not found at {config_path}, using defaults")
         return default_config
     except json.JSONDecodeError as e:
-        logger.error(f"[Bifrost] Invalid JSON in config: {e}")
+        logger.exception(f"[Bifrost] Invalid JSON in config: {e}")
         return default_config
 
 
@@ -54,9 +56,7 @@ def main():
     parser = argparse.ArgumentParser(description="Bifrost Gateway Server")
     parser.add_argument("--host", help="Host to bind (default: from config)")
     parser.add_argument("--port", type=int, help="Port to bind (default: from config)")
-    parser.add_argument(
-        "--reload", action="store_true", help="Enable auto-reload (dev)"
-    )
+    parser.add_argument("--reload", action="store_true", help="Enable auto-reload (dev)")
     args = parser.parse_args()
 
     # Load configuration
@@ -69,25 +69,23 @@ def main():
     auth_config = config.get("auth", {})
     tokens = auth_config.get("tokens", [])
     if not tokens:
-        logger.warning(
-            "[Bifrost] No auth tokens configured! Requests will be rejected."
-        )
+        logger.warning("[Bifrost] No auth tokens configured! Requests will be rejected.")
         logger.warning("[Bifrost] Add tokens to config/bifrost.json: auth.tokens")
 
     try:
         import uvicorn
-        from bifrost.gateway import app
+        from bifrost.gateway import app  # noqa: F401 – availability probe
 
-        logger.info(f"╔════════════════════════════════════════════════╗")
-        logger.info(f"║       BIFROST GATEWAY - VANAHEIM               ║")
-        logger.info(f"║                                                ║")
+        logger.info("╔════════════════════════════════════════════════╗")
+        logger.info("║       BIFROST GATEWAY - VANAHEIM               ║")
+        logger.info("║                                                ║")
         logger.info(f"║   http://{host}:{port:<15}                  ║")
-        logger.info(f"║                                                ║")
-        logger.info(f"║   Endpoints:                                   ║")
-        logger.info(f"║   - GET  /api/bifrost/health                   ║")
-        logger.info(f"║   - GET  /api/bifrost/agents                   ║")
-        logger.info(f"║   - POST /api/bifrost/execute                  ║")
-        logger.info(f"╚════════════════════════════════════════════════╝")
+        logger.info("║                                                ║")
+        logger.info("║   Endpoints:                                   ║")
+        logger.info("║   - GET  /api/bifrost/health                   ║")
+        logger.info("║   - GET  /api/bifrost/agents                   ║")
+        logger.info("║   - POST /api/bifrost/execute                  ║")
+        logger.info("╚════════════════════════════════════════════════╝")
 
         uvicorn.run(
             "bifrost.gateway:app",
@@ -98,10 +96,8 @@ def main():
         )
 
     except ImportError as e:
-        logger.error(f"[Bifrost] Missing dependency: {e}")
-        logger.error(
-            "[Bifrost] Install with: pip install fastapi uvicorn pydantic httpx"
-        )
+        logger.exception(f"[Bifrost] Missing dependency: {e}")
+        logger.exception("[Bifrost] Install with: pip install fastapi uvicorn pydantic httpx")
         sys.exit(1)
     except Exception as e:
         logger.error(f"[Bifrost] Failed to start server: {e}", exc_info=True)

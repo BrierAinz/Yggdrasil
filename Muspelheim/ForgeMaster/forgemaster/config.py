@@ -21,6 +21,7 @@ from typing import Any
 
 import yaml
 
+
 # ─── Default paths ────────────────────────────────────────────────────────────
 
 DEFAULT_CONFIG_DIR = Path.home() / ".forgemaster"
@@ -53,14 +54,14 @@ class Config:
         """Return scan_dirs as resolved Path objects, expanding ~ and env vars."""
         resolved = []
         for d in self.scan_dirs:
-            p = Path(os.path.expandvars(os.path.expanduser(d)))
+            p = Path(os.path.expandvars(Path(d).expanduser()))
             if p.exists():
                 resolved.append(p)
         return resolved
 
     def resolve_catalog_path(self) -> Path:
         """Return catalog_path as a resolved Path."""
-        return Path(os.path.expandvars(os.path.expanduser(self.catalog_path)))
+        return Path(os.path.expandvars(Path(self.catalog_path).expanduser()))
 
 
 # ─── Load / save ──────────────────────────────────────────────────────────────
@@ -80,7 +81,7 @@ def load_config(config_path: str | Path | None = None) -> Config:
 
     # Determine config file path
     if config_path is not None:
-        cfg_file = Path(os.path.expandvars(os.path.expanduser(str(config_path))))
+        cfg_file = Path(os.path.expandvars(Path(str(config_path)).expanduser()))
     else:
         cfg_file = DEFAULT_CONFIG_FILE
 
@@ -89,7 +90,7 @@ def load_config(config_path: str | Path | None = None) -> Config:
 
     # Load YAML if it exists
     if cfg_file.exists():
-        with open(cfg_file, "r") as f:
+        with cfg_file.open() as f:
             raw = yaml.safe_load(f)
             if isinstance(raw, dict):
                 cfg_dict = raw
@@ -128,7 +129,7 @@ def save_config(cfg: Config, config_path: str | Path | None = None) -> Path:
         The path where the config was saved.
     """
     if config_path is not None:
-        cfg_file = Path(os.path.expandvars(os.path.expanduser(str(config_path))))
+        cfg_file = Path(os.path.expandvars(Path(str(config_path)).expanduser()))
     else:
         cfg_file = DEFAULT_CONFIG_FILE
 
@@ -140,15 +141,13 @@ def save_config(cfg: Config, config_path: str | Path | None = None) -> Path:
         "catalog_path": cfg.catalog_path,
     }
 
-    with open(cfg_file, "w") as f:
+    with cfg_file.open("w") as f:
         yaml.dump(data, f, default_flow_style=False, sort_keys=False)
 
     return cfg_file
 
 
-def set_config_value(
-    key: str, value: str, config_path: str | Path | None = None
-) -> Config:
+def set_config_value(key: str, value: str, config_path: str | Path | None = None) -> Config:
     """Set a single configuration value and save.
 
     Supports dotted keys like ``scan_dirs.0`` to set list items by index.

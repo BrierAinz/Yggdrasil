@@ -5,10 +5,10 @@ from __future__ import annotations
 import logging
 import subprocess
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Any
 
 import psutil
+
 
 logger = logging.getLogger(__name__)
 
@@ -106,9 +106,7 @@ class SystemHealth:
 class HealthMonitor:
     """Monitors system health using psutil and nvidia-smi."""
 
-    def __init__(
-        self, disk_path: str = "/", nvidia_smi_path: str = "nvidia-smi"
-    ) -> None:
+    def __init__(self, disk_path: str = "/", nvidia_smi_path: str = "nvidia-smi") -> None:
         """Initialize the health monitor.
 
         Args:

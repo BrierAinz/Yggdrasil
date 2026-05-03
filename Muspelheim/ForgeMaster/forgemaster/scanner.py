@@ -5,13 +5,16 @@ from __future__ import annotations
 import json
 import os
 import re
-from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING
 
 import yaml
+
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 @dataclass
@@ -23,12 +26,12 @@ class ModelInfo:
     size_bytes: int = 0
     format: str = ""  # gguf, safetensors, pt, onnx
     architecture: str = ""  # llama, stable-diffusion, whisper, etc.
-    parameters: Optional[int] = None
-    context_length: Optional[int] = None
-    quantization: Optional[str] = None
-    vram_required_gb: Optional[float] = None
-    download_date: Optional[str] = None
-    source: Optional[str] = None
+    parameters: int | None = None
+    context_length: int | None = None
+    quantization: str | None = None
+    vram_required_gb: float | None = None
+    download_date: str | None = None
+    source: str | None = None
 
 
 @dataclass
@@ -141,18 +144,14 @@ class ModelScanner:
         """Find model files in a directory listing."""
         return [f for f in files if Path(f).suffix in FORMAT_EXTENSIONS]
 
-    def _extract_from_directory(
-        self, dir_path: Path, files: list[str]
-    ) -> Optional[ModelInfo]:
+    def _extract_from_directory(self, dir_path: Path, files: list[str]) -> ModelInfo | None:
         """Extract model info from a model directory."""
         model_files = self._find_model_files(dir_path, files)
         if not model_files:
             return None
 
         total_size = sum(
-            (dir_path / f).stat().st_size
-            for f in model_files
-            if (dir_path / f).is_file()
+            (dir_path / f).stat().st_size for f in model_files if (dir_path / f).is_file()
         )
 
         # Determine primary format from files
@@ -162,9 +161,7 @@ class ModelScanner:
             if ext in FORMAT_EXTENSIONS:
                 formats.add(FORMAT_EXTENSIONS[ext])
 
-        primary_format = (
-            formats.pop() if len(formats) == 1 else ",".join(sorted(formats))
-        )
+        primary_format = formats.pop() if len(formats) == 1 else ",".join(sorted(formats))
 
         # Try to read config.json or metadata from HuggingFace style directories
         metadata = self._read_hf_metadata(dir_path)
@@ -189,7 +186,7 @@ class ModelScanner:
         config_path = dir_path / "config.json"
         if config_path.is_file():
             try:
-                with open(config_path) as f:
+                with config_path.open() as f:
                     config = json.load(f)
                 if "model_type" in config:
                     metadata["architecture"] = config["model_type"]
@@ -204,7 +201,7 @@ class ModelScanner:
         tokenizer_config = dir_path / "tokenizer_config.json"
         if tokenizer_config.is_file():
             try:
-                with open(tokenizer_config) as f:
+                with tokenizer_config.open() as f:
                     config = json.load(f)
                 if "model_type" in config and not metadata.get("architecture"):
                     metadata["architecture"] = config["model_type"]
@@ -216,7 +213,7 @@ class ModelScanner:
             yaml_path = dir_path / yaml_name
             if yaml_path.is_file():
                 try:
-                    with open(yaml_path) as f:
+                    with yaml_path.open() as f:
                         ydata = yaml.safe_load(f) or {}
                     for key in [
                         "name",
@@ -247,7 +244,7 @@ class ModelScanner:
 
         return metadata
 
-    def extract_metadata(self, model_path: Path) -> Optional[ModelInfo]:
+    def extract_metadata(self, model_path: Path) -> ModelInfo | None:
         """Extract metadata from a single model file.
 
         Args:
@@ -322,14 +319,14 @@ class ModelScanner:
                 return arch
         return ""
 
-    def _guess_quantization(self, name: str) -> Optional[str]:
+    def _guess_quantization(self, name: str) -> str | None:
         """Guess quantization level from filename."""
         for pattern, quant in QUANT_PATTERNS:
             if pattern.search(name):
                 return quant
         return None
 
-    def _guess_parameters(self, name: str) -> Optional[int]:
+    def _guess_parameters(self, name: str) -> int | None:
         """Guess parameter count from filename (e.g., 7B -> 7000000000)."""
         for pattern in PARAM_PATTERNS:
             match = pattern.search(name)
@@ -343,7 +340,7 @@ class ModelScanner:
             return int(value * 1_000_000_000)
         return None
 
-    def _read_gguf_metadata(self, path: Path) -> tuple[Optional[int], Optional[float]]:
+    def _read_gguf_metadata(self, path: Path) -> tuple[int | None, float | None]:
         """Try to read context_length and estimate VRAM from GGUF metadata.
 
         GGUF format stores metadata in the file header. We read a simplified
@@ -360,9 +357,7 @@ class ModelScanner:
             pass
         return context_length, vram_required_gb
 
-    def _read_safetensors_metadata(
-        self, path: Path
-    ) -> tuple[Optional[int], Optional[int]]:
+    def _read_safetensors_metadata(self, path: Path) -> tuple[int | None, int | None]:
         """Read safetensors file metadata to extract parameter count."""
         parameters = None
         context_length = None
@@ -371,7 +366,7 @@ class ModelScanner:
 
             with safe_open(str(path), framework="pt") as f:
                 total_params = 0
-                for key in f.keys():
+                for key in f:
                     tensor = f.get_tensor(key)
                     total_params += tensor.numel()
                 if total_params > 0:

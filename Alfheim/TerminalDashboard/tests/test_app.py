@@ -7,22 +7,20 @@ from __future__ import annotations
 
 import tempfile
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
-from textual.pilot import Pilot
 from tui.app import _REALM_KEYS, YggdrasilDashboard
 from tui.scanner import (
     REALMS,
     GitStatus,
     HealthStatus,
-    ProjectInfo,
     ProjTestStatus,
     RealmScanner,
     RealmStatus,
 )
 from tui.widgets.detail import RealmDetailView
 from tui.widgets.sidebar import REALM_ICONS, RealmButton, RealmSidebar
+
 
 # ── Helpers ────────────────────────────────────────────────────────
 
@@ -254,7 +252,7 @@ class TestWidgetConstants:
         assert set(REALM_ICONS.keys()) == set(REALMS.keys())
 
     def test_realm_icons_are_strings(self) -> None:
-        for name, icon in REALM_ICONS.items():
+        for _name, icon in REALM_ICONS.items():
             assert isinstance(icon, str)
             assert len(icon) > 0
 

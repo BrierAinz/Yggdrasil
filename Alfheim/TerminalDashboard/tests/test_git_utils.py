@@ -6,7 +6,6 @@ import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
 from tui.git_utils import (
     GitActivity,
     GitLogEntry,
@@ -162,9 +161,7 @@ class TestGetGitActivity:
         assert activity.status_lines == []
 
     @patch("tui.git_utils.subprocess.run")
-    def test_git_repo_rev_parse_fails(
-        self, mock_run: MagicMock, tmp_path: Path
-    ) -> None:
+    def test_git_repo_rev_parse_fails(self, mock_run: MagicMock, tmp_path: Path) -> None:
         """When rev-parse fails, return non-repo activity."""
         rev_parse_result = MagicMock()
         rev_parse_result.returncode = 128
@@ -217,7 +214,7 @@ class TestGetGitActivity:
             status_result,
         ]
 
-        activity = get_git_activity(tmp_path, max_commits=5)
+        get_git_activity(tmp_path, max_commits=5)
         # Check that git log was called with the correct limit
         log_call = mock_run.call_args_list[2]
         assert "-5" in log_call[0][0] or "-5" in str(log_call)
@@ -232,9 +229,7 @@ class TestGetRealmGitActivities:
         assert activities == {}
 
     @patch("tui.git_utils.get_git_activity")
-    def test_realm_root_is_git_repo(
-        self, mock_get_activity: MagicMock, tmp_path: Path
-    ) -> None:
+    def test_realm_root_is_git_repo(self, mock_get_activity: MagicMock, tmp_path: Path) -> None:
         """When realm root is a git repo, include __realm__ entry."""
         realm_dir = tmp_path / "Asgard"
         realm_dir.mkdir()
@@ -250,9 +245,7 @@ class TestGetRealmGitActivities:
         assert activities["__realm__"].branch == "main"
 
     @patch("tui.git_utils.get_git_activity")
-    def test_project_subdirs_included(
-        self, mock_get_activity: MagicMock, tmp_path: Path
-    ) -> None:
+    def test_project_subdirs_included(self, mock_get_activity: MagicMock, tmp_path: Path) -> None:
         """When project subdirs are git repos, they are included."""
         realm_dir = tmp_path / "Asgard"
         realm_dir.mkdir()
@@ -272,9 +265,7 @@ class TestGetRealmGitActivities:
         assert "provider-openai" in activities
 
     @patch("tui.git_utils.get_git_activity")
-    def test_hidden_dirs_excluded(
-        self, mock_get_activity: MagicMock, tmp_path: Path
-    ) -> None:
+    def test_hidden_dirs_excluded(self, mock_get_activity: MagicMock, tmp_path: Path) -> None:
         """Hidden dirs and __pycache__ should be excluded."""
         realm_dir = tmp_path / "Asgard"
         realm_dir.mkdir()

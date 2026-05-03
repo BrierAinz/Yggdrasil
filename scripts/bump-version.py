@@ -3,10 +3,12 @@
 Bump version across the Yggdrasil ecosystem.
 Usage: python bump-version.py [patch|minor|major]
 """
+
 import datetime
 import re
 import sys
 from pathlib import Path
+
 
 REPO_ROOT = Path(__file__).parent.parent.resolve()
 
@@ -49,7 +51,7 @@ def get_file_patterns(current_version: str):
 
 def bump_changelog(new_version: str) -> None:
     changelog_path = REPO_ROOT / "CHANGELOG.md"
-    with open(changelog_path, "r", encoding="utf-8", newline="") as f:
+    with changelog_path.open(encoding="utf-8", newline="") as f:
         content = f.read()
     today = datetime.date.today().isoformat()
 
@@ -95,7 +97,7 @@ def bump_changelog(new_version: str) -> None:
             + f"\n\n[{new_version}]: https://github.com/BrierAinz/Yggdrasil/compare/v2.1.0...v{new_version}\n"
         )
 
-    with open(changelog_path, "w", encoding="utf-8", newline="") as f:
+    with changelog_path.open("w", encoding="utf-8", newline="") as f:
         f.write(content)
     print(f"Updated CHANGELOG.md -> [{new_version}]")
 
@@ -105,7 +107,7 @@ def bump_file(path: Path, patterns: list, new_version: str) -> None:
         print(f"WARNING: {path} not found")
         return
 
-    with open(path, "r", encoding="utf-8", newline="") as f:
+    with path.open(encoding="utf-8", newline="") as f:
         content = f.read()
     original = content
 
@@ -114,7 +116,7 @@ def bump_file(path: Path, patterns: list, new_version: str) -> None:
         content = re.sub(pattern, replacement, content)
 
     if content != original:
-        with open(path, "w", encoding="utf-8", newline="") as f:
+        with path.open("w", encoding="utf-8", newline="") as f:
             f.write(content)
         print(f"Updated {path.relative_to(REPO_ROOT)}")
     else:
@@ -124,7 +126,7 @@ def bump_file(path: Path, patterns: list, new_version: str) -> None:
 def extract_version_notes(new_version: str) -> str:
     """Extract release notes for the given version from CHANGELOG."""
     changelog_path = REPO_ROOT / "CHANGELOG.md"
-    with open(changelog_path, "r", encoding="utf-8", newline="") as f:
+    with changelog_path.open(encoding="utf-8", newline="") as f:
         content = f.read()
     pattern = rf"## \[{re.escape(new_version)}\] - \d{{4}}-\d{{2}}-\d{{2}}\n\n(.*?)\n(?=## \[)"
     match = re.search(pattern, content, re.DOTALL)

@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import subprocess
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @dataclass
@@ -100,7 +103,7 @@ def get_git_activity(directory: Path, max_commits: int = 10) -> GitActivity:
     # Get recent commits
     try:
         result = subprocess.run(
-            ["git", "log", f"--oneline", f"-{max_commits}"],
+            ["git", "log", "--oneline", f"-{max_commits}"],
             cwd=str(directory),
             capture_output=True,
             text=True,
@@ -128,18 +131,14 @@ def get_git_activity(directory: Path, max_commits: int = 10) -> GitActivity:
             timeout=5,
         )
         if result.returncode == 0:
-            activity.status_lines = [
-                line for line in result.stdout.strip().splitlines() if line
-            ]
+            activity.status_lines = [line for line in result.stdout.strip().splitlines() if line]
     except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
         pass
 
     return activity
 
 
-def get_realm_git_activities(
-    realm_path: Path, max_commits: int = 10
-) -> dict[str, GitActivity]:
+def get_realm_git_activities(realm_path: Path, max_commits: int = 10) -> dict[str, GitActivity]:
     """Get git activity for a realm and its project subdirectories.
 
     Args:

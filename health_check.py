@@ -11,6 +11,7 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
+
 BASE = Path(__file__).parent.resolve()
 REALMS = [
     "Asgard",
@@ -80,7 +81,7 @@ def scan_realm(name: str) -> dict:
             if f.endswith(".py"):
                 stats["py_files"] += 1
                 try:
-                    with open(fpath, "r", encoding="utf-8", errors="ignore") as fh:
+                    with fpath.open(encoding="utf-8", errors="ignore") as fh:
                         stats["py_lines"] += sum(1 for _ in fh)
                 except:
                     pass
@@ -88,9 +89,7 @@ def scan_realm(name: str) -> dict:
                 stats["js_files"] += 1
             elif f.endswith(".pyc"):
                 stats["trash"][".pyc"] += 1
-            elif (
-                f == "package.json" or f == "requirements.txt" or f == "pyproject.toml"
-            ):
+            elif f in {"package.json", "requirements.txt", "pyproject.toml"}:
                 stats["manifests"].append(str(fpath.relative_to(BASE)))
 
     return stats
@@ -137,7 +136,7 @@ def main():
             for m in s["manifests"][:3]:
                 print(f"            manifest: {m}")
             if len(s["manifests"]) > 3:
-                print(f"            ... y {len(s['manifests'])-3} mas")
+                print(f"            ... y {len(s['manifests']) - 3} mas")
 
         if s["trash"]:
             trash_items = ", ".join(f"{k}={v}" for k, v in s["trash"].items())

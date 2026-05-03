@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import typer
 from rich.console import Console
+
 from tui import __version__
+
 
 app = typer.Typer(
     name="yggdrasil-dashboard",
@@ -24,9 +26,7 @@ _console = Console()
 def _version_callback(value: bool) -> None:
     """Print the version and exit."""
     if value:
-        _console.print(
-            f"[bold #c8a23e]☵ Yggdrasil Dashboard[/]  [dim]v{__version__}[/]"
-        )
+        _console.print(f"[bold #c8a23e]☵ Yggdrasil Dashboard[/]  [dim]v{__version__}[/]")
         raise typer.Exit()
 
 

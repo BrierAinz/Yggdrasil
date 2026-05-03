@@ -1,22 +1,20 @@
-from typing import Dict, Type
-
 from .base import BaseTool
 
 
 class ToolRegistry:
-    _tools: Dict[str, Type[BaseTool]] = {}
+    _tools: dict[str, type[BaseTool]] = {}
 
     @classmethod
-    def register(cls, tool_class: Type[BaseTool]):
+    def register(cls, tool_class: type[BaseTool]):
         cls._tools[tool_class.name] = tool_class
         return tool_class
 
     @classmethod
-    def get(cls, name: str) -> Type[BaseTool]:
+    def get(cls, name: str) -> type[BaseTool]:
         return cls._tools.get(name)
 
     @classmethod
-    def list_tools(cls) -> Dict[str, str]:
+    def list_tools(cls) -> dict[str, str]:
         return {name: tool_class.description for name, tool_class in cls._tools.items()}
 
     @classmethod

@@ -22,14 +22,10 @@ console = Console()
 @app.command()
 def transcribe(
     input_file: str = typer.Argument(..., help="Path to audio/video file"),
-    language: str = typer.Option(
-        None, "--lang", "-l", help="Source language (auto-detect)"
-    ),
+    language: str = typer.Option(None, "--lang", "-l", help="Source language (auto-detect)"),
     model: str = typer.Option("base", "--model", "-m", help="Whisper model size"),
     output: str = typer.Option(None, "--output", "-o", help="Output file path"),
-    format: str = typer.Option(
-        "srt", "--format", "-f", help="Output format: srt, vtt, txt"
-    ),
+    format: str = typer.Option("srt", "--format", "-f", help="Output format: srt, vtt, txt"),
 ):
     """Transcribe audio/video to subtitles."""
     path = Path(input_file)
@@ -37,7 +33,7 @@ def transcribe(
         console.print(f"[red]Error: File not found: {input_file}[/]")
         raise typer.Exit(code=1)
 
-    console.print(f"[bold green]AutoSub[/] v0.1.0 — Transcription")
+    console.print("[bold green]AutoSub[/] v0.1.0 — Transcription")
     console.print(f"[dim]Input: {input_file} | Model: {model} | Format: {format}[/]")
 
     transcriber = Transcriber(model_size=model)
@@ -76,7 +72,7 @@ def translate(
         console.print(f"[red]Error: File not found: {input_srt}[/]")
         raise typer.Exit(code=1)
 
-    console.print(f"[bold green]AutoSub[/] — Translate")
+    console.print("[bold green]AutoSub[/] — Translate")
     console.print(f"[dim]Input: {input_srt} | Target language: {target_lang}[/]")
 
     translator = Translator(target_lang=target_lang)
@@ -104,9 +100,7 @@ def pipeline(
     language: str = typer.Option(None, "--lang", "-l", help="Source language"),
     target_lang: str = typer.Option(None, "--translate", "-t", help="Target language"),
     model: str = typer.Option("base", "--model", "-m", help="Whisper model size"),
-    format: str = typer.Option(
-        "srt", "--format", "-f", help="Output format: srt, vtt, txt"
-    ),
+    format: str = typer.Option("srt", "--format", "-f", help="Output format: srt, vtt, txt"),
     output: str = typer.Option(None, "--output", "-o", help="Output file path"),
 ):
     """Full pipeline: transcribe → translate → export."""
@@ -120,7 +114,7 @@ def pipeline(
             output_path=output,
             console=console,
         )
-        console.print(f"[bold green]✓ Pipeline complete[/]")
+        console.print("[bold green]✓ Pipeline complete[/]")
         console.print(f"  Segments: {result.segments_count}")
         console.print(f"  Output: {result.output_path}")
         if result.translated:
@@ -133,23 +127,17 @@ def pipeline(
 @app.command()
 def batch(
     directory: str = typer.Argument(..., help="Directory to scan for media files"),
-    language: str = typer.Option(
-        None, "--lang", "-l", help="Source language (auto-detect)"
-    ),
+    language: str = typer.Option(None, "--lang", "-l", help="Source language (auto-detect)"),
     target_lang: str = typer.Option(None, "--translate", "-t", help="Target language"),
     model: str = typer.Option("base", "--model", "-m", help="Whisper model size"),
-    format: str = typer.Option(
-        "srt", "--format", "-f", help="Output format: srt, vtt, txt"
-    ),
+    format: str = typer.Option("srt", "--format", "-f", help="Output format: srt, vtt, txt"),
     output_dir: str = typer.Option(None, "--output-dir", "-o", help="Output directory"),
-    recursive: bool = typer.Option(
-        False, "--recursive", "-r", help="Scan subdirectories"
-    ),
+    recursive: bool = typer.Option(False, "--recursive", "-r", help="Scan subdirectories"),
 ):
     """Batch process all media files in a directory."""
     bp = BatchProcessor(model_size=model)
     try:
-        results = bp.process_batch(
+        bp.process_batch(
             directory=directory,
             language=language,
             target_lang=target_lang,
@@ -170,11 +158,7 @@ def config(
 ):
     """Manage AutoSub configuration (TOML)."""
     if show or path is None:
-        cfg = (
-            AutoSubConfig.find_config()
-            if path is None
-            else AutoSubConfig.from_toml(path)
-        )
+        cfg = AutoSubConfig.find_config() if path is None else AutoSubConfig.from_toml(path)
         console.print("[bold green]AutoSub Configuration[/]")
         table = Table()
         table.add_column("Setting", style="cyan")
@@ -204,9 +188,7 @@ def info():
     table.add_row("GPU available", str(t._has_gpu()))
 
     cfg = AutoSubConfig.find_config()
-    table.add_row(
-        "Config source", "defaults" if cfg.model_size == "base" else "autosub.toml"
-    )
+    table.add_row("Config source", "defaults" if cfg.model_size == "base" else "autosub.toml")
 
     console.print(table)
 

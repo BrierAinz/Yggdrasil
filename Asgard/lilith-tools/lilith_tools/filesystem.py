@@ -15,9 +15,7 @@ class FileReadTool(BaseTool):
     def execute(self, **kwargs) -> ToolResult:
         path = Path(kwargs.get("path", ""))
         if not path.exists():
-            return ToolResult(
-                success=False, data=None, error=f"Archivo no encontrado: {path}"
-            )
+            return ToolResult(success=False, data=None, error=f"Archivo no encontrado: {path}")
         try:
             content = path.read_text(encoding="utf-8", errors="ignore")
             return ToolResult(success=True, data=content)
@@ -36,9 +34,7 @@ class DirectoryListTool(BaseTool):
     def execute(self, **kwargs) -> ToolResult:
         path = Path(kwargs.get("path", "."))
         if not path.exists():
-            return ToolResult(
-                success=False, data=None, error=f"Directorio no encontrado: {path}"
-            )
+            return ToolResult(success=False, data=None, error=f"Directorio no encontrado: {path}")
         try:
             items = []
             for item in sorted(path.iterdir()):

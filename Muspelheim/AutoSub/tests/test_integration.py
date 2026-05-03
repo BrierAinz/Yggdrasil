@@ -1,13 +1,11 @@
 """Integration tests for AutoSub — end-to-end pipeline tests."""
 
 import tempfile
-from pathlib import Path
 
-import pytest
 from autosub.aligner import Aligner
 from autosub.exporter import export_segments
-from autosub.pipeline import Pipeline, PipelineResult
-from autosub.transcriber import Segment, Transcriber
+from autosub.pipeline import PipelineResult
+from autosub.transcriber import Segment
 
 
 class TestIntegrationExportFormats:

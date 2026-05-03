@@ -8,13 +8,15 @@ from __future__ import annotations
 
 import hashlib
 import os
-import shutil
-from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING
 
-from forgemaster.scanner import FORMAT_EXTENSIONS, ModelInfo, ModelScanner, ScanResult
+from forgemaster.scanner import ModelInfo, ModelScanner
+
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 @dataclass
@@ -230,9 +232,7 @@ class DuplicateFinder:
         result = scanner.scan(paths)
         return self.find_duplicates_from_models(result.models)
 
-    def find_duplicates_from_models(
-        self, models: list[ModelInfo]
-    ) -> list[DuplicateGroup]:
+    def find_duplicates_from_models(self, models: list[ModelInfo]) -> list[DuplicateGroup]:
         """Find duplicate groups from an existing list of ModelInfo.
 
         Args:
@@ -250,7 +250,7 @@ class DuplicateFinder:
             groups[key].append(model)
 
         duplicate_groups: list[DuplicateGroup] = []
-        for key, group_models in groups.items():
+        for _key, group_models in groups.items():
             if len(group_models) < 2:
                 continue
 
@@ -275,9 +275,7 @@ class DuplicateFinder:
         duplicate_groups.sort(key=lambda g: g.total_wasted_bytes, reverse=True)
         return duplicate_groups
 
-    def find_exact_duplicates(
-        self, paths: Sequence[str | Path]
-    ) -> list[DuplicateGroup]:
+    def find_exact_duplicates(self, paths: Sequence[str | Path]) -> list[DuplicateGroup]:
         """Find files with identical content (hash-based deduplication).
 
         This reads file contents and computes hashes, so it is slower
@@ -293,9 +291,7 @@ class DuplicateFinder:
         result = scanner.scan(paths)
         return self.find_exact_duplicates_from_models(result.models)
 
-    def find_exact_duplicates_from_models(
-        self, models: list[ModelInfo]
-    ) -> list[DuplicateGroup]:
+    def find_exact_duplicates_from_models(self, models: list[ModelInfo]) -> list[DuplicateGroup]:
         """Find exact content duplicates from ModelInfo list.
 
         Args:
@@ -313,7 +309,7 @@ class DuplicateFinder:
             size_groups[s].append(model)
 
         duplicate_groups: list[DuplicateGroup] = []
-        for size, group in size_groups.items():
+        for _size, group in size_groups.items():
             if len(group) < 2:
                 continue
 
@@ -327,7 +323,7 @@ class DuplicateFinder:
                     hash_groups[file_hash] = []
                 hash_groups[file_hash].append(model)
 
-            for hash_val, hash_group in hash_groups.items():
+            for _hash_val, hash_group in hash_groups.items():
                 if len(hash_group) < 2:
                     continue
 
@@ -360,9 +356,7 @@ class DuplicateFinder:
         result = scanner.scan(paths)
         return self.generate_cleanup_report_from_models(result.models)
 
-    def generate_cleanup_report_from_models(
-        self, models: list[ModelInfo]
-    ) -> CleanupReport:
+    def generate_cleanup_report_from_models(self, models: list[ModelInfo]) -> CleanupReport:
         """Generate a cleanup report from an existing list of ModelInfo.
 
         Args:
@@ -390,9 +384,7 @@ class DuplicateFinder:
                     path=fpath,
                     size_bytes=size,
                     reason="duplicate",
-                    description=(
-                        f"Duplicate of '{group.name}': {fpath} " f"(original: {kept})"
-                    ),
+                    description=(f"Duplicate of '{group.name}': {fpath} (original: {kept})"),
                 )
                 report.add_action(action)
 
@@ -455,16 +447,16 @@ class DuplicateFinder:
         groups.append(current_group)
         return groups
 
-    def _hash_file(self, path: str, chunk_size: int = 8192) -> Optional[str]:
+    def _hash_file(self, path: str, chunk_size: int = 8192) -> str | None:
         """Compute SHA256 hash of a file for exact duplicate detection."""
         try:
             h = hashlib.sha256()
-            with open(path, "rb") as f:
+            with Path(path).open("rb") as f:
                 while True:
                     chunk = f.read(chunk_size)
                     if not chunk:
                         break
                     h.update(chunk)
             return h.hexdigest()
-        except (OSError, IOError):
+        except OSError:
             return None

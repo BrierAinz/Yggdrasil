@@ -12,16 +12,15 @@ httpx.
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
-import os
 import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Callable, Iterator, Optional
+from typing import Callable
 
 import httpx
+
 
 logger = logging.getLogger(__name__)
 
@@ -63,9 +62,7 @@ class DownloadConfig:
     model_id: str
     revision: str = DEFAULT_REVISION
     cache_dir: str = field(
-        default_factory=lambda: os.path.join(
-            os.path.expanduser("~"), ".cache", "huggingface", "hub"
-        )
+        default_factory=lambda: str(Path("~").expanduser() / ".cache" / "huggingface" / "hub")
     )
     force_download: bool = False
 
@@ -89,8 +86,8 @@ class DownloadProgress:
     progress_pct: float = 0.0
     speed_mb: float = 0.0
     downloaded_bytes: int = 0
-    total_bytes: Optional[int] = None
-    error: Optional[str] = None
+    total_bytes: int | None = None
+    error: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -151,7 +148,7 @@ class ModelDownloader:
     def __init__(
         self,
         *,
-        client: Optional[httpx.Client] = None,
+        client: httpx.Client | None = None,
         timeout: float = 300.0,
         max_retries: int = 3,
         retry_delay: float = 2.0,
@@ -172,8 +169,8 @@ class ModelDownloader:
         self,
         config: DownloadConfig,
         filename: str,
-        dest: Optional[str] = None,
-        progress_callback: Optional[Callable[[DownloadProgress], None]] = None,
+        dest: str | None = None,
+        progress_callback: Callable[[DownloadProgress], None] | None = None,
     ) -> Path:
         """Download a single file from a HuggingFace model repository.
 
@@ -230,8 +227,8 @@ class ModelDownloader:
     def download_model(
         self,
         config: DownloadConfig,
-        filenames: Optional[list[str]] = None,
-        progress_callback: Optional[Callable[[DownloadProgress], None]] = None,
+        filenames: list[str] | None = None,
+        progress_callback: Callable[[DownloadProgress], None] | None = None,
     ) -> list[Path]:
         """Download an entire model (or a subset of files).
 
@@ -250,9 +247,7 @@ class ModelDownloader:
             filenames = self.list_model_files(config)
         paths: list[Path] = []
         for fname in filenames:
-            path = self.download_file(
-                config, fname, progress_callback=progress_callback
-            )
+            path = self.download_file(config, fname, progress_callback=progress_callback)
             paths.append(path)
         return paths
 
@@ -286,20 +281,13 @@ class ModelDownloader:
     # -- internal helpers ---------------------------------------------------
 
     @staticmethod
-    def _resolve_dest(
-        config: DownloadConfig, filename: str, dest: Optional[str]
-    ) -> Path:
+    def _resolve_dest(config: DownloadConfig, filename: str, dest: str | None) -> Path:
         """Return the local file path for a download."""
         if dest is not None:
             base = Path(dest)
         else:
             safe_model = config.model_id.replace("/", "--")
-            base = (
-                Path(config.cache_dir)
-                / f"models--{safe_model}"
-                / "snapshots"
-                / config.revision
-            )
+            base = Path(config.cache_dir) / f"models--{safe_model}" / "snapshots" / config.revision
         return base / filename
 
     @staticmethod
@@ -318,9 +306,9 @@ class ModelDownloader:
         resume_from: int,
         headers: dict[str, str],
         config: DownloadConfig,
-        progress_callback: Optional[Callable[[DownloadProgress], None]],
+        progress_callback: Callable[[DownloadProgress], None] | None,
     ) -> Path:
-        last_error: Optional[Exception] = None
+        last_error: Exception | None = None
 
         for attempt in range(self._max_retries):
             if self._cancelled:
@@ -356,9 +344,7 @@ class ModelDownloader:
                 error=str(last_error),
             ),
         )
-        raise DownloadError(
-            f"Download failed after {self._max_retries} attempts: {last_error}"
-        )
+        raise DownloadError(f"Download failed after {self._max_retries} attempts: {last_error}")
 
     def _stream_download(
         self,
@@ -369,7 +355,7 @@ class ModelDownloader:
         resume_from: int,
         headers: dict[str, str],
         config: DownloadConfig,
-        progress_callback: Optional[Callable[[DownloadProgress], None]],
+        progress_callback: Callable[[DownloadProgress], None] | None,
     ) -> Path:
         """Stream-download a file over HTTP with live progress tracking."""
         self._emit(
@@ -400,7 +386,7 @@ class ModelDownloader:
             start_time = time.monotonic()
             last_emit = 0.0
 
-            with open(tmp_path, mode) as f:
+            with tmp_path.open(mode) as f:
                 for chunk in response.iter_bytes(chunk_size=CHUNK_SIZE):
                     if self._cancelled:
                         self._emit(
@@ -419,7 +405,7 @@ class ModelDownloader:
 
                     # Throttled progress reporting (~4 Hz).
                     now = time.monotonic()
-                    if now - last_emit >= 0.25 or total and downloaded >= total:
+                    if now - last_emit >= 0.25 or (total and downloaded >= total):
                         elapsed = max(now - start_time, 1e-9)
                         speed = (downloaded - resume_from) / (elapsed * 1024 * 1024)
                         pct = (downloaded / total * 100) if total else 0.0
@@ -469,7 +455,7 @@ class ModelDownloader:
 
     @staticmethod
     def _emit(
-        callback: Optional[Callable[[DownloadProgress], None]],
+        callback: Callable[[DownloadProgress], None] | None,
         progress: DownloadProgress,
     ) -> None:
         if callback is not None:
@@ -484,9 +470,7 @@ class ModelDownloader:
                 if entry.get("type") == "file":
                     filenames.append(entry.get("path", entry.get("rfilename", "")))
                 elif entry.get("type") == "directory":
-                    filenames.extend(
-                        ModelDownloader._extract_filenames(entry.get("children", []))
-                    )
+                    filenames.extend(ModelDownloader._extract_filenames(entry.get("children", [])))
         elif isinstance(data, dict):
             siblings = data.get("siblings", [])
             for sib in siblings:

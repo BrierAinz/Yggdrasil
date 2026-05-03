@@ -2,14 +2,14 @@
 
 from __future__ import annotations
 
-import os
 import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
-from forgemaster.cli import app
 from typer.testing import CliRunner
+
+from forgemaster.cli import app
+
 
 runner = CliRunner()
 
@@ -50,24 +50,26 @@ class TestScanCommand:
 
     def test_scan_catalog_flag(self):
         """Scan with --catalog flag should work."""
-        with tempfile.TemporaryDirectory() as tmp:
-            with patch("forgemaster.scanner.ModelScanner") as MockScanner:
-                mock_model = MagicMock()
-                mock_model.name = "test-model"
-                mock_model.format = "gguf"
-                mock_model.size_bytes = 1024
-                mock_model.architecture = "llama"
-                mock_model.quantization = "Q4_K_M"
-                mock_model.path = tmp
-                mock_result = MagicMock()
-                mock_result.models = [mock_model]
-                MockScanner.return_value.scan.return_value = mock_result
+        with (
+            tempfile.TemporaryDirectory() as tmp,
+            patch("forgemaster.scanner.ModelScanner") as mock_scanner,
+            patch("forgemaster.catalog.Catalog") as mock_catalog,
+        ):
+            mock_model = MagicMock()
+            mock_model.name = "test-model"
+            mock_model.format = "gguf"
+            mock_model.size_bytes = 1024
+            mock_model.architecture = "llama"
+            mock_model.quantization = "Q4_K_M"
+            mock_model.path = tmp
+            mock_result = MagicMock()
+            mock_result.models = [mock_model]
+            mock_scanner.return_value.scan.return_value = mock_result
 
-                with patch("forgemaster.catalog.Catalog") as MockCatalog:
-                    mock_cat = MagicMock()
-                    MockCatalog.return_value = mock_cat
-                    result = runner.invoke(app, ["scan", "--path", tmp, "--catalog"])
-                    assert result.exit_code == 0
+            mock_cat = MagicMock()
+            mock_catalog.return_value = mock_cat
+            result = runner.invoke(app, ["scan", "--path", tmp, "--catalog"])
+            assert result.exit_code == 0
 
 
 # ─── List Command ────────────────────────────────────────────────────────────
@@ -76,17 +78,17 @@ class TestScanCommand:
 class TestListCommand:
     def test_list_empty_catalog(self):
         """List with empty catalog should show message."""
-        with patch("forgemaster.catalog.Catalog") as MockCatalog:
+        with patch("forgemaster.catalog.Catalog") as mock_catalog:
             mock_cat = MagicMock()
             mock_cat.list_models.return_value = []
-            MockCatalog.return_value = mock_cat
+            mock_catalog.return_value = mock_cat
             result = runner.invoke(app, ["list"])
             assert result.exit_code == 0
             assert "No models" in result.output or "0 model" in result.output.lower()
 
     def test_list_with_models(self):
         """List with models in catalog."""
-        with patch("forgemaster.catalog.Catalog") as MockCatalog:
+        with patch("forgemaster.catalog.Catalog") as mock_catalog:
             mock_cat = MagicMock()
             # list_models returns a list of dicts
             mock_cat.list_models.return_value = [
@@ -100,13 +102,13 @@ class TestListCommand:
                     "scanned_at": None,
                 }
             ]
-            MockCatalog.return_value = mock_cat
+            mock_catalog.return_value = mock_cat
             result = runner.invoke(app, ["list"])
             assert result.exit_code == 0
 
     def test_list_with_format_filter(self):
         """List with format filter."""
-        with patch("forgemaster.catalog.Catalog") as MockCatalog:
+        with patch("forgemaster.catalog.Catalog") as mock_catalog:
             mock_cat = MagicMock()
             mock_model = MagicMock()
             mock_model.name = "test-model"
@@ -117,7 +119,7 @@ class TestListCommand:
             mock_model.scanned_at = None
             mock_model.id = 1
             mock_cat.list_models.return_value = [mock_model]
-            MockCatalog.return_value = mock_cat
+            mock_catalog.return_value = mock_cat
             result = runner.invoke(app, ["list", "--format", "gguf"])
             assert result.exit_code == 0
 
@@ -146,17 +148,15 @@ class TestStatsCommand:
 class TestCheckCommand:
     def test_check_with_gpu_vram(self):
         """Check with explicit GPU VRAM — model not found should exit(1)."""
-        with patch("forgemaster.gpu.GPUMonitor") as MockMonitor:
-            mock_monitor = MagicMock()
-            mock_monitor.get_gpu_info.return_value = []
-            MockMonitor.return_value = mock_monitor
-            with patch("forgemaster.scanner.ModelScanner") as MockScanner:
+        with patch("forgemaster.gpu.GPUMonitor") as mock_monitor:
+            monitor_instance = MagicMock()
+            monitor_instance.get_gpu_info.return_value = []
+            mock_monitor.return_value = monitor_instance
+            with patch("forgemaster.scanner.ModelScanner") as mock_scanner:
                 mock_result = MagicMock()
                 mock_result.models = []
-                MockScanner.return_value.scan.return_value = mock_result
-                result = runner.invoke(
-                    app, ["check", "test-model", "--gpu-vram", "12288"]
-                )
+                mock_scanner.return_value.scan.return_value = mock_result
+                result = runner.invoke(app, ["check", "test-model", "--gpu-vram", "12288"])
                 # Model not found -> exit_code 1
                 assert result.exit_code == 1
                 assert "not found" in result.output.lower()
@@ -168,11 +168,11 @@ class TestCheckCommand:
 class TestGPUCommand:
     def test_gpu_not_available(self):
         """GPU command when no GPU is available."""
-        with patch("forgemaster.gpu.GPUMonitor") as MockMonitor:
-            mock_monitor = MagicMock()
-            mock_monitor.get_gpu_info.return_value = []
-            mock_monitor.get_fallback_message.return_value = "No GPU detected."
-            MockMonitor.return_value = mock_monitor
+        with patch("forgemaster.gpu.GPUMonitor") as mock_monitor:
+            monitor_instance = MagicMock()
+            monitor_instance.get_gpu_info.return_value = []
+            monitor_instance.get_fallback_message.return_value = "No GPU detected."
+            mock_monitor.return_value = monitor_instance
             result = runner.invoke(app, ["gpu"])
             assert result.exit_code == 1
             assert "No GPU detected" in result.output
@@ -181,9 +181,9 @@ class TestGPUCommand:
         """GPU command when an NVIDIA GPU is available."""
         from forgemaster.gpu import GPUInfo
 
-        with patch("forgemaster.gpu.GPUMonitor") as MockMonitor:
-            mock_monitor = MagicMock()
-            mock_monitor.get_gpu_info.return_value = [
+        with patch("forgemaster.gpu.GPUMonitor") as mock_monitor:
+            monitor_instance = MagicMock()
+            monitor_instance.get_gpu_info.return_value = [
                 GPUInfo(
                     name="NVIDIA GeForce RTX 3060",
                     vram_total_mb=12288,
@@ -195,8 +195,8 @@ class TestGPUCommand:
                     gpu_type="nvidia",
                 )
             ]
-            mock_monitor.get_gpu_processes.return_value = []
-            MockMonitor.return_value = mock_monitor
+            monitor_instance.get_gpu_processes.return_value = []
+            mock_monitor.return_value = monitor_instance
             result = runner.invoke(app, ["gpu"])
             assert result.exit_code == 0
             assert "RTX 3060" in result.output
@@ -213,13 +213,15 @@ class TestDupesCommand:
 
     def test_dupes_empty_directory(self):
         """Dupes on empty dir should find no duplicates."""
-        with tempfile.TemporaryDirectory() as tmp:
-            with patch("forgemaster.disk.DuplicateFinder") as MockFinder:
-                mock_finder = MagicMock()
-                mock_finder.find_duplicates.return_value = []
-                MockFinder.return_value = mock_finder
-                result = runner.invoke(app, ["dupes", "--path", tmp])
-                assert result.exit_code == 0
+        with (
+            tempfile.TemporaryDirectory() as tmp,
+            patch("forgemaster.disk.DuplicateFinder") as mock_finder,
+        ):
+            finder_instance = MagicMock()
+            finder_instance.find_duplicates.return_value = []
+            mock_finder.return_value = finder_instance
+            result = runner.invoke(app, ["dupes", "--path", tmp])
+            assert result.exit_code == 0
 
 
 # ─── Download Command ─────────────────────────────────────────────────────────
@@ -228,9 +230,9 @@ class TestDupesCommand:
 class TestDownloadCommand:
     def test_download_connection_error(self):
         """Download with connection error should fail gracefully."""
-        with patch("forgemaster.downloader.ModelDownloader") as MockDL:
-            mock_dl = MagicMock()
-            mock_dl.list_model_files.side_effect = Exception("Connection error")
-            MockDL.return_value = mock_dl
+        with patch("forgemaster.downloader.ModelDownloader") as mock_dl:
+            downloader_instance = MagicMock()
+            downloader_instance.list_model_files.side_effect = Exception("Connection error")
+            mock_dl.return_value = downloader_instance
             result = runner.invoke(app, ["download", "test/model"])
             assert result.exit_code == 1

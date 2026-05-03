@@ -2,12 +2,8 @@
 
 from __future__ import annotations
 
-import io
 import json
-import os
-import time
-from pathlib import Path
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import MagicMock, Mock
 
 import httpx
 import pytest
@@ -23,6 +19,7 @@ from forgemaster.downloader import (
     ModelNotFoundError,
     _hf_url,
 )
+
 
 # ---------------------------------------------------------------------------
 # Fixtures & helpers
@@ -53,16 +50,13 @@ def fake_progress_collector():
 class FakeStreamResponse:
     """Minimal httpx.StreamResponse-like object for mocking."""
 
-    def __init__(
-        self, chunks: list[bytes], status_code: int = 200, headers: dict | None = None
-    ):
+    def __init__(self, chunks: list[bytes], status_code: int = 200, headers: dict | None = None):
         self.chunks = chunks
         self.status_code = status_code
         self.headers = headers or {}
 
     def iter_bytes(self, chunk_size=CHUNK_SIZE):
-        for chunk in self.chunks:
-            yield chunk
+        yield from self.chunks
 
     def raise_for_status(self):
         if self.status_code >= 400:
@@ -316,12 +310,7 @@ class TestDownloadFile:
     def test_file_already_exists(self, tmp_path):
         """When the file already exists and force_download is False, skip download."""
         cfg = make_config(cache_dir=str(tmp_path))
-        model_dir = (
-            tmp_path
-            / f"models--{cfg.model_id.replace('/', '--')}"
-            / "snapshots"
-            / "main"
-        )
+        model_dir = tmp_path / f"models--{cfg.model_id.replace('/', '--')}" / "snapshots" / "main"
         model_dir.mkdir(parents=True, exist_ok=True)
         existing = model_dir / "config.json"
         existing.write_text("{}")
@@ -333,12 +322,7 @@ class TestDownloadFile:
     def test_force_download_redownloads(self, tmp_path):
         """When force_download=True, download even if file exists."""
         cfg = make_config(cache_dir=str(tmp_path), force_download=True)
-        model_dir = (
-            tmp_path
-            / f"models--{cfg.model_id.replace('/', '--')}"
-            / "snapshots"
-            / "main"
-        )
+        model_dir = tmp_path / f"models--{cfg.model_id.replace('/', '--')}" / "snapshots" / "main"
         model_dir.mkdir(parents=True, exist_ok=True)
         existing = model_dir / "config.json"
         existing.write_text("{}")
@@ -350,7 +334,7 @@ class TestDownloadFile:
         mock_client.stream.return_value = FakeStreamContext(fake_resp)
 
         dl = ModelDownloader(client=mock_client)
-        callback, progresses = fake_progress_collector()
+        callback, _progresses = fake_progress_collector()
         result = dl.download_file(cfg, "config.json", progress_callback=callback)
         assert result.exists()
         # Should have attempted download
@@ -600,19 +584,14 @@ class TestResumeDownload:
         existing_data = b"first half "
         new_data = b"second half"
 
-        model_dir = (
-            tmp_path
-            / f"models--{cfg.model_id.replace('/', '--')}"
-            / "snapshots"
-            / "main"
-        )
+        model_dir = tmp_path / f"models--{cfg.model_id.replace('/', '--')}" / "snapshots" / "main"
         model_dir.mkdir(parents=True, exist_ok=True)
         part_file = model_dir / "model.bin.part"
         part_file.write_bytes(existing_data)
 
         # The server should respond with 206 and the remaining data
         mock_client = MagicMock()
-        full_data = existing_data + new_data
+        existing_data + new_data
         fake_resp = FakeStreamResponse(
             chunks=[new_data],
             status_code=206,
@@ -631,12 +610,7 @@ class TestResumeDownload:
         """With force_download, ignore .part file and start fresh."""
         cfg = make_config(cache_dir=str(tmp_path), force_download=True)
 
-        model_dir = (
-            tmp_path
-            / f"models--{cfg.model_id.replace('/', '--')}"
-            / "snapshots"
-            / "main"
-        )
+        model_dir = tmp_path / f"models--{cfg.model_id.replace('/', '--')}" / "snapshots" / "main"
         model_dir.mkdir(parents=True, exist_ok=True)
         part_file = model_dir / "model.bin.part"
         part_file.write_bytes(b"stale data")
@@ -670,9 +644,7 @@ class TestEdgeCases:
     def test_empty_file(self, tmp_path):
         cfg = make_config(cache_dir=str(tmp_path))
         mock_client = MagicMock()
-        fake_resp = FakeStreamResponse(
-            chunks=[], status_code=200, headers={"content-length": "0"}
-        )
+        fake_resp = FakeStreamResponse(chunks=[], status_code=200, headers={"content-length": "0"})
         mock_client.stream.return_value = FakeStreamContext(fake_resp)
 
         dl = ModelDownloader(client=mock_client)

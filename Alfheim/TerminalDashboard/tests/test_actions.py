@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
 from tui.actions import ActionResult, QuickActions
 
 
@@ -56,9 +54,7 @@ class TestQuickActions:
         qa = QuickActions(project_path="/nonexistent/path")
         result = qa._action_tests()
         assert result.action == "tests"
-        assert (
-            result.success is False or result.success is True
-        )  # Could fail gracefully
+        assert result.success is False or result.success is True  # Could fail gracefully
 
     @patch("subprocess.run")
     def test_git_action_success(self, mock_run: MagicMock) -> None:

@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import logging
-import os
 import subprocess
 import webbrowser
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +87,7 @@ class QuickActions:
         try:
             return handler()
         except Exception as exc:
-            logger.error("Action %s failed: %s", action_name, exc)
+            logger.exception("Action %s failed: %s", action_name, exc)
             return ActionResult(
                 success=False,
                 action=action_name,
@@ -118,9 +118,7 @@ class QuickActions:
                     text=True,
                     timeout=120,
                 )
-                output = (
-                    result.stdout[-500:] if len(result.stdout) > 500 else result.stdout
-                )
+                output = result.stdout[-500:] if len(result.stdout) > 500 else result.stdout
                 success = result.returncode == 0
                 return ActionResult(
                     success=success,
@@ -153,11 +151,7 @@ class QuickActions:
                 text=True,
                 timeout=10,
             )
-            branch = (
-                branch_result.stdout.strip()
-                if branch_result.returncode == 0
-                else "unknown"
-            )
+            branch = branch_result.stdout.strip() if branch_result.returncode == 0 else "unknown"
 
             # Get short status
             status_result = subprocess.run(
@@ -167,9 +161,7 @@ class QuickActions:
                 text=True,
                 timeout=10,
             )
-            status_output = (
-                status_result.stdout.strip() if status_result.returncode == 0 else "N/A"
-            )
+            status_output = status_result.stdout.strip() if status_result.returncode == 0 else "N/A"
 
             # Get recent commits
             log_result = subprocess.run(
@@ -179,9 +171,7 @@ class QuickActions:
                 text=True,
                 timeout=10,
             )
-            recent_commits = (
-                log_result.stdout.strip() if log_result.returncode == 0 else ""
-            )
+            recent_commits = log_result.stdout.strip() if log_result.returncode == 0 else ""
 
             # Count ahead/behind
             ahead_behind = ""

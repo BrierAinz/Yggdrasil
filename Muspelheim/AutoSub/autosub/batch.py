@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import glob
 from pathlib import Path
 
 from autosub.exporter import export_segments
@@ -126,9 +125,7 @@ class BatchProcessor:
 
                     # Determine output path
                     if output_dir:
-                        out_path = (
-                            Path(output_dir) / f"{file_path.stem}.{output_format}"
-                        )
+                        out_path = Path(output_dir) / f"{file_path.stem}.{output_format}"
                     else:
                         suffix = f".{target_lang}" if target_lang else ""
                         out_path = file_path.with_suffix(f"{suffix}.{output_format}")

@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
-from forgemaster.scanner import ModelInfo
+
+if TYPE_CHECKING:
+    from forgemaster.scanner import ModelInfo
 
 
 @dataclass
@@ -112,7 +114,6 @@ class VRAMCalculator:
         # Model weights
         model_weights_gb = self._estimate_weights_gb(model)
 
-        # Overhead (format-specific)
         overhead_multiplier = FORMAT_OVERHEAD.get(model.format, DEFAULT_OVERHEAD)
         overhead_gb = model_weights_gb * (overhead_multiplier - 1.0)
 
@@ -130,9 +131,7 @@ class VRAMCalculator:
             batch_size=batch_size,
         )
 
-    def can_run(
-        self, model: ModelInfo, gpu: GPUProfile, context_length: int = 4096
-    ) -> bool:
+    def can_run(self, model: ModelInfo, gpu: GPUProfile, context_length: int = 4096) -> bool:
         """Check if a model can run on a given GPU.
 
         Args:
@@ -200,9 +199,7 @@ class VRAMCalculator:
         gpu_layers = max(1, int(total_layers * gpu_ratio))
         cpu_layers = total_layers - gpu_layers
 
-        gpu_vram = (
-            estimate.kv_cache_gb + estimate.overhead_gb + (weights_gb * gpu_ratio)
-        )
+        gpu_vram = estimate.kv_cache_gb + estimate.overhead_gb + (weights_gb * gpu_ratio)
         cpu_ram = weights_gb * (1 - gpu_ratio)
 
         can_run = gpu_layers > 0
@@ -255,14 +252,10 @@ class VRAMCalculator:
         params_b = (model.parameters or 7_000_000_000) / 1_000_000_000
 
         # Bytes per token per billion parameters
-        kv_per_token = KV_CACHE_PER_TOKEN_BYTES.get(
-            model.architecture, DEFAULT_KV_PER_TOKEN
-        )
+        kv_per_token = KV_CACHE_PER_TOKEN_BYTES.get(model.architecture, DEFAULT_KV_PER_TOKEN)
 
         # KV cache = per_token * context_length * batch_size * params_b
-        kv_cache_bytes = (
-            kv_per_token * context_length * batch_size * params_b * 1024 * 1024
-        )
+        kv_cache_bytes = kv_per_token * context_length * batch_size * params_b * 1024 * 1024
 
         return kv_cache_bytes / (1024**3)
 

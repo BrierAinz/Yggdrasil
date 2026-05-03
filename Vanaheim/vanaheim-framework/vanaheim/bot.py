@@ -1,6 +1,6 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Optional
 
 
 class BaseBot(ABC):
@@ -8,16 +8,14 @@ class BaseBot(ABC):
     version: str = "0.1.0"
     description: str = ""
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: Optional[dict[str, Any]] = None):
         self.config = config or {}
         self.logger = logging.getLogger(self.name)
         self._setup_logging()
 
     def _setup_logging(self):
         handler = logging.StreamHandler()
-        formatter = logging.Formatter(
-            "%(asctime)s [%(name)s] %(levelname)s: %(message)s"
-        )
+        formatter = logging.Formatter("%(asctime)s [%(name)s] %(levelname)s: %(message)s")
         handler.setFormatter(formatter)
         self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO)
@@ -30,7 +28,7 @@ class BaseBot(ABC):
     def handle_message(self, message: str) -> str:
         pass
 
-    def health_check(self) -> Dict[str, Any]:
+    def health_check(self) -> dict[str, Any]:
         return {
             "name": self.name,
             "version": self.version,

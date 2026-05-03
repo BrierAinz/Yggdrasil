@@ -86,7 +86,5 @@ def export_segments(segments: list[Segment], fmt: str = "srt") -> str:
         "txt": export_txt,
     }
     if fmt not in exporters:
-        raise ValueError(
-            f"Unsupported format: {fmt}. Supported: {list(exporters.keys())}"
-        )
+        raise ValueError(f"Unsupported format: {fmt}. Supported: {list(exporters.keys())}")
     return exporters[fmt](segments)

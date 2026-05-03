@@ -2,15 +2,17 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from rich.bar import Bar
 from rich.console import Group
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 from textual.widgets import Static
-from tui.health import GPUInfo, SystemHealth
+
+
+if TYPE_CHECKING:
+    from tui.health import SystemHealth
 
 
 class SystemHealthPanel(Static):
@@ -37,9 +39,7 @@ class SystemHealthPanel(Static):
         self._health = health
         self._flash_fields: set[str] = set()
 
-    def update_health(
-        self, health: SystemHealth, flash_fields: set[str] | None = None
-    ) -> None:
+    def update_health(self, health: SystemHealth, flash_fields: set[str] | None = None) -> None:
         """Update the panel with new health data.
 
         Args:
@@ -90,10 +90,8 @@ class SystemHealthPanel(Static):
             style="dim",
         )
         if health.swap_total_gb > 0:
-            swap_label = self._maybe_flash("swap_pct", f"Swap {health.swap_pct:5.1f}%")
-            ram_text.append(
-                f"\n  Swap: {health.swap_used_gb:.1f} / {health.swap_total_gb:.1f} GB"
-            )
+            self._maybe_flash("swap_pct", f"Swap {health.swap_pct:5.1f}%")
+            ram_text.append(f"\n  Swap: {health.swap_used_gb:.1f} / {health.swap_total_gb:.1f} GB")
         sections.append(ram_text)
 
         # -- Disk Section --
@@ -129,9 +127,7 @@ class SystemHealthPanel(Static):
                 )
                 if gpu.temperature_c > 0:
                     temp_style = "yellow" if gpu.temperature_c > 80 else "green"
-                    gpu_text.append(
-                        f"  Temp: {gpu.temperature_c:.0f}°C", style=temp_style
-                    )
+                    gpu_text.append(f"  Temp: {gpu.temperature_c:.0f}°C", style=temp_style)
                 if gpu.power_draw_w > 0:
                     gpu_text.append(
                         f"  Power: {gpu.power_draw_w:.0f}/{gpu.power_limit_w:.0f}W",

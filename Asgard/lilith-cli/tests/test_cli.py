@@ -2,6 +2,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+
 YGGDRASIL_ROOT = Path(__file__).parent.parent.parent.parent.resolve()
 CLI = YGGDRASIL_ROOT / "Asgard" / "lilith-cli" / "lilith_cli" / "main.py"
 

@@ -9,9 +9,10 @@ from lilith_cli.tui.app import YggdrasilDashboard
 from lilith_cli.tui.log_view import LogViewer
 from lilith_cli.tui.realm_view import RealmStatusView
 
+
 __all__ = [
-    "YggdrasilDashboard",
-    "RealmStatusView",
     "AgentMonitorView",
     "LogViewer",
+    "RealmStatusView",
+    "YggdrasilDashboard",
 ]

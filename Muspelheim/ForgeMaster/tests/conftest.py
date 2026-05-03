@@ -9,8 +9,10 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from forgemaster.gpu import GPUInfo, GPUMonitor
 from forgemaster.scanner import ModelInfo
+
 
 # ─── Temporary model directories ───────────────────────────────────────────────
 

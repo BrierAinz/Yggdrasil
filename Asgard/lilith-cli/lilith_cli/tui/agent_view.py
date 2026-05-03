@@ -13,6 +13,7 @@ from rich.table import Table
 from rich.text import Text
 from textual.widgets import Static
 
+
 # ── Placeholder Agent Data ───────────────────────────────────────
 
 PLACEHOLDER_AGENTS: list[dict[str, str]] = [

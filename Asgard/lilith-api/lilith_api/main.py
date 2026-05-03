@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import threading
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from fastapi import Depends, FastAPI, Query
 from pydantic import BaseModel
+
 
 # ---------------------------------------------------------------------------
 # orjson integration – faster JSON serialisation with stdlib fallback
@@ -62,6 +63,7 @@ app = FastAPI(
 # CORS – restrict to localhost for dev environments
 from starlette.middleware.cors import CORSMiddleware
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -86,13 +88,13 @@ _lock = threading.Lock()
 class _LazyState:
     """Holds lazily-initialised application state behind a lock."""
 
-    __slots__ = ("config", "memory", "engine", "tools")
+    __slots__ = ("config", "engine", "memory", "tools")
 
     def __init__(self) -> None:
-        self.config: Optional[Any] = None
-        self.memory: Optional[Any] = None
-        self.engine: Optional[Any] = None
-        self.tools: Optional[Any] = None
+        self.config: Any | None = None
+        self.memory: Any | None = None
+        self.engine: Any | None = None
+        self.tools: Any | None = None
 
     def _ensure_config(self) -> Any:
         if self.config is None:
@@ -161,23 +163,23 @@ def get_tools() -> Any:
 # ---------------------------------------------------------------------------
 class ChatRequest(BaseModel):
     message: str
-    model: Optional[str] = None
+    model: str | None = None
 
 
 class ChatResponse(BaseModel):
     response: str
-    context_used: List[str]
-    tool_call: Dict[str, Any]
+    context_used: list[str]
+    tool_call: dict[str, Any]
 
 
 class ToolCallRequest(BaseModel):
     tool: str
-    params: Dict[str, Any] = {}
+    params: dict[str, Any] = {}
 
 
 class MemoryStoreRequest(BaseModel):
     text: str
-    metadata: Dict[str, Any] = {}
+    metadata: dict[str, Any] = {}
 
 
 # ---------------------------------------------------------------------------
@@ -210,7 +212,7 @@ async def execute_tool(
 @app.get("/tools")
 async def list_tools(
     tools: Any = Depends(get_tools),
-) -> Dict[str, str]:
+) -> dict[str, str]:
     return tools.list_tools()
 
 
