@@ -92,6 +92,13 @@ jobs:
       - name: Run pytest (forgemaster)
         run: pytest Niflheim/ForgeMaster/tests
 
+      - name: Install TerminalDashboard dependencies
+        run: |
+          pip install -e "Alfheim/TerminalDashboard[dev]"
+
+      - name: Run pytest (terminaldashboard)
+        run: pytest Alfheim/TerminalDashboard/tests
+
   type-check:
     name: Type check (pyright)
     runs-on: ubuntu-latest
