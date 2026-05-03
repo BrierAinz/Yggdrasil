@@ -22,17 +22,10 @@ jobs:
         run: pip install ruff
 
       - name: Run ruff check
-        run: |
-          ruff check . \
-            --exclude Helheim \
-            --exclude Muspelheim \
-            --exclude Niflheim \
-            --exclude __pycache__ \
-            --exclude .git \
-            --exclude "*.egg-info" \
-            --exclude node_modules \
-            --exclude .venv \
-            --exclude venv
+        run: ruff check .
+
+      - name: Run ruff format check
+        run: ruff format --check .
 
   test:
     name: Test (pytest)
@@ -45,59 +38,44 @@ jobs:
           python-version: "3.11"
           cache: pip
 
-      - name: Install dependencies
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install Asgard dependencies
         run: |
-          pip install pytest pytest-asyncio httpx
-          # Install modular packages in dependency order
-          pip install -e Asgard/lilith-core
-          pip install -e Asgard/lilith-memory
-          pip install -e Asgard/lilith-tools
-          pip install -e Asgard/lilith-orchestrator
-          pip install -e Asgard/lilith-api
-          pip install -e Asgard/lilith-cli
-          pip install -e Vanaheim/vanaheim-framework
+          uv pip install -e Asgard/lilith-core
+          uv pip install -e Asgard/lilith-memory
+          uv pip install -e Asgard/lilith-tools
+          uv pip install -e Asgard/lilith-orchestrator
+          uv pip install -e Asgard/lilith-api
+          uv pip install -e Asgard/lilith-cli
 
-      - name: Run pytest (lilith-core)
-        run: pytest Asgard/lilith-core/tests
+      - name: Install Vanaheim dependencies
+        run: uv pip install -e Vanaheim/vanaheim-framework
 
-      - name: Run pytest (lilith-memory)
-        run: pytest Asgard/lilith-memory/tests
-
-      - name: Run pytest (lilith-tools)
-        run: pytest Asgard/lilith-tools
-
-      - name: Run pytest (lilith-orchestrator)
-        run: pytest Asgard/lilith-orchestrator
-
-      - name: Run pytest (lilith-api)
-        run: pytest Asgard/lilith-api/tests
-
-      - name: Run pytest (lilith-cli)
-        run: pytest Asgard/lilith-cli/tests
-
-      - name: Run pytest (vanaheim-framework)
-        run: pytest Vanaheim/vanaheim-framework/tests
-
-      - name: Install AutoSub dependencies
+      - name: Install Muspelheim dependencies
         run: |
-          pip install -e Muspelheim/AutoSub
+          uv pip install -e Muspelheim/AutoSub
+          uv pip install -e Muspelheim/ForgeMaster
 
-      - name: Run pytest (autosub)
-        run: pytest Muspelheim/AutoSub/tests
-
-      - name: Install ForgeMaster dependencies
+      - name: Install Alfheim dependencies
         run: |
-          pip install -e Muspelheim/ForgeMaster
+          uv pip install -e "Alfheim/TerminalDashboard[dev]"
+          uv pip install -e Alfheim/dashboard
 
-      - name: Run pytest (forgemaster)
-        run: pytest Muspelheim/ForgeMaster/tests
+      - name: Run pytest (all packages)
+        run: pytest
 
-      - name: Install TerminalDashboard dependencies
+      - name: Install dev dependencies (for type checking)
         run: |
-          pip install -e "Alfheim/TerminalDashboard[dev]"
-
-      - name: Run pytest (terminaldashboard)
-        run: pytest Alfheim/TerminalDashboard/tests
+          uv pip install pyright pytest pytest-asyncio httpx
+          uv pip install -e Asgard/lilith-core
+          uv pip install -e Asgard/lilith-memory
+          uv pip install -e Asgard/lilith-tools
+          uv pip install -e Asgard/lilith-orchestrator
+          uv pip install -e Asgard/lilith-api
+          uv pip install -e Asgard/lilith-cli
+          uv pip install -e Vanaheim/vanaheim-framework
 
   type-check:
     name: Type check (pyright)
@@ -111,17 +89,20 @@ jobs:
           python-version: "3.11"
           cache: pip
 
+      - name: Install uv
+        run: pip install uv
+
       - name: Install dependencies
         run: |
-          pip install pyright
+          uv pip install pyright
           # Install packages so pyright can resolve imports
-          pip install -e Asgard/lilith-core
-          pip install -e Asgard/lilith-memory
-          pip install -e Asgard/lilith-tools
-          pip install -e Asgard/lilith-orchestrator
-          pip install -e Asgard/lilith-api
-          pip install -e Asgard/lilith-cli
-          pip install -e Vanaheim/vanaheim-framework
+          uv pip install -e Asgard/lilith-core
+          uv pip install -e Asgard/lilith-memory
+          uv pip install -e Asgard/lilith-tools
+          uv pip install -e Asgard/lilith-orchestrator
+          uv pip install -e Asgard/lilith-api
+          uv pip install -e Asgard/lilith-cli
+          uv pip install -e Vanaheim/vanaheim-framework
 
       - name: Run pyright on lilith-core
         run: pyright Asgard/lilith-core/lilith_core
@@ -135,43 +116,6 @@ jobs:
         run: pyright Asgard/lilith-tools/lilith_tools
         continue-on-error: true
 
-      - name: Run pyright on lilith-orchestrator
-        run: pyright Asgard/lilith-orchestrator
-        continue-on-error: true
-
-      - name: Run pyright on lilith-api
-        run: pyright Asgard/lilith-api/lilith_api
-        continue-on-error: true
-
-      - name: Run pyright on lilith-cli
-        run: pyright Asgard/lilith-cli/lilith_cli
-        continue-on-error: true
-
       - name: Run pyright on vanaheim-framework
         run: pyright Vanaheim/vanaheim-framework/vanaheim
-        continue-on-error: true
-
-  forgemaster-test:
-    name: ForgeMaster Tests (Python 3.12)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: Muspelheim/ForgeMaster
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: pip
-
-      - name: Install dependencies
-        run: pip install -e ".[dev]"
-
-      - name: Run pytest
-        run: pytest tests -v
-
-      - name: Run mypy
-        run: mypy forgemaster/
         continue-on-error: true

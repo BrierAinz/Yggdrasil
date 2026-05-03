@@ -2,10 +2,37 @@
 # https://docs.astral.sh/ruff/configuration/
 
 target-version = "py39"
-
-# Same as Black
 line-length = 100
 indent-width = 4
+
+# Top-level exclude — these directories are completely skipped
+extend-exclude = [
+    "Helheim",
+    "Niflheim",
+    "Muspelheim/AI-Influencer",
+    "Muspelheim/AutoMode",
+    "Muspelheim/Docs",
+    "Asgard/Lilith",
+    "Asgard/Hermes-Lilith",
+    "Asgard/Dashboards",
+    "Asgard/Lilith_backup*",
+    "Vanaheim/Agents",
+    "Vanaheim/Bots_Lilith_v5",
+    "Vanaheim/Config",
+    "Vanaheim/Core",
+    "Vanaheim/Council",
+    "Vanaheim/bots",
+    "Vanaheim/bifrost",
+    "Svartalfheim",
+    "Midgard",
+    ".git",
+    "__pycache__",
+    "*.egg-info",
+    "node_modules",
+    ".venv",
+    "venv",
+    "website-v2",
+]
 
 [lint]
 select = [
@@ -32,29 +59,41 @@ ignore = [
     "PLR2004", # magic value comparison
     "TRY003",  # avoid specifying exception messages
     "B905",    # zip() without strict (py39 compat)
+    "PLC0415", # import not at top-level (legitimate in tests & lazy imports)
+    "RUF001",  # ambiguous unicode char in string (Norse dashes are intentional)
+    "RUF002",  # ambiguous unicode char in docstring (Norse theme is intentional)
+    "RUF003",  # ambiguous unicode char in comment (Norse theme is intentional)
+    "RUF012",  # mutable class attr default (dataclass pattern)
+    "PLW1510", # subprocess run without check (intentional in health monitors & CLI)
+    "PLW0603", # global statement in function (singleton pattern)
+    "PLR0912", # too many branches (CLI commands are naturally branching)
+    "PLR0915", # too many statements (CLI commands are naturally long)
+    "PLR0911", # too many return statements
+    "TRY300",  # consider moving to else block (readability preference)
+    "TRY401",  # redundant exception object in logging.exception
+    "B008",    # function call in argument defaults (FastAPI Depends pattern)
+    "B017",    # assert blind Exception (test pattern)
+    "E741",    # ambiguous variable name (l is fine in context)
+    "E722",    # bare except (common in CLI error handling)
+    "E402",    # module level import not at top (legacy code with sys.path hacks)
+    "SIM105",  # try-except-pass -> contextlib.suppress (sometimes less readable)
+    "SIM108",  # ternary operator (sometimes if/else is clearer)
+    "SIM102",  # nested if -> single if (sometimes nesting is clearer)
+    "RUF034",  # useless if-else (false positives on intentional fallbacks)
 ]
 
-# Allow fix for all enabled rules
 fixable = ["ALL"]
 unfixable = []
 
-# Exclude directories from linting
-exclude = [
-    "Helheim",
-    "Muspelheim",
-    "Niflheim",
-    ".git",
-    "__pycache__",
-    "*.egg-info",
-    "node_modules",
-    ".venv",
-    "venv",
-]
-
 [lint.isort]
-known-first-party = ["lilith_core", "lilith_cli", "lilith_api", "lilith_memory", "lilith_tools", "lilith_orchestrator"]
+known-first-party = ["lilith_core", "lilith_cli", "lilith_api", "lilith_memory", "lilith_tools", "lilith_orchestrator", "forgemaster", "autosub", "alfheim_dashboard", "terminaldashboard", "vanaheim"]
 force-single-line = false
 lines-after-imports = 2
+
+[lint.per-file-ignores]
+"tests/**" = ["F401", "PTH"]
+"*_test.py" = ["F401", "PTH"]
+"conftest.py" = ["F401", "PTH"]
 
 [format]
 quote-style = "double"
