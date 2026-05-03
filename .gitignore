@@ -16,6 +16,8 @@ htmlcov/
 
 # Node
 node_modules/
+website-v2/build/
+website-v2/.docusaurus/
 npm-debug.log
 yarn-error.log
 .pnpm-debug.log

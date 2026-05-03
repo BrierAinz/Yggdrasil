@@ -1,0 +1,147 @@
+---
+sidebar_position: 5
+title: Changelog
+description: "Release history and changelog for Yggdrasil and Lilith"
+---
+
+# Changelog
+
+Every feature, fix, and evolution across the Nine Realms. From the first spark in Muspelheim to the enduring pillars of Asgard.
+
+## v5.0.0-alpha — PC Agent Telegram E2E
+
+**Status:** ✅ Active &nbsp;·&nbsp; **Released:** 2026-03-26
+
+Complete PC control from Telegram with auto-batched operations, single confirmation per batch, and dual-layer Discord protection. 31/31 tests passing.
+
+### Planner Auto-Batch
+
+Automatically groups multiple PC operations into a single batch. One confirmation instead of N. Integrates at 5 points in the planner pipeline — macro detection, learned plans, prefilter, and patterns.
+
+### Discord Redirect Message
+
+Dual-layer protection blocks PC operations in Discord. Layer 1 (Fail-Fast) detects intent before the planner runs. Layer 2 (Post-Planner) catches anything that slips through. Clean UX with informative redirect messages.
+
+### PC Macro Engine
+
+6 predefined macros: `backup_proyecto`, `compilar_y_test`, `setup_proyecto_python`, `limpiar_temp`, `git_commit_push`, `crear_estructura_web`. Natural language detection, parameter extraction, and validation.
+
+### Telegram Sessions
+
+Persistent session history with 24h TTL, disk persistence, isolated vault in MuninnDB, context formatting for prompts, and automatic cleanup of expired sessions.
+
+:::info Key Metrics
+
+- **31 tests passing** — 14 session tests + 17 macro tests. 100% success rate.
+- **7-layer security model**: Discord blocking, dual-layer protection, regex anti-injection, path sanitization, rate limiting, token expiration, vault isolation.
+- **~18,700 lines of code** · **~140 total tests** · **67 REST APIs** · **6 PC macros** · **8 MuninnDB vaults**.
+
+:::
+
+## All Releases
+
+The full evolution of Lilith from v1.0 to v5.0. Each version represents a milestone in the Nine Realms.
+
+| Version | Date | Realm | Highlights |
+|---------|------|-------|-----------|
+| `v5.0.0-alpha` | 2026-03-26 | Asgard | PC Agent Telegram E2E, Auto-Batch, Macros, Sessions, Discord dual-layer security |
+| `v4.2.3` | 2026-03-23 | Asgard | Crystal Kimi API, Health Checks, WebSocket Dashboard, 46 tests |
+| `v4.2.2` | 2026-03-22 | Asgard | DAG Execution Engine, usage guide, historical documentation |
+| `v4.2.0` | 2026-03-21 | Asgard | Full DAG implementation: PlanDag, DagExecutor, DagOptimizer |
+| `v4.0.0` | 2026-03-05 | Asgard | Multi-Agent system, DAG architecture, 5 specialist agents, MuninnDB, Kimi integration |
+| `v3.9.0` | 2026-02-28 | Vanaheim | Intent detection, Response Generator, Crystal Agent for Discord |
+| `v3.8.0` | 2026-02-20 | Vanaheim | Improved Discord integration, roles (Owner/Trusted/Public), slash commands |
+| `v3.7.0` | 2026-02-15 | Vanaheim | Enhanced Telegram bot, confirmation system, task delegation |
+| `v3.6.0` | 2026-02-10 | Vanaheim | Local search (Odin agent), basic web mining (Eva agent) |
+| `v3.5.0` | 2026-02-05 | Asgard | Tools v2 system, basic code generation |
+| `v3.0.0` | 2026-01-20 | Asgard | Modular architecture, configuration system, structured logging, unit tests |
+| `v2.3.0` | 2026-01-10 | Vanaheim | Basic Telegram integration, OpenRouter responses |
+| `v2.0.0` | 2026-01-01 | Muspelheim | Core rewrite, basic agent system, multi-LLM integration |
+| `v1.0.0` | 2025-12-15 | Muspelheim | First functional version, basic LLM API integration, simple memory |
+
+## The Journey
+
+From a single spark in Muspelheim to the living ecosystem spanning all Nine Realms. Each era brought new capabilities.
+
+### 🔥 Era I — The Spark (v1.0 — v2.0 · Dec 2025 – Jan 2026)
+
+The first light. A simple LLM integration and basic memory system. The core was rewritten from scratch in v2.0, establishing the foundation for everything that followed.
+
+- First functional version
+- LLM API integration
+- Simple memory system
+- Core rewrite (v2.0)
+- Basic agent system
+- Multi-LLM support
+
+### 🔮 Era II — The Awakening (v2.3 — v3.9 · Jan – Feb 2026)
+
+The agents learned to speak. Telegram integration, Discord with role-based access, intent detection, and the first specialist agents (Odin, Eva, Crystal).
+
+- Telegram bot integration
+- Discord bot with roles
+- Intent detection system
+- Crystal Agent for Discord
+- Response Generator
+- Confirmation & delegation
+
+### 🏰 Era III — The Kingdom (v4.0 — v4.2 · Mar 2026)
+
+Asgard formed. Multi-agent DAG architecture, MuninnDB cognitive memory, Kimi API integration, and the WebSocket Dashboard brought the ecosystem to life.
+
+- 5 specialist agents
+- DAG Execution Engine
+- MuninnDB cognitive memory
+- Kimi API integration
+- WebSocket Dashboard
+- 46 tests (v4.2.3)
+
+### 🌍 Era IV — The Convergence (v5.0-alpha · Mar 2026)
+
+Full PC control from Telegram. Auto-batched operations, macro engine, persistent sessions, and 7-layer security. The ecosystem converges into a unified control surface.
+
+- PC Agent Telegram E2E
+- Auto-Batch planner
+- 6 predefined macros
+- Persistent sessions
+- 7-layer security model
+- 140+ total tests
+
+## Security Model
+
+The v5.0 security model is built on 7 layers of protection, ensuring safe remote control of your machine.
+
+| # | Layer | Description |
+|---|-------|-------------|
+| 1 | **Discord Blocking** | PC operations disabled by default in Discord. Only authorized via Telegram. |
+| 2 | **Dual-Layer Detection** | Fail-fast layer catches intent before planner runs. Post-planner layer catches anything that slips through. |
+| 3 | **Regex Anti-Injection** | Pattern matching detects and filters dangerous inputs before they reach the command pipeline. |
+| 4 | **Path Sanitization** | Blocks `..`, `|`, `;`, `&&`, `||` in file paths to prevent injection attacks. |
+| 5 | **Rate Limiting** | 30 operations per hour maximum. Prevents abuse and runaway execution. |
+| 6 | **Token Expiration** | Confirmations expire after 60 seconds. Stale requests are automatically discarded. |
+| 7 | **Vault Isolation** | Telegram memory is isolated from Discord memory. One compromised channel cannot access the other. |
+
+## Roadmap
+
+What's coming next in the Nine Realms. These are the planned features for v5.1 and beyond.
+
+:::tip Planned Features
+
+- **🔮 v5.1 — Progress Streaming:** Real-time step-by-step feedback in Telegram. 6-8 hours estimated.
+- **📊 Macro Dashboard:** Metrics and analytics for executed macros.
+- **🧠 Custom Macro Learning:** System that learns and suggests custom macros based on usage patterns.
+- **✅ Granular Multi-Confirmation:** Confirm individual steps within a batch.
+- **📤 Session Export:** Export conversation history for analysis.
+- **⏪ Operation Rollback:** Undo PC operations with a single command.
+
+:::
+
+```
+Roadmap priorities:
+├─→ Progress Streaming (Telegram visual feedback)
+├─→ Dashboard de métricas de macros
+├─→ Custom macro learning system
+├─→ Granular multi-confirmation
+├─→ Session history export
+└─→ Operation rollback
+```

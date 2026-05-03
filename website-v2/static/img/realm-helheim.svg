@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <!-- Helheim — Skull with crossed bones, blood-red accents -->
+  <!-- Dark fog circle -->
+  <circle cx="64" cy="64" r="58" fill="rgba(204,34,51,0.06)" stroke="rgba(204,34,51,0.15)" stroke-width="1"/>
+  <circle cx="64" cy="64" r="50" fill="none" stroke="rgba(204,34,51,0.1)" stroke-width="0.5" stroke-dasharray="3,6"/>
+
+  <!-- Skull -->
+  <g transform="translate(64,50)">
+    <!-- Cranium -->
+    <ellipse cx="0" cy="-8" rx="20" ry="22" fill="rgba(204,34,51,0.12)" stroke="#cc2233" stroke-width="1.5"/>
+    <!-- Left eye socket -->
+    <ellipse cx="-7" cy="-10" rx="5" ry="6" fill="rgba(11,15,25,0.9)" stroke="#cc2233" stroke-width="1"/>
+    <!-- Right eye socket -->
+    <ellipse cx="7" cy="-10" rx="5" ry="6" fill="rgba(11,15,25,0.9)" stroke="#cc2233" stroke-width="1"/>
+    <!-- Nose -->
+    <path d="M0,-3 L-2,2 L2,2 Z" fill="rgba(11,15,25,0.7)" stroke="#cc2233" stroke-width="0.5"/>
+    <!-- Jaw -->
+    <path d="M-14,2 Q-16,14 -8,18 L8,18 Q16,14 14,2" fill="rgba(204,34,51,0.08)" stroke="#cc2233" stroke-width="1.5"/>
+    <!-- Teeth -->
+    <line x1="-8" y1="14" x2="-8" y2="18" stroke="#cc2233" stroke-width="1"/>
+    <line x1="-4" y1="14" x2="-4" y2="18" stroke="#cc2233" stroke-width="1"/>
+    <line x1="0" y1="14" x2="0" y2="18" stroke="#cc2233" stroke-width="1"/>
+    <line x1="4" y1="14" x2="4" y2="18" stroke="#cc2233" stroke-width="1"/>
+    <line x1="8" y1="14" x2="8" y2="18" stroke="#cc2233" stroke-width="1"/>
+  </g>
+
+  <!-- Crossed bones -->
+  <g stroke="#cc2233" stroke-width="2" stroke-linecap="round" opacity="0.7">
+    <line x1="36" y1="88" x2="60" y2="100"/>
+    <line x1="92" y1="88" x2="68" y2="100"/>
+    <!-- Bone ends -->
+    <circle cx="36" cy="88" r="3" fill="#cc2233" opacity="0.5"/>
+    <circle cx="60" cy="100" r="3" fill="#cc2233" opacity="0.5"/>
+    <circle cx="92" cy="88" r="3" fill="#cc2233" opacity="0.5"/>
+    <circle cx="68" cy="100" r="3" fill="#cc2233" opacity="0.5"/>
+  </g>
+
+  <!-- Rune ᚺ (Haglaz - hail, destruction) -->
+  <g stroke="#cc2233" stroke-width="1.2" stroke-linecap="round" opacity="0.4">
+    <line x1="96" y1="20" x2="96" y2="44"/>
+    <line x1="88" y1="28" x2="96" y2="20"/>
+    <line x1="96" y1="36" x2="104" y2="28"/>
+  </g>
+
+  <!-- Blood drips -->
+  <g fill="none" stroke="#cc2233" stroke-width="0.8" opacity="0.3">
+    <path d="M50,70 Q48,75 50,78"/>
+    <path d="M78,70 Q80,74 78,77"/>
+  </g>
+</svg>
