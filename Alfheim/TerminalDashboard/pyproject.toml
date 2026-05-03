@@ -1,3 +1,32 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "terminaldashboard"
+version = "0.1.0"
+description = "Yggdrasil Terminal Dashboard – TUI for monitoring all realms"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "textual>=2.0",
+    "rich>=13.0",
+    "psutil>=5.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "pytest-textual-snapshot>=0.1",
+]
+
+[project.scripts]
+yggdrasil-dashboard = "tui.app:main"
+
+[tool.setuptools.packages.find]
+include = ["tui*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
