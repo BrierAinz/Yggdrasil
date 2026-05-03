@@ -11,7 +11,7 @@ function HomepageHeader() {
       <div className="container">
         <div style={{textAlign: 'center', padding: '3rem 0'}}>
           <img
-            src="/Yggdrasil/static/img/logo-yggdrasil.svg"
+            src="/Yggdrasil/img/logo-yggdrasil.svg"
             alt="Yggdrasil"
             style={{height: '80px', marginBottom: '1.5rem', filter: 'drop-shadow(0 0 20px rgba(200, 162, 62, 0.4))'}}
           />
@@ -83,7 +83,7 @@ export default function Home() {
               }}>
                 <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem'}}>
                   <img
-                    src={`/Yggdrasil/static/img/realm-${realm.name.toLowerCase()}.svg`}
+                    src={`/Yggdrasil/img/realm-${realm.name.toLowerCase()}.svg`}
                     alt={realm.name}
                     style={{width: '36px', height: '36px'}}
                   />
