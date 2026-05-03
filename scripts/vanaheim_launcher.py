@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 
-sys.path.insert(0, str(Path(__file__).parent / "vanaheim-framework"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "Vanaheim" / "vanaheim-framework"))
 
 BOTS = {
     "vanaheim": ("Bots.vanaheim-bot", "main"),

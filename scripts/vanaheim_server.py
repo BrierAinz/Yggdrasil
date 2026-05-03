@@ -18,10 +18,10 @@ import sys
 from pathlib import Path
 
 
-# Añadir directorio actual al path para imports
-_current_dir = Path(__file__).parent.resolve()
-if str(_current_dir) not in sys.path:
-    sys.path.insert(0, str(_current_dir))
+# Añadir directorio de Vanaheim al path para imports
+_vanaheim_dir = Path(__file__).parent.parent / "Vanaheim"
+if str(_vanaheim_dir) not in sys.path:
+    sys.path.insert(0, str(_vanaheim_dir))
 
 # Setup logging antes de importar FastAPI
 logging.basicConfig(
@@ -33,7 +33,7 @@ logger = logging.getLogger("bifrost.server")
 
 def load_config():
     """Carga configuración desde config/bifrost.json."""
-    config_path = Path(__file__).parent / "config" / "bifrost.json"
+    config_path = Path(__file__).parent.parent / "Vanaheim" / "Config" / "bifrost.json"
     default_config = {
         "server": {"host": "0.0.0.0", "port": 9000},
         "logging": {"level": "INFO"},

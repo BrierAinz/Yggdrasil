@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 
-YGGDRASIL_ROOT = Path(__file__).parent.resolve()
+YGGDRASIL_ROOT = Path(__file__).parent.parent.resolve()
 REALMS = [
     "Asgard",
     "Vanaheim",

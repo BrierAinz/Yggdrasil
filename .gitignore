@@ -40,6 +40,7 @@ Thumbs.db
 # Yggdrasil specific
 Helheim/Quarantine_*/
 Helheim/Archives_*/
+Helheim/*.tar.gz
 *.log
 logs/
 tmp/
@@ -59,12 +60,10 @@ Niflheim/Models/
 Muspelheim/AI-Influencer/outputs/**/*.png
 Muspelheim/AI-Influencer/outputs/**/*.jpg
 Muspelheim/AI-Influencer/outputs/**/*.webp
-Helheim/Archives_Lilith_Legacy_*.tar.gz
 
-# Binaries & Archives
+# Binaries & archives
 Asgard/*.tar.gz
 Asgard/*.exe
-Asgard/]
 *.exe
 
 # Databases

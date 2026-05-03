@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """EchoBot — Bot de ejemplo funcional usando vanaheim-framework."""
+
 import asyncio
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "vanaheim-framework"))
+
+sys.path.insert(0, str(Path(__file__).parent.parent / "Vanaheim" / "vanaheim-framework"))
 
 from vanaheim.bot import BaseBot
 from vanaheim.config import load_config
@@ -25,10 +27,8 @@ class EchoBot(BaseBot):
             result = self.execute_tool("web_search", {"query": query})
             hits = result.get("results", [])
             if hits:
-                lines = [f"{i+1}. {h['title']} - {h['url']}" for i, h in enumerate(hits[:3])]
-                return "Resultados:
-" + "
-".join(lines)
+                lines = [f"{i + 1}. {h['title']} - {h['url']}" for i, h in enumerate(hits[:3])]
+                return "Resultados:\n" + "\n".join(lines)
             return "Sin resultados."
 
         if msg.startswith("/status"):
@@ -41,7 +41,7 @@ class EchoBot(BaseBot):
 async def main():
     config = load_config()
     bot = EchoBot(config)
-    print(f"[EchoBot] Iniciado. Escribe /salir para terminar.")
+    print("[EchoBot] Iniciado. Escribe /salir para terminar.")
     while True:
         try:
             user = input("> ").strip()

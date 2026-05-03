@@ -6,7 +6,7 @@ from pathlib import Path
 
 
 # Agregar directorio de Vanaheim al path ANTES de cualquier import
-vanaheim_dir = Path(__file__).parent.resolve()
+vanaheim_dir = Path(__file__).parent.parent / "Vanaheim"
 sys.path.insert(0, str(vanaheim_dir))
 
 # Ahora importar y ejecutar

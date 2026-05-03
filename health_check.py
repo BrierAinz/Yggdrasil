@@ -54,11 +54,21 @@ def scan_realm(name: str) -> dict:
     }
 
     for root, dirs, files in os.walk(path):
-        # Skip quarantine and hidden
+        # Skip quarantine, hidden, cache, and legacy dirs
         rel = Path(root).relative_to(path)
         if any(p.startswith(".") for p in rel.parts):
             continue
-        if "Quarantine" in str(rel) or "quarantine" in str(rel):
+        skip_parts = {
+            "Quarantine",
+            "quarantine",
+            "__pycache__",
+            ".pytest_cache",
+            "node_modules",
+            ".venv",
+            "venv",
+            ".ruff_cache",
+        }
+        if any(p in skip_parts for p in rel.parts):
             continue
 
         for d in dirs:

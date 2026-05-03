@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 
-YGGDRASIL = Path(__file__).parent.resolve()
+YGGDRASIL = Path(__file__).parent.parent.resolve()
 STATE_FILE = YGGDRASIL / ".yggdrasil_state.json"
 
 
@@ -16,6 +16,10 @@ EXCLUDE_DIRS = {
     "Archives",
     "Archives_Lilith_Monolith",
     "Archives_Lilith_Legacy",
+    ".venv",
+    "venv",
+    ".ruff_cache",
+    ".pytest_cache",
 }
 
 
