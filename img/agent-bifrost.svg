@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Bifrost — Telegram Gateway Agent -->
+  <!-- Rainbow bridge + telegram + ports, cyan/blue palette -->
+
+  <circle cx="100" cy="100" r="90" fill="rgba(34,136,170,0.04)" stroke="rgba(34,136,170,0.15)" stroke-width="1"/>
+  <circle cx="100" cy="100" r="78" fill="none" stroke="rgba(34,136,170,0.08)" stroke-width="0.5" stroke-dasharray="3,8"/>
+
+  <!-- Rainbow bridge arc -->
+  <path d="M30,150 Q65,40 100,55 Q135,40 170,150" fill="none" stroke="url(#bifrost-grad)" stroke-width="3" opacity="0.6"/>
+  <defs>
+    <linearGradient id="bifrost-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#aa55ff"/>
+      <stop offset="25%" stop-color="#2288aa"/>
+      <stop offset="50%" stop-color="#00ff88"/>
+      <stop offset="75%" stop-color="#C7A44A"/>
+      <stop offset="100%" stop-color="#ff3366"/>
+    </linearGradient>
+  </defs>
+  <!-- Second thinner bridge arc -->
+  <path d="M35,150 Q68,48 100,60 Q132,48 165,150" fill="none" stroke="url(#bifrost-grad)" stroke-width="1.5" opacity="0.3"/>
+
+  <!-- Telegram paper plane icon (stylized) -->
+  <g transform="translate(82,85)">
+    <path d="M0,20 L5,8 L35,0 L8,15 Z" fill="rgba(34,136,170,0.15)" stroke="#2288aa" stroke-width="1.2" stroke-linejoin="round"/>
+    <path d="M5,8 L8,15 L35,0 Z" fill="rgba(34,136,170,0.1)" stroke="#2288aa" stroke-width="0.8"/>
+  </g>
+
+  <!-- Port/connection indicators -->
+  <g opacity="0.5">
+    <!-- Left port -->
+    <rect x="25" y="95" rx="2" width="18" height="10" fill="none" stroke="#2288aa" stroke-width="1"/>
+    <text x="34" y="103" font-family="monospace" font-size="5" fill="#2288aa" text-anchor="middle">:8080</text>
+    <line x1="43" y1="100" x2="70" y2="100" stroke="#2288aa" stroke-width="0.5" stroke-dasharray="2,3"/>
+
+    <!-- Right port -->
+    <rect x="155" y="95" rx="2" width="22" height="10" fill="none" stroke="#2288aa" stroke-width="1"/>
+    <text x="166" y="103" font-family="monospace" font-size="5" fill="#2288aa" text-anchor="middle">:/api</text>
+    <line x1="130" y1="100" x2="155" y2="100" stroke="#2288aa" stroke-width="0.5" stroke-dasharray="2,3"/>
+  </g>
+
+  <!-- Rune ᛒ (Berkano - birch, new beginnings — for Bifrost) -->
+  <g stroke="#2288aa" stroke-width="1.2" stroke-linecap="round" opacity="0.4" transform="translate(155,45)">
+    <line x1="0" y1="-10" x2="0" y2="10"/>
+    <path d="M0,-10 Q10,-5 0,0" fill="none"/>
+    <path d="M0,0 Q10,5 0,10" fill="none"/>
+  </g>
+
+  <!-- Data flow particles -->
+  <g fill="#2288aa" opacity="0.4">
+    <circle cx="50" cy="110" r="1.5"/>
+    <circle cx="58" cy="100" r="1"/>
+    <circle cx="142" cy="105" r="1.5"/>
+    <circle cx="148" cy="95" r="1"/>
+  </g>
+
+  <!-- Floating runes -->
+  <g fill="rgba(34,136,170,0.2)" font-family="serif" font-size="10">
+    <text x="30" y="55">ᚠ</text>
+    <text x="165" y="150">ᛏ</text>
+    <text x="40" y="130">ᚦ</text>
+  </g>
+
+  <!-- Energy field at base -->
+  <ellipse cx="100" cy="165" rx="45" ry="8" fill="rgba(34,136,170,0.05)"/>
+</svg>

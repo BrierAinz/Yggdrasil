@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
+  <defs>
+    <filter id="glow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <circle cx="60" cy="60" r="56" fill="#0b0f19" stroke="#06b6d4" stroke-width="2"/>
+  <circle cx="60" cy="60" r="48" fill="#06b6d4" opacity="0.05"/>
+  <!-- Ice crystal/Niflheim -->
+  <g filter="url(#glow)" stroke="#06b6d4" stroke-width="1.5" fill="none">
+    <path d="M60 25 L78 50 L60 80 L42 50 Z"/>
+    <path d="M42 50 L78 50" opacity="0.6"/>
+    <path d="M60 25 L60 80" opacity="0.4"/>
+    <circle cx="60" cy="50" r="8" fill="#06b6d4" opacity="0.15"/>
+    <circle cx="60" cy="50" r="3" fill="#06b6d4" opacity="0.4"/>
+    <!-- Ice sparkles -->
+    <circle cx="48" cy="35" r="2" fill="#06b6d4" opacity="0.5"/>
+    <circle cx="72" cy="35" r="2" fill="#06b6d4" opacity="0.5"/>
+    <circle cx="48" cy="65" r="1.5" fill="#06b6d4" opacity="0.4"/>
+    <circle cx="72" cy="65" r="1.5" fill="#06b6d4" opacity="0.4"/>
+  </g>
+  <text x="60" y="104" text-anchor="middle" fill="#06b6d4" font-family="serif" font-size="14" font-weight="bold">ᚾ</text>
+</svg>
