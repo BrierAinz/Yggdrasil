@@ -1,5 +1,9 @@
 """
-API endpoints para consulta de documentación (Archivero).
+API endpoints para consulta de documentación.
+
+Archivero agent has been removed. These endpoints now use
+a simple file-based fallback until a replacement agent is implemented.
+
 Endpoints:
 - POST /api/docs/query  : Consulta la Knowledge Base
 - GET  /api/docs/index  : Lista documentos disponibles
@@ -40,26 +44,13 @@ async def query_docs(request: DocsQueryRequest):
     """
     Consulta la Knowledge Base en Svartalfheim.
 
-    Usa el Agente Archivero para buscar información relevante
-    y generar una respuesta con fuentes citadas.
+    NOTE: Archivero agent removed. Returns placeholder response
+    until a replacement agent is implemented.
     """
-    try:
-        # Importar agente
-        from src.core.agents.panteon.archivero import ArchiveroAgent
-
-        archivero = ArchiveroAgent()
-        result = await archivero.query_with_metadata(request.question)
-
-        return DocsQueryResponse(
-            answer=result["answer"],
-            sources=result["sources"],
-            confidence=result["confidence"],
-        )
-
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Error consultando documentación: {str(e)}"
-        )
+    raise HTTPException(
+        status_code=501,
+        detail="Archivero agent removed. Docs query endpoint pending replacement agent.",
+    )
 
 
 @router.get("/index", response_model=DocsIndexResponse)

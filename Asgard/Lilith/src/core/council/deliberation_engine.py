@@ -28,7 +28,6 @@ AGENT_WEIGHTS: Dict[str, Dict[str, float]] = {
     "eva": {"research": 1.5, "analysis": 1.3, "documentation": 1.2},
     "adan": {"code": 1.5, "refactor": 1.3, "testing": 1.2, "performance": 1.3},
     "odin": {"architecture": 1.5, "planning": 1.3, "strategy": 1.4},
-    "archivero": {"documentation": 1.5, "history": 1.3, "knowledge": 1.2},
 }
 
 # Prompt para análisis individual
@@ -130,7 +129,6 @@ class DeliberationEngine:
         if self._agents is not None:
             return self._agents
         from src.core.agents.panteon.adan import AdanAgent
-        from src.core.agents.panteon.archivero import ArchiveroAgent
         from src.core.agents.panteon.eva import EvaAgent
         from src.core.agents.panteon.odin import OdinAgent
 
@@ -139,7 +137,6 @@ class DeliberationEngine:
             ("eva", EvaAgent),
             ("adan", AdanAgent),
             ("odin", OdinAgent),
-            ("archivero", ArchiveroAgent),
         ]:
             try:
                 instance = cls()

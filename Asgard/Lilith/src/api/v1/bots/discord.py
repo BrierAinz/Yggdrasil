@@ -294,7 +294,6 @@ _TOOL_TO_AGENT: Dict[str, str] = {
     "delegate_lucifer": "Lilith",
     "delegate_odin": "Odin",
     "delegate_kimi_cli": "Kimi",
-    "delegate_albedo": "Albedo",
     "delegate_web_scraper": "Web Scraper",
     "delegate_content_cleaner": "Content Cleaner",
     "delegate_quality_filter": "Quality Filter",
@@ -1061,7 +1060,6 @@ def _is_dangerous_step(tool_name: str, params: dict) -> bool:
         "delete",
         "delegate_cursor",
         "delegate_kimi_cli",
-        "delegate_albedo",
         "owner_system_action",
     ):
         if tool_name == "delegate_cursor":
@@ -1102,13 +1100,6 @@ def _summarize_plan(steps: List[Tuple[str, dict]]) -> str:
                 f"- **Kimi CLI**: {task}…"
                 if len(params.get("task") or "") > 200
                 else f"- **Kimi CLI**: {task}"
-            )
-        elif tool_name == "delegate_albedo":
-            task = (params.get("task") or "").strip()[:200]
-            lines.append(
-                f"- **Albedo**: {task}…"
-                if len(params.get("task") or "") > 200
-                else f"- **Albedo**: {task}"
             )
         else:
             lines.append(f"- **{tool_name}**")
@@ -3346,26 +3337,9 @@ async def discord_chat(request: DiscordChatRequest) -> Response:
                 response_text = _normalize_response_for_discord(
                     ((response_text or "").strip() or "(Sin respuesta)")
                 )
-                # ── Albedo: Intérprete — reformateo si excede límite de embed ───────
+                # ── Albedo REMOVED — simple truncation if too long ──
                 if len(response_text) > 4000:
-                    try:
-                        from src.core.agents.panteon.albedo import (
-                            AlbedoAgent as _AlbedoAgent,
-                        )
-
-                        _reformatted = await _AlbedoAgent().interpret_for_channel(
-                            response_text, "discord_embed", 3900
-                        )
-                        if _reformatted:
-                            response_text = _reformatted
-                            logger.debug(
-                                "[Albedo:Intérprete] Reformateado: %d chars",
-                                len(response_text),
-                            )
-                        else:
-                            response_text = response_text[:3900] + "\n\n… *(truncado)*"
-                    except Exception:
-                        response_text = response_text[:3900] + "\n\n… *(truncado)*"
+                    response_text = response_text[:3900] + "\n\n… *(truncado)*"
                 if getattr(request, "channel_id", None):
                     _thread_memory_append(
                         _project_root(),
@@ -3718,12 +3692,9 @@ async def discord_chat(request: DiscordChatRequest) -> Response:
                 tokens_used=estimated_tokens,
             )
 
-            # ─── Crystal Agent Processing ─────────────────────────────────────────
-            from src.core.agents.panteon.crystal import get_crystal_agent
-
-            crystal = get_crystal_agent(
-                config_path=_project_root() / "Config" / "crystal.json"
-            )
+            # ─── Crystal Agent REMOVED — Discord bot disabled ──
+            # Crystal agent processing replaced with NotImplementedError
+            raise NotImplementedError("Crystal agent removed — Discord bot disabled")
 
             # Preparar contexto
             context = {

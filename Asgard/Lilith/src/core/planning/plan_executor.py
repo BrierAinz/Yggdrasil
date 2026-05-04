@@ -816,28 +816,7 @@ class PlanExecutor:
                 step_results[sid] = last_result
                 step_metadata[sid] = _extract_source_metadata(result)
                 _audit_step_executed(sid, step.tool_name, last_result)
-                # ── Albedo: Centinela — quality review (solo loggear en V1) ───────
-                if step.tool_name.startswith("delegate_"):
-                    try:
-                        from .agents.albedo_agent import AlbedoAgent as _AlbedoAgent
-
-                        _alb = _AlbedoAgent()
-                        if _alb.enabled:
-                            _task = (params.get("task") or params.get("message") or "")[
-                                :500
-                            ]
-                            _qc = _alb.sentinel_review_sync(
-                                _task, last_result, agent_name
-                            )
-                            if _qc:
-                                logger.debug(
-                                    "[Albedo:Centinela] %s → score=%s/10 | %s",
-                                    agent_name,
-                                    _qc.get("score", "?"),
-                                    (_qc.get("notes") or "")[:100],
-                                )
-                    except Exception as _e:
-                        logger.warning("[Albedo:Centinela] Error: %s", _e)
+                # ── Albedo: Centinela REMOVED — no quality review ──
                 denied = _try_parse_permission_denied(result)
                 if denied and event_callback:
                     try:

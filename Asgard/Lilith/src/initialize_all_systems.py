@@ -90,25 +90,10 @@ def initialize_all_systems(base_dir: Path):
     except Exception as e:
         logger.error(f"❌ Failed to initialize Confidence Calculator: {e}")
 
-    # --- MISIÓN 1: Crystal Agent ---
-    try:
-        from crystal_agent import get_crystal_agent
-        from openrouter_client import get_openrouter_client
-
-        crystal_config = config_dir / "crystal.json"
-
-        if not crystal_config.exists():
-            logger.warning(f"crystal.json not found, copying from /home/claude/")
-            import shutil
-
-            shutil.copy("/home/claude/crystal.json", crystal_config)
-
-        crystal = get_crystal_agent(config_path=crystal_config)
-        openrouter = get_openrouter_client(config_path=crystal_config)
-
-        logger.info(f"✅ Crystal Agent initialized")
-    except Exception as e:
-        logger.error(f"❌ Failed to initialize Crystal: {e}")
+    # --- MISIÓN 1: Crystal Agent (REMOVED) ---
+    # Crystal agent has been removed from the panteón.
+    # The 4 active agents are: Eva, Adán, Odín, Shalltear.
+    logger.info("⏭️ Crystal Agent initialization skipped (agent removed)")
 
     # --- MISIÓN 1: Memory Router v2 ---
     try:
@@ -181,7 +166,7 @@ def initialize_all_systems(base_dir: Path):
         "personality_modes": True,
         "decision_auditor": True,
         "confidence_calculator": True,
-        "crystal": True,
+        "crystal": False,  # Removed
         "memory_router": True,
         "discord_router": True,
         "context_enricher": True,

@@ -112,19 +112,7 @@ class DelegationDetector:
                 "strategy",
             ],
             "description": "Arquitectura, diseño, planificación estratégica",
-        },
-        "archivero": {
-            "keywords": [
-                "docs",
-                "documentación",
-                "cómo funciona",
-                "how does",
-                "explicar",
-                "explain",
-                "buscar en docs",
-            ],
-            "description": "Consulta de documentación técnica",
-        },
+},
         "shalltear": {
             "keywords": [
                 "creativo",

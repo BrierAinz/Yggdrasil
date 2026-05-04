@@ -125,7 +125,7 @@ def create_default_agent_registry(base_path: Optional[Path] = None) -> AgentRegi
         DelegateLuciferTool,
         DelegateOdinTool,
     )
-    from .tools_v3.archivero_tool import DelegateArchiveroTool
+    # Archivero removed — pending replacement
     from .web_scraper_agent import WebScraperAgent
 
     reg = AgentRegistry()
@@ -162,14 +162,7 @@ def create_default_agent_registry(base_path: Optional[Path] = None) -> AgentRegi
             DelegateOdinTool(),
         )
     )
-    reg.register(
-        _DelegateToolAgent(
-            "archivero",
-            "delegate_archivero",
-            "Archivero: documentación técnica, arquitectura, historia (Kimi + RAG).",
-            DelegateArchiveroTool(),
-        )
-    )
+# Archivero registration removed
     reg.register(WebScraperAgent(root))
     reg.register(ContentCleanerAgent(root))
     reg.register(QualityFilterAgent(root))

@@ -112,26 +112,9 @@ async def check_muninn() -> Dict:
         from src.core.memory.muninn_memory import MuninnMemory
 
         muninn = MuninnMemory()
-        # Intentar una operación simple
         return {"status": "online", "message": "MuninnDB disponible"}
     except Exception as e:
         return {"status": "offline", "message": str(e)}
-
-
-async def check_archivero() -> Dict:
-    """Verifica que el agente Archivero funcione."""
-    try:
-        from src.core.agents.panteon.archivero import ArchiveroAgent
-
-        agent = ArchiveroAgent()
-        return {
-            "status": "online",
-            "vault": agent.muninn_docs.active_vault
-            if hasattr(agent.muninn_docs, "active_vault")
-            else "unknown",
-        }
-    except Exception as e:
-        return {"status": "error", "message": str(e)}
 
 
 @router.get("/full")
@@ -141,17 +124,16 @@ async def health_check_full():
     """
     start_time = datetime.now()
 
-    # Verificar todas las APIs en paralelo
+    # Verificar todas las APIs en paralelo (sin archivero — removed)
     results = await asyncio.gather(
         check_kimi_api(),
         check_grok_api(),
         check_venice_api(),
         check_muninn(),
-        check_archivero(),
         return_exceptions=True,
     )
 
-    kimi, grok, venice, muninn, archivero = results
+    kimi, grok, venice, muninn = results
 
     # Contar servicios online
     online_count = sum(
@@ -159,7 +141,7 @@ async def health_check_full():
         for r in [kimi, grok, venice, muninn]
         if isinstance(r, dict) and r.get("status") == "online"
     )
-    total_count = 5
+    total_count = 4
 
     return {
         "status": "healthy" if online_count >= 2 else "degraded",
@@ -177,9 +159,6 @@ async def health_check_full():
             "muninn_db": muninn
             if not isinstance(muninn, Exception)
             else {"status": "error", "message": str(muninn)},
-            "archivero_agent": archivero
-            if not isinstance(archivero, Exception)
-            else {"status": "error", "message": str(archivero)},
         },
         "summary": {
             "online": online_count,

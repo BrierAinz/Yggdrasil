@@ -19,9 +19,6 @@ Vanaheim/
 │   ├── Adan/                        # Codigo y refactoring (Ollama/qwen2.5-coder)
 │   │   ├── agent.py
 │   │   └── __init__.py
-│   ├── Crystal/                     # Asistente publico Discord (Kimi)
-│   │   ├── agent.py
-│   │   └── __init__.py
 │   ├── Eva/                         # Analisis y documentacion (Grok/xAI)
 │   │   ├── agent.py
 │   │   └── __init__.py
@@ -104,7 +101,6 @@ Vanaheim/
 | **Shalltear** | llama-3.3-70b | Venice | Clasificacion, parsing NL, triaje | 32k |
 | **Adan** | qwen2.5-coder:7b | Ollama (local) | Codigo, tests, refactoring | 32k |
 | **Eva** | grok-4-fast-reasoning | xAI/Grok | Analisis, documentacion, research | 128k |
-| **Crystal** | kimi-for-coding | Kimi | Conversacion, asistencia general | 8k (fallback Ollama) |
 | **Odin** | kimi-for-coding | Kimi | Investigacion profunda, analisis masivo | 262k |
 
 ---

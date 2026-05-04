@@ -99,7 +99,7 @@ def _call_odin_sync(task: str, context: str = "") -> Optional[str]:
 def _call_lucifer_sync(
     task: str, context: str = "", project_root: Optional[Path] = None
 ) -> str:
-    """Voz de Lilith: Grok → Odín (Kimi) → Albedo (local). Siempre retorna un string."""
+    """Voz de Lilith: Grok → Odín (Kimi). Siempre retorna un string."""
     # 1. Grok directo (voz propia de Lilith)
     result = _call_grok_lilith_sync(task, context, project_root)
     if result:
@@ -110,16 +110,7 @@ def _call_lucifer_sync(
     if result:
         return result
 
-    # 3. Último recurso: Albedo local
-    try:
-        from src.core.agents.panteon.albedo import AlbedoAgent
-
-        result = AlbedoAgent().quick_resolve_sync(task)
-        if result:
-            return result
-    except Exception:
-        pass
-
+    # Albedo eliminado — sin más fallbacks
     return "(Sin respuesta)"
 
 

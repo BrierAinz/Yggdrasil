@@ -22,15 +22,6 @@
       "timeout": 120,
       "temperature": 0.5
     },
-    "crystal": {
-      "enabled": true,
-      "model": "kimi-for-coding",
-      "provider": "kimi",
-      "fallback_provider": "ollama",
-      "fallback_model": "llama3.2:latest",
-      "timeout": 60,
-      "temperature": 0.7
-    },
     "odin": {
       "enabled": true,
       "model": "kimi-for-coding",

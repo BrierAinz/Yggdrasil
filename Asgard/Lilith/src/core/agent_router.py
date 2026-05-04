@@ -6,16 +6,15 @@ Reglas de routing:
 - Adán:    código puro, tests, refactorización
 - Odín:    investigación, creativo, privado — absorbió a Lucifer
 - Kimi:    por defecto (Lilith, razonamiento, planificación)
-- Crystal: asistente público para Discord (sin herramientas peligrosas)
+- Shalltear: triage, clasificación, parsing NL
 """
 import asyncio
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from .agents.adan_agent import AdanAgent
-from .agents.crystal_agent import CrystalAgent, get_crystal_agent
-from .agents.eva_agent import EvaAgent
-from .agents.odin_agent import OdinAgent
+from .agents.panteon.adan import AdanAgent
+from .agents.panteon.eva import EvaAgent
+from .agents.panteon.odin import OdinAgent
 
 
 class AgentRouter:
@@ -28,15 +27,6 @@ class AgentRouter:
         self.eva = EvaAgent()
         self.adan = AdanAgent()
         self.odin = OdinAgent()
-        self.crystal = (
-            get_crystal_agent(
-                config_path=Path(base_path) / "Config" / "crystal.json"
-                if base_path
-                else None
-            )
-            if base_path
-            else None
-        )
 
         # Mapeo de nombres a agentes
         # Nota: "kimi" es Lilith (orquestador), no un agente del panteón; "odin" usa Kimi para análisis masivo
@@ -45,7 +35,6 @@ class AgentRouter:
             "adan": self.adan,
             "lucifer": self.odin,  # Legacy alias → Odín absorbió a Lucifer
             "odin": self.odin,
-            "crystal": self.crystal,
             "kimi": None,  # Lilith/Kimi es el orquestador
             "grok": None,  # Legacy: Grok ahora es Eva
         }
@@ -70,12 +59,6 @@ class AgentRouter:
             Nombre del agente seleccionado
         """
         task_lower = task.lower()
-
-        # === CRYSTAL: Usuarios públicos en Discord ===
-        # Crystal es el asistente público para canales de Discord
-        if transport == "discord" and user_role == "public":
-            if self.crystal and self.crystal.config.get("enabled", True):
-                return "crystal"
 
         # === EVA: Contexto largo o análisis ===
         if context_tokens > 50000:
@@ -185,36 +168,6 @@ class AgentRouter:
 
         agent_name = agent_name.lower()
 
-        # Crystal Agent: manejo especial para Discord público
-        if agent_name == "crystal":
-            if self.crystal and self.crystal.config.get("enabled", True):
-                try:
-                    result = await self.crystal.process_message(
-                        message=task,
-                        context={"transport": transport, "user_role": user_role},
-                    )
-                    return {
-                        "agent": "crystal",
-                        "agent_display": "Crystal",
-                        "result": result.get("response", ""),
-                        "delegated": True,
-                        "task": task,
-                        "backend": result.get("backend", "unknown"),
-                        "cached": result.get("cached", False),
-                    }
-                except Exception as e:
-                    return {
-                        "agent": "crystal",
-                        "agent_display": "Crystal",
-                        "result": f"[Crystal error] {str(e)}",
-                        "delegated": False,
-                        "task": task,
-                        "error": str(e),
-                    }
-            else:
-                # Fallback a Kimi si Crystal no está disponible
-                agent_name = "kimi"
-
         if agent_name == "kimi" or agent_name not in self.agent_map:
             # Lilith/Kimi maneja directamente
             return {
@@ -266,21 +219,16 @@ class AgentRouter:
 
         Post-cambio de roles:
         - Lilith (kimi): Orquestadora principal, contexto 262k
-        - Eva: Analista, ahora usa Grok
-        - Crystal: Asistente público para Discord
+        - Eva: Analista, usa Grok
+        - Adán: Código puro (Qwen local)
+        - Odín: Investigación, contexto masivo (Kimi)
         """
-        crystal_available = (
-            (self.crystal is not None and self.crystal.config.get("enabled", True))
-            if self.crystal
-            else False
-        )
-
         return {
             "eva": {
                 "name": self.eva.name,
                 "description": self.eva.description,
                 "available": self.eva.is_available(),
-                "model": "grok-4-fast-reasoning",  # Eva ahora usa Grok
+                "model": "grok-4-fast-reasoning",
             },
             "adan": {
                 "name": self.adan.name,
@@ -299,13 +247,5 @@ class AgentRouter:
                 "description": self.odin.description,
                 "available": self.odin.is_available(),
                 "model": "kimi-for-coding",
-            },
-            "crystal": {
-                "name": "Crystal",
-                "description": "Asistente público para Discord. Sin acceso a herramientas peligrosas.",
-                "available": crystal_available,
-                "model": self.crystal.config.get("kimi_model", "kimi-for-coding")
-                if self.crystal
-                else "kimi-for-coding",
             },
         }

@@ -100,7 +100,6 @@ class AgentCaller:
                 "delegate_lucifer",
                 "delegate_odin",
                 "delegate_kimi_cli",
-                "delegate_albedo",
                 "delegate_local_irreverent",
                 "delegate_web_scraper",
                 "delegate_content_cleaner",

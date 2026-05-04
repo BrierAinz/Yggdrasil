@@ -58,9 +58,9 @@ class PersonaLoader:
         Compone el system prompt para un agente.
 
         Args:
-            agent_name: Nombre del agente (lilith, odin, eva, adan, shalltear, albedo, crystal)
+            agent_name: Nombre del agente (lilith, odin, eva, adan, shalltear)
             extra_context: Contexto adicional a inyectar (memoria, tarea específica)
-            include_common: Si True, incluye BLOQUE_COMUN (Crystal lo pone en False)
+            include_common: Si True, incluye BLOQUE_COMUN
 
         Returns:
             System prompt completo compuesto
@@ -70,7 +70,7 @@ class PersonaLoader:
 
         parts = []
 
-        # Capa 1: BLOQUE_COMUN (excepto para Crystal que no debe saber del sistema)
+        # Capa 1: BLOQUE_COMUN
         if include_common:
             common = self._config.get("common_block", "")
             if common:

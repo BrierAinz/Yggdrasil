@@ -155,54 +155,6 @@
       "metrics": {}
     },
     {
-      "agent_id": "crystal",
-      "name": "Crystal",
-      "description": "Asistente p\u00fablico para Discord",
-      "state": "idle",
-      "config": {
-        "agent_id": "crystal",
-        "name": "Crystal",
-        "description": "Asistente p\u00fablico para Discord",
-        "model": "kimi-for-coding",
-        "provider": "kimi",
-        "base_url": null,
-        "api_key_env": null,
-        "timeout": 120,
-        "temperature": 0.7,
-        "capabilities": {
-          "can_stream": true,
-          "supports_tools": false,
-          "max_context_tokens": 8192,
-          "specialties": [
-            "conversation",
-            "general_assistance"
-          ],
-          "supported_tasks": []
-        },
-        "persona_key": null,
-        "fallback_agent": null
-      },
-      "capabilities": {
-        "can_stream": true,
-        "supports_tools": false,
-        "max_context_tokens": 8192,
-        "specialties": [
-          "conversation",
-          "general_assistance",
-          "faq",
-          "help"
-        ],
-        "supported_tasks": [
-          "conversar",
-          "responder_preguntas",
-          "ayuda_general"
-        ]
-      },
-      "current_task": null,
-      "last_heartbeat": null,
-      "metrics": {}
-    },
-    {
       "agent_id": "odin",
       "name": "Od\u00edn",
       "description": "An\u00e1lisis masivo, investigaci\u00f3n profunda",
@@ -255,5 +207,5 @@
       "metrics": {}
     }
   ],
-  "updated_at": "2026-04-29T07:31:57.849716"
+  "updated_at": "2026-05-03T21:45:00.000000"
 }

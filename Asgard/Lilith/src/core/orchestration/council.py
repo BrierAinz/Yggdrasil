@@ -116,7 +116,6 @@ class CouncilOrchestrator:
             return self._agents
 
         from src.core.agents.panteon.adan import AdanAgent
-        from src.core.agents.panteon.archivero import ArchiveroAgent
         from src.core.agents.panteon.eva import EvaAgent
         from src.core.agents.panteon.odin import OdinAgent
 
@@ -125,7 +124,6 @@ class CouncilOrchestrator:
             ("eva", EvaAgent),
             ("adan", AdanAgent),
             ("odin", OdinAgent),
-            ("archivero", ArchiveroAgent),
         ]:
             try:
                 instance = cls()

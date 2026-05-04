@@ -262,9 +262,8 @@ class PersonaLoader:
                     base = f"{base}\n\n[Contexto adicional]:\n{extra_context.strip()}"
                 return base
 
-            # Para trusted y public: usar Crystal como interfaz pública
-            # Crystal NO incluye el common_block (no sabe del Panteón)
-            base = loader.get_system_prompt("crystal", include_common=False)
+# Para trusted y public: usar Eva como interfaz pública
+            base = loader.get_system_prompt("eva", include_common=False)
 
             # Añadir instrucciones específicas según el rol
             if role == "trusted":

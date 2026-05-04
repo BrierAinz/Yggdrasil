@@ -43,16 +43,11 @@ class ReviewChain:
         """
         if not self._should_review(tool_name, response):
             return None
-        try:
-            from src.core.agents.panteon.albedo import AlbedoAgent
-
-            albedo = AlbedoAgent()
-            if not albedo.enabled:
-                return None
-            result = albedo.sentinel_review_sync(task[:500], response[:1000], tool_name)
-            return result
+try:
+            # Albedo agent removed — review chain disabled until replacement
+            return None
         except Exception as e:
-            logger.debug("review_chain: albedo error: %s", e)
+            logger.debug("review_chain: review error: %s", e)
             return None
 
     def annotate_if_low_quality(self, tool_name: str, task: str, response: str) -> str:

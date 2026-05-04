@@ -2,11 +2,16 @@
 Panteón de Agentes - Lilith v5.0
 Arquitectura Multi-Agente con Swarm Orchestration
 
-Agentes:
+Agentes activos (en panteon/):
 - Eva (Grok): Análisis, documentación, contexto largo
 - Adán (Qwen local): Código puro, sin internet
 - Odín (Kimi): Investigación, contexto masivo, creativo
-- Crystal (Claude): Ejecutor principal
+- Shalltear (Venice): Clasificación, parsing NL, triaje
+
+Agentes eliminados:
+- Crystal (Discord desactivado)
+- Albedo (over-engineering)
+- Archivero (absorbido por Eva/Odín)
 
 Swarm v5.0:
 - Orquestación multi-agente
@@ -14,30 +19,35 @@ Swarm v5.0:
 - Coordinator para asignación dinámica
 """
 
-from .adan_agent import AdanAgent
+# Agentes del panteón (vivos)
+from .panteon.adan import AdanAgent
+from .panteon.eva import EvaAgent
+from .panteon.odin import OdinAgent
+from .panteon.shalltear import ShalltearAgent
+
+# Base
+from .base import BaseAgent
 
 # Swarm v5.0
-from .agent_base import Agent, AgentConfig, AgentRole, AgentStatus
-from .base_agent import BaseAgent
-from .coordinator import Coordinator, get_coordinator
+from .swarm.base import Agent, AgentConfig, AgentRole, AgentStatus
+from .swarm.coordinator import Coordinator, get_coordinator
+from .swarm.swarm import Swarm, get_swarm
+from .swarm.task_planner import SubTask, TaskPlanner
 
-# Integraciones v5.0
+# Integraciones
 from .crystal_functions import (
     CrystalFunctionIntegration,
     CrystalFunctionResult,
     get_crystal_function_integration,
 )
-from .eva_agent import EvaAgent
-from .odin_agent import OdinAgent
-from .swarm import Swarm, get_swarm
-from .task_planner import SubTask, TaskPlanner
 
 __all__ = [
-    # Agentes clásicos
+    # Agentes del panteón
     "BaseAgent",
     "EvaAgent",
     "AdanAgent",
     "OdinAgent",
+    "ShalltearAgent",
     # Swarm v5.0
     "Agent",
     "AgentRole",
@@ -49,7 +59,7 @@ __all__ = [
     "SubTask",
     "Coordinator",
     "get_coordinator",
-    # Integraciones v5.0
+    # Integraciones
     "CrystalFunctionIntegration",
     "get_crystal_function_integration",
     "CrystalFunctionResult",

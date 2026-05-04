@@ -102,9 +102,7 @@ async def get_pantheon_status():
         "adan",
         "odin",
         "lucifer",
-        "crystal",
         "shalltear",
-        "archivero",
     ]
 
     agents = {}

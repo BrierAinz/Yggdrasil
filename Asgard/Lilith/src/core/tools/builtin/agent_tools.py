@@ -257,7 +257,7 @@ class DelegateLuciferTool(LilithTool):
         if not task:
             return {"response": "Indica la tarea.", "error": True}
         # Lucifer absorbido por Odín — alias con intent creativo
-        from ..agents.odin_agent import OdinAgent
+        from ..agents.panteon.odin import OdinAgent
 
         async def _run():
             return await OdinAgent().execute(task, context=context, intent="creative")

@@ -58,40 +58,10 @@ def _launch_scribe(
         _ch=channel,
         _bp=base_path,
     ):
-        try:
-            from .agents.albedo_agent import AlbedoAgent as _AlbedoAgent
+# Albedo eliminado — scribe desactivado
+        pass
 
-            result = _AlbedoAgent().scribe_process_sync(_msg, _resp, _agent, _elapsed)
-            if result:
-                summary = (result.get("episode_summary") or "")[:100]
-                logger.debug("[Albedo:Escriba] [%s] %s", _ch, summary)
-                # Guardar episodio con source=channel para tagging de fuente
-                if summary and _bp is not None:
-                    try:
-                        from .episode_builder import build_episode
-                        from .episodic_store import EpisodicStore
-
-                        tags = list(result.get("tags") or [])
-                        if _ch and _ch not in tags:
-                            tags.append(_ch)
-                        episode = build_episode(
-                            summary=summary,
-                            outcome="success",
-                            source=_ch,
-                            channel_name=_ch,
-                        )
-                        EpisodicStore(_bp).append(episode)
-                    except Exception as _ep_err:
-                        logger.debug(
-                            "[Albedo:Escriba] episodio no guardado: %s", _ep_err
-                        )
-        except Exception as _e:
-            logger.warning("[Albedo:Escriba] Error en background: %s", _e)
-
-    try:
-        threading.Thread(target=_bg, daemon=True).start()
-    except Exception as _e:
-        logger.warning("[Albedo:Escriba] Error al lanzar hilo: %s", _e)
+    # No lanzamos hilo, Albedo ya no existe
 
 
 class Orchestrator:
