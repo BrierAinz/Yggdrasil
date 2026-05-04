@@ -3,6 +3,7 @@ sidebar_position: 1
 title: Yggdrasil — Nine Realms Ecosystem
 description: "A personal project ecosystem organized under the Norse Nine Realms metaphor"
 ---
+
 # Nine Realms. One Tree.
 
 **Yggdrasil** is a personal project ecosystem organized under the Norse Nine Realms metaphor. At its heart lies **Lilith v5.0** — a dark-fantasy CLI agent with hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, skills framework, batch mode, and real-time dashboard.
@@ -66,19 +67,23 @@ You (Telegram) → Telegram Bot → Gateway (FastAPI) → Lilith (Orchestrator) 
 
 ## Agents of Yggdrasil
 
-Each agent embodies a Norse archetype — a specialized consciousness serving the ecosystem.
+Four active agents power the ecosystem, each a specialized LLM personality with a distinct role and context window.
 
-| Agent | Realm | Role |
-|-------|-------|------|
-| **Lilith** | Asgard | Core orchestrator. CLI agent with hybrid memory, swarm intelligence, and the dark gift of command. |
-| **Eir** | Muspelheim | AI art influencer. Norse goddess of healing transmuted into digital creation — LoRA-trained, Instagram-bound. |
-| **ForgeMaster** | Muspelheim | Build & deploy automator. The smith who forges code into artifacts, striking while the iron is hot. |
-| **Bifrost** | Vanaheim | Telegram gateway. The rainbow bridge between worlds — connecting the ecosystem to the mortal plane. |
-| **Heimdall** | Asgard | Watchman & monitor. All-seeing eye guarding the gates, sounding Gjallarhorn when threats arise. |
-| **Mimir** | Asgard | Memory & knowledge keeper. The wise head at the well, sacrificing an eye for infinite recall. |
-| **Urd** | Asgard | Past & history. The first Norn, keeper of what was — scrolls of memory stretching back to the roots. |
-| **Skuld** | Asgard | Future & planning. The third Norn, scrying what shall be — compass pointing toward destiny. |
-| **Dashboard** | Alfheim | Real-time terminal UI. The mortal window into the divine — system metrics, Git activity, and live telemetry. |
+| Agent | Backend Model | Specialty | Context |
+|-------|-------------|-----------|---------|
+| **Shalltear** | Venice AI (llama-3.3-70b) | Classification, NL parsing, triage | 32k |
+| **Adán** | Ollama (qwen2.5-coder:7b) | Code generation, tests, refactoring | 8k |
+| **Eva** | Grok (grok-4-fast-reasoning) | Long-context analysis, documentation | 128k |
+| **Odín** | Kimi (kimi-for-coding) | Deep analysis, research, creative writing | 262k |
+
+Non-agent components that complement the pantheon:
+
+| Component | Realm | Role |
+|-----------|-------|------|
+| **Lilith** | Asgard | Core orchestrator — CLI agent with hybrid memory, swarm intelligence, and command over all sub-agents |
+| **Bifrost** | Vanaheim | Telegram gateway — the rainbow bridge connecting the ecosystem to the mortal plane |
+| **ForgeMaster** | Muspelheim | Build automator — model catalog, GPU detection, VRAM calculator |
+| **Dashboard** | Alfheim | Real-time terminal UI — system metrics, Git activity, live telemetry |
 
 ## Ecosystem Health
 
