@@ -7,13 +7,17 @@ Endpoints criticos implementados; el resto devuelven stubs seguros.
 """
 
 import asyncio
+import logging
 import os
 import sys
 import traceback
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
+
+
+logger = logging.getLogger(__name__)
 
 
 # Use orjson for faster JSON serialization; fall back to stdlib json if unavailable
@@ -103,7 +107,7 @@ def _plugin_mgr():
 # ───────────────────────────────────────────────────────────────────────────────
 # Estado global
 # ───────────────────────────────────────────────────────────────────────────────
-_global_orch: Optional[LilithOrchestrator] = None
+_global_orch: LilithOrchestrator | None = None
 _orch_lock = asyncio.Lock()
 # Scale thread pool with CPU cores: 4 workers per core, capped at 16.
 # The previous max_workers=2 was a bottleneck under concurrent load.
@@ -114,13 +118,13 @@ def _get_orchestrator() -> LilithOrchestrator:
     """Lazy init del orchestrator global."""
     global _global_orch
     if _global_orch is None:
-        print("[Gateway] Inicializando LilithOrchestrator...")
+        logger.info("Initializing LilithOrchestrator...")
         _global_orch = LilithOrchestrator()
-        print("[Gateway] LilithOrchestrator listo.")
+        logger.info("LilithOrchestrator ready.")
     return _global_orch
 
 
-def _chat_sync(text: str, history: Optional[list[dict]], user_id: str) -> str:
+def _chat_sync(text: str, history: list[dict] | None, user_id: str) -> str:
     """Ejecuta chat de forma sincrona (para thread pool)."""
     orch = _get_orchestrator()
     # Reconstruir historial
@@ -170,9 +174,7 @@ def _pregunta_rapida_sync(text: str, user_id: str) -> str:
         return f"[Error: {e}]"
 
 
-def _pc_fs_sync(
-    op: str, path: str, dst: str, cmd: str, steps: Optional[list], user_id: str
-) -> dict:
+def _pc_fs_sync(op: str, path: str, dst: str, cmd: str, steps: list | None, user_id: str) -> dict:
     """Ejecuta operaciones de filesystem de forma sincrona."""
     try:
         if op == "list":
@@ -267,7 +269,7 @@ async def startup():
     try:
         _get_orchestrator()
     except Exception as e:
-        print(f"[Gateway] Warning: No se pudo pre-inicializar el orchestrator: {e}")
+        logger.warning("Could not pre-initialize orchestrator: %s", e)
 
 
 @app.get("/health")

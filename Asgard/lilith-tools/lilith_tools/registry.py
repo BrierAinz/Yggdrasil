@@ -1,3 +1,5 @@
+"""Tool registry for discovering and managing available Lilith tools."""
+
 from .base import BaseTool
 
 

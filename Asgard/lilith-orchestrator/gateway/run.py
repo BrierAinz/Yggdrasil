@@ -5,8 +5,11 @@ Entry point for starting the gateway server with production-ready defaults.
 Supports uvloop for improved async performance on Unix systems.
 """
 
+import logging
 import os
 
+
+logger = logging.getLogger(__name__)
 
 # Install uvloop before importing the FastAPI app — it must be set before
 # the asyncio event loop is created.  uvloop is optional and only available
@@ -15,9 +18,9 @@ try:
     import uvloop
 
     uvloop.install()
-    print("[run] uvloop installed — using high-performance event loop")
+    logger.info("uvloop installed — using high-performance event loop")
 except ImportError:
-    print("[run] uvloop not available — using default asyncio event loop")
+    logger.info("uvloop not available — using default asyncio event loop")
 
 import uvicorn
 
@@ -36,7 +39,7 @@ APP_REF = "gateway.gateway:app"
 
 def main() -> None:
     """Start the Lilith Gateway server."""
-    print(f"[run] Starting Lilith Gateway on {HOST}:{PORT} ({WORKERS} worker(s))")
+    logger.info("Starting Lilith Gateway on %s:%s (%s worker(s))", HOST, PORT, WORKERS)
     uvicorn.run(
         APP_REF,
         host=HOST,

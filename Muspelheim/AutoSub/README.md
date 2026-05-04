@@ -1,39 +1,39 @@
-# AutoSub — Generador Automático de Subtítulos
+# AutoSub
 
-> **Realm:** Muspelheim | **Status:** En desarrollo
+> Born of Muspelheim's fire, forging words from the roar of chaos.
 
-CLI que toma video/audio y genera subtítulos sincronizados con Whisper, traduce a múltiples idiomas, y exporta SRT/VTT.
+Automatic subtitle generator with translation — transcribe audio/video to SRT/VTT/TXT, then translate to any language, powered by faster-whisper and deep-translator.
 
-## Stack
-
-| Componente | Tecnología |
-|---|---|
-| Transcripción | faster-whisper (CTranslate2, GPU-accel) |
-| Diarización | pyannote-audio (opcional, GPU) |
-| Traducción | deep-translator (Google, DeepL, local) |
-| Export | pysubs2 (SRT, VTT, ASS, TXT) |
-| CLI | Typer + Rich |
-| Caché | SQLite |
-| Config | TOML |
-
-## Instalación
+## Installation
 
 ```bash
-cd Muspelheim/AutoSub
-pip install -e ".[dev]"
+pip install -e .
 ```
 
-## Uso
+## Usage
 
 ```bash
-autosub transcribe video.mp4 --lang es --format srt
-autosub translate subtitles.srt --to es
-autosub pipeline video.mp4 --lang en --translate es --format srt
-autosub batch ./videos/ --lang es --format srt
+# Transcribe a video to SRT
+autosub transcribe video.mp4 --lang en --format srt
+
+# Full pipeline: transcribe and translate to Spanish
+autosub pipeline video.mp4 --lang en --translate es --model base
 ```
 
-## Tests
+Or use the Python API:
 
-```bash
-pytest
+```python
+from autosub.pipeline import Pipeline
+
+pipe = Pipeline(model_size="base")
+result = pipe.run(input_path="video.mp4", language="en", target_lang="es", output_format="srt")
+print(f"Wrote {result.segments_count} segments to {result.output_path}")
 ```
+
+## Architecture
+
+This package is part of the Muspelheim realm in the Yggdrasil ecosystem.
+
+## License
+
+MIT

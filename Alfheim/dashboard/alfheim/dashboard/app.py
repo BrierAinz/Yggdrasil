@@ -1,14 +1,15 @@
 """
 Alfheim Dashboard - FastAPI application with HTMX + Alpine.js + Jinja2.
 
-Replaces the React dashboard with a server-side rendered alternative
-using HTMX for dynamic updates and Alpine.js for client-side interactivity.
+This is a frontend dashboard that currently serves mock data.
+Real backend integration is pending — API route stubs raise
+NotImplementedError until the backend services are connected.
 """
 
 import asyncio
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
@@ -34,7 +35,7 @@ jinja_env = Environment(
 
 
 # =============================================================================
-# Mock Data - TODO: connect to real backend
+# Mock Data — backend integration pending
 # =============================================================================
 
 MOCK_REALMS = {
@@ -320,65 +321,65 @@ def create_app() -> FastAPI:
         html = template.render()
         return HTMLResponse(content=html)
 
-    # --- API Routes (TODO: connect to real backend) ---
+    # --- API Routes (stubs — backend integration pending) ---
 
     @app.get("/api/ecosystem/status")
     async def ecosystem_status():
         """Return status of all Yggdrasil realms."""
-        # TODO: connect to real backend
+        raise NotImplementedError("Backend integration pending")
         return {
             "realms": MOCK_REALMS,
             "total_files": sum(r["file_count"] for r in MOCK_REALMS.values()),
             "total_dirs": sum(r["dir_count"] for r in MOCK_REALMS.values()),
             "active_realms": sum(1 for r in MOCK_REALMS.values() if r["status"] == "active"),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     @app.get("/api/pantheon/status")
     async def pantheon_status():
         """Return status of all Pantheon agents."""
-        # TODO: connect to real backend
+        raise NotImplementedError("Backend integration pending")
         return {
             "agents": MOCK_AGENTS,
             "total_calls": sum(a["total_calls"] for a in MOCK_AGENTS.values()),
             "avg_success_rate": sum(a["success_rate"] for a in MOCK_AGENTS.values())
             / len(MOCK_AGENTS),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     @app.get("/api/memory/stats")
     async def memory_stats():
         """Return memory system statistics."""
-        # TODO: connect to real backend
+        raise NotImplementedError("Backend integration pending")
         return {
             "semantic": MOCK_MEMORY["semantic"],
             "episodic": MOCK_MEMORY["episodic"],
             "muninn": MOCK_MEMORY["muninn"],
             "total_memories": sum(m["total"] for m in MOCK_MEMORY.values()),
             "total_size_mb": sum(m["size_mb"] for m in MOCK_MEMORY.values()),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     @app.get("/api/automode/tasks")
     async def automode_tasks():
         """Return active AutoMode tasks."""
-        # TODO: connect to real backend
+        raise NotImplementedError("Backend integration pending")
         return {
             "tasks": MOCK_TASKS,
             "running": sum(1 for t in MOCK_TASKS if t["status"] == "running"),
             "pending": sum(1 for t in MOCK_TASKS if t["status"] == "pending"),
             "completed": sum(1 for t in MOCK_TASKS if t["status"] == "completed"),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     @app.get("/api/logs/recent")
     async def recent_logs(limit: int = 50):
         """Return recent log entries."""
-        # TODO: connect to real backend
+        raise NotImplementedError("Backend integration pending")
         return {
             "logs": MOCK_LOGS[:limit],
             "count": min(limit, len(MOCK_LOGS)),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
     # --- SSE Endpoint ---
@@ -395,10 +396,10 @@ def create_app() -> FastAPI:
                 # Heartbeat every 30 seconds
                 yield {
                     "event": "heartbeat",
-                    "data": json.dumps({"timestamp": datetime.now(timezone.utc).isoformat()}),
+                    "data": json.dumps({"timestamp": datetime.now(UTC).isoformat()}),
                 }
                 # Also emit a mock log event occasionally
-                # TODO: connect to real backend for live logs
+                raise NotImplementedError("Backend integration pending")
                 await asyncio.sleep(30)
 
         return EventSourceResponse(event_generator())
@@ -412,7 +413,7 @@ def create_app() -> FastAPI:
         try:
             while True:
                 data = await websocket.receive_text()
-                # TODO: connect to real backend (lilith-api)
+                raise NotImplementedError("Backend integration pending")
                 msg = json.loads(data) if data.startswith("{") else {"message": data}
                 # Echo with agent context for now
                 response = {
@@ -420,7 +421,7 @@ def create_app() -> FastAPI:
                     "agent": "odin",
                     "emoji": "🧠",
                     "message": f'Recibido: "{msg.get("message", data)}". Procesando...',
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 }
                 await websocket.send_json(response)
         except WebSocketDisconnect:

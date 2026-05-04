@@ -1,4 +1,4 @@
-exclude: ^(Helheim|Niflheim|Muspelheim/AI-Influencer|Muspelheim/AutoMode|Muspelheim/Docs|Asgard/Lilith|Asgard/Hermes-Lilith|Asgard/Dashboards|Asgard/Lilith_backup|Vanaheim/Agents|Vanaheim/Bots_Lilith_v5|Vanaheim/Config|Vanaheim/Core|Vanaheim/Council|Vanaheim/bots|Vanaheim/bifrost|Svartalfheim|Midgard|\.git|__pycache__|\.venv|venv|node_modules|website-v2)/
+exclude: ^(Helheim|Niflheim|Muspelheim/AI-Influencer|Muspelheim/AutoMode|Muspelheim/Docs|Asgard/Lilith|Vanaheim/Agents|Vanaheim/Bots_Lilith_v5|Vanaheim/Config|Vanaheim/Core|Vanaheim/Council|Vanaheim/bots|Vanaheim/bifrost|Svartalfheim|Midgard|\.git|__pycache__|\.venv|venv|node_modules|website-v2)/
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -10,9 +10,14 @@ repos:
       - id: check-added-large-files
         args: ['--maxkb=1000']
       - id: check-json
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: ['--fix=lf']
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.12
+    rev: v0.11.8
     hooks:
       - id: ruff
         args: ['--fix']

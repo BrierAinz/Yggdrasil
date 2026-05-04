@@ -1,6 +1,6 @@
 """Cliente HTTP para Lilith API."""
 
-from typing import Any, Optional
+from typing import Any
 
 import httpx
 
@@ -18,7 +18,7 @@ class LilithClient:
         r.raise_for_status()
         return r.json()
 
-    def chat(self, message: str, model: Optional[str] = None) -> dict[str, Any]:
+    def chat(self, message: str, model: str | None = None) -> dict[str, Any]:
         payload = {"message": message}
         if model:
             payload["model"] = model
@@ -43,7 +43,7 @@ class LilithClient:
         r.raise_for_status()
         return r.json()
 
-    def memory_store(self, text: str, metadata: Optional[dict] = None) -> dict[str, Any]:
+    def memory_store(self, text: str, metadata: dict | None = None) -> dict[str, Any]:
         payload = {"text": text, "metadata": metadata or {}}
         r = self.client.post(f"{self.base_url}/memory", json=payload)
         r.raise_for_status()

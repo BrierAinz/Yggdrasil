@@ -5,6 +5,29 @@ All notable changes to the Yggdrasil project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.1.0] - 2026-05-04
+
+### Changed
+- **Build system**: Migrated all workspace packages from setuptools to hatchling
+- **Ruff**: Updated target-version from py39 to py311; auto-fixed UP038/UP007 modernizations
+- **CI**: Added Python 3.12 matrix, updated ruff-pre-commit to v0.11.8, added check-toml/check-merge-conflict/detect-private-key hooks
+- **pytest.ini**: Removed stale --ignore entries, added TerminalDashboard to testpaths
+- **Workspace**: Added TerminalDashboard, AutoSub, ForgeMaster to uv.workspace.members
+- **Code quality**: Replaced print() with logging in lilith-api, lilith-orchestrator, ForgeMaster
+- **Code quality**: Fixed hardcoded /mnt/d path in ForgeMaster (now uses COMFYUI_MODELS_DIR env var)
+- **Code quality**: Replaced TODO comments with NotImplementedError in Alfheim dashboard app.py
+- **Code quality**: Added module docstrings to lilith-tools and vanaheim-framework modules
+
+### Fixed
+- **lilith-cli**: Version mismatch (pyproject 2.0.0 → 2.1.0 to match __init__.py)
+- **lilith-orchestrator**: Added missing gateway/__init__.py
+- **Pre-commit**: Updated exclude regex, added check-toml and detect-private-key hooks
+- **CI**: Added Alfheim/TerminalDashboard, Muspelheim/AutoSub, ForgeMaster to install steps
+
+### Added
+- **pyproject.toml**: Added [project.urls] Repository, license, readme fields to all packages
+- **pyproject.toml**: Added README.md to all packages that were missing it
+
 ## [Unreleased]
 
 ### Added
@@ -80,6 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/BrierAinz/Yggdrasil/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/BrierAinz/Yggdrasil/compare/v5.1.0...HEAD
+[5.1.0]: https://github.com/BrierAinz/Yggdrasil/compare/v2.1.0...v5.1.0
 [2.1.0]: https://github.com/BrierAinz/Yggdrasil/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/BrierAinz/Yggdrasil/releases/tag/v2.0.0

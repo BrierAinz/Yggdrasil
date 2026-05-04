@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import subprocess
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
 
-class GitStatus(str, Enum):
+class GitStatus(StrEnum):
     """Git status for a realm or project."""
 
     CLEAN = "clean"
@@ -17,7 +17,7 @@ class GitStatus(str, Enum):
     NO_REPO = "no_repo"
 
 
-class ProjTestStatus(str, Enum):
+class ProjTestStatus(StrEnum):
     """Test status for a realm or project."""
 
     PASS = "pass"
@@ -25,7 +25,7 @@ class ProjTestStatus(str, Enum):
     UNKNOWN = "unknown"
 
 
-class HealthStatus(str, Enum):
+class HealthStatus(StrEnum):
     """Overall health of a realm."""
 
     HEALTHY = "healthy"

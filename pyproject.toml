@@ -36,6 +36,9 @@ members = [
     "Asgard/lilith-api",
     "Asgard/lilith-cli",
     "Alfheim/dashboard",
+    "Alfheim/TerminalDashboard",
+    "Muspelheim/AutoSub",
+    "Muspelheim/ForgeMaster",
     "Vanaheim/vanaheim-framework",
 ]
 

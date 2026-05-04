@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 """Entry-point for Lilith API with uvloop (if available) for maximum throughput."""
 
+import logging
 import sys
+
+
+logger = logging.getLogger(__name__)
 
 
 def main() -> None:
@@ -12,9 +16,9 @@ def main() -> None:
         import uvloop
 
         uvloop.install()
-        print("[lilith-api] uvloop event loop installed", flush=True)
+        logger.info("uvloop event loop installed")
     except ImportError:
-        print("[lilith-api] uvloop not available – falling back to asyncio", flush=True)
+        logger.info("uvloop not available – falling back to asyncio")
 
     uvicorn.run(
         "lilith_api.main:app",

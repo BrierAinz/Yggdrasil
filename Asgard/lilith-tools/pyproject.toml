@@ -1,12 +1,18 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "lilith-tools"
 version = "2.0.0"
 description = "Tool system for Lilith AI agent"
+readme = "README.md"
+license = "MIT"
 requires-python = ">=3.9"
 dependencies = [
     "lilith-core>=2.0.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/BrierAinz/Yggdrasil"
+Repository = "https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard/lilith-tools"

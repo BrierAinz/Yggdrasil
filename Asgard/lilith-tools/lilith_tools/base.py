@@ -1,3 +1,5 @@
+"""Base classes and data structures for the Lilith tool system."""
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any

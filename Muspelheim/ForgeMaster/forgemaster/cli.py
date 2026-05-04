@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import typer
@@ -46,7 +47,7 @@ def main(
 DEFAULT_PATHS = [
     Path.home() / ".cache" / "huggingface",
     Path.home() / ".cache" / "lm-studio",
-    Path("/mnt/d/Proyectos/comfy/ComfyUI/models"),
+    Path(os.environ.get("COMFYUI_MODELS_DIR", "models")),
 ]
 
 

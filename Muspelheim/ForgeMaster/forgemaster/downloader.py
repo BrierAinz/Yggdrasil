@@ -15,11 +15,15 @@ import hashlib
 import logging
 import time
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
-from typing import Callable
+from typing import TYPE_CHECKING
 
 import httpx
+
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 logger = logging.getLogger(__name__)
@@ -38,7 +42,7 @@ DEFAULT_REVISION = "main"
 # ---------------------------------------------------------------------------
 
 
-class DownloadStatus(str, Enum):
+class DownloadStatus(StrEnum):
     """Status of a download operation."""
 
     PENDING = "pending"

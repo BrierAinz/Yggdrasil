@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=68.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "alfheim-dashboard"
@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "HTMX + Alpine.js + Jinja2 dashboard for Yggdrasil ecosystem"
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Yggdrasil Team"},
 ]
@@ -31,9 +31,9 @@ dev = [
 [project.scripts]
 alfheim-dashboard = "alfheim.dashboard.app:create_app"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["alfheim*"]
+[tool.hatch.build.targets.wheel]
+packages = ["alfheim"]
 
-[tool.setuptools.package-data]
-"alfheim.dashboard" = ["templates/*.html", "static/**/*"]
+[tool.hatch.build.targets.wheel.force-include]
+"alfheim/dashboard/templates" = "alfheim/dashboard/templates"
+"alfheim/dashboard/static" = "alfheim/dashboard/static"

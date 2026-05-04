@@ -1,12 +1,11 @@
 import json
 from pathlib import Path
-from typing import Optional
 
 
 class Config:
     """Configuracion centralizada de Lilith."""
 
-    def __init__(self, root_path: Optional[Path] = None):
+    def __init__(self, root_path: Path | None = None):
         self.root = root_path or Path.home() / ".lilith"
         self.root.mkdir(parents=True, exist_ok=True)
         self.config_file = self.root / "config.json"

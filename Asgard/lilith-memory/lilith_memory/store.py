@@ -1,7 +1,6 @@
 import json
 import sqlite3
 from pathlib import Path
-from typing import Optional
 
 
 class MemoryStore:
@@ -20,7 +19,7 @@ class MemoryStore:
                      automatically on first access.
         """
         self.db_path = db_path
-        self._conn: Optional[sqlite3.Connection] = None
+        self._conn: sqlite3.Connection | None = None
         self._init_db()
 
     # ------------------------------------------------------------------
@@ -87,8 +86,8 @@ class MemoryStore:
     def add(
         self,
         content: str,
-        embedding: Optional[bytes] = None,
-        metadata: Optional[dict] = None,
+        embedding: bytes | None = None,
+        metadata: dict | None = None,
     ):
         """Insert a new memory entry.
 
@@ -111,8 +110,8 @@ class MemoryStore:
     def store(
         self,
         content: str,
-        embedding: Optional[bytes] = None,
-        metadata: Optional[dict] = None,
+        embedding: bytes | None = None,
+        metadata: dict | None = None,
     ):
         """Alias for :meth:`add` — insert a new memory entry.
 

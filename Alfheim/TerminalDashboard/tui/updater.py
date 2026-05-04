@@ -6,14 +6,14 @@ import asyncio
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 from tui.health import HealthMonitor
 from tui.scanner import RealmScanner
 
 
 if TYPE_CHECKING:
-    from collections.abc import Coroutine
+    from collections.abc import Callable, Coroutine
 
 
 logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ class ChangeRecord:
     @property
     def is_significant(self) -> bool:
         """Whether the change is significant enough to warrant a flash."""
-        if isinstance(self.old_value, (int, float)) and isinstance(self.new_value, (int, float)):
+        if isinstance(self.old_value, int | float) and isinstance(self.new_value, int | float):
             # Numeric change > 5% is significant (or crossing zero)
             if self.old_value == 0 and self.new_value != 0:
                 return True

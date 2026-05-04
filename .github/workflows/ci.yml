@@ -15,8 +15,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: pip
+          python-version: "3.12"
 
       - name: Install ruff
         run: pip install ruff
@@ -30,45 +29,23 @@ jobs:
   test:
     name: Test (pytest)
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-          cache: pip
+          python-version: ${{ matrix.python-version }}
 
       - name: Install uv
         run: pip install uv
 
-      - name: Install Asgard dependencies
+      - name: Create venv and install dependencies
         run: |
-          uv pip install -e Asgard/lilith-core
-          uv pip install -e Asgard/lilith-memory
-          uv pip install -e Asgard/lilith-tools
-          uv pip install -e Asgard/lilith-orchestrator
-          uv pip install -e Asgard/lilith-api
-          uv pip install -e Asgard/lilith-cli
-
-      - name: Install Vanaheim dependencies
-        run: uv pip install -e Vanaheim/vanaheim-framework
-
-      - name: Install Muspelheim dependencies
-        run: |
-          uv pip install -e Muspelheim/AutoSub
-          uv pip install -e Muspelheim/ForgeMaster
-
-      - name: Install Alfheim dependencies
-        run: |
-          uv pip install -e "Alfheim/TerminalDashboard[dev]"
-          uv pip install -e Alfheim/dashboard
-
-      - name: Run pytest (all packages)
-        run: pytest
-
-      - name: Install dev dependencies (for type checking)
-        run: |
-          uv pip install pyright pytest pytest-asyncio httpx
+          uv venv .venv
+          source .venv/bin/activate
           uv pip install -e Asgard/lilith-core
           uv pip install -e Asgard/lilith-memory
           uv pip install -e Asgard/lilith-tools
@@ -76,6 +53,16 @@ jobs:
           uv pip install -e Asgard/lilith-api
           uv pip install -e Asgard/lilith-cli
           uv pip install -e Vanaheim/vanaheim-framework
+          uv pip install -e Muspelheim/AutoSub
+          uv pip install -e Muspelheim/ForgeMaster
+          uv pip install -e Alfheim/TerminalDashboard
+          uv pip install -e Alfheim/dashboard
+          uv pip install pytest pytest-asyncio httpx pytest-cov
+
+      - name: Run pytest (all packages)
+        run: |
+          source .venv/bin/activate
+          pytest --tb=short -q
 
   type-check:
     name: Type check (pyright)
@@ -86,7 +73,7 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
           cache: pip
 
       - name: Install uv
@@ -95,7 +82,6 @@ jobs:
       - name: Install dependencies
         run: |
           uv pip install pyright
-          # Install packages so pyright can resolve imports
           uv pip install -e Asgard/lilith-core
           uv pip install -e Asgard/lilith-memory
           uv pip install -e Asgard/lilith-tools

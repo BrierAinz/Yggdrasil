@@ -1,3 +1,5 @@
+"""Filesystem tools for reading files and listing directories."""
+
 from pathlib import Path
 
 from .base import BaseTool, ToolResult

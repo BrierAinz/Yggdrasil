@@ -1,8 +1,18 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "autosub"
 version = "0.1.0"
 description = "Automatic subtitle generator with translation"
+readme = "README.md"
 requires-python = ">=3.11"
+license = "MIT"
+authors = [
+    {name = "Yggdrasil Team"},
+]
+
 dependencies = [
     "faster-whisper>=1.0",
     "deep-translator>=1.11",
@@ -17,6 +27,9 @@ gpu = ["pyannote-audio>=3.0"]
 
 [project.scripts]
 autosub = "autosub.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["autosub"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

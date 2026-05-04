@@ -159,7 +159,7 @@ class RealmStatusView(Static):
 
             size_bytes = info["size"]
             size_str = (
-                _format_size(int(size_bytes)) if isinstance(size_bytes, (int,)) else str(size_bytes)
+                _format_size(int(size_bytes)) if isinstance(size_bytes, int) else str(size_bytes)
             )
             file_count = str(info["files"])
 

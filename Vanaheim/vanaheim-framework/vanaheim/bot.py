@@ -1,6 +1,8 @@
+"""Base bot class for Vanaheim framework."""
+
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any
 
 
 class BaseBot(ABC):
@@ -8,7 +10,7 @@ class BaseBot(ABC):
     version: str = "0.1.0"
     description: str = ""
 
-    def __init__(self, config: Optional[dict[str, Any]] = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         self.config = config or {}
         self.logger = logging.getLogger(self.name)
         self._setup_logging()

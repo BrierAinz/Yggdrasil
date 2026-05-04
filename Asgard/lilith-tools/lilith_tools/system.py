@@ -1,3 +1,5 @@
+"""System information tools for querying OS details and current time."""
+
 from .base import BaseTool, ToolResult
 from .registry import ToolRegistry
 

@@ -1,11 +1,13 @@
+"""Configuration management for Vanaheim bots."""
+
 import json
 import os
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 
 class BotConfig:
-    def __init__(self, bot_name: str, config_dir: Optional[Path] = None):
+    def __init__(self, bot_name: str, config_dir: Path | None = None):
         self.bot_name = bot_name
         self.config_dir = config_dir or Path.home() / ".vanaheim" / bot_name
         self.config_dir.mkdir(parents=True, exist_ok=True)
