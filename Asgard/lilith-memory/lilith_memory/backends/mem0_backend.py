@@ -27,7 +27,7 @@ class Mem0Backend(MemoryBackend):
 
     def __init__(self, db_path: Path | None = None) -> None:
         try:
-            from mem0 import Memory  # noqa: WPS433 – lazy import
+            from mem0 import Memory
         except ImportError as exc:
             raise ImportError(
                 "mem0ai is required for Mem0Backend. "
@@ -87,7 +87,7 @@ class Mem0Backend(MemoryBackend):
 
     def _init_meta_db(self) -> None:
         """Create a lightweight SQLite db to track entry count & id mapping."""
-        import sqlite3  # noqa: WPS433
+        import sqlite3
 
         self._local_db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(self._local_db_path)
@@ -102,8 +102,8 @@ class Mem0Backend(MemoryBackend):
         conn.commit()
         conn.close()
 
-    def _meta_conn(self):  # noqa: ANN202
-        import sqlite3  # noqa: WPS433
+    def _meta_conn(self):
+        import sqlite3
 
         return sqlite3.connect(self._local_db_path)
 
@@ -164,7 +164,7 @@ class Mem0Backend(MemoryBackend):
 
     async def _local_search(self, query: str, limit: int = 5) -> list[dict[str, Any]]:
         """Fallback substring search over the local meta db."""
-        import sqlite3  # noqa: WPS433
+        import sqlite3
 
         conn = self._meta_conn()
         try:
@@ -179,7 +179,7 @@ class Mem0Backend(MemoryBackend):
 
     async def recent(self, limit: int = 10) -> list[dict[str, Any]]:
         """Return recent entries from the local meta db."""
-        import sqlite3  # noqa: WPS433
+        import sqlite3
 
         conn = self._meta_conn()
         try:
@@ -229,7 +229,6 @@ class Mem0Backend(MemoryBackend):
 
     def count(self) -> int:
         """Return the total number of entries in the local meta db."""
-        import sqlite3  # noqa: WPS433
 
         conn = self._meta_conn()
         try:

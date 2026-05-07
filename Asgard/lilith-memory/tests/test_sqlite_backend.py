@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 import asyncio
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from lilith_memory.backends import SQLiteBackend
 from lilith_memory.backends.base import MemoryBackend
 from lilith_memory.store import MemoryStore
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 # ------------------------------------------------------------------

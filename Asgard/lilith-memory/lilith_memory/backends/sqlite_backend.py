@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import asyncio
-from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from ..store import MemoryStore
 from .base import MemoryBackend
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class SQLiteBackend(MemoryBackend):

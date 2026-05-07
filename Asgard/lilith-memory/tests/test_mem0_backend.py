@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
 import pytest
+
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 # ------------------------------------------------------------------
@@ -44,11 +47,13 @@ def test_mem0_backend_init(tmp_path: Path):
     """Mem0Backend should initialise without errors when mem0 is available."""
     from lilith_memory.backends import Mem0Backend
 
-    with patch.dict("os.environ", {"MEM0_API_KEY": ""}, clear=False):
-        with patch("mem0.Memory.from_config") as mock_from_config:
-            mock_from_config.return_value = MagicMock()
-            backend = Mem0Backend(db_path=tmp_path / "test.db")
-            assert backend is not None
+    with (
+        patch.dict("os.environ", {"MEM0_API_KEY": ""}, clear=False),
+        patch("mem0.Memory.from_config") as mock_from_config,
+    ):
+        mock_from_config.return_value = MagicMock()
+        backend = Mem0Backend(db_path=tmp_path / "test.db")
+        assert backend is not None
 
 
 def test_add_and_search_mock(tmp_path: Path):
@@ -100,10 +105,11 @@ def test_fallback_to_sqlite(tmp_path: Path):
     with patch.dict("sys.modules", {"mem0": None}):
         # Need a fresh import to hit the constructor guard
         import importlib
+
         import lilith_memory.backends.mem0_backend as mod
 
         importlib.reload(mod)
-        Mem0Backend = mod.Mem0Backend
+        mem0_backend_cls = mod.Mem0Backend
 
         with pytest.raises(ImportError, match="mem0ai is required"):
-            Mem0Backend(db_path=tmp_path / "fb.db")
+            mem0_backend_cls(db_path=tmp_path / "fb.db")

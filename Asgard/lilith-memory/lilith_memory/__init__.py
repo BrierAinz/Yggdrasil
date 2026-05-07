@@ -1,6 +1,7 @@
 """Lilith Memory - Sistema de memoria hibrida."""
 
-from .backends import MemoryBackend, Mem0Backend, SQLiteBackend
+from .backends import Mem0Backend, MemoryBackend, SQLiteBackend
 from .store import MemoryStore
 
-__all__ = ["MemoryStore", "MemoryBackend", "SQLiteBackend", "Mem0Backend"]
+
+__all__ = ["Mem0Backend", "MemoryBackend", "MemoryStore", "SQLiteBackend"]
