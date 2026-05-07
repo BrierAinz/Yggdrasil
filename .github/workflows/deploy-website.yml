@@ -42,4 +42,4 @@ jobs:
         with:
           path: website-v2/build
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
