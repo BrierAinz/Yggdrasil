@@ -77,7 +77,9 @@ def test_add_and_search_mock(tmp_path: Path):
         ]
     }
 
-    with patch.dict("sys.modules", {"mem0": mock_mem_module, "mem0.Memory": mock_mem_module.Memory}):
+    with patch.dict(
+        "sys.modules", {"mem0": mock_mem_module, "mem0.Memory": mock_mem_module.Memory}
+    ):
         # We must also patch the already-imported reference inside mem0_backend
         from lilith_memory.backends.mem0_backend import Mem0Backend
 
@@ -87,9 +89,7 @@ def test_add_and_search_mock(tmp_path: Path):
         import asyncio
 
         loop = asyncio.new_event_loop()
-        entry_id = loop.run_until_complete(
-            backend.add("Hello world", metadata={"source": "test"})
-        )
+        entry_id = loop.run_until_complete(backend.add("Hello world", metadata={"source": "test"}))
         assert entry_id == "mem-001"
 
         # search

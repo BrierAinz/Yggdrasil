@@ -24,3 +24,9 @@ yggdrasil-tui = "lilith_cli.tui.app:main"
 [project.urls]
 Homepage = "https://github.com/BrierAinz/Yggdrasil"
 Repository = "https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard/lilith-cli"
+
+[tool.uv.sources]
+lilith-core = { workspace = true }
+lilith-memory = { workspace = true }
+lilith-tools = { workspace = true }
+lilith-orchestrator = { workspace = true }

@@ -200,9 +200,7 @@ class Mem0Backend(MemoryBackend):
 
         conn = self._meta_conn()
         try:
-            cursor = conn.execute(
-                "DELETE FROM mem0_meta WHERE mem0_id = ?", (entry_id,)
-            )
+            cursor = conn.execute("DELETE FROM mem0_meta WHERE mem0_id = ?", (entry_id,))
             conn.commit()
             return cursor.rowcount > 0
         finally:

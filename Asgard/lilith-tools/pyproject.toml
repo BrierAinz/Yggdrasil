@@ -16,3 +16,6 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/BrierAinz/Yggdrasil"
 Repository = "https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard/lilith-tools"
+
+[tool.uv.sources]
+lilith-core = { workspace = true }
