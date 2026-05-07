@@ -1,0 +1,58 @@
+"""SQLite-backed adapter that wraps the existing MemoryStore."""
+
+from __future__ import annotations
+
+import asyncio
+from pathlib import Path
+from typing import Any
+
+from ..store import MemoryStore
+from .base import MemoryBackend
+
+
+class SQLiteBackend(MemoryBackend):
+    """Async adapter over :class:`MemoryStore`.
+
+    This backend delegates all storage to the battle-tested SQLite
+    implementation while exposing the unified async
+    :class:`MemoryBackend` interface.  Blocking SQLite calls are
+    offloaded to a thread via ``asyncio.to_thread`` so that they
+    never stall the event loop.
+    """
+
+    def __init__(self, db_path: Path) -> None:
+        self._store = MemoryStore(db_path)
+
+    # ------------------------------------------------------------------
+    # MemoryBackend interface
+    # ------------------------------------------------------------------
+
+    async def add(self, content: str, metadata: dict[str, Any] | None = None) -> str:
+        """Store *content* and return its integer id as a string."""
+        self._store.add(content=content, metadata=metadata)
+        # After inserting, retrieve the most recent entry to get its id.
+        recent = self._store.recent(limit=1)
+        if recent:
+            return str(recent[0]["id"])
+        # Fallback — should not happen in practice.
+        return ""
+
+    async def search(self, query: str, limit: int = 5) -> list[dict[str, Any]]:
+        """Substring search via SQLite LIKE."""
+        return await asyncio.to_thread(self._store.search, query, limit)
+
+    async def recent(self, limit: int = 10) -> list[dict[str, Any]]:
+        """Return recent entries."""
+        return await asyncio.to_thread(self._store.recent, limit)
+
+    async def delete(self, entry_id: str) -> bool:
+        """Delete by integer id."""
+        return await asyncio.to_thread(self._store.delete, int(entry_id))
+
+    async def clear(self) -> int:
+        """Clear all entries and return the count removed."""
+        return await asyncio.to_thread(self._store.clear)
+
+    def count(self) -> int:
+        """Return the total number of entries."""
+        return self._store.count_entries()
