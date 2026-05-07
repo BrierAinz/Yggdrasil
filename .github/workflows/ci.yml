@@ -11,7 +11,7 @@ jobs:
     name: Lint (ruff)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
@@ -33,75 +33,56 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
       - name: Install uv
-        run: pip install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
 
-      - name: Create venv and install dependencies
-        run: |
-          uv venv .venv
-          source .venv/bin/activate
-          uv pip install -e Asgard/lilith-core
-          uv pip install -e Asgard/lilith-memory
-          uv pip install -e Asgard/lilith-tools
-          uv pip install -e Asgard/lilith-orchestrator
-          uv pip install -e Asgard/lilith-api
-          uv pip install -e Asgard/lilith-cli
-          uv pip install -e Vanaheim/vanaheim-framework
-          uv pip install -e Muspelheim/AutoSub
-          uv pip install -e Muspelheim/ForgeMaster
-          uv pip install -e Alfheim/TerminalDashboard
-          uv pip install -e Alfheim/dashboard
-          uv pip install pytest pytest-asyncio httpx pytest-cov
+      - name: Install workspace dependencies
+        run: uv sync --all-packages
 
       - name: Run pytest (all packages)
-        run: |
-          source .venv/bin/activate
-          pytest --tb=short -q
+        run: uv run pytest --tb=short -q
 
   type-check:
     name: Type check (pyright)
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
 
       - name: Install uv
-        run: pip install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
 
-      - name: Install dependencies
+      - name: Install workspace dependencies + pyright
         run: |
+          uv sync --all-packages
           uv pip install pyright
-          uv pip install -e Asgard/lilith-core
-          uv pip install -e Asgard/lilith-memory
-          uv pip install -e Asgard/lilith-tools
-          uv pip install -e Asgard/lilith-orchestrator
-          uv pip install -e Asgard/lilith-api
-          uv pip install -e Asgard/lilith-cli
-          uv pip install -e Vanaheim/vanaheim-framework
 
       - name: Run pyright on lilith-core
-        run: pyright Asgard/lilith-core/lilith_core
+        run: uv run pyright Asgard/lilith-core/lilith_core
         continue-on-error: true
 
       - name: Run pyright on lilith-memory
-        run: pyright Asgard/lilith-memory/lilith_memory
+        run: uv run pyright Asgard/lilith-memory/lilith_memory
         continue-on-error: true
 
       - name: Run pyright on lilith-tools
-        run: pyright Asgard/lilith-tools/lilith_tools
+        run: uv run pyright Asgard/lilith-tools/lilith_tools
         continue-on-error: true
 
       - name: Run pyright on vanaheim-framework
-        run: pyright Vanaheim/vanaheim-framework/vanaheim
+        run: uv run pyright Vanaheim/vanaheim-framework/vanaheim
         continue-on-error: true

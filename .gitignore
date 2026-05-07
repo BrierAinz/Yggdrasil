@@ -104,3 +104,7 @@ Vanaheim/bot_registry.json
 
 # State files
 .yggdrasil_state.json
+
+# Embedded subprojects (have their own .git — NOT submodules)
+Alfheim/YggdrasilStudio/
+Alfheim/YggdrasilForge/

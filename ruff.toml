@@ -22,6 +22,8 @@ extend-exclude = [
     "Svartalfheim",
     "Midgard",
     "Jotunheim",
+    "Alfheim/YggdrasilStudio",
+    "Alfheim/YggdrasilForge",
     ".git",
     "__pycache__",
     "*.egg-info",
