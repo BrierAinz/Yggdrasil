@@ -1,0 +1,45 @@
+{
+  "agent_id": "mimir",
+  "name": "Mimir",
+  "description": "Deep Research Agent — The Well of Wisdom. Mimir sees beneath the surface, drawing from the depths of knowledge to synthesize insight.",
+  "model": "grok-4-fast-reasoning",
+  "provider": "grok",
+  "base_url": "https://api.x.ai/v1",
+  "api_key_env": "GROK_API_KEY",
+  "timeout": 300,
+  "temperature": 0.3,
+  "capabilities": {
+    "can_stream": true,
+    "supports_tools": true,
+    "max_context_tokens": 128000,
+    "specialties": ["research", "analysis", "synthesis", "arxiv", "web_search"],
+    "supported_tasks": ["deep_research", "literature_review", "topic_analysis", "report_generation"]
+  },
+  "persona_key": "mimir",
+  "fallback_agent": "odin",
+  "depth_configs": {
+    "quick": {
+      "max_sources": 5,
+      "max_arxiv_papers": 3,
+      "deep_dive_top_k": 3,
+      "timeout_seconds": 120,
+      "description": "Quick scan — 1-2 minutes. Surface-level overview with top sources."
+    },
+    "standard": {
+      "max_sources": 10,
+      "max_arxiv_papers": 5,
+      "deep_dive_top_k": 5,
+      "timeout_seconds": 600,
+      "description": "Standard research — 5-10 minutes. Balanced depth and breadth."
+    },
+    "deep": {
+      "max_sources": 20,
+      "max_arxiv_papers": 10,
+      "deep_dive_top_k": 8,
+      "timeout_seconds": 900,
+      "description": "Deep research — 15+ minutes. Exhaustive analysis with full synthesis."
+    }
+  },
+  "searxng_url": "http://localhost:8888",
+  "output_dir": "Svartalfheim/Knowledge"
+}

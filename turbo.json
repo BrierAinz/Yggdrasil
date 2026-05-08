@@ -1,0 +1,33 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "globalEnv": ["NODE_ENV", "VITE_API_URL", "VITE_WS_URL"],
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "env": ["VITE_API_URL", "VITE_WS_URL"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": ["VITE_API_URL", "VITE_WS_URL", "PORT"]
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "type-check": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"],
+      "env": ["CI"]
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

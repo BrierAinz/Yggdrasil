@@ -96,6 +96,7 @@ lines-after-imports = 2
 # FastAPI route handlers commonly raise HTTPException inside except blocks (B904)
 # and abstract raises to inner functions within try blocks (TRY301)
 "Alfheim/YggdrasilStudio/backend/routes/**" = ["B904", "TRY301"]
+"Alfheim/YggdrasilStudio/backend/routes/ws_routes.py" = ["B904", "TRY301"]
 "Alfheim/YggdrasilStudio/backend/main.py" = ["B904"]
 "Alfheim/YggdrasilStudio/backend/comfyui_client.py" = ["B904"]
 
