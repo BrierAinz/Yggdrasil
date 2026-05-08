@@ -44,9 +44,10 @@ jobs:
         uses: astral-sh/setup-uv@v4
 
       - name: Install workspace dependencies
-        run: |
-          uv sync --all-packages --dev
-          uv pip install pytest pytest-asyncio httpx
+        run: uv sync --all-packages --dev
+
+      - name: Verify pytest available
+        run: uv run python -m pytest --version
 
       - name: Run pytest (per-package)
         run: |

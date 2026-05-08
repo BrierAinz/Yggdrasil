@@ -12,6 +12,7 @@ requires-python = ">=3.9"
 dependencies = [
     "requests>=2.28.0",
     "pydantic>=2.0",
+    "litellm>=1.0",
 ]
 
 [project.optional-dependencies]
