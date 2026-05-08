@@ -43,6 +43,9 @@ members = [
     "Vanaheim/vanaheim-framework",
 ]
 
+[tool.uv.extra-build-dependencies]
+hatchling = ["hatchling"]
+
 [tool.uv.sources]
 # Workspace packages reference each other via editable installs.
 # When a sub-package depends on another workspace member (e.g.

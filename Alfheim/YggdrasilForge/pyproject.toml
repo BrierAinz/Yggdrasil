@@ -19,7 +19,10 @@ forge-server = "backend.main:main"
 
 [build-system]
 requires = ["hatchling"]
-build-backend = "hatchling.backends"
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend"]
 
 [tool.ruff]
 target-version = "py311"
@@ -28,6 +31,7 @@ line-length = 100
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+pythonpath = ["."]
 
 [project.optional-dependencies]
 dev = [

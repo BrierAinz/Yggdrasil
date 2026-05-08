@@ -105,10 +105,8 @@ Vanaheim/bot_registry.json
 # State files
 .yggdrasil_state.json
 
-# Embedded subprojects — ignore build/output dirs, keep source tracked
-Alfheim/YggdrasilStudio/node_modules/
-Alfheim/YggdrasilStudio/dist/
-Alfheim/YggdrasilStudio/.vite/
+# Embedded subprojects — ignore build/output dirs, keep YggdrasilForge source tracked
+Alfheim/YggdrasilStudio/
 Alfheim/YggdrasilForge/node_modules/
 Alfheim/YggdrasilForge/dist/
 Alfheim/YggdrasilForge/build/

@@ -46,8 +46,22 @@ jobs:
       - name: Install workspace dependencies
         run: uv sync --all-packages
 
-      - name: Run pytest (all packages)
-        run: uv run pytest --tb=short -q
+      - name: Run pytest (per-package)
+        run: |
+          FAILED=0
+          for pkg in $(uv run python -c "
+          import tomllib, pathlib
+          root = tomllib.loads(pathlib.Path('pyproject.toml').read_text())
+          for m in root['tool']['uv']['workspace']['members']:
+            print(m)
+          "); do
+            if [ -d "$pkg/tests" ]; then
+              echo "::group::pytest $pkg"
+              uv run pytest "$pkg/tests" --tb=short -q --rootdir="$pkg" || FAILED=1
+              echo "::endgroup::"
+            fi
+          done
+          exit $FAILED
 
   type-check:
     name: Type check (pyright)
@@ -65,9 +79,8 @@ jobs:
 
       - name: Install workspace dependencies + pyright
         run: |
-          uv sync --all-packages || true
+          uv sync --all-packages
           uv pip install pyright
-        continue-on-error: true
 
       - name: Run pyright on lilith-core
         run: uv run pyright Asgard/lilith-core/lilith_core
