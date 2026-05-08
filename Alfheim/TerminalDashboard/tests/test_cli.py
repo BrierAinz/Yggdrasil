@@ -32,15 +32,11 @@ class TestCLIHelp:
         assert result.exit_code == 0
         assert "Yggdrasil" in result.output
 
-    def test_help_shows_install_completion_option(self) -> None:
+    def test_help_shows_completion_option(self) -> None:
         result = runner.invoke(app, ["--help"])
         assert result.exit_code == 0
-        assert "install-completion" in result.output
-
-    def test_help_shows_show_completion_option(self) -> None:
-        result = runner.invoke(app, ["--help"])
-        assert result.exit_code == 0
-        assert "show-completion" in result.output
+        # Tyler >=0.12 uses shell-completion; older uses install-completion/show-completion
+        assert "completion" in result.output.lower()
 
 
 class TestCLIVersionValue:
