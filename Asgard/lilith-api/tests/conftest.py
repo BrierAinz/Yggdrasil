@@ -21,9 +21,7 @@ def _make_stub(name: str, **attrs) -> types.ModuleType:
 
 # Create a mock engine that responds to .process()
 _mock_engine = MagicMock()
-_mock_engine.process = MagicMock(
-    return_value={"response": "stub", "tool_call": {}, "context": []}
-)
+_mock_engine.process = MagicMock(return_value={"response": "stub", "tool_call": {}, "context": []})
 
 # Install stubs once at module load time so that lazy imports succeed.
 _lilith_orchestrator = _make_stub(
