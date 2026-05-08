@@ -44,7 +44,9 @@ jobs:
         uses: astral-sh/setup-uv@v4
 
       - name: Install workspace dependencies
-        run: uv sync --all-packages --dev
+        run: |
+          uv sync --all-packages --dev
+          uv pip install pytest pytest-asyncio httpx
 
       - name: Run pytest (per-package)
         run: |
@@ -57,7 +59,7 @@ jobs:
           "); do
             if [ -d "$pkg/tests" ]; then
               echo "::group::pytest $pkg"
-              uv run pytest "$pkg/tests" --tb=short -q --rootdir="$pkg" || FAILED=1
+              uv run python -m pytest "$pkg/tests" --tb=short -q --rootdir="$pkg" || FAILED=1
               echo "::endgroup::"
             fi
           done
