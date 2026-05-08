@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+dist/
+node_modules/
+data/forge.db
+data/outputs/
+.env
+.backend.pid
+.frontend.pid
