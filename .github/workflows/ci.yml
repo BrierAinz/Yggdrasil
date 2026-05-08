@@ -11,7 +11,7 @@ jobs:
     name: Lint (ruff)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-python@v5
         with:
@@ -34,7 +34,7 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-python@v5
         with:
@@ -45,18 +45,16 @@ jobs:
 
       - name: Install workspace dependencies
         run: uv sync --all-packages
-        continue-on-error: true
 
       - name: Run pytest (all packages)
         run: uv run pytest --tb=short -q
-        continue-on-error: true
 
   type-check:
     name: Type check (pyright)
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-python@v5
         with:
