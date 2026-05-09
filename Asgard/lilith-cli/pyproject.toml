@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lilith-cli"
-version = "2.1.0"
-description = "CLI entry point for Lilith v2"
+version = "3.0.0"
+description = "Yggdrasil CLI v6.0 — Interactive AI Agent REPL (Where Ancient Meets Digital)"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
@@ -15,10 +15,17 @@ dependencies = [
     "lilith-orchestrator>=2.0.0",
     "lilith-tools>=2.0.0",
     "textual>=0.50.0",
+    "cyclopts>=2.0.0",
+    "rich>=13.0.0",
+    "prompt-toolkit>=3.0",
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+    "litellm>=1.0.0",
 ]
 
 [project.scripts]
 lilith = "lilith_cli.main:main"
+yggdrasil = "lilith_cli.main:main"
 yggdrasil-tui = "lilith_cli.tui.app:main"
 
 [project.urls]

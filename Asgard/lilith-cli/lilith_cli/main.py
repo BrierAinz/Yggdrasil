@@ -1,118 +1,252 @@
-import argparse
+"""Yggdrasil CLI v6.0 — Unified entry point.
+
+Usage:
+  yggdrasil              # Launch interactive REPL
+  yggdrasil "prompt"     # One-shot mode
+  yggdrasil chat          # Explicit REPL mode
+  yggdrasil status        # Show realm status
+  yggdrasil launch        # Launch services
+  yggdrasil config        # Show/edit configuration
+"""
+
+from __future__ import annotations
+
+import asyncio
+import platform
+import subprocess
 import sys
 from pathlib import Path
+from typing import Annotated
+
+from cyclopts import App, Parameter
+
+from .config import CONFIG_DIR, YggdrasilConfig, load_config, save_config
 
 
-__version__ = "2.1.0"
+# ── Version ─────────────────────────────────────────────────────────
+
+__version__ = "3.0.0"
+
+# ── Cyclopts app ────────────────────────────────────────────────────
+
+app = App(
+    name="yggdrasil",
+    help="Yggdrasil CLI v6.0 — Where Ancient Meets Digital",
+    version=__version__,
+)
 
 
-def print_banner():
-    print(
-        """
-    ╔════════════════════════════════════╗
-    ║        LILITH CLI v2.1 (API+Local)        ║
-    ║   Modo API por defecto. Usa --local para modo directo   ║
-    ╚════════════════════════════════════╝
-    """
+# ── Helpers ─────────────────────────────────────────────────────────
+
+
+def _is_wsl() -> bool:
+    """Check if running under WSL."""
+    return platform.system() == "Linux" and "microsoft" in platform.release().lower()
+
+
+def _resolve_yggdrasil_root() -> Path:
+    """Find the Yggdrasil workspace root."""
+    return Path(__file__).resolve().parents[3]
+
+
+def _lazy_import_yggdrasil_cli():
+    """Import the existing yggdrasil_cli module, adding the root to sys.path."""
+    root = str(_resolve_yggdrasil_root())
+    if root not in sys.path:
+        sys.path.insert(0, root)
+    import yggdrasil_cli
+
+    return yggdrasil_cli
+
+
+def _apply_overrides(
+    cfg: YggdrasilConfig,
+    *,
+    model: str | None = None,
+    provider: str | None = None,
+    local: bool = False,
+    no_tools: bool = False,
+) -> None:
+    """Apply CLI flag overrides to a loaded config."""
+    if model:
+        cfg.model = model
+    if provider:
+        cfg.provider = provider
+    if local:
+        cfg.provider = "local"
+        if cfg.base_url is None:
+            cfg.base_url = "http://localhost:1234/v1"
+        if cfg.model == "gpt-4o-mini":
+            cfg.model = "local-model"
+    if no_tools:
+        cfg.tools.filesystem = False
+        cfg.tools.coding = False
+        cfg.tools.web_search = False
+        cfg.tools.browser = False
+        cfg.tools.system = False
+
+
+# ── Commands ────────────────────────────────────────────────────────
+
+
+@app.command
+def chat(
+    model: Annotated[str | None, Parameter(name=["--model", "-m"], help="Override model")] = None,
+    provider: Annotated[
+        str | None, Parameter(name=["--provider", "-p"], help="Override provider")
+    ] = None,
+    local: Annotated[bool, Parameter(name="--local", help="Use local LM Studio")] = False,
+    no_tools: Annotated[bool, Parameter(name="--no-tools", help="Disable tools")] = False,
+    verbose: Annotated[bool, Parameter(name=["--verbose", "-v"], help="Debug output")] = False,
+    config_path: Annotated[str | None, Parameter(name="--config", help="Config file path")] = None,
+):
+    """Iniciar el REPL interactivo de Yggdrasil Agent."""
+    import logging
+
+    if verbose:
+        logging.basicConfig(level=logging.DEBUG)
+
+    cfg = load_config(config_path)
+    _apply_overrides(cfg, model=model, provider=provider, local=local, no_tools=no_tools)
+
+    from .agent import AgentSession
+    from .repl import run_repl
+
+    session = AgentSession(cfg)
+    asyncio.run(run_repl(session))
+
+
+@app.command
+def prompt(
+    text: Annotated[str, Parameter(help="Prompt para enviar al agente")],
+    model: Annotated[str | None, Parameter(name=["--model", "-m"], help="Override model")] = None,
+    provider: Annotated[
+        str | None, Parameter(name=["--provider", "-p"], help="Override provider")
+    ] = None,
+    local: Annotated[bool, Parameter(name="--local", help="Use local LM Studio")] = False,
+    no_tools: Annotated[bool, Parameter(name="--no-tools", help="Disable tools")] = False,
+    config_path: Annotated[str | None, Parameter(name="--config", help="Config file path")] = None,
+):
+    """Modo one-shot: enviar un prompt y mostrar la respuesta."""
+    cfg = load_config(config_path)
+    _apply_overrides(cfg, model=model, provider=provider, local=local, no_tools=no_tools)
+
+    from .agent import AgentSession
+    from .repl import run_one_shot
+
+    session = AgentSession(cfg)
+    asyncio.run(run_one_shot(session, text))
+
+
+@app.command
+def status():
+    """Mostrar estado de salud de los reinos y servicios de Yggdrasil."""
+    try:
+        ygg_cli = _lazy_import_yggdrasil_cli()
+        ygg_cli.status()
+    except (ImportError, ModuleNotFoundError):
+        from .render import console
+
+        console.print("[error]No se pudo importar yggdrasil_cli. Verifica la instalación.[/]")
+
+
+@app.command
+def launch():
+    """Abrir menú interactivo para lanzar servicios de Yggdrasil."""
+    try:
+        ygg_cli = _lazy_import_yggdrasil_cli()
+        ygg_cli.launch()
+    except (ImportError, ModuleNotFoundError):
+        from .render import console
+
+        console.print("[error]No se pudo importar yggdrasil_cli. Verifica la instalación.[/]")
+
+
+@app.command
+def config(
+    show: Annotated[bool, Parameter(name="--show", help="Mostrar configuración")] = True,
+    edit: Annotated[bool, Parameter(name="--edit", help="Abrir configuración en editor")] = False,
+    reset: Annotated[
+        bool, Parameter(name="--reset", help="Restablecer configuración por defecto")
+    ] = False,
+    config_path: Annotated[
+        str | None, Parameter(name="--path", help="Ruta del archivo de config")
+    ] = None,
+):
+    """Mostrar o editar la configuración de Yggdrasil."""
+    from .render import console
+
+    if reset:
+        path = Path(config_path) if config_path else CONFIG_DIR / "config.yaml"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        save_config(YggdrasilConfig(), config_path=str(path))
+        console.print(f"[success]✓ Configuración restablecida en: {path}[/]")
+        return
+
+    if edit:
+        path = Path(config_path) if config_path else CONFIG_DIR / "config.yaml"
+        if not path.exists():
+            load_config(str(path))  # bootstrap
+        editor = "nano" if _is_wsl() else ("notepad" if platform.system() == "Windows" else "vi")
+        try:
+            subprocess.run([editor, str(path)])
+        except FileNotFoundError:
+            console.print(f"[error]Editor '{editor}' no encontrado. Edita manualmente: {path}[/]")
+        return
+
+    # Default: show.
+    cfg = load_config(config_path)
+    console.print(cfg.model_dump_json(indent=2))
+
+
+# ── Default handler (no subcommand) ────────────────────────────────
+
+
+@app.default
+def default_command(
+    args: Annotated[tuple[str, ...] | None, Parameter(show=False)] = (),
+    model: Annotated[str | None, Parameter(name=["--model", "-m"])] = None,
+    provider: Annotated[str | None, Parameter(name=["--provider", "-p"])] = None,
+    local: Annotated[bool, Parameter(name="--local")] = False,
+    no_tools: Annotated[bool, Parameter(name="--no-tools")] = False,
+    verbose: Annotated[bool, Parameter(name=["--verbose", "-v"])] = False,
+    config_path: Annotated[str | None, Parameter(name="--config")] = None,
+    version: Annotated[bool, Parameter(name=["--version"])] = False,
+):
+    """Punto de entrada por defecto — lanza REPL o procesa un prompt directo."""
+    from .render import console
+
+    if version:
+        console.print(f"Yggdrasil CLI v{__version__}")
+        return
+
+    # If positional args look like a prompt, go one-shot.
+    if args:
+        prompt_text = " ".join(args)
+        cfg = load_config(config_path)
+        _apply_overrides(cfg, model=model, provider=provider, local=local, no_tools=no_tools)
+
+        from .agent import AgentSession
+        from .repl import run_one_shot
+
+        session = AgentSession(cfg)
+        asyncio.run(run_one_shot(session, prompt_text))
+        return
+
+    # No args → interactive REPL.
+    chat(
+        model=model,
+        provider=provider,
+        local=local,
+        no_tools=no_tools,
+        verbose=verbose,
+        config_path=config_path,
     )
 
 
-def run_api_mode(api_url: str, model_override: str | None = None):
-    from lilith_cli.client import LilithClient
-
-    client = LilithClient(base_url=api_url)
-    print("[API] Conectado a Lilith API")
-    try:
-        health = client.health()
-        print(f"[API] Status: {health['status']} | Tools: {health['tools']} | v{health['version']}")
-    except Exception as e:
-        print(f"[API] Error conectando: {e}")
-        print("[API] Tip: inicia la API con 'python3 -m uvicorn lilith_api.main:app'")
-        return
-
-    while True:
-        try:
-            user_input = input("> ").strip()
-        except (EOFError, KeyboardInterrupt):
-            break
-
-        if user_input in ("/salir", "/quit", "/exit"):
-            break
-        if user_input == "/tools":
-            tools = client.list_tools()
-            for name, desc in tools.items():
-                print(f"  • {name}: {desc}")
-            continue
-        if user_input.startswith("/memory "):
-            query = user_input[8:]
-            results = client.memory_recall(query)
-            for r in results:
-                print(f"  [{r.get('distance', 0):.3f}] {r.get('text', '')[:100]}...")
-            continue
-
-        if not user_input:
-            continue
-
-        try:
-            result = client.chat(user_input)
-            print(f"[Lilith] {result['response']}")
-            if result.get("tool_call"):
-                print(f"[Tool] {result['tool_call']}")
-        except Exception as e:
-            print(f"[Error] {e}")
-
-
-def run_local_mode(config_path: Path | None, model_override: str | None = None):
-    from lilith_core.config import Config
-    from lilith_memory.store import MemoryStore
-    from lilith_orchestrator.engine import LilithEngine
-
-    config = Config(root_path=config_path)
-    if model_override:
-        config.set("model", model_override)
-    db_path = (config_path or Path.home() / ".lilith") / "memory.db"
-    memory = MemoryStore(db_path)
-
-    engine = LilithEngine(config, memory)
-    print("[Local] Modo directo (sin API)")
-    while True:
-        try:
-            user_input = input("> ").strip()
-        except (EOFError, KeyboardInterrupt):
-            break
-
-        if user_input in ("/salir", "/quit", "/exit"):
-            break
-
-        if not user_input:
-            continue
-
-        result = engine.process(user_input)
-        print(f"[PROMPT] {result['prompt'][:200]}...")
-        if result["tool_call"]:
-            print(f"[TOOL] {result['tool_call']}")
+# ── Entry point ─────────────────────────────────────────────────────
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Lilith CLI v2.1")
-    parser.add_argument("--config", type=Path, help="Path to config directory")
-    parser.add_argument("--model", help="Override model")
-    parser.add_argument("--version", action="store_true", help="Show version")
-    parser.add_argument("--local", action="store_true", help="Modo local directo (sin API)")
-    parser.add_argument("--api-url", default="http://localhost:8000", help="URL de la API")
-    args = parser.parse_args()
-
-    if args.version:
-        print(f"Lilith v{__version__}")
-        sys.exit(0)
-
-    print_banner()
-
-    if args.local:
-        run_local_mode(config_path=args.config, model_override=args.model)
-    else:
-        run_api_mode(api_url=args.api_url)
-
-
-if __name__ == "__main__":
-    main()
+    """CLI entry point."""
+    app()
