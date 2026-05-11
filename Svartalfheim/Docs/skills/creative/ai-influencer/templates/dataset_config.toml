@@ -1,0 +1,21 @@
+# Kohya sd-scripts dataset config for SDXL LoRA training
+# Place this file at: assets/lora_dataset/dataset_config.toml
+# Images go in: assets/lora_dataset/<trigger_word>/
+
+[general]
+enable_bucket = true
+mixed_priority = "max"
+
+[[datasets]]
+resolution = 1024
+batch_size = 1
+num_repeats = 10
+
+  [[datasets.subsets]]
+  # UPDATE: Change this path to your project's lora_dataset/<trigger_word>/ directory
+  # Must be an ABSOLUTE path
+  image_dir = "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/assets/lora_dataset/eir_niflheimr"
+  # UPDATE: Change class_tokens to your trigger word
+  class_tokens = "eir_niflheimr"
+  num_repeats = 10
+  caption_extension = ".txt"

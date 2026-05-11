@@ -1,0 +1,561 @@
+{
+  "schema": "yggdrasil-skills-v1",
+  "source": "hermes-agent",
+  "categories": {
+    "apple": [
+      {
+        "name": "apple-notes",
+        "description": "Manage Apple Notes via memo CLI: create, search, edit.",
+        "files": 1
+      },
+      {
+        "name": "apple-reminders",
+        "description": "Apple Reminders via remindctl: add, list, complete.",
+        "files": 1
+      },
+      {
+        "name": "findmy",
+        "description": "Track Apple devices/AirTags via FindMy.app on macOS.",
+        "files": 1
+      },
+      {
+        "name": "imessage",
+        "description": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+        "files": 1
+      },
+      {
+        "name": "macos-computer-use",
+        "description": "|",
+        "files": 1
+      }
+    ],
+    "autonomous-ai-agents": [
+      {
+        "name": "claude-code",
+        "description": "Delegate coding to Claude Code CLI (features, PRs).",
+        "files": 1
+      },
+      {
+        "name": "codex",
+        "description": "Delegate coding to OpenAI Codex CLI (features, PRs).",
+        "files": 1
+      },
+      {
+        "name": "hermes-agent",
+        "description": "Configure, extend, or contribute to Hermes Agent.",
+        "files": 2
+      },
+      {
+        "name": "opencode",
+        "description": "Delegate coding to OpenCode CLI (features, PR review).",
+        "files": 1
+      }
+    ],
+    "creative": [
+      {
+        "name": "ai-influencer",
+        "description": "Create and manage AI influencer projects — character design, content generation pipeline, platform strategy, caption automation, and monetization. Covers the full lifecycle from concept to posting.",
+        "files": 18
+      },
+      {
+        "name": "architecture-diagram",
+        "description": "Generate dark-themed SVG diagrams of software systems and cloud infrastructure as standalone HTML files with inline SVG graphics. Semantic component colors (cyan=frontend, emerald=backend, violet=data",
+        "files": 2
+      },
+      {
+        "name": "ascii-art",
+        "description": "ASCII art: pyfiglet, cowsay, boxes, image-to-ascii.",
+        "files": 1
+      },
+      {
+        "name": "ascii-video",
+        "description": "ASCII video: convert video/audio to colored ASCII MP4/GIF.",
+        "files": 10
+      },
+      {
+        "name": "baoyu-comic",
+        "description": "Knowledge comics (知识漫画): educational, biography, tutorial.",
+        "files": 35
+      },
+      {
+        "name": "baoyu-infographic",
+        "description": "Infographics: 21 layouts x 21 styles (信息图, 可视化).",
+        "files": 47
+      },
+      {
+        "name": "blender-mcp",
+        "description": "Control Blender 3D via the Blender MCP addon — execute Python/bpy code, manage scenes, import models, apply textures, and render. Connects Hermes to a running Blender instance through a TCP socket MCP",
+        "files": 5
+      },
+      {
+        "name": "claude-design",
+        "description": "Design one-off HTML artifacts (landing, deck, prototype).",
+        "files": 3
+      },
+      {
+        "name": "comfyui",
+        "description": "Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API f",
+        "files": 47
+      },
+      {
+        "name": "creative-ideation",
+        "description": "Generate project ideas via creative constraints.",
+        "files": 2
+      },
+      {
+        "name": "design-md",
+        "description": "Author/validate/export Google's DESIGN.md token spec files.",
+        "files": 2
+      },
+      {
+        "name": "excalidraw",
+        "description": "Hand-drawn Excalidraw JSON diagrams (arch, flow, seq).",
+        "files": 5
+      },
+      {
+        "name": "humanizer",
+        "description": "Humanize text: strip AI-isms and add real voice.",
+        "files": 2
+      },
+      {
+        "name": "manim-video",
+        "description": "Manim CE animations: 3Blue1Brown math/algo videos.",
+        "files": 17
+      },
+      {
+        "name": "p5js",
+        "description": "p5.js sketches: gen art, shaders, interactive, 3D.",
+        "files": 17
+      },
+      {
+        "name": "pixel-art",
+        "description": "Pixel art w/ era palettes (NES, Game Boy, PICO-8).",
+        "files": 7
+      },
+      {
+        "name": "popular-web-designs",
+        "description": "54 real design systems (Stripe, Linear, Vercel) as HTML/CSS.",
+        "files": 55
+      },
+      {
+        "name": "pretext",
+        "description": "Use when building creative browser demos with @chenglou/pretext — DOM-free text layout for ASCII art, typographic flow around obstacles, text-as-geometry games, kinetic typography, and text-powered ge",
+        "files": 4
+      },
+      {
+        "name": "sketch",
+        "description": "Throwaway HTML mockups: 2-3 design variants to compare.",
+        "files": 1
+      },
+      {
+        "name": "songwriting-and-ai-music",
+        "description": "Songwriting craft and Suno AI music prompts.",
+        "files": 1
+      },
+      {
+        "name": "touchdesigner-mcp",
+        "description": "Control a running TouchDesigner instance via twozero MCP — create operators, set parameters, wire connections, execute Python, build real-time visuals. 36 native tools.",
+        "files": 23
+      },
+      {
+        "name": "yggdrasilforge",
+        "description": "",
+        "files": 1
+      }
+    ],
+    "data-science": [
+      {
+        "name": "jupyter-live-kernel",
+        "description": "Iterative Python via live Jupyter kernel (hamelnb).",
+        "files": 1
+      }
+    ],
+    "devops": [
+      {
+        "name": "cloudflare",
+        "description": "Manage Cloudflare domains, DNS, API tokens, Pages deployment, Workers, KV, security headers, and site infrastructure. Domain registration, DNS configuration, Pages static hosting, Workers serverless f",
+        "files": 6
+      },
+      {
+        "name": "disk-space-watchdog",
+        "description": "Monitor disk space on WSL2 Windows mounts and WSL root, alert on thresholds, suggest automated cleanup, and manage cron-based watchdog.",
+        "files": 2
+      },
+      {
+        "name": "docker-management",
+        "description": "Manage Docker containers, images, volumes, networks, and Compose stacks — lifecycle ops, debugging, cleanup, and Dockerfile optimization.",
+        "files": 1
+      },
+      {
+        "name": "docusaurus",
+        "description": "Set up, customize, and deploy Docusaurus documentation sites. Covers project scaffolding, theme customization, content structure, Cloudflare Pages deployment with custom domains, and iterative updates",
+        "files": 4
+      },
+      {
+        "name": "git-repo-cleanup",
+        "description": "Diagnose and fix bloated git repos, clean garbage tmp_pack files, exclude large binaries via .gitignore, and recover from hung git add / push operations.",
+        "files": 1
+      },
+      {
+        "name": "kanban-orchestrator",
+        "description": "Decomposition playbook + specialist-roster conventions + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle ar",
+        "files": 1
+      },
+      {
+        "name": "kanban-worker",
+        "description": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is w",
+        "files": 1
+      },
+      {
+        "name": "project-ecosystem-remastering",
+        "description": "",
+        "files": 1
+      },
+      {
+        "name": "webhook-subscriptions",
+        "description": "Webhook subscriptions: event-driven agent runs.",
+        "files": 1
+      },
+      {
+        "name": "wsl-windows-storage",
+        "description": "Manage Windows disk space from WSL — analyze, clean, migrate apps/games/models to secondary drives, create symlinks, compact VHDX.",
+        "files": 3
+      },
+      {
+        "name": "yggdrasil-health-check",
+        "description": "Run comprehensive health checks on the Yggdrasil ecosystem — GPU, services, disk, and model inventory.",
+        "files": 1
+      }
+    ],
+    "diagramming": [],
+    "dogfood": [],
+    "domain": [],
+    "email": [
+      {
+        "name": "himalaya",
+        "description": "Himalaya CLI: IMAP/SMTP email from terminal.",
+        "files": 3
+      }
+    ],
+    "feeds": [],
+    "gaming": [
+      {
+        "name": "minecraft-modpack-server",
+        "description": "Host modded Minecraft servers (CurseForge, Modrinth).",
+        "files": 2
+      },
+      {
+        "name": "pokemon-player",
+        "description": "Play Pokemon via headless emulator + RAM reads.",
+        "files": 1
+      }
+    ],
+    "gifs": [],
+    "github": [
+      {
+        "name": "codebase-inspection",
+        "description": "Inspect codebases w/ pygount: LOC, languages, ratios.",
+        "files": 1
+      },
+      {
+        "name": "github-auth",
+        "description": "GitHub auth setup: HTTPS tokens, SSH keys, gh CLI login.",
+        "files": 2
+      },
+      {
+        "name": "github-code-review",
+        "description": "Review PRs: diffs, inline comments via gh or REST.",
+        "files": 2
+      },
+      {
+        "name": "github-issues",
+        "description": "Create, triage, label, assign GitHub issues via gh or REST.",
+        "files": 3
+      },
+      {
+        "name": "github-pages-project-site",
+        "description": "Create a multi-page static website for a project based on a reference design repo. Extracts project structure, maps it to visual design, and sets up GitHub Pages deployment.",
+        "files": 3
+      },
+      {
+        "name": "github-pr-workflow",
+        "description": "GitHub PR lifecycle: branch, commit, open, CI, merge.",
+        "files": 5
+      },
+      {
+        "name": "github-presence-optimization",
+        "description": "Enhance a GitHub repository's discoverability, professionalism, and community engagement. Covers Topics, community health files (SECURITY.md, CODE_OF_CONDUCT.md, CONTRIBUTING.md), Issue/PR templates, ",
+        "files": 6
+      },
+      {
+        "name": "github-repo-management",
+        "description": "Clone/create/fork repos; manage remotes, releases.",
+        "files": 2
+      }
+    ],
+    "inference-sh": [],
+    "mcp": [
+      {
+        "name": "native-mcp",
+        "description": "MCP client: connect servers, register tools (stdio/HTTP).",
+        "files": 1
+      }
+    ],
+    "media": [
+      {
+        "name": "gif-search",
+        "description": "Search/download GIFs from Tenor via curl + jq.",
+        "files": 1
+      },
+      {
+        "name": "heartmula",
+        "description": "HeartMuLa: Suno-like song generation from lyrics + tags.",
+        "files": 1
+      },
+      {
+        "name": "songsee",
+        "description": "Audio spectrograms/features (mel, chroma, MFCC) via CLI.",
+        "files": 1
+      },
+      {
+        "name": "spotify",
+        "description": "Spotify: play, search, queue, manage playlists and devices.",
+        "files": 1
+      },
+      {
+        "name": "youtube-content",
+        "description": "YouTube transcripts to summaries, threads, blogs.",
+        "files": 3
+      }
+    ],
+    "mlops": [
+      {
+        "name": "auto-captioning",
+        "description": "Generic image captioning using Qwen3-VL for LoRA training datasets. Batch-process images, generate trigger-word-prefixed captions, resume-safe, VRAM-aware.",
+        "files": 1
+      },
+      {
+        "name": "comfyui-batch-generate",
+        "description": "Batch image generation via ComfyUI API with IPAdapter FaceID — covers reference prep, workflow JSON, prompt submission, deterministic seeds, resume logic, and quality verification.",
+        "files": 3
+      },
+      {
+        "name": "ehyra-zimage-lora",
+        "description": "Full LoRA training pipeline for Ehyra character using Z-Image Base (Tongyi-MAI/Z-Image) on ai-toolkit",
+        "files": 5
+      },
+      {
+        "name": "huggingface-hub",
+        "description": "HuggingFace hf CLI: search/download/upload models, datasets.",
+        "files": 1
+      },
+      {
+        "name": "lora-training-pipeline",
+        "description": "Full LoRA training pipeline for character/person generation — dataset prep, auto-captioning with Qwen3-VL, training config (ai-toolkit/Kohya), execution, evaluation, and iteration.",
+        "files": 5
+      },
+      {
+        "name": "peft",
+        "description": "Parameter-efficient fine-tuning for LLMs using LoRA, QLoRA, and 25+ methods. Use when fine-tuning large models (7B-70B) with limited GPU memory, when you need to train <1% of parameters with minimal a",
+        "files": 3
+      },
+      {
+        "name": "pixai-generation",
+        "description": "Generate images via PixAI GraphQL API with custom LoRAs",
+        "files": 1
+      }
+    ],
+    "note-taking": [
+      {
+        "name": "obsidian",
+        "description": "Read, search, create, and edit notes in the Obsidian vault.",
+        "files": 1
+      }
+    ],
+    "productivity": [
+      {
+        "name": "airtable",
+        "description": "Airtable REST API via curl. Records CRUD, filters, upserts.",
+        "files": 1
+      },
+      {
+        "name": "google-workspace",
+        "description": "Gmail, Calendar, Drive, Docs, Sheets via gws CLI or Python.",
+        "files": 6
+      },
+      {
+        "name": "linear",
+        "description": "Linear: manage issues, projects, teams via GraphQL + curl.",
+        "files": 2
+      },
+      {
+        "name": "maps",
+        "description": "Geocode, POIs, routes, timezones via OpenStreetMap/OSRM.",
+        "files": 2
+      },
+      {
+        "name": "nano-pdf",
+        "description": "Edit PDF text/typos/titles via nano-pdf CLI (NL prompts).",
+        "files": 1
+      },
+      {
+        "name": "notion",
+        "description": "Notion API via curl: pages, databases, blocks, search.",
+        "files": 2
+      },
+      {
+        "name": "ocr-and-documents",
+        "description": "Extract text from PDFs/scans (pymupdf, marker-pdf).",
+        "files": 4
+      },
+      {
+        "name": "powerpoint",
+        "description": "Create, read, edit .pptx decks, slides, notes, templates.",
+        "files": 50
+      },
+      {
+        "name": "teams-meeting-pipeline",
+        "description": "Operate the Teams meeting summary pipeline via Hermes CLI — summarize meetings, inspect pipeline status, replay jobs, manage Microsoft Graph subscriptions.",
+        "files": 1
+      }
+    ],
+    "red-teaming": [
+      {
+        "name": "godmode",
+        "description": "Jailbreak LLMs: Parseltongue, GODMODE, ULTRAPLINIAN.",
+        "files": 9
+      }
+    ],
+    "research": [
+      {
+        "name": "arxiv",
+        "description": "Search arXiv papers by keyword, author, category, or ID.",
+        "files": 2
+      },
+      {
+        "name": "blogwatcher",
+        "description": "Monitor blogs and RSS/Atom feeds via blogwatcher-cli tool.",
+        "files": 1
+      },
+      {
+        "name": "llm-wiki",
+        "description": "Karpathy's LLM Wiki: build/query interlinked markdown KB.",
+        "files": 1
+      },
+      {
+        "name": "polymarket",
+        "description": "Query Polymarket: markets, prices, orderbooks, history.",
+        "files": 3
+      },
+      {
+        "name": "research-paper-writing",
+        "description": "Write ML papers for NeurIPS/ICML/ICLR: design→submit.",
+        "files": 55
+      },
+      {
+        "name": "searxng-search",
+        "description": "Free meta-search via SearXNG — aggregates results from 70+ search engines. Self-hosted or use a public instance. No API key needed. Falls back automatically when the web search toolset is unavailable.",
+        "files": 2
+      }
+    ],
+    "smart-home": [
+      {
+        "name": "openhue",
+        "description": "Control Philips Hue lights, scenes, rooms via OpenHue CLI.",
+        "files": 1
+      }
+    ],
+    "social-media": [
+      {
+        "name": "xurl",
+        "description": "X/Twitter via xurl CLI: post, search, DM, media, v2 API.",
+        "files": 1
+      }
+    ],
+    "software-development": [
+      {
+        "name": "debugging-hermes-tui-commands",
+        "description": "Debug Hermes TUI slash commands: Python, gateway, Ink UI.",
+        "files": 1
+      },
+      {
+        "name": "hermes-agent-skill-authoring",
+        "description": "Author in-repo SKILL.md: frontmatter, validator, structure.",
+        "files": 1
+      },
+      {
+        "name": "lilith-cli-setup",
+        "description": "",
+        "files": 3
+      },
+      {
+        "name": "lilith-development",
+        "description": "Development patterns, architecture, module conventions, and testing for the Hermes-Lilith agent CLI project. Covers project structure, Swarm coordination, memory systems, tool integration, CLI command",
+        "files": 11
+      },
+      {
+        "name": "node-inspect-debugger",
+        "description": "Debug Node.js via --inspect + Chrome DevTools Protocol CLI.",
+        "files": 1
+      },
+      {
+        "name": "oss-research-for-integration",
+        "description": "Investigate open-source projects on GitHub to extract architecture patterns, features, and methodologies for integration into a personal ecosystem. Covers API scraping, README analysis, skill extracti",
+        "files": 5
+      },
+      {
+        "name": "plan",
+        "description": "Plan mode: write markdown plan to .hermes/plans/, no exec.",
+        "files": 1
+      },
+      {
+        "name": "python-debugpy",
+        "description": "Debug Python: pdb REPL + debugpy remote (DAP).",
+        "files": 1
+      },
+      {
+        "name": "requesting-code-review",
+        "description": "Pre-commit review: security scan, quality gates, auto-fix.",
+        "files": 1
+      },
+      {
+        "name": "spike",
+        "description": "Throwaway experiments to validate an idea before build.",
+        "files": 1
+      },
+      {
+        "name": "subagent-driven-development",
+        "description": "Execute plans via delegate_task subagents (2-stage review).",
+        "files": 4
+      },
+      {
+        "name": "systematic-debugging",
+        "description": "4-phase root cause debugging: understand bugs before fixing.",
+        "files": 1
+      },
+      {
+        "name": "test-driven-development",
+        "description": "TDD: enforce RED-GREEN-REFACTOR, tests before code.",
+        "files": 4
+      },
+      {
+        "name": "writing-plans",
+        "description": "Write implementation plans: bite-sized tasks, paths, code.",
+        "files": 1
+      },
+      {
+        "name": "yggdrasil-ecosystem",
+        "description": "",
+        "files": 21
+      },
+      {
+        "name": "yggdrasil-studio-dev",
+        "description": "",
+        "files": 1
+      }
+    ],
+    "yuanbao": []
+  },
+  "total_skills": 102,
+  "total_files": 598
+}

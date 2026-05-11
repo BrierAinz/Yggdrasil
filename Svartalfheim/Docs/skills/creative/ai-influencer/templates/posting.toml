@@ -1,0 +1,67 @@
+# AI Influencer — Posting Schedule Config
+# Copy to config/posting.toml and customize
+
+[schedule]
+# Posting frequency: how many posts per week per platform
+instagram_feed = 3    # Mon-Wed-Fri
+instagram_stories = 5 # Daily (some days TBD)
+tiktok = 2            # Tue-Thu
+twitter = 5           # Daily (WIP/teaser)
+patreon = 1           # Weekly exclusive
+
+[instagram]
+platform = "instagram"
+time = "19:00"        # 7pm (adjust for timezone)
+timezone = "UTC-6"    # Central time, adjust accordingly
+# Best posting times by day (research your audience)
+best_times = ["07:00", "12:00", "19:00"]
+hashtag_count = 20     # 20-25 is sweet spot for IG
+bio_link = "linktr.ee/yourname"
+
+[tiktok]
+platform = "tiktok"
+time = "15:00"        # 3pm
+timezone = "UTC-6"
+video_length = "15-60" # seconds
+# Use trending sounds (check Discover page weekly)
+trending_sound_check = "weekly"
+
+[twitter]
+platform = "twitter"
+time = "12:00"        # Noon
+timezone = "UTC-6"
+thread_format = true   # Use threads for longer content
+max_tweet_length = 280
+
+[patreon]
+platform = "patreon"
+# Tiers structure
+[patreon.tier1]
+price = 3
+name = "Apprentice"
+perks = ["Early access", "WIPs", "Behind-the-scenes"]
+
+[patreon.tier2]
+price = 7
+name = "Artisan"
+perks = ["Full resolution images", "PSD files", "Process timelapses", "Monthly tutorial"]
+
+[patreon.tier3]
+price = 15
+name = "Patron"
+perks = ["Custom commissions (1/month)", "1-on-1 chat", "Vote on content direction", "Exclusive variants"]
+
+[captions]
+# Caption style configuration for LLM generation
+style = "mysterious, poetic, cryptic"
+tone_variations = ["poetic", "mysterious", "cryptic", "playful", "contemplative"]
+max_length = 2200         # Instagram limit
+typical_length = 150-300  # Sweet spot
+emoji_usage = "sparse"    # none, sparse, moderate, heavy
+hashtag_style = "inline"  # inline or grouped at end
+
+[content_rotation]
+# Ensure variety by rotating content types
+types = ["portrait", "landscape", "closeup", "action", "outfit_variation", "setting_mood", "process/WIP"]
+# Minimum days before repeating same type
+repeat_cooldown_days = 3
