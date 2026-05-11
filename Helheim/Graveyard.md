@@ -24,7 +24,7 @@
 - **Tamano original**: ~920MB (1,606 archivos)
 - **Lecciones**: Monolitos escalan mal. La refactorizacion a modulos (Core, Dashboard, MCP, Swarm, Memory) mejoro mantenibilidad y testing dramaticamente. 820+ tests ahora pasan vs ~200 antes.
 - **Rescatable**: Parcialmente - algunos configs y prompts pueden reutilizarse. Las lecciones de diseno ya estan en Svartalfheim.
-- **Estado**: Comprimido en `Archives_Lilith_Legacy_2026-04-29.tar.gz`
+- **Estado**: **ELIMINADO** (tarball purgado 2026-05-11)
 
 ---
 
@@ -39,4 +39,20 @@
 
 ---
 
-*Cripta de Proyectos - Aqui descansan los caidos*
+## 2026-05-11 - Purga Completa de Helheim (5.2GB liberados)
+
+- **Fecha**: 2026-05-11
+- **Razon**: 5.2GB de datos legacy sin referencias activas fuera de Helheim
+- **Contenido eliminado**:
+  - `Archives_Lilith_Legacy_2026-04-29.tar.gz` (814MB) — comprimido del monolito
+  - `Lilith_backup_pre_refactor_20260403_145209.tar.gz` (4.4GB) — backup pre-refactor
+  - `Archives_Lilith_Monolith/` (1.5MB, 126 archivos) — monolito descomprimido
+  - `Hermes-Lilith_v4_legacy/` (27MB, 247 archivos) — código v4 legacy
+  - `Dashboards_legacy/` (346KB, 19 archivos) — dashboards viejos
+- **Lecciones**: Los backups legacy dejan de ser útiles después de que el código refactorizado está en producción y estable.
+- **Rescatable**: No — todo está documentado aquí y el código vive en Asgard/Lilith/
+- **Estado**: **ELIMINADO**
+
+---
+
+*Cripta de Proyectos - Aqui descansan los caídos*

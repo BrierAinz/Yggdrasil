@@ -4,25 +4,24 @@ El reino de los muertos. Donde los proyectos yacen en silencio eterno, sellados 
 
 Helheim es el cementerio del ecosistema Yggdrasil. Aquí descansan los proyectos que fallaron, los artefactos que cumplieron su ciclo, y los archivos legacy que ya no sirven pero que la memoria del árbol exige conservar. No se trabaja en Helheim — se archiva. Lo que entra aquí no vuelve a vivir, aunque el Norns puede decidir resucitarlo si el destino lo exige.
 
-> 📝 **NOTA:** La cuarentena `Quarantine_2026-04-29/` fue purgada por completo y ya no existe. Su contenido fue evaluado, archivado o destruido según correspondía.
+> ⚠️ **PURGA 2026-05-11:** Todos los tarballs y directorios legacy fueron eliminados (5.2GB liberados). Solo queda este registro documental.
 
 ## 📂 Estructura del Reino
 
 ```
 Helheim/
-├── Archives_Lilith_Legacy_2026-04-29.tar.gz   # (852MB) Archivo comprimido del monolito legado de Lilith. NO es un directorio.
-└── Graveyard.md                                # Registro de proyectos muertos. Sus epitafios.
+├── Graveyard.md    # Registro de proyectos muertos. Sus epitafios.
+└── REGLAS.md       # Reglas del reino
 ```
 
 ## ⚔️ Estado
 
-**Inactivo — Reino sellado.** Helheim recibe pero no produce. Solo el Archivero puede abrir las puertas.
+**Inactivo — Reino sellado y purgado.** Helheim recibe pero no produce. Solo el Archivero puede abrir las puertas.
 
 ## 🔗 Vínculos
 
 - [Graveyard.md](./Graveyard.md) — El registro de los caídos. Cada proyecto, su epitafio.
-- [Archives — Lilith Legacy](./Archives_Lilith_Legacy_2026-04-29.tar.gz) — El monolito comprimido. Extraer solo con autorización del Arquitecto.
 
 ---
 
-*Última actualización: 2026-05-02*
+*Última actualización: 2026-05-11 — Purga completa de 5.2GB*

@@ -1,2 +1,0 @@
-# Lilith Dependencies
-httpx>=0.27.0

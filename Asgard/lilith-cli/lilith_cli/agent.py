@@ -196,6 +196,39 @@ class AgentSession:
         """Return tools in OpenAI function-calling format."""
         return lilith_tools_to_openai(self.get_tool_descriptions())
 
+    def _repair_tool_name(self, concatenated_name: str) -> list[str]:
+        """Try to split a concatenated tool name into valid tool names.
+
+        Some models (e.g. GLM-5.1) concatenate multiple tool names into one,
+        e.g. ``system_infodirectory_list`` → [``system_info``, ``directory_list``].
+        This method tries all possible splits and returns the one where every
+        segment matches a known tool name.
+        """
+        known = set(self._tool_registry.list_tools().keys()) if self._tool_registry else set()
+        if not known:
+            return [concatenated_name]
+
+        # Try every possible left-prefix that is a valid tool name,
+        # then recursively split the remainder.
+        def _split(name: str) -> list[list[str]]:
+            results: list[list[str]] = []
+            for tool in known:
+                if name.startswith(tool):
+                    remainder = name[len(tool) :]
+                    if not remainder:
+                        results.append([tool])
+                    else:
+                        for sub in _split(remainder):
+                            results.append([tool, *sub])
+            return results
+
+        splits = _split(concatenated_name)
+        if splits:
+            # Prefer the split with the fewest segments (most specific match).
+            splits.sort(key=len)
+            return splits[0]
+        return [concatenated_name]
+
     async def execute_tool(self, tool_call: ToolCall) -> ToolResult:
         """Execute a single tool call and return the result."""
         self._init_tools()
@@ -211,7 +244,26 @@ class AgentSession:
             )
 
         tool_cls = self._tool_registry.get(tool_name)
+
+        # If tool name not found, try to repair concatenated names.
         if tool_cls is None:
+            repaired = self._repair_tool_name(tool_name)
+            if len(repaired) > 1 and all(self._tool_registry.get(n) for n in repaired):
+                logger.info(
+                    "Repaired concatenated tool name: %s → %s",
+                    tool_name,
+                    repaired,
+                )
+                # Return a hint so the caller can re-dispatch.
+                return ToolResult(
+                    tool_call_id=tool_call.id,
+                    name=tool_name,
+                    content=(
+                        f"Error: tool '{tool_name}' was a concatenation of "
+                        f"{repaired}. Please call each tool separately: " + ", ".join(repaired)
+                    ),
+                )
+
             return ToolResult(
                 tool_call_id=tool_call.id,
                 name=tool_name,
@@ -341,7 +393,12 @@ class AgentSession:
         if tools_desc and self._tools_enabled:
             tool_lines = "\n".join(f"- {t['name']}: {t['description']}" for t in tools_desc)
             messages[0]["content"] += (
-                f"\n\nYou have access to the following tools:\n{tool_lines}\n\nWhen you need to use a tool, call it. When you have enough information to answer directly, do so."
+                f"\n\nYou have access to the following tools:\n{tool_lines}\n\n"
+                "IMPORTANT: Call each tool by its EXACT name shown above. "
+                "Do NOT combine or concatenate multiple tool names into one call. "
+                "If you need multiple tools, call them one at a time — "
+                "wait for each result before calling the next. "
+                "When you have enough information to answer directly, do so."
             )
 
         # Trim history to max_turns.
@@ -391,6 +448,31 @@ class AgentSession:
                 # No more tool calls — we're done.
                 self.history.append(Message.assistant(content))
                 return content
+
+            # Auto-repair concatenated tool names (some models merge names).
+            self._init_tools()
+            repaired_tool_calls: list[ToolCall] = []
+            for tc in tool_calls:
+                if self._tool_registry and self._tool_registry.get(tc.name) is None:
+                    repaired = self._repair_tool_name(tc.name)
+                    if len(repaired) > 1 and all(self._tool_registry.get(n) for n in repaired):
+                        logger.info(
+                            "Non-stream: repaired concatenated tool name: %s → %s",
+                            tc.name,
+                            repaired,
+                        )
+                        for i, name in enumerate(repaired):
+                            call_args = tc.arguments if i == 0 else {}
+                            repaired_tool_calls.append(
+                                ToolCall(
+                                    id=f"{tc.id}_{i}" if tc.id else f"repair_{i}",
+                                    name=name,
+                                    arguments=call_args,
+                                )
+                            )
+                        continue
+                repaired_tool_calls.append(tc)
+            tool_calls = repaired_tool_calls
 
             # There are tool calls — execute each one.
             # First, add the assistant message (with tool_calls) to history.
@@ -457,7 +539,12 @@ class AgentSession:
                         if tc_delta.get("name"):
                             accumulated_tool_calls[idx]["name"] += tc_delta["name"]
                         if tc_delta.get("arguments"):
-                            accumulated_tool_calls[idx]["arguments"] += tc_delta["arguments"]
+                            arg_delta = tc_delta["arguments"]
+                            # Some providers (e.g. opencode/glm) return arguments
+                            # as a parsed dict instead of a JSON string.
+                            if isinstance(arg_delta, dict):
+                                arg_delta = json.dumps(arg_delta, ensure_ascii=False)
+                            accumulated_tool_calls[idx]["arguments"] += arg_delta
 
                 if finish_reason == "stop":
                     break
@@ -468,7 +555,7 @@ class AgentSession:
                 yield {"type": "done", "content": accumulated_text, "usage": self._total_usage}
                 return
 
-            # Resolve tool calls.
+            # Resolve tool calls — with auto-repair for concatenated names.
             resolved_tool_calls: list[ToolCall] = []
             for idx in sorted(accumulated_tool_calls):
                 tc_data = accumulated_tool_calls[idx]
@@ -477,7 +564,34 @@ class AgentSession:
                 except json.JSONDecodeError:
                     args = {"raw": tc_data["arguments"]}
 
-                tc = ToolCall(id=tc_data["id"], name=tc_data["name"], arguments=args)
+                tc_name = tc_data["name"]
+                tc_id = tc_data["id"]
+
+                # Auto-repair: some models (e.g. GLM-5.1) concatenate
+                # multiple tool names into one call.  Split them up.
+                self._init_tools()
+                if self._tool_registry and self._tool_registry.get(tc_name) is None:
+                    repaired = self._repair_tool_name(tc_name)
+                    if len(repaired) > 1 and all(self._tool_registry.get(n) for n in repaired):
+                        logger.info(
+                            "Stream: repaired concatenated tool name: %s → %s",
+                            tc_name,
+                            repaired,
+                        )
+                        # Create a separate ToolCall for each split name.
+                        # Arguments go to the first tool; the rest get {}.
+                        for i, name in enumerate(repaired):
+                            call_args = args if i == 0 else {}
+                            resolved_tool_calls.append(
+                                ToolCall(
+                                    id=f"{tc_id}_{i}" if tc_id else f"repair_{i}",
+                                    name=name,
+                                    arguments=call_args,
+                                )
+                            )
+                        continue
+
+                tc = ToolCall(id=tc_id, name=tc_name, arguments=args)
                 resolved_tool_calls.append(tc)
 
             self.history.append(Message.assistant(accumulated_text, tool_calls=resolved_tool_calls))
