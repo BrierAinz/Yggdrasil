@@ -1,4 +1,4 @@
-"""BifrostGateway - API Gateway con LilithEngine real, JWT y Streaming."""
+"""BifrostGateway - API Gateway con LilithEngine real, JWT, Streaming y Hermes Bridge."""
 import json
 import logging
 import sys
@@ -19,6 +19,9 @@ sys.path.insert(
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "Asgard" / "lilith-tools"))
 sys.path.insert(
     0, str(Path(__file__).parent.parent.parent / "Asgard" / "lilith-orchestrator")
+)
+sys.path.insert(
+    0, str(Path(__file__).parent.parent.parent / "Asgard" / "lilith-bridge")
 )
 
 from bifrost.auth import create_access_token, verify_token
@@ -164,3 +167,20 @@ async def execute_legacy(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ---------------------------------------------------------------------------
+# Hermes Bridge — mount bidirectional gateway to Hermes Agent
+# ---------------------------------------------------------------------------
+try:
+    from lilith_bridge.bifrost_integration import create_bridge_router
+
+    _bridge_router = create_bridge_router(
+        engine=_engine,
+        memory=_memory,
+        skills_ctx=None,  # skills loaded lazily by the router
+    )
+    app.include_router(_bridge_router, prefix="/api/bridge")
+    logger.info("Hermes Bridge router mounted at /api/bridge")
+except ImportError:
+    logger.warning("lilith-bridge not installed — Hermes Bridge routes not available")

@@ -42,6 +42,8 @@ members = [
     "Asgard/lilith-orchestrator",
     "Asgard/lilith-api",
     "Asgard/lilith-cli",
+    "Asgard/lilith-skills",
+    "Asgard/lilith-bridge",
     "Alfheim/dashboard",
     "Alfheim/TerminalDashboard",
     "Alfheim/YggdrasilForge",
@@ -58,6 +60,14 @@ hatchling = ["hatchling"]
 # When a sub-package depends on another workspace member (e.g.
 # lilith-tools depends on lilith-core), uv resolves it from the
 # local workspace automatically – no need to publish to PyPI first.
+lilith-core = { workspace = true }
+lilith-memory = { workspace = true }
+lilith-tools = { workspace = true }
+lilith-orchestrator = { workspace = true }
+lilith-api = { workspace = true }
+lilith-cli = { workspace = true }
+lilith-skills = { workspace = true }
+lilith-bridge = { workspace = true }
 
 # ---------------------------------------------------------------------------
 # poethepoet task runner
@@ -72,6 +82,7 @@ format = {cmd = "ruff format .", help = "Run ruff formatter on the entire monore
 dashboard = {cmd = "uvicorn alfheim.dashboard.app:create_app --factory --port 8000 --reload", help = "Start the Alfheim HTMX dashboard server"}
 tui = {cmd = "python -m lilith_cli.tui.app", help = "Start the Yggdrasil TUI dashboard"}
 api = {cmd = "python -m lilith_api", help = "Start the Lilith REST API server"}
+bridge = {cmd = "lilith-bridge", help = "Start the Hermes Bridge gateway (Yggdrasil <-> Hermes)"}
 
 clean = {cmd = "python scripts/clean.py", help = "Remove __pycache__, .pyc, .pytest_cache, .ruff_cache, *.egg-info"}
 
