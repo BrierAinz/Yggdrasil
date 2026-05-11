@@ -176,7 +176,7 @@ The original skills section had plain cards with `fade-in` class — visually bo
 1. Append version comment to CSS: `echo "/* v2.1 */" >> styles.css` → forces different file hash → wrangler detects change
 2. Add `?v=2.1` cache-bust query param to `<link>` and `<script>` URLs in HTML → forces CDN and browser bypass
 
-**Pitfall**: Account tokens (`cfat_*`) cannot purge zone-level cache via `POST /zones/{id}/purge_cache` (returns 10000 auth error). Cache-busting URLs is the only programmatic solution.
+**Pitfall**: Account tokens cannot purge zone-level cache via `POST /zones/{id}/purge_cache` (returns 10000 auth error). Cache-busting URLs is the only programmatic solution.
 
 ## Completed
 - [x] DNS for contact.brierstudios.com — configured via Workers Domains API

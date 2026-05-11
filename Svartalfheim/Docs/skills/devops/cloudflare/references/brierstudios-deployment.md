@@ -95,14 +95,14 @@ Updated v2.2→v2.3 — Lilith section pivoted from dark fantasy to anime/cyberp
 After modifying site files:
 1. Bump `?v=X.Y` in all 3 locations in index.html (preload CSS link, stylesheet link, script tag src)
 2. If you also changed CSS, append a version comment to end of styles.css (`/* vX.Y */`) to force wrangler content-hash change
-3. Run: `CLOUDFLARE_API_TOKEN=cfat_xxx CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID} npx wrangler pages deploy . --project-name=brierstudios`
+3. Run: `CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN} CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID} npx wrangler pages deploy . --project-name=brierstudios`
 4. Verify in browser: navigate to site, check console for errors, test scroll animations
 5. If changes don't appear, it's a CDN cache issue — the `?v=` bump should handle it. If wrangler says "0 files uploaded", force re-upload by appending trivial comment to the changed file.
 
 **Cache-busting details**:
 - Query-param `?v=X.Y` busts both CDN and browser caches simultaneously
 - Wrangler checks content hashes before uploading — if hash matches a prior deploy, it skips the file
-- Account tokens (`cfat_*`) CANNOT purge Cloudflare CDN cache via API — only `cfut_*` user tokens can. Always rely on `?v=` query params instead.
+- Account tokens CANNOT purge Cloudflare CDN cache via API — only user tokens can. Always rely on `?v=` query params instead.
 
 ### v2.5 Changes (deployed May 2026)
 
@@ -188,7 +188,7 @@ After modifying site files:
 - **Custom domain**: `docs.brierstudios.com` (CNAME → docs-brierstudios.pages.dev, proxied)
 - **Stack**: Docusaurus v3 + TypeScript, custom neon theme (cyan/magenta/abyss)
 - **Sections**: Intro, CLI (19 commands), Lilith v2.0, Architecture, Agents, LoRA Training
-- **Build**: `npm run build` → `build/` (98 files); deploy: `CLOUDFLARE_API_TOKEN=cfat_xxx CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID} npx wrangler pages deploy build --project-name=docs-brierstudios`
+- **Build**: `npm run build` → `build/` (98 files); deploy: `CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN} CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID} npx wrangler pages deploy build --project-name=docs-brierstudios`
 - **See also**: `docusaurus` skill for full setup/customization details
 
 ### Still pending
