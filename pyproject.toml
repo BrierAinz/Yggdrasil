@@ -49,6 +49,7 @@ members = [
     "Alfheim/YggdrasilForge",
     "Muspelheim/AutoSub",
     "Muspelheim/ForgeMaster",
+    "Vanaheim/bifrost",
     "Vanaheim/vanaheim-framework",
 ]
 
@@ -68,6 +69,7 @@ lilith-api = { workspace = true }
 lilith-cli = { workspace = true }
 lilith-skills = { workspace = true }
 lilith-bridge = { workspace = true }
+bifrost = { workspace = true }
 
 # ---------------------------------------------------------------------------
 # poethepoet task runner
