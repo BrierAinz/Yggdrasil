@@ -4,45 +4,50 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Hybrid Memory',
+    rune: 'ᛒ',
+    color: '#c8a23e',
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Three-layer memory: vector embeddings, knowledge graph, and full-text search.
+        The agent remembers who you are and what you did — no context lost between sessions.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Swarm Intelligence',
+    rune: 'ᚹ',
+    color: '#b87333',
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Spawn LLM-powered specialist agents — researcher, coder, writer, critic —
+        each with its own context and tools. Parallel execution with file locking and session persistence.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Forge-Ready CLI',
+    rune: 'ᛏ',
+    color: '#d19a66',
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Control from terminal or Telegram. Skills with hot-reload, multi-provider LLM fallback,
+        batch mode, and TOML configuration. Your forge, your rules.
       </>
     ),
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({rune, title, description, color}) {
   return (
     <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+      <div style={{textAlign: 'center', marginBottom: '1rem'}}>
+        <span style={{fontSize: '3rem', color: color, fontFamily: "'MedievalSharp', cursive", lineHeight: 1}}>
+          {rune}
+        </span>
       </div>
       <div className="text--center padding-horiz--md">
-        <Heading as="h3">{title}</Heading>
+        <Heading as="h3" style={{fontFamily: "'Cinzel', serif", color: color}}>{title}</Heading>
         <p>{description}</p>
       </div>
     </div>

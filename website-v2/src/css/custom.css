@@ -1,19 +1,19 @@
 /**
- * Yggdrasil — Dark Fantasy Theme for Docusaurus
+ * Yggdrasil — Dark Fantasy Nordic Theme for Docusaurus
  *
- * Palette: Dark base (#1a1b26) with amber/gold (#c8a23e) accent
- * Fonts: Inter (body) + JetBrains Mono (code)
+ * Palette: Deep dark (#1a1b26) with old gold (#c8a23e) accent
+ * Fonts: Cinzel (serif headings) + Inter (body) + MedievalSharp (runes/special)
  *
  * Realm colors:
- *   Asgard      #c8a23e (gold)
- *   Vanaheim    #e06c75 (rose)
- *   Alfheim     #61afef (sky)
- *   Svartalfheim#98c379 (green)
- *   Muspelheim  #e5c07b (amber)
- *   Niflheim    #56b6c2 (cyan)
- *   Helheim     #be5046 (crimson)
- *   Jotunheim   #d19a66 (orange)
- *   Midgard     #c678dd (purple)
+ *   Asgard      #c8a23e (old gold)
+ *   Vanaheim    #b87333 (bronze)
+ *   Alfheim     #a8c4d4 (pale sky)
+ *   Svartalfheim#e0c878 (parchment)
+ *   Muspelheim  #d4760a (forge fire)
+ *   Niflheim    #7a8599 (ancient ice)
+ *   Helheim     #8b2020 (blood crimson)
+ *   Jotunheim   #d19a66 (copper)
+ *   Midgard     #6b8f71 (forest moss)
  */
 
  :root {
@@ -30,9 +30,9 @@
   --docusaurus-highlighted-code-line-bg: rgba(200, 162, 62, 0.1);
 }
 
-/* Light mode overrides (still dark-adjacent) */
+/* Light mode overrides (parchment/paper feel) */
 [data-theme='light'] {
-  --ifm-color-primary: #1a1b26;
+  --ifm-color-primary: #8a6d1b;
   --ifm-background-color: #faf9f6;
   --ifm-navbar-background-color: #ffffff;
   --ifm-footer-background-color: #f5f4f0;
@@ -63,16 +63,38 @@ html[data-theme='dark'] {
   --ifm-menu-color-active: #c8a23e;
 }
 
-/* Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* Fonts — Cinzel for headings, Inter for body, MedievalSharp for runes */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=MedievalSharp&display=swap');
 
 html {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   scroll-behavior: smooth;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cinzel', 'Georgia', serif !important;
+  letter-spacing: 0.04em;
+}
+
 code, pre {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace !important;
+  font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace !important;
+}
+
+/* Rune accents for headings */
+h2::before {
+  content: '᛭ ';
+  color: #c8a23e;
+  opacity: 0.6;
+  margin-right: 0.3em;
+  font-family: 'MedievalSharp', cursive;
+}
+
+h3::before {
+  content: '᛫ ';
+  color: #c8a23e;
+  opacity: 0.4;
+  margin-right: 0.2em;
+  font-family: 'MedievalSharp', cursive;
 }
 
 /* Navbar */
@@ -86,6 +108,7 @@ html[data-theme='dark'] .navbar {
 }
 
 .navbar__title {
+  font-family: 'Cinzel', serif;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -95,7 +118,7 @@ html[data-theme='dark'] .navbar {
   height: 28px;
 }
 
-/* Hero */
+/* Hero — dark forge background */
 .hero {
   background: linear-gradient(180deg, #1a1b26 0%, #0f0f14 100%) !important;
   position: relative;
@@ -114,6 +137,7 @@ html[data-theme='dark'] .navbar {
 }
 
 .hero__title {
+  font-family: 'Cinzel', serif !important;
   font-size: 3rem;
   letter-spacing: 0.08em;
   font-weight: 700;
@@ -121,11 +145,12 @@ html[data-theme='dark'] .navbar {
 
 .hero__subtitle {
   color: #c8a23e;
+  font-family: 'Cinzel', serif;
   font-weight: 300;
   letter-spacing: 0.04em;
 }
 
-/* Cards and containers */
+/* Cards and containers — forged iron borders */
 html[data-theme='dark'] .card {
   background-color: #1e1f30;
   border: 1px solid rgba(200, 162, 62, 0.15);
@@ -138,7 +163,7 @@ html[data-theme='dark'] .card:hover {
   box-shadow: 0 4px 20px rgba(200, 162, 62, 0.1);
 }
 
-/* Sidebar */
+/* Sidebar — dark stone */
 html[data-theme='dark'] .menu {
   background-color: #16161e;
 }
@@ -148,17 +173,17 @@ html[data-theme='dark'] .menu__link--active {
   border-left: 3px solid #c8a23e;
 }
 
-/* Footer */
+/* Footer — deepest hall */
 html[data-theme='dark'] .footer {
   border-top: 1px solid rgba(200, 162, 62, 0.15);
 }
 
-/* Code blocks */
+/* Code blocks — runic carved stone */
 html[data-theme='dark'] pre {
   border: 1px solid rgba(200, 162, 62, 0.1);
 }
 
-/* Tables */
+/* Tables — ancient parchment */
 html[data-theme='dark'] table {
   border-collapse: separate;
   border-spacing: 0;
@@ -168,6 +193,7 @@ html[data-theme='dark'] table th {
   background-color: #24253a;
   color: #c8a23e;
   border-bottom: 2px solid rgba(200, 162, 62, 0.3);
+  font-family: 'Cinzel', serif;
 }
 
 html[data-theme='dark'] table td {
@@ -178,25 +204,25 @@ html[data-theme='dark'] table tr:hover td {
   background-color: rgba(200, 162, 62, 0.05);
 }
 
-/* Admonitions */
+/* Admonitions — realm-colored */
 html[data-theme='dark'] .admonition {
   border-radius: 6px;
 }
 
 html[data-theme='dark'] .admonition--info {
-  border-left-color: #56b6c2;
+  border-left-color: #a8c4d4;
 }
 
 html[data-theme='dark'] .admonition--tip {
-  border-left-color: #98c379;
+  border-left-color: #e0c878;
 }
 
 html[data-theme='dark'] .admonition--warning {
-  border-left-color: #e5c07b;
+  border-left-color: #d4760a;
 }
 
 html[data-theme='dark'] .admonition--caution {
-  border-left-color: #be5046;
+  border-left-color: #8b2020;
 }
 
 /* Breadcrumbs */
@@ -219,7 +245,7 @@ html[data-theme='dark'] .pagination-nav__link:hover {
   color: #c8a23e;
 }
 
-/* Custom realm badges */
+/* Custom realm badges — dark fantasy colors */
 .realm-badge {
   display: inline-block;
   padding: 2px 8px;
@@ -232,19 +258,26 @@ html[data-theme='dark'] .pagination-nav__link:hover {
 }
 
 .realm-asgard { background: rgba(200, 162, 62, 0.2); color: #c8a23e; border: 1px solid rgba(200, 162, 62, 0.4); }
-.realm-vanaheim { background: rgba(224, 108, 117, 0.2); color: #e06c75; border: 1px solid rgba(224, 108, 117, 0.4); }
-.realm-alfheim { background: rgba(97, 175, 239, 0.2); color: #61afef; border: 1px solid rgba(97, 175, 239, 0.4); }
-.realm-svartalfheim { background: rgba(152, 195, 121, 0.2); color: #98c379; border: 1px solid rgba(152, 195, 121, 0.4); }
-.realm-muspelheim { background: rgba(229, 192, 123, 0.2); color: #e5c07b; border: 1px solid rgba(229, 192, 123, 0.4); }
-.realm-niflheim { background: rgba(86, 182, 194, 0.2); color: #56b6c2; border: 1px solid rgba(86, 182, 194, 0.4); }
-.realm-helheim { background: rgba(190, 80, 70, 0.2); color: #be5046; border: 1px solid rgba(190, 80, 70, 0.4); }
+.realm-vanaheim { background: rgba(184, 115, 51, 0.2); color: #b87333; border: 1px solid rgba(184, 115, 51, 0.4); }
+.realm-alfheim { background: rgba(168, 196, 212, 0.2); color: #a8c4d4; border: 1px solid rgba(168, 196, 212, 0.4); }
+.realm-svartalfheim { background: rgba(224, 200, 120, 0.2); color: #e0c878; border: 1px solid rgba(224, 200, 120, 0.4); }
+.realm-muspelheim { background: rgba(212, 118, 10, 0.2); color: #d4760a; border: 1px solid rgba(212, 118, 10, 0.4); }
+.realm-niflheim { background: rgba(122, 133, 153, 0.2); color: #7a8599; border: 1px solid rgba(122, 133, 153, 0.4); }
+.realm-helheim { background: rgba(139, 32, 32, 0.2); color: #8b2020; border: 1px solid rgba(139, 32, 32, 0.4); }
 .realm-jotunheim { background: rgba(209, 154, 102, 0.2); color: #d19a66; border: 1px solid rgba(209, 154, 102, 0.4); }
-.realm-midgard { background: rgba(198, 120, 221, 0.2); color: #c678dd; border: 1px solid rgba(198, 120, 221, 0.4); }
+.realm-midgard { background: rgba(107, 143, 113, 0.2); color: #6b8f71; border: 1px solid rgba(107, 143, 113, 0.4); }
 
 /* Status badges */
-.status-active { background: rgba(152, 195, 121, 0.2); color: #98c379; }
-.status-planned { background: rgba(97, 175, 239, 0.2); color: #61afef; }
-.status-deprecated { background: rgba(190, 80, 70, 0.2); color: #be5046; }
+.status-active { background: rgba(224, 200, 120, 0.2); color: #e0c878; }
+.status-planned { background: rgba(168, 196, 212, 0.2); color: #a8c4d4; }
+.status-deprecated { background: rgba(139, 32, 32, 0.2); color: #8b2020; }
+
+/* Rune decorations for inline code */
+html[data-theme='dark'] code {
+  background-color: #24253a;
+  border: 1px solid rgba(200, 162, 62, 0.08);
+  border-radius: 3px;
+}
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -253,19 +286,34 @@ html[data-theme='dark'] .pagination-nav__link:hover {
   }
 }
 
-/* Animations */
+/* Animations — subtle forge glow */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes forgeGlow {
+  0%, 100% { text-shadow: 0 0 4px rgba(200, 162, 62, 0.3); }
+  50% { text-shadow: 0 0 12px rgba(200, 162, 62, 0.6); }
 }
 
 .markdown > * {
   animation: fadeIn 0.3s ease-out;
 }
 
+/* Headings subtle forge glow on hover */
+html[data-theme='dark'] .markdown h2:hover,
+html[data-theme='dark'] .markdown h3:hover {
+  animation: forgeGlow 2s ease-in-out infinite;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .markdown > * {
+    animation: none;
+  }
+  html[data-theme='dark'] .markdown h2:hover,
+  html[data-theme='dark'] .markdown h3:hover {
     animation: none;
   }
 }

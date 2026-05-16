@@ -4,15 +4,15 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Yggdrasil',
-  tagline: 'A personal project ecosystem rooted in Norse mythology',
+  tagline: 'Forged in the Nine Realms — A project ecosystem rooted in Norse mythology',
   favicon: 'img/favicon.svg',
 
   future: {
     v4: true,
   },
 
-  url: 'https://brierainz.github.io',
-  baseUrl: '/Yggdrasil/',
+  url: 'https://docs.brierstudios.com',
+  baseUrl: '/',
 
   organizationName: 'BrierAinz',
   projectName: 'Yggdrasil',
@@ -56,7 +56,7 @@ const config = {
         respectPrefersColorScheme: true,
       },
       navbar: {
-        title: 'Yggdrasil',
+        title: '᛭ Yggdrasil',
         logo: {
           alt: 'Yggdrasil Logo',
           src: 'img/logo-yggdrasil.svg',
@@ -100,7 +100,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Built with runes and code. ${new Date().getFullYear()}`,
+        copyright: `ᛒ Forged with runes and code. ${new Date().getFullYear()}`,
       },
       prism: {
         theme: prismThemes.github,
@@ -109,7 +109,7 @@ const config = {
       },
       announcementBar: {
         id: 'yggdrasil-v5',
-        content: 'Yggdrasil v5 — Lilith refactored into modular packages',
+        content: '᛭ Yggdrasil v5 — Lilith reforged into modular packages',
         backgroundColor: '#1a1b26',
         textColor: '#c8a23e',
         isCloseable: true,

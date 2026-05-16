@@ -55,15 +55,15 @@ Open LM Studio, load a model (recommended: 13B+ parameters), and start the local
 
 ### 4. Launch Yggdrasil
 
-:::tip Unified Launcher
-On Windows, use the unified launcher:
-
-```bash
-$ start_lilith.bat
-```
-
-This starts the Gateway (port 8000) and the Telegram Bot in a single console.
-:::
+> **ᛏ Unified Launcher**
+>
+> On Windows, use the unified launcher:
+>
+> ```bash
+> $ start_lilith.bat
+> ```
+>
+> This starts the Gateway (port 8000) and the Telegram Bot in a single console.
 
 Or launch manually:
 

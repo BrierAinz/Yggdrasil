@@ -16,7 +16,7 @@ Every feature, fix, and evolution across the Nine Realms. From the first spark i
 - **TerminalDashboard v1.0.0**: 188 tests, pytest-asyncio fix, scanner auto-detection, git_activity module, Sidebar regex filter, Typer CLI with shell completions, 81.81% coverage
 - **Website v2**: Migrated from static HTML to Docusaurus v3.10, 6 doc pages, custom Norse dark theme, React landing page with realm cards
 
-**Status:** ✅ Active &nbsp;·&nbsp; **Released:** 2026-03-26
+**Status:** ᛏ Active &nbsp;·&nbsp; **Released:** 2026-03-26
 
 Complete PC control from Telegram with auto-batched operations, single confirmation per batch, and dual-layer Discord protection. 31/31 tests passing.
 
@@ -36,13 +36,11 @@ Dual-layer protection blocks PC operations in Discord. Layer 1 (Fail-Fast) detec
 
 Persistent session history with 24h TTL, disk persistence, isolated vault in MuninnDB, context formatting for prompts, and automatic cleanup of expired sessions.
 
-:::info Key Metrics
-
-- **31 tests passing** — 14 session tests + 17 macro tests. 100% success rate.
-- **7-layer security model**: Discord blocking, dual-layer protection, regex anti-injection, path sanitization, rate limiting, token expiration, vault isolation.
-- **~18,700 lines of code** · **~140 total tests** · **67 REST APIs** · **6 PC macros** · **8 MuninnDB vaults**.
-
-:::
+> **᛭ Key Metrics**
+>
+> - **31 tests passing** — 14 session tests + 17 macro tests. 100% success rate.
+> - **7-layer security model**: Discord blocking, dual-layer protection, regex anti-injection, path sanitization, rate limiting, token expiration, vault isolation.
+> - **~18,700 lines of code** · **~140 total tests** · **67 REST APIs** · **6 PC macros** · **8 MuninnDB vaults**.
 
 ## All Releases
 
@@ -70,7 +68,7 @@ The full evolution of Lilith from v1.0 to v5.0. Each version represents a milest
 
 From a single spark in Muspelheim to the living ecosystem spanning all Nine Realms. Each era brought new capabilities.
 
-### 🔥 Era I — The Spark (v1.0 — v2.0 · Dec 2025 – Jan 2026)
+### ᚲ Era I — The Spark (v1.0 — v2.0 · Dec 2025 – Jan 2026)
 
 The first light. A simple LLM integration and basic memory system. The core was rewritten from scratch in v2.0, establishing the foundation for everything that followed.
 
@@ -81,7 +79,7 @@ The first light. A simple LLM integration and basic memory system. The core was 
 - Basic agent system
 - Multi-LLM support
 
-### 🔮 Era II — The Awakening (v2.3 — v3.9 · Jan – Feb 2026)
+### ᛇ Era II — The Awakening (v2.3 — v3.9 · Jan – Feb 2026)
 
 The agents learned to speak. Telegram integration, Discord with role-based access, intent detection, and the first specialist agents (Odin, Eva).
 
@@ -91,7 +89,7 @@ The agents learned to speak. Telegram integration, Discord with role-based acces
 - Response Generator
 - Confirmation & delegation
 
-### 🏰 Era III — The Kingdom (v4.0 — v4.2 · Mar 2026)
+### ᛟ Era III — The Kingdom (v4.0 — v4.2 · Mar 2026)
 
 Asgard formed. Multi-agent DAG architecture, MuninnDB cognitive memory, Kimi API integration, and the WebSocket Dashboard brought the ecosystem to life.
 
@@ -102,7 +100,7 @@ Asgard formed. Multi-agent DAG architecture, MuninnDB cognitive memory, Kimi API
 - WebSocket Dashboard
 - 46 tests (v4.2.3)
 
-### 🌍 Era IV — The Convergence (v5.0-alpha · Mar 2026)
+### ᛃ Era IV — The Convergence (v5.0-alpha · Mar 2026)
 
 Full PC control from Telegram. Auto-batched operations, macro engine, persistent sessions, and 7-layer security. The ecosystem converges into a unified control surface.
 
@@ -131,16 +129,14 @@ The v5.0 security model is built on 7 layers of protection, ensuring safe remote
 
 What's coming next in the Nine Realms. These are the planned features for v5.1 and beyond.
 
-:::tip Planned Features
-
-- **🔮 v5.1 — Progress Streaming:** Real-time step-by-step feedback in Telegram. 6-8 hours estimated.
-- **📊 Macro Dashboard:** Metrics and analytics for executed macros.
-- **🧠 Custom Macro Learning:** System that learns and suggests custom macros based on usage patterns.
-- **✅ Granular Multi-Confirmation:** Confirm individual steps within a batch.
-- **📤 Session Export:** Export conversation history for analysis.
-- **⏪ Operation Rollback:** Undo PC operations with a single command.
-
-:::
+> **ᛏ Planned Features**
+>
+> - **ᛇ v5.1 — Progress Streaming:** Real-time step-by-step feedback in Telegram. 6-8 hours estimated.
+> - **ᛒ Macro Dashboard:** Metrics and analytics for executed macros.
+> - **ᛗ Custom Macro Learning:** System that learns and suggests custom macros based on usage patterns.
+> - **ᛏ Granular Multi-Confirmation:** Confirm individual steps within a batch.
+> - **ᚠ Session Export:** Export conversation history for analysis.
+> - **ᚦ Operation Rollback:** Undo PC operations with a single command.
 
 ```
 Roadmap priorities:

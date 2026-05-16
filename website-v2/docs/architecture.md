@@ -102,9 +102,9 @@ How the major packages interact. Arrows indicate dependency or communication dir
 
 | Component | Type |
 |-----------|------|
-| 📱 Telegram Bot | Interface |
-| 🖼️ VSCode Extension | Interface |
-| 💻 CLI | Interface |
+| ᚨ Telegram Bot | Interface |
+| ᚲ VSCode Extension | Interface |
+| ᚱ CLI | Interface |
 
 ↓ *HTTP / REST* ↓
 
@@ -112,7 +112,7 @@ How the major packages interact. Arrows indicate dependency or communication dir
 
 | Component | Detail |
 |-----------|--------|
-| 🔗 Gateway | FastAPI · Port 8000 |
+| ᚦ Gateway | FastAPI · Port 8000 |
 
 ↓ *Internal API* ↓
 
@@ -120,14 +120,14 @@ How the major packages interact. Arrows indicate dependency or communication dir
 
 | Component | Detail |
 |-----------|--------|
-| ⚡ Lilith | Orchestrator |
-| 🧠 Memory | Vector + Graph + FTS5 |
-| 📅 Scheduler | Cron + SQLite |
-| 🔌 Plugins | Dynamic tools |
-| 🐝 Swarm | Specialist Agents |
-| 📜 Skills | Hot-reload Packs |
-| 🔮 MCP | Model Context Protocol |
-| 📊 Dashboard | WebSocket · Port 8080 |
+| ᚦ Lilith | Orchestrator |
+| ᛗ Memory | Vector + Graph + FTS5 |
+| ᛏ Scheduler | Cron + SQLite |
+| ᚦ Plugins | Dynamic tools |
+| ᛊ Swarm | Specialist Agents |
+| ᚺ Skills | Hot-reload Packs |
+| ᛇ MCP | Model Context Protocol |
+| ᛒ Dashboard | WebSocket · Port 8080 |
 
 ↓ *Multi-Provider LLM* ↓
 
@@ -135,8 +135,8 @@ How the major packages interact. Arrows indicate dependency or communication dir
 
 | Component | Detail |
 |-----------|--------|
-| 🌳 LM Studio | Local · localhost:1234 |
-| ☁️ Kimi / OpenAI | Remote Fallback |
+| ᛃ LM Studio | Local · localhost:1234 |
+| ᚨ Kimi / OpenAI | Remote Fallback |
 
 ## Security Model
 

@@ -19,14 +19,12 @@ $ cd Asgard/Lilith && lilith
 
 Yggdrasil is not a monorepo — it is a **living ecosystem** where every project has a purpose, a lifecycle, and a destination realm. Inspired by Norse cosmology, each realm serves a distinct function in the development lifecycle.
 
-:::info Key Principles
-
-- Every project lives in **exactly one realm** at any time. No duplicates, no chaos.
-- The lifecycle is enforced: `Idea → Muspelheim → [Target Realm] → Helheim (if it dies)`.
-- Lilith is the orchestrator — a local LLM-powered agent with Telegram control, RAG memory, and sub-agent delegation.
-- All communication with the AI flows through a REST Gateway. No cloud dependencies for the core.
-
-:::
+> **᛭ Key Principles**
+>
+> - Every project lives in **exactly one realm** at any time. No duplicates, no chaos.
+> - The lifecycle is enforced: `Idea → Muspelheim → [Target Realm] → Helheim (if it dies)`.
+> - Lilith is the orchestrator — a local LLM-powered agent with Telegram control, RAG memory, and sub-agent delegation.
+> - All communication with the AI flows through a REST Gateway. No cloud dependencies for the core.
 
 ## The Nine Realms
 
@@ -56,14 +54,14 @@ You (Telegram) → Telegram Bot → Gateway (FastAPI) → Lilith (Orchestrator) 
 
 ### Features
 
-- **🔍 Hybrid Memory** — Vector embeddings + knowledge graph + full-text search (FTS5). Automatic compression, entity extraction, and semantic recall across sessions.
-- **🤖 Swarm Intelligence** — LLM-powered specialist agents (researcher, coder, writer, critic) with file locking, conflict resolution, and persistent sessions via SQLite.
-- **📅 Task Scheduler** — Cron-like job scheduling with persistent SQLite backend and REST API exposure.
-- **🔮 Multi-Provider LLM** — LM Studio (local) + Kimi (remote) + any OpenAI-compatible provider. Automatic fallback, model auto-detection, and zero-config startup.
-- **⚡ Skills & MCP** — Hot-reloadable skill packs with auto-trigger. MCP (Model Context Protocol) connects external tool servers dynamically. 35+ native tools.
-- **🚀 Plugin Architecture** — Hot-pluggable tools with dynamic discovery, enable/disable, and custom tool registration.
-- **📊 Real-time Dashboard** — Web dashboard with WebSocket live updates, multi-pane layout, terminal widget, and system monitoring. Dark fantasy aesthetic.
-- **📜 TOML Config & Resilience** — Unified configuration in `~/.lilith/config.toml`. Circuit breaker, graceful shutdown, error tracking, and automatic recovery.
+- **ᛒ Hybrid Memory** — Vector embeddings + knowledge graph + full-text search (FTS5). Automatic compression, entity extraction, and semantic recall across sessions.
+- **ᚹ Swarm Intelligence** — LLM-powered specialist agents (researcher, coder, writer, critic) with file locking, conflict resolution, and persistent sessions via SQLite.
+- **ᛏ Task Scheduler** — Cron-like job scheduling with persistent SQLite backend and REST API exposure.
+- **ᛇ Multi-Provider LLM** — LM Studio (local) + Kimi (remote) + any OpenAI-compatible provider. Automatic fallback, model auto-detection, and zero-config startup.
+- **ᚦ Skills & MCP** — Hot-reloadable skill packs with auto-trigger. MCP (Model Context Protocol) connects external tool servers dynamically. 35+ native tools.
+- **ᚠ Plugin Architecture** — Hot-pluggable tools with dynamic discovery, enable/disable, and custom tool registration.
+- **ᛗ Real-time Dashboard** — Web dashboard with WebSocket live updates, multi-pane layout, terminal widget, and system monitoring. Dark fantasy aesthetic.
+- **ᚨ TOML Config & Resilience** — Unified configuration in `~/.lilith/config.toml`. Circuit breaker, graceful shutdown, error tracking, and automatic recovery.
 
 ## Agents of Yggdrasil
 
@@ -91,17 +89,17 @@ Current state of the major components across all realms.
 
 | Component | Realm | Status | Description |
 |-----------|-------|--------|-------------|
-| `Lilith` | Asgard | ✅ Active | Core orchestrator v5.0 — CLI, memory, swarm, MCP, skills, batch, dashboard |
-| `Gateway` | Asgard | ✅ Active | FastAPI REST bridge exposing Telegram, Scheduler, Agents, Plugins |
-| `ForgeMaster` | Muspelheim | ✅ Active | Model catalog, GPU detection, GGUF/safetensors metadata, download manager |
-| `TerminalDashboard` | Alfheim | ✅ Active | Terminal UI with scanner, Git activity, sidebar search, Rich panels |
-| `LLM Providers` | Asgard | ✅ Active | Multi-provider: LM Studio (local), Kimi (remote), OpenAI-compatible, auto-fallback |
-| `Hybrid Memory` | Asgard | ✅ Active | Vector embeddings + knowledge graph + FTS5, auto-compression, entity extraction, session search |
-| `Swarm Intelligence` | Asgard | ✅ Active | LLM-powered specialist agents with file locking, conflict resolution, persistent SQLite sessions |
-| `Skills & MCP` | Asgard | ✅ Active | Hot-reloadable skill packs, MCP protocol, dynamic tool registration, 35+ native tools |
-| `Task Scheduler` | Asgard | ✅ Active | Cron-like scheduling with REST API and persistent storage |
-| `Dashboard` | Asgard | ✅ Active | Real-time web dashboard with WebSocket, multi-pane layout, terminal widget |
-| `TOML Config & Resilience` | Asgard | ✅ Active | Unified config, circuit breaker, graceful shutdown, error tracking, auto-recovery |
-| `Telegram Bot` | Vanaheim | ✅ Active | Remote control interface for the entire ecosystem |
-| `VSCode Extension` | Alfheim | 🔄 Prototype | Visual interface for Lilith inside VS Code |
-| `Website` | Svartalfheim | ✅ Active | GitHub Pages documentation site (this page) |
+| `Lilith` | Asgard | ᛏ Active | Core orchestrator v5.0 — CLI, memory, swarm, MCP, skills, batch, dashboard |
+| `Gateway` | Asgard | ᛏ Active | FastAPI REST bridge exposing Telegram, Scheduler, Agents, Plugins |
+| `ForgeMaster` | Muspelheim | ᛏ Active | Model catalog, GPU detection, GGUF/safetensors metadata, download manager |
+| `TerminalDashboard` | Alfheim | ᛏ Active | Terminal UI with scanner, Git activity, sidebar search, Rich panels |
+| `LLM Providers` | Asgard | ᛏ Active | Multi-provider: LM Studio (local), Kimi (remote), OpenAI-compatible, auto-fallback |
+| `Hybrid Memory` | Asgard | ᛏ Active | Vector embeddings + knowledge graph + FTS5, auto-compression, entity extraction, session search |
+| `Swarm Intelligence` | Asgard | ᛏ Active | LLM-powered specialist agents with file locking, conflict resolution, persistent SQLite sessions |
+| `Skills & MCP` | Asgard | ᛏ Active | Hot-reloadable skill packs, MCP protocol, dynamic tool registration, 35+ native tools |
+| `Task Scheduler` | Asgard | ᛏ Active | Cron-like scheduling with REST API and persistent storage |
+| `Dashboard` | Asgard | ᛏ Active | Real-time web dashboard with WebSocket, multi-pane layout, terminal widget |
+| `TOML Config & Resilience` | Asgard | ᛏ Active | Unified config, circuit breaker, graceful shutdown, error tracking, auto-recovery |
+| `Telegram Bot` | Vanaheim | ᛏ Active | Remote control interface for the entire ecosystem |
+| `VSCode Extension` | Alfheim | ᚦ Prototype | Visual interface for Lilith inside VS Code |
+| `Website` | Svartalfheim | ᛏ Active | GitHub Pages documentation site (this page) |

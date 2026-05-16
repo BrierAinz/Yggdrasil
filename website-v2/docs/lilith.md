@@ -1,12 +1,12 @@
 ---
 sidebar_position: 4
 title: Lilith v5.0
-description: "Lilith v5.0: dark-fantasy CLI agent with hybrid memory, batch mode, and swarm intelligence"
+description: "Lilith v5.0: dark-fantasy CLI agent — hybrid memory, swarm intelligence, and forged-iron runic architecture"
 ---
 
 # Lilith v5.0
 
-A **dark-fantasy CLI agent** that runs entirely on your hardware. Hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, batch mode, skills with hot-reload, and real-time dashboard. No cloud lock-in. No subscription. Control your PC from Telegram or the terminal.
+A **dark-fantasy CLI agent** forged in the ancient fires of Yggdrasil. Hybrid memory, swarm intelligence, MCP protocol, multi-provider LLM, batch mode, skills with hot-reload, and real-time dashboard. No cloud lock-in. No subscription. Control your realm from Telegram or the terminal.
 
 ```bash
 $ cd Asgard/Lilith
@@ -16,18 +16,16 @@ $ lilith                    # Run from anywhere
 
 ## Why local-first?
 
-Lilith is built on a simple belief: **your data should stay on your machine**. The LLM runs through LM Studio (localhost:1234). Memory is stored in local SQLite. Files never leave your drive. Telegram is just the remote control — the brain is at home.
+Lilith is forged on an ancient principle: **your data stays in your hall**. The LLM runs through LM Studio (localhost:1234). Memory is stored in local SQLite. Files never leave your drive. Telegram is just the raven messenger — the brain resides in your own forge.
 
-:::info Key Facts
-
-- **No API keys required** for the core. LM Studio serves the model locally. Kimi available as remote fallback.
-- **Works offline** once LM Studio is loaded. Telegram needs internet, but the agent brain doesn't.
-- **48GB RAM + RTX 3060** can run models up to ~27B parameters with CPU offload.
-- **Multi-provider** — automatic fallback from LM Studio to Kimi to any OpenAI-compatible API.
-- **Model auto-detection** — "auto" in config picks the best loaded model from LM Studio.
-- **838 tests passing** — Core, Memory, Swarm, MCP, Dashboard, CLI, TOML Config, Batch, E2E.
-
-:::
+> **᛭ Key Facts**
+>
+> - **No API keys required** for the core. LM Studio serves the model locally. Kimi available as remote fallback.
+> - **Works offline** once LM Studio is loaded. Telegram needs internet, but the agent brain doesn't.
+> - **48GB RAM + RTX 3060** can run models up to ~27B parameters with CPU offload.
+> - **Multi-provider** — automatic fallback from LM Studio to Kimi to any OpenAI-compatible API.
+> - **Model auto-detection** — "auto" in config picks the best loaded model from LM Studio.
+> - **838 tests passing** — Core, Memory, Swarm, MCP, Dashboard, CLI, TOML Config, Batch, E2E.
 
 ## How it works
 
@@ -57,45 +55,45 @@ The Gateway is the single point of contact for all external interfaces. It expos
 
 ## Core Components
 
-### 🧠 Hybrid Memory (FASE 2)
+### ᛒ Hybrid Memory (FASE 2)
 
 Three-layer memory: vector embeddings (sentence-transformers), knowledge graph (NetworkX), and full-text search (FTS5). Auto-compression, entity extraction, session search, and context injection into every prompt. The agent remembers who you are and what you did.
 
-### 🔮 Multi-Provider LLM (FASE 7)
+### ᚨ Multi-Provider LLM (FASE 7)
 
 LM Studio for local inference, Kimi (Moonshot) for remote, and any OpenAI-compatible provider. Automatic fallback when the primary provider fails. Model auto-detection via `/models`. Zero-config startup — just start LM Studio and go.
 
-### 🤖 Swarm Intelligence (FASE 9)
+### ᚹ Swarm Intelligence (FASE 9)
 
 Spawn LLM-powered specialist agents — researcher, coder, writer, critic — each with its own context and tool access. File locking prevents conflicts. Code shift notifications keep agents aware. Persistent sessions via SQLite. `/swarm spawn`, `/swarm status`, `/swarm history`.
 
-### ⚡ Skills & MCP (FASE 8)
+### ᛏ Skills & MCP (FASE 8)
 
 Hot-reloadable skill packs with auto-trigger. Skills inject context into prompts when relevant. MCP (Model Context Protocol) connects external tool servers dynamically. 35+ native tools for files, system, network, browser, desktop, coding, and more.
 
-### 📅 Task Scheduler
+### ᛗ Task Scheduler
 
 Cron-like scheduling with persistent SQLite storage. Create, list, run, and delete tasks via REST or CLI. The scheduler wakes up the agent at the right time to execute background jobs.
 
-### 📊 Real-time Dashboard (FASE 10)
+### ᛇ Real-time Dashboard (FASE 10)
 
 Web dashboard with WebSocket live updates, multi-pane layout, terminal widget, and system monitoring. Watch agent activity, memory recall, swarm coordination, and tool invocations as they happen. Dark fantasy aesthetic throughout.
 
-### 🔌 Plugin Architecture
+### ᚺ Plugin Architecture
 
 Hot-pluggable tools with dynamic discovery. Enable/disable plugins at runtime. Custom tools registered by dropping a Python file in the plugins directory. Dynamic Tool Registry integrates MCP and native tools seamlessly.
 
-### 📖 RAG Pipeline
+### ᛚ RAG Pipeline
 
 Document ingestion with chunking, embedding via sentence-transformers, and semantic retrieval. Build a personal knowledge base the agent queries in real time. Index with `/index`, search with `/search`.
 
-### 🖥️ PC Control
+### ᚦ PC Control
 
 35+ native tools: file system, process management, Windows automation, browser interaction, coding assistant, network operations, desktop control. The agent can literally use your computer.
 
-### 📜 TOML Config & Resilience (FASE 10)
+### ᛊ TOML Config & Resilience (FASE 10)
 
-Unified configuration in `~/.lilith/config.toml`. Priority: TOML > env vars > defaults. Circuit breaker for provider failures, graceful shutdown, error tracking, and automatic recovery.
+Unified configuration in `~/.lilith/config.toml`. Priority: TOML \> env vars \> defaults. Circuit breaker for provider failures, graceful shutdown, error tracking, and automatic recovery.
 
 ## CLI & Telegram Commands
 
@@ -126,7 +124,7 @@ Control Lilith through the terminal CLI or remotely via Telegram. Both interface
 
 ## Recommended Specs
 
-Lilith is designed to run on consumer hardware. You don't need a data center.
+Lilith is designed to run on consumer hardware. You don't need a data center — just a worthy forge.
 
 | | Minimum | Recommended | Reference Build |
 |---|---------|-------------|-----------------|
