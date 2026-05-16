@@ -43,7 +43,7 @@ lilith-tools = { workspace = true }
 # asyncio event loop when uvloop is unavailable.
 
 [tool.hatch.build.targets.wheel]
-packages = ["gateway"]
+packages = ["gateway", "lilith_orchestrator"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

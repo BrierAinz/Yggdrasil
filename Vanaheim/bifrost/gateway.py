@@ -1,7 +1,7 @@
 """BifrostGateway - API Gateway con LilithEngine real, JWT, Streaming y Hermes Bridge."""
+
 import json
 import logging
-import sys
 import time
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -10,19 +10,6 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
-
-# Paths para imports de Asgard
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "Asgard" / "lilith-core"))
-sys.path.insert(
-    0, str(Path(__file__).parent.parent.parent / "Asgard" / "lilith-memory")
-)
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "Asgard" / "lilith-tools"))
-sys.path.insert(
-    0, str(Path(__file__).parent.parent.parent / "Asgard" / "lilith-orchestrator")
-)
-sys.path.insert(
-    0, str(Path(__file__).parent.parent.parent / "Asgard" / "lilith-bridge")
-)
 
 from bifrost.auth import create_access_token, verify_token
 from lilith_core.config import Config
@@ -77,12 +64,10 @@ class ChatRequest(BaseModel):
     stream: bool = False
     metadata: Optional[Dict[str, Any]] = None
 
-
 class ChatResponse(BaseModel):
     response: str
     latency_ms: float
     usage: Optional[Dict[str, Any]] = None
-
 
 @app.get("/api/bifrost/health")
 async def health_check():
@@ -121,7 +106,6 @@ async def chat(req: ChatRequest, user: dict = Depends(_get_current_user)):
         logger.error(f"Chat error: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
-
 @app.post("/api/bifrost/chat/stream")
 async def chat_stream(req: ChatRequest, user: dict = Depends(_get_current_user)):
     async def event_generator():
@@ -135,7 +119,6 @@ async def chat_stream(req: ChatRequest, user: dict = Depends(_get_current_user))
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
-
 # Legacy endpoint (mantiene compatibilidad)
 class ExecuteRequest(BaseModel):
     agent: str
@@ -143,7 +126,6 @@ class ExecuteRequest(BaseModel):
     context: Optional[str] = ""
     streaming: bool = False
     metadata: Optional[Dict[str, Any]] = None
-
 
 @app.post("/api/bifrost/execute")
 async def execute_legacy(
@@ -167,7 +149,6 @@ async def execute_legacy(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 # ---------------------------------------------------------------------------
 # Hermes Bridge — mount bidirectional gateway to Hermes Agent
