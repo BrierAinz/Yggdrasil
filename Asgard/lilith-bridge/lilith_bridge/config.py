@@ -32,9 +32,7 @@ class BridgeConfig(BaseModel):
     hermes_max_retries: int = 3
 
     # ── MCP connection (alternative to HTTP) ────────────────────────
-    hermes_mcp_command: list[str] = Field(
-        default_factory=lambda: ["hermes", "mcp", "serve"]
-    )
+    hermes_mcp_command: list[str] = Field(default_factory=lambda: ["hermes", "mcp", "serve"])
     hermes_mcp_url: str | None = None
 
     # ── Lilith engine ───────────────────────────────────────────────

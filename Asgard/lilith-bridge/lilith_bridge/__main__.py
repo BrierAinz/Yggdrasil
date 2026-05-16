@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import logging
-import sys
 
 import uvicorn
 
@@ -15,24 +14,18 @@ def main() -> None:
         prog="lilith-bridge",
         description="Bidirectional gateway connecting Yggdrasil to Hermes Agent",
     )
-    parser.add_argument(
-        "--host", default=None, help="Bind host (default: from config or 0.0.0.0)"
-    )
+    parser.add_argument("--host", default=None, help="Bind host (default: from config or 0.0.0.0)")
     parser.add_argument(
         "--port", type=int, default=None, help="Bind port (default: from config or 9001)"
     )
-    parser.add_argument(
-        "--reload", action="store_true", help="Enable auto-reload for development"
-    )
+    parser.add_argument("--reload", action="store_true", help="Enable auto-reload for development")
     parser.add_argument(
         "--log-level",
         default="info",
         choices=["debug", "info", "warning", "error"],
         help="Log level",
     )
-    parser.add_argument(
-        "--config", default=None, help="Path to Yggdrasil config.yaml"
-    )
+    parser.add_argument("--config", default=None, help="Path to Yggdrasil config.yaml")
     args = parser.parse_args()
 
     # Configure logging.

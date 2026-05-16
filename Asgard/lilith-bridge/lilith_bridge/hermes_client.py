@@ -15,6 +15,7 @@ from typing import Any
 
 import httpx
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -165,9 +166,7 @@ class HermesClient:
 
             await asyncio.sleep(2 ** (attempt - 1))
 
-        raise RuntimeError(
-            f"Hermes chat failed after {self.max_retries} retries: {last_exc}"
-        )
+        raise RuntimeError(f"Hermes chat failed after {self.max_retries} retries: {last_exc}")
 
     async def chat_simple(
         self,
@@ -215,9 +214,7 @@ class HermesClient:
 
     # ── Tool execution ──────────────────────────────────────────────
 
-    async def execute_tool(
-        self, tool_name: str, params: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def execute_tool(self, tool_name: str, params: dict[str, Any]) -> dict[str, Any]:
         """Execute a tool on the Hermes side via chat+function_calling.
 
         Hermes doesn't have a direct /tools/execute endpoint, but we can
@@ -293,12 +290,9 @@ class HermesMCPClient:
         self._tools_cache = []
         return self._tools_cache
 
-    async def call_tool(
-        self, name: str, arguments: dict[str, Any]
-    ) -> dict[str, Any]:
+    async def call_tool(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         """Call a tool on the Hermes MCP server."""
         # MCP tool call would go here.
         raise NotImplementedError(
-            "MCP tool calling requires an active Hermes MCP server. "
-            "Start with: hermes mcp serve"
+            "MCP tool calling requires an active Hermes MCP server. Start with: hermes mcp serve"
         )

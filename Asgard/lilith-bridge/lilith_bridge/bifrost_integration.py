@@ -1,18 +1,28 @@
 """Bifrost integration — mount the Hermes Bridge onto the existing BifrostGateway.
 
-This module provides a FastAPI router that can be included in the
-BifrostGateway app to add Hermes Bridge endpoints. This way the
-Bifrost server can also act as a bridge to Hermes Agent without
-running a separate server.
+This module provides TWO factory functions:
+
+- ``create_bridge_router()`` — returns an APIRouter for embedding into
+  existing FastAPI apps (Bifrost gateway, etc.).
+- ``create_standalone_app()`` — returns a complete FastAPI application
+  for running the bridge as a standalone server (port 9001).
+
+All bridge logic lives HERE.  The ``app.py`` entry-point is just a thin
+wrapper that calls ``create_standalone_app()`` and runs uvicorn.
 
 Usage in ``bifrost/gateway.py``::
 
     from lilith_bridge.bifrost_integration import create_bridge_router
 
-    bridge_router = create_bridge_router()
+    bridge_router = create_bridge_router(engine=_engine, memory=_memory)
     app.include_router(bridge_router, prefix="/api/bridge")
 
-This adds all the /api/bridge/* endpoints to the Bifrost server.
+Usage standalone::
+
+    from lilith_bridge.bifrost_integration import create_standalone_app
+
+    app = create_standalone_app()
+    uvicorn.run(app, host="0.0.0.0", port=9001)
 """
 
 from __future__ import annotations
@@ -21,8 +31,8 @@ import logging
 import time
 from typing import Any
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query, Request
+from fastapi.middleware.cors import CORSMiddleware
 
 from .config import BridgeConfig, load_bridge_config
 from .hermes_client import HermesClient
@@ -30,7 +40,6 @@ from .models import (
     BridgeChatRequest,
     BridgeChatResponse,
     BridgeHealth,
-    BridgeMemoryQuery,
     BridgeMemoryStore,
     BridgeSkillSearch,
     HermesChatRequest,
@@ -39,12 +48,91 @@ from .models import (
     HermesToolResult,
 )
 
+
 logger = logging.getLogger(__name__)
 
-# ── State ──────────────────────────────────────────────────────────────
+# ── Lazy Lilith state (used by standalone mode) ──────────────────────────
+
+
+class _LilithState:
+    """Holds lazily-initialised Lilith component references."""
+
+    __slots__ = ("engine", "memory", "skills_ctx", "skills_loaded")
+
+    def __init__(self) -> None:
+        self.engine: Any = None
+        self.memory: Any = None
+        self.skills_ctx: Any = None
+        self.skills_loaded: int = 0
+
+    def ensure_engine(self, config: BridgeConfig) -> Any:
+        if self.engine is None:
+            try:
+                from lilith_core.config import Config as LilithConfig
+                from lilith_orchestrator.engine import LilithEngine
+
+                lconfig = LilithConfig()
+                if config.default_model != "auto":
+                    object.__setattr__(lconfig, "model", config.default_model)
+                self.engine = LilithEngine(lconfig, self.ensure_memory(config))
+                logger.info("LilithEngine initialized")
+            except ImportError:
+                logger.warning("lilith_orchestrator not available — engine disabled")
+                self.engine = None
+        return self.engine
+
+    def ensure_memory(self, config: BridgeConfig) -> Any:
+        if self.memory is None:
+            try:
+                from lilith_memory.store import MemoryStore
+
+                db_path = config.resolve_memory_db()
+                db_path.parent.mkdir(parents=True, exist_ok=True)
+                self.memory = MemoryStore(str(db_path))
+                logger.info("MemoryStore initialized: %s", db_path)
+            except ImportError:
+                logger.warning("lilith_memory not available — memory disabled")
+                self.memory = None
+        return self.memory
+
+    def ensure_skills(self, config: BridgeConfig) -> tuple[Any, int]:
+        if self.skills_ctx is None:
+            try:
+                from lilith_skills.context import SkillContext
+
+                skills_dir = config.resolve_skills_dir()
+                if skills_dir:
+                    ctx = SkillContext.from_repo(str(skills_dir.parent.parent))
+                    self.skills_ctx = ctx
+                    self.skills_loaded = len(ctx.registry.skills)
+                    logger.info(
+                        "SkillContext loaded: %d skills from %s",
+                        self.skills_loaded,
+                        skills_dir,
+                    )
+                else:
+                    logger.warning("Skills directory not found")
+                    self.skills_ctx = None
+                    self.skills_loaded = 0
+            except ImportError:
+                logger.warning("lilith_skills not available — skills disabled")
+                self.skills_ctx = None
+                self.skills_loaded = 0
+        return self.skills_ctx, self.skills_loaded
+
+
+# ── State singletons (module-level for standalone mode) ──────────────────
 
 _bridge_config: BridgeConfig | None = None
 _hermes_client: HermesClient | None = None
+_lilith_state: _LilithState | None = None
+
+
+def _validate_hermes_response(result: dict[str, Any]) -> dict[str, Any]:
+    """Raise HTTPException if Hermes returned no choices."""
+    if not result.get("choices"):
+        raise HTTPException(status_code=502, detail="Hermes returned no choices")
+    return result
 
 
 def _get_bridge_config() -> BridgeConfig:
@@ -72,25 +160,28 @@ def _verify_bridge_token(
 ) -> dict[str, str]:
     """Verify authentication for bridge endpoints.
 
-    If BifrostGateway already authenticated the user via its own JWT
-    middleware, the request will have a valid user. This adds an
-    additional layer: if ``auth_token`` is configured in bridge config,
-    it must match. If not configured, BifrostGateway's own auth is
-    sufficient.
+    Accepts:
+      - Authorization: Bearer ***  (if auth_token configured)
+      - X-Bridge-Token: <token>
+      - ?token=<token>  (query parameter)
+      - If no auth_token configured, allow all.
     """
     if not config.auth_token:
-        return {"sub": "bifrost-user", "role": "admin"}
+        return {"sub": "anonymous", "role": "admin"}
 
     auth = request.headers.get("authorization", "")
-    if auth.startswith("Bearer "):
-        if auth[7:] == config.auth_token:
-            return {"sub": "bearer", "role": "admin"}
+    if auth.startswith("Bearer ") and auth[7:] == config.auth_token:
+        return {"sub": "bearer", "role": "admin"}
 
     bridge_token = request.headers.get("x-bridge-token")
     if bridge_token == config.auth_token:
         return {"sub": "bridge", "role": "admin"}
 
-    raise HTTPException(status_code=401, detail="Invalid bridge token")
+    query_token = request.query_params.get("token")
+    if query_token == config.auth_token:
+        return {"sub": "query", "role": "admin"}
+
+    raise HTTPException(status_code=401, detail="Invalid or missing authentication token")
 
 
 # ── Router factory ──────────────────────────────────────────────────────
@@ -113,7 +204,7 @@ def create_bridge_router(
         Optional pre-built config. Falls back to loading from YAML.
     engine:
         Optional pre-initialised LilithEngine. If None, the bridge
-        will try to lazy-load one.
+        will try to lazy-load one (standalone mode).
     memory:
         Optional pre-initialised MemoryStore. If None, lazy-loads.
     skills_ctx:
@@ -125,6 +216,14 @@ def create_bridge_router(
     else:
         _bridge_config = _get_bridge_config()
 
+    # Use injected dependencies or lazy-load via _LilithState.
+    state = _LilithState() if engine is None else None
+    if state:
+        state.engine = engine
+        state.memory = memory
+        state.skills_ctx = skills_ctx
+        state.skills_loaded = len(skills_ctx.registry.skills) if skills_ctx else 0
+
     router = APIRouter(prefix="/bridge", tags=["Hermes Bridge"])
 
     # ── Health ─────────────────────────────────────────────────────
@@ -133,16 +232,18 @@ def create_bridge_router(
     async def bridge_health():
         hermes = _get_hermes_client()
         hermes_info = await hermes.health()
-        skills_count = len(skills_ctx.registry.skills) if skills_ctx else 0
+        skills_count = (
+            state.skills_loaded if state else (len(skills_ctx.registry.skills) if skills_ctx else 0)
+        )
 
         return BridgeHealth(
             status="healthy",
             bridge_version="1.0.0",
-            lilith_engine=engine is not None,
+            lilith_engine=(state.engine if state else engine) is not None,
             hermes_connected=hermes_info.get("connected", False),
-            memory_available=memory is not None,
+            memory_available=(state.memory if state else memory) is not None,
             skills_loaded=skills_count,
-            uptime_seconds=0.0,  # Bifrost tracks its own uptime
+            uptime_seconds=0.0,
         )
 
     # ── Inbound: Hermes → Yggdrasil (Lilith) ──────────────────────
@@ -152,10 +253,11 @@ def create_bridge_router(
         req: BridgeChatRequest,
         user: dict = Depends(_verify_bridge_token),
     ):
-        if engine is None:
+        _engine = state.ensure_engine(_bridge_config) if state else engine
+        if _engine is None:
             raise HTTPException(
                 status_code=503,
-                detail="Lilith engine not available",
+                detail="Lilith engine not available (lilith-orchestrator not installed)",
             )
 
         import uuid
@@ -164,7 +266,7 @@ def create_bridge_router(
         session_id = req.session_id or str(uuid.uuid4())
 
         try:
-            result = engine.process(req.message)
+            result = _engine.process(req.message)
             latency = round((time.time() - start) * 1000, 2)
 
             tools_used: list[str] = []
@@ -181,7 +283,7 @@ def create_bridge_router(
             )
         except Exception as exc:
             logger.exception("Bridge chat inbound error: %s", exc)
-            raise HTTPException(status_code=500, detail=str(exc))
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @router.get("/memory")
     async def bridge_memory_recall(
@@ -189,52 +291,64 @@ def create_bridge_router(
         k: int = Query(5),
         user: dict = Depends(_verify_bridge_token),
     ):
-        if memory is None:
+        _memory = state.ensure_memory(_bridge_config) if state else memory
+        if _memory is None:
             raise HTTPException(status_code=503, detail="Memory not available")
 
         try:
-            results = memory.search(query, k=k)
+            results = _memory.search(query, k=k)
             return {"results": results, "count": len(results)}
         except Exception as exc:
-            raise HTTPException(status_code=500, detail=str(exc))
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @router.post("/memory")
     async def bridge_memory_store(
         req: BridgeMemoryStore,
         user: dict = Depends(_verify_bridge_token),
     ):
-        if memory is None:
+        _memory = state.ensure_memory(_bridge_config) if state else memory
+        if _memory is None:
             raise HTTPException(status_code=503, detail="Memory not available")
 
         try:
-            memory.store(req.text, req.metadata)
+            _memory.store(req.text, req.metadata)
             return {"status": "stored", "text": req.text[:100]}
         except Exception as exc:
-            raise HTTPException(status_code=500, detail=str(exc))
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     @router.get("/skills")
     async def bridge_list_skills(
         category: str | None = Query(None),
         user: dict = Depends(_verify_bridge_token),
     ):
-        if skills_ctx is None:
+        _skills_ctx, _ = (
+            state.ensure_skills(_bridge_config)
+            if state
+            else (skills_ctx, len(skills_ctx.registry.skills) if skills_ctx else 0)
+        )
+        if _skills_ctx is None:
             raise HTTPException(status_code=503, detail="Skills not available")
 
         if category:
-            content = skills_ctx.format_by_category(category)
+            content = _skills_ctx.format_by_category(category)
             return {"category": category, "content": content}
 
-        return {"categories": skills_ctx.list_available()}
+        return {"categories": _skills_ctx.list_available()}
 
     @router.post("/skills/search")
     async def bridge_search_skills(
         req: BridgeSkillSearch,
         user: dict = Depends(_verify_bridge_token),
     ):
-        if skills_ctx is None:
+        _skills_ctx, _ = (
+            state.ensure_skills(_bridge_config)
+            if state
+            else (skills_ctx, len(skills_ctx.registry.skills) if skills_ctx else 0)
+        )
+        if _skills_ctx is None:
             raise HTTPException(status_code=503, detail="Skills not available")
 
-        results = skills_ctx.search(req.query, limit=req.limit)
+        results = _skills_ctx.search(req.query, limit=req.limit)
         return {"query": req.query, "results": results, "count": len(results)}
 
     # ── Outbound: Yggdrasil → Hermes ──────────────────────────────
@@ -245,7 +359,6 @@ def create_bridge_router(
         user: dict = Depends(_verify_bridge_token),
     ):
         hermes = _get_hermes_client()
-        start = time.time()
 
         messages: list[dict[str, Any]] = []
         if req.context:
@@ -253,10 +366,7 @@ def create_bridge_router(
         messages.append({"role": "user", "content": req.message})
 
         try:
-            result = await hermes.chat(messages, model=req.model)
-
-            if not result.get("choices"):
-                raise HTTPException(status_code=502, detail="Hermes returned no choices")
+            result = _validate_hermes_response(await hermes.chat(messages, model=req.model))
 
             choice = result["choices"][0]
             content = choice.get("message", {}).get("content", "")
@@ -276,7 +386,7 @@ def create_bridge_router(
             raise
         except Exception as exc:
             logger.exception("Hermes outbound error: %s", exc)
-            raise HTTPException(status_code=502, detail=f"Hermes error: {exc}")
+            raise HTTPException(status_code=502, detail=f"Hermes error: {exc}") from exc
 
     @router.get("/hermes/models")
     async def bridge_hermes_models(
@@ -314,3 +424,75 @@ def create_bridge_router(
         return await hermes.health()
 
     return router
+
+
+# ── Standalone app factory ─────────────────────────────────────────────
+
+
+def create_standalone_app(config: BridgeConfig | None = None) -> FastAPI:
+    """Create a standalone FastAPI app for the Hermes Bridge server.
+
+    This includes:
+    - CORS middleware
+    - Startup/shutdown lifespan
+    - Lazy initialization of Lilith components
+    - All bridge endpoints
+
+    Use this when running the bridge as its own server (port 9001).
+    For embedding into Bifrost, use ``create_bridge_router()`` instead.
+    """
+    from contextlib import asynccontextmanager
+
+    cfg = config or _get_bridge_config()
+    _start_time = time.time()
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        logger.info("Hermes Bridge starting on %s:%d", cfg.host, cfg.port)
+        logger.info("Hermes endpoint: %s", cfg.hermes_url)
+
+        # Force lazy-init of all Lilith components.
+        with _lilith_state_lock:
+            _lilith_state.ensure_memory(cfg)
+            _lilith_state.ensure_engine(cfg)
+            _lilith_state.ensure_skills(cfg)
+
+        yield
+
+        global _hermes_client
+        if _hermes_client:
+            await _hermes_client.close()
+            _hermes_client = None
+
+        logger.info("Hermes Bridge shut down")
+
+    app = FastAPI(
+        title="Hermes Bridge",
+        description="Bidirectional gateway connecting Yggdrasil to Hermes Agent",
+        version="1.0.0",
+        lifespan=lifespan,
+    )
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=cfg.cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    # Mount the bridge router at /api/bridge (standalone mode).
+    # In standalone mode, engine/memory/skills are lazily loaded
+    # via _LilithState, so we don't pass pre-built instances.
+    router = create_bridge_router(config=cfg, engine=None, memory=None, skills_ctx=None)
+    app.include_router(router, prefix="/api")
+
+    return app
+
+
+# Module-level state for standalone mode
+_lilith_state = _LilithState()
+import threading
+
+
+_lilith_state_lock = threading.Lock()

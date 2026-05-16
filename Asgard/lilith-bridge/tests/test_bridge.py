@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-import json
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
-
 from lilith_bridge.config import BridgeConfig
 from lilith_bridge.models import (
     BridgeChatRequest,
@@ -16,7 +14,6 @@ from lilith_bridge.models import (
     BridgeMemoryStore,
     BridgeSkillSearch,
     HermesChatRequest,
-    HermesChatResponse,
     HermesToolExecute,
     HermesToolResult,
 )
@@ -243,7 +240,6 @@ class TestBridgeApp:
     @pytest.fixture
     def app_client(self):
         """Create a test client with no auth token."""
-        from httpx import ASGITransport, AsyncClient
 
         from lilith_bridge.app import create_app
 
