@@ -5,6 +5,7 @@ Provides two integration modes:
 - ``create_standalone_app()`` — run the bridge as a standalone server on port 9001.
 """
 
+from .bifrost_integration import create_bridge_router, create_standalone_app
 from .config import BridgeConfig, load_bridge_config
 from .models import (
     BridgeChatRequest,
@@ -34,5 +35,7 @@ __all__ = [
     "HermesChatResponse",
     "HermesToolExecute",
     "HermesToolResult",
+    "create_bridge_router",
+    "create_standalone_app",
     "load_bridge_config",
 ]
