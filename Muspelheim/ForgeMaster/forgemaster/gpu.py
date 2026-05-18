@@ -358,7 +358,7 @@ class GPUMonitor:
     # ------------------------------------------------------------------
 
     def _get_amd_gpu_info(self) -> list[GPUInfo]:
-        """Query AMD GPU information via rocm-smi.
+        r"""Query AMD GPU information via rocm-smi.
 
         rocm-smi output format (--showproductname):
             GPU[0]\t\t: gfx900
