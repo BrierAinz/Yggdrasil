@@ -11,6 +11,7 @@ class SystemInfoTool(BaseTool):
     parameters = {}
 
     def execute(self, **kwargs) -> ToolResult:
+        """Obtiene información del sistema operativo."""
         import platform
 
         data = {
@@ -28,6 +29,7 @@ class SystemTimeTool(BaseTool):
     parameters = {}
 
     def execute(self, **kwargs) -> ToolResult:
+        """Obtiene la fecha y hora actual en formato ISO."""
         from datetime import datetime
 
         return ToolResult(success=True, data={"now": datetime.now().isoformat()})

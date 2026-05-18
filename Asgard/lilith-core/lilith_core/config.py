@@ -26,9 +26,11 @@ class Config:
         }
 
     def get(self, key: str, default: Any = None) -> Any:
+        """Recuperar un valor de configuración por clave."""
         return self._data.get(key, default)
 
     def set(self, key: str, value: Any) -> None:
+        """Establecer un valor de configuración y guardar en disco."""
         self._data[key] = value
         self._save()
 

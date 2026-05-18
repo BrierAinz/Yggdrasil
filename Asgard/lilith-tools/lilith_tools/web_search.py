@@ -23,6 +23,7 @@ class WebSearchTool(BaseTool):
     }
 
     def execute(self, query: str = "", max_results: int = 5) -> dict[str, Any]:
+        """Busca en la web usando DuckDuckGo HTML."""
         if not query:
             return {"error": "Query vacia"}
         try:

@@ -23,6 +23,7 @@ class CodingTool(BaseTool):
     }
 
     def execute(self, code: str = "", timeout: int = 10) -> dict[str, Any]:
+        """Ejecuta código Python en entorno sandboxed."""
         if not code:
             return {"error": "Codigo vacio"}
         blocked = [

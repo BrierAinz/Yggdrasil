@@ -15,6 +15,7 @@ class FileReadTool(BaseTool):
     }
 
     def execute(self, **kwargs) -> ToolResult:
+        """Lee el contenido de un archivo."""
         path = Path(kwargs.get("path", ""))
         if not path.exists():
             return ToolResult(success=False, data=None, error=f"Archivo no encontrado: {path}")
@@ -34,6 +35,7 @@ class DirectoryListTool(BaseTool):
     }
 
     def execute(self, **kwargs) -> ToolResult:
+        """Lista archivos y subdirectorios en un directorio."""
         path = Path(kwargs.get("path", "."))
         if not path.exists():
             return ToolResult(success=False, data=None, error=f"Directorio no encontrado: {path}")

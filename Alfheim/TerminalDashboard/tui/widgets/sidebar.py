@@ -101,6 +101,7 @@ class RealmSidebar(VerticalScroll):
             self.realm_name = realm_name
 
     def compose(self) -> ComposeResult:
+        """Construir el sidebar con título, filtro y botones de reinos."""
         yield Static("☵ Yggdrasil", classes="sidebar-title")
         yield Static("Realms", classes="sidebar-subtitle")
         yield Static("Filter:", classes="filter-label")
@@ -109,6 +110,7 @@ class RealmSidebar(VerticalScroll):
             yield RealmButton(realm_name, i)
 
     def on_mount(self) -> None:
+        """Inicializar el resaltado del botón activo al montar."""
         self._highlight_active()
 
     def watch_selected_realm(self, new_realm: str) -> None:
@@ -151,6 +153,7 @@ class RealmSidebar(VerticalScroll):
             self.post_message(self.RealmSelected(realm_name))
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Manejar clic en botón de reino y seleccionarlo."""
         if isinstance(event.button, RealmButton):
             self.select_realm(event.button.realm_name)
 

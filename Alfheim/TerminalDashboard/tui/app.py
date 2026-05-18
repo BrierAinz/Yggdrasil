@@ -31,6 +31,7 @@ class DashboardHeader(Static):
     """
 
     def render(self) -> str:
+        """Renderizar el header con timestamp en vivo."""
         ts = datetime.now().strftime("%Y-%m-%d %H:%M")
         return (
             " [bold #c8a23e]☵ Yggdrasil Dashboard[/]"

@@ -75,6 +75,7 @@ class RealmDetailView(Static):
         self._update()
 
     def on_mount(self) -> None:
+        """Inicializar contenido del panel de detalle al montar."""
         self._update()
 
     def _update(self) -> None:

@@ -19,6 +19,7 @@ class GitLogEntry:
     message: str = ""
 
     def to_dict(self) -> dict[str, str]:
+        """Serializar entrada de log como diccionario."""
         return {"hash": self.hash, "message": self.message}
 
 
@@ -43,6 +44,7 @@ class GitActivity:
         return len(self.recent_commits)
 
     def to_dict(self) -> dict[str, Any]:
+        """Serializar actividad git como diccionario."""
         return {
             "path": str(self.path),
             "is_git_repo": self.is_git_repo,

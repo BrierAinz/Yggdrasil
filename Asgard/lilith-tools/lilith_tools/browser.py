@@ -31,6 +31,7 @@ class BrowserTool(BaseTool):
     def execute(
         self, url: str = "", max_chars: int = 3000, use_playwright: bool = True
     ) -> dict[str, Any]:
+        """Navega a una URL y extrae texto legible."""
         if not url:
             return {"error": "URL vacia"}
         if not url.startswith(("http://", "https://")):

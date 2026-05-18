@@ -35,6 +35,7 @@ class GPUInfo:
         return (self.memory_used_mb / self.memory_total_mb) * 100.0
 
     def to_dict(self) -> dict[str, Any]:
+        """Serializar información de GPU como diccionario."""
         return {
             "name": self.name,
             "utilization_pct": self.utilization_pct,
@@ -77,6 +78,7 @@ class SystemHealth:
     load_avg_15m: float = 0.0
 
     def to_dict(self) -> dict[str, Any]:
+        """Serializar snapshot de salud del sistema como diccionario."""
         return {
             "cpu_pct": self.cpu_pct,
             "cpu_per_core": self.cpu_per_core,
