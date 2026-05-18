@@ -9,6 +9,7 @@ Endpoints:
 - GET  /api/docs/index  : Lista documentos disponibles
 """
 import json
+import os
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -18,9 +19,11 @@ from pydantic import BaseModel
 router = APIRouter(prefix="/api/docs", tags=["documentation"])
 
 # Path a Knowledge Base
-# Vault dedicado para documentación
+# Vault dedicado para documentación — resolved from project root
 VAULT_NAME = "docs"
-KB_ROOT = Path("D:/Proyectos/Yggdrasil/Svartalfheim/Knowledge_Base")
+_MODULE_DIR = Path(__file__).resolve().parent
+_YGGDRASIL_ROOT = Path(os.environ.get("YGGDRASIL_ROOT", str(_MODULE_DIR.parents[4])))
+KB_ROOT = _YGGDRASIL_ROOT / "Svartalfheim" / "Knowledge_Base"
 
 
 class DocsQueryRequest(BaseModel):
