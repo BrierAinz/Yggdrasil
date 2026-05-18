@@ -1,3 +1,5 @@
+"""Central configuration management for the Lilith agent ecosystem."""
+
 import json
 from pathlib import Path
 from typing import Any
