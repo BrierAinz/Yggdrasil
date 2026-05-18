@@ -4,10 +4,10 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel
 
@@ -15,6 +15,7 @@ from bifrost.auth import create_access_token, verify_token
 from lilith_core.config import Config
 from lilith_memory.store import MemoryStore
 from lilith_orchestrator.engine import LilithEngine
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("bifrost.gateway")
@@ -35,8 +36,7 @@ def load_tokens():
     global VALID_TOKENS
     try:
         config_path = Path(__file__).parent.parent / "config" / "bifrost.json"
-        with open(config_path, "r", encoding="utf-8") as f:
-            cfg = json.load(f)
+        cfg = json.loads(config_path.read_text(encoding="utf-8"))
         VALID_TOKENS = set(cfg.get("auth", {}).get("tokens", []))
         logger.info(f"Loaded {len(VALID_TOKENS)} legacy tokens")
     except Exception as e:
@@ -62,12 +62,14 @@ def _get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securi
 class ChatRequest(BaseModel):
     message: str
     stream: bool = False
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: dict[str, Any] | None = None
+
 
 class ChatResponse(BaseModel):
     response: str
     latency_ms: float
-    usage: Optional[Dict[str, Any]] = None
+    usage: dict[str, Any] | None = None
+
 
 @app.get("/api/bifrost/health")
 async def health_check():
@@ -85,7 +87,6 @@ async def login_token(request: Request):
     """Endpoint simple para generar un token JWT (en produccion usar OAuth2PasswordRequestForm)."""
     body = await request.json()
     username = body.get("username", "anon")
-    password = body.get("password", "")
     # En produccion verificar contra DB/hash; aqui generamos libremente para facilitar testing
     token = create_access_token({"sub": username, "role": "user"})
     return {"access_token": token, "token_type": "bearer"}
@@ -104,7 +105,8 @@ async def chat(req: ChatRequest, user: dict = Depends(_get_current_user)):
         )
     except Exception as e:
         logger.error(f"Chat error: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
 
 @app.post("/api/bifrost/chat/stream")
 async def chat_stream(req: ChatRequest, user: dict = Depends(_get_current_user)):
@@ -119,18 +121,20 @@ async def chat_stream(req: ChatRequest, user: dict = Depends(_get_current_user))
 
     return StreamingResponse(event_generator(), media_type="text/event-stream")
 
+
 # Legacy endpoint (mantiene compatibilidad)
 class ExecuteRequest(BaseModel):
     agent: str
     task: str
-    context: Optional[str] = ""
+    context: str | None = ""
     streaming: bool = False
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: dict[str, Any] | None = None
+
 
 @app.post("/api/bifrost/execute")
 async def execute_legacy(
     req: ExecuteRequest,
-    x_bifrost_token: Optional[str] = Header(None),
+    x_bifrost_token: str | None = Header(None),
     user: dict = Depends(_get_current_user),
 ):
     start = time.time()
@@ -148,7 +152,8 @@ async def execute_legacy(
             "usage": result.get("usage"),
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
 
 # ---------------------------------------------------------------------------
 # Hermes Bridge — mount bidirectional gateway to Hermes Agent
