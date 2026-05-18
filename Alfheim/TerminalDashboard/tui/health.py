@@ -35,7 +35,11 @@ class GPUInfo:
         return (self.memory_used_mb / self.memory_total_mb) * 100.0
 
     def to_dict(self) -> dict[str, Any]:
-        """Serializar información de GPU como diccionario."""
+        """Serializar información de GPU como diccionario.
+
+        Returns:
+            Dictionary with GPU name, utilization, memory, temperature, and power.
+        """
         return {
             "name": self.name,
             "utilization_pct": self.utilization_pct,
@@ -78,7 +82,11 @@ class SystemHealth:
     load_avg_15m: float = 0.0
 
     def to_dict(self) -> dict[str, Any]:
-        """Serializar snapshot de salud del sistema como diccionario."""
+        """Serializar snapshot de salud del sistema como diccionario.
+
+        Returns:
+            Dictionary with all SystemHealth fields including nested GPU info.
+        """
         return {
             "cpu_pct": self.cpu_pct,
             "cpu_per_core": self.cpu_per_core,
@@ -120,7 +128,11 @@ class HealthMonitor:
         self._nvidia_available: bool | None = None
 
     def get_health(self) -> SystemHealth:
-        """Collect a complete system health snapshot."""
+        """Collect a complete system health snapshot.
+
+        Returns:
+            SystemHealth with CPU, RAM, swap, disk, GPU, and process metrics.
+        """
         cpu_pct = psutil.cpu_percent(interval=None)
         cpu_per_core = psutil.cpu_percent(interval=None, percpu=True)
 
@@ -189,7 +201,11 @@ class HealthMonitor:
         )
 
     def _get_gpu_info(self) -> list[GPUInfo]:
-        """Query nvidia-smi for GPU information."""
+        """Query nvidia-smi for GPU information.
+
+        Returns:
+            List of GPUInfo objects, or empty list if nvidia-smi unavailable.
+        """
         if self._nvidia_available is False:
             return []
 
@@ -245,7 +261,11 @@ class HealthMonitor:
             return []
 
     def _get_python_processes(self) -> list[dict[str, Any]]:
-        """Get info about running Python processes."""
+        """Get info about running Python processes.
+
+        Returns:
+            List of dicts with pid, name, cmdline, cpu_percent, memory_percent.
+        """
         procs: list[dict[str, Any]] = []
         for proc in psutil.process_iter(
             ["pid", "name", "cmdline", "cpu_percent", "memory_percent"]

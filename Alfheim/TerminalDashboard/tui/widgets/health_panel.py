@@ -66,7 +66,10 @@ class SystemHealthPanel(Static):
         self.update(renderable)
 
     def _build_renderable(self, health: SystemHealth) -> Panel:
-        """Build the Rich renderable for the health panel."""
+        """Build the Rich renderable for the health panel.
+
+        Returns:
+            Rich Panel containing formatted health information."""
         sections: list[Any] = []
 
         # -- CPU Section --
@@ -165,7 +168,10 @@ class SystemHealthPanel(Static):
         return Panel(group, title="System Health", border_style="green")
 
     def _maybe_flash(self, field: str, text: str) -> Text:
-        """Return Text, styled with flash if the field has changed."""
+        """Return Text, styled with flash if the field has changed.
+
+        Returns:
+            Rich Text object, optionally styled with flash effect."""
         rich_text = Text(text)
         if field in self._flash_fields:
             rich_text.stylize("bold reverse")
@@ -179,7 +185,10 @@ class SystemHealthPanel(Static):
 
     @staticmethod
     def format_uptime(seconds: float) -> str:
-        """Format uptime in seconds to human-readable string."""
+        """Format uptime in seconds to human-readable string.
+
+        Returns:
+            Formatted string like \"2d 3h 15m\"."""
         days = int(seconds // 86400)
         hours = int((seconds % 86400) // 3600)
         minutes = int((seconds % 3600) // 60)

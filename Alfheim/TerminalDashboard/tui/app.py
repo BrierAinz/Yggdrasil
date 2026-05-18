@@ -31,7 +31,11 @@ class DashboardHeader(Static):
     """
 
     def render(self) -> str:
-        """Renderizar el header con timestamp en vivo."""
+        """Renderizar el header con timestamp en vivo.
+
+        Returns:
+            Rich-formatted string with logo and live clock.
+        """
         ts = datetime.now().strftime("%Y-%m-%d %H:%M")
         return (
             " [bold #c8a23e]☵ Yggdrasil Dashboard[/]"
@@ -71,7 +75,11 @@ class YggdrasilDashboard(App):
     # ── Composition ──────────────────────────────────────────
 
     def compose(self) -> ComposeResult:
-        """Create child widgets for the app."""
+        """Create child widgets for the app.
+
+        Yields:
+            DashboardHeader, RealmSidebar, RealmDetailView, and Footer widgets.
+        """
         yield DashboardHeader(id="app-header")
         with Horizontal(id="main-grid"):
             yield RealmSidebar(id="sidebar")

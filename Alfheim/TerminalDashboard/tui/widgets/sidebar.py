@@ -101,7 +101,10 @@ class RealmSidebar(VerticalScroll):
             self.realm_name = realm_name
 
     def compose(self) -> ComposeResult:
-        """Construir el sidebar con título, filtro y botones de reinos."""
+        """Construir el sidebar con título, filtro y botones de reinos.
+
+        Yields:
+            Static widgets for title, subtitle, filter input, and realm buttons."""
         yield Static("☵ Yggdrasil", classes="sidebar-title")
         yield Static("Realms", classes="sidebar-subtitle")
         yield Static("Filter:", classes="filter-label")

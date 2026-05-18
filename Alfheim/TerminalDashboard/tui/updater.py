@@ -120,7 +120,10 @@ class DashboardUpdater:
     def should_flash(self, key: str) -> bool:
         """Check whether a given key should show a flash animation.
 
-        The flash lasts for 2 display cycles after a change is detected.
+                The flash lasts for 2 display cycles after a change is detected.
+
+        Returns:
+            True if the key should flash, False otherwise.
         """
         if key in self._flash_keys:
             return True
@@ -137,7 +140,10 @@ class DashboardUpdater:
         self._flash_timestamps.pop(key, None)
 
     def collect(self) -> Snapshot:
-        """Collect a fresh data snapshot (realm scan + system health)."""
+        """Collect a fresh data snapshot (realm scan + system health).
+
+        Returns:
+            Snapshot dictionary with realm and health data."""
         snapshot: Snapshot = {}
 
         try:
@@ -160,8 +166,11 @@ class DashboardUpdater:
     def detect_changes(self, old: Snapshot, new: Snapshot, prefix: str = "") -> list[ChangeRecord]:
         """Detect changes between two snapshots.
 
-        Recursively compares nested dicts. String-digit keys at the top level
-        of 'realms' dict (realm names) are compared by their nested values.
+                Recursively compares nested dicts. String-digit keys at the top level
+                of 'realms' dict (realm names) are compared by their nested values.
+
+        Returns:
+            List of ChangeRecord for each detected difference.
         """
         changes: list[ChangeRecord] = []
 
@@ -262,5 +271,8 @@ class DashboardUpdater:
             await asyncio.sleep(self.interval_seconds)
 
     async def refresh_once(self) -> UpdateResult:
-        """Perform a single async refresh (for manual triggers)."""
+        """Perform a single async refresh (for manual triggers).
+
+        Returns:
+            UpdateResult with fresh snapshot and any detected changes."""
         return self.refresh()

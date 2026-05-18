@@ -95,7 +95,12 @@ class QuickActions:
             )
 
     def _action_tests(self) -> ActionResult:
-        """Run project tests."""
+        """Run project tests.
+
+        Returns:
+            ActionResult with test output and return code on success,
+            or failure message if no test runner found.
+        """
         project = self.project_path
         # Try common test commands
         test_commands = [
@@ -143,7 +148,11 @@ class QuickActions:
         )
 
     def _action_git(self) -> ActionResult:
-        """Show git status summary."""
+        """Show git status summary.
+
+        Returns:
+            ActionResult with branch, status, recent commits, and ahead/behind info.
+        """
         project = self.project_path
         try:
             # Get branch
@@ -218,7 +227,11 @@ class QuickActions:
             )
 
     def _action_health(self) -> ActionResult:
-        """Show health panel – delegates to HealthMonitor."""
+        """Show health panel – delegates to HealthMonitor.
+
+        Returns:
+            ActionResult with CPU, RAM, disk percentages and process count.
+        """
         from tui.health import HealthMonitor
 
         monitor = HealthMonitor()
@@ -239,7 +252,11 @@ class QuickActions:
             )
 
     def _action_vscode(self) -> ActionResult:
-        """Open project in VS Code."""
+        """Open project in VS Code.
+
+        Returns:
+            ActionResult with editor name and path on success, or failure message.
+        """
         project = self.project_path
         # Look for VS Code variants
         editors = ["code", "code-insiders", "codium"]
@@ -273,7 +290,11 @@ class QuickActions:
         )
 
     def _action_docs(self) -> ActionResult:
-        """Open documentation in the browser."""
+        """Open documentation in the browser.
+
+        Returns:
+            ActionResult with docs URL on success, or failure message.
+        """
         try:
             webbrowser.open(self.docs_url)
             return ActionResult(
@@ -291,7 +312,11 @@ class QuickActions:
 
     @classmethod
     def available_actions(cls) -> dict[str, str]:
-        """Return a mapping of available shortcut keys and their descriptions."""
+        """Return a mapping of available shortcut keys and their descriptions.
+
+        Returns:
+            Dictionary mapping keyboard keys to action descriptions.
+        """
         return {
             "t": "Run tests",
             "g": "Git status",

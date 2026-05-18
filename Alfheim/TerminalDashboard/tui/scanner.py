@@ -59,7 +59,11 @@ class ProjectInfo:
     last_commit: str = ""
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary for serialization."""
+        """Convert to dictionary for serialization.
+
+        Returns:
+            Dictionary with all ProjectInfo fields.
+        """
         return {
             "name": self.name,
             "path": str(self.path),
@@ -89,7 +93,11 @@ class RealmStatus:
         return REALMS.get(self.name, "Unknown realm")
 
     def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary for serialization."""
+        """Convert to dictionary for serialization.
+
+        Returns:
+            Dictionary with realm name, path, description, and nested project dicts.
+        """
         return {
             "name": self.name,
             "path": str(self.path),
@@ -123,7 +131,10 @@ class RealmScanner:
 
     @staticmethod
     def _find_yggdrasil_root(start: Path) -> Path:
-        """Walk up from *start* to find a directory named 'Yggdrasil'."""
+        """Walk up from *start* to find a directory named 'Yggdrasil'.
+
+        Returns:
+            Path to the Yggdrasil root directory."""
         current = start
         for _ in range(20):  # safety limit
             if current.name == "Yggdrasil":
@@ -192,7 +203,11 @@ class RealmScanner:
         )
 
     def _scan_projects(self, realm_path: Path) -> list[ProjectInfo]:
-        """Scan a realm directory for project subdirectories."""
+        """Scan a realm directory for project subdirectories.
+
+        Returns:
+            List of ProjectInfo for each non-hidden subdirectory.
+        """
         projects: list[ProjectInfo] = []
 
         if not realm_path.is_dir():
@@ -211,7 +226,11 @@ class RealmScanner:
         return projects
 
     def _get_project_info(self, project_path: Path) -> ProjectInfo:
-        """Get information about a single project directory."""
+        """Get information about a single project directory.
+
+        Returns:
+            ProjectInfo with name, branch, uncommitted status, and last commit date.
+        """
         name = project_path.name
         branch = self._get_git_branch(project_path)
         uncommitted = self._has_uncommitted_changes(project_path)
@@ -227,7 +246,11 @@ class RealmScanner:
         )
 
     def _get_git_branch(self, path: Path) -> str:
-        """Get the current git branch for a project."""
+        """Get the current git branch for a project.
+
+        Returns:
+            Branch name string, or empty string if git is unavailable.
+        """
         try:
             result = subprocess.run(
                 ["git", "rev-parse", "--abbrev-ref", "HEAD"],
@@ -243,7 +266,11 @@ class RealmScanner:
         return ""
 
     def _has_uncommitted_changes(self, path: Path) -> bool:
-        """Check if a project has uncommitted git changes."""
+        """Check if a project has uncommitted git changes.
+
+        Returns:
+            True if there are uncommitted changes, False otherwise.
+        """
         try:
             result = subprocess.run(
                 ["git", "status", "--porcelain"],
@@ -259,7 +286,11 @@ class RealmScanner:
         return False
 
     def _get_last_commit_date(self, path: Path) -> str:
-        """Get the date of the last commit in a directory."""
+        """Get the date of the last commit in a directory.
+
+        Returns:
+            Short date string (YYYY-MM-DD), or empty string if unavailable.
+        """
         try:
             result = subprocess.run(
                 ["git", "log", "-1", "--format=%cd", "--date=short"],
@@ -275,7 +306,12 @@ class RealmScanner:
         return ""
 
     def _aggregate_git_status(self, projects: list[ProjectInfo], realm_path: Path) -> GitStatus:
-        """Aggregate git status from all projects in a realm."""
+        """Aggregate git status from all projects in a realm.
+
+        Returns:
+            GitStatus.CLEAN if all projects are clean, DIRTY if any has
+            uncommitted changes, NO_REPO if no projects and no .git directory.
+        """
         if not projects:
             # Check if the realm itself is a git repo
             git_dir = realm_path / ".git"
@@ -293,6 +329,9 @@ class RealmScanner:
 
         Since running tests is expensive, we default to UNKNOWN unless
         we find pytest results caches.
+
+        Returns:
+            ProjTestStatus — currently always UNKNOWN (placeholder).
         """
         return ProjTestStatus.UNKNOWN
 
@@ -302,7 +341,12 @@ class RealmScanner:
         test_status: ProjTestStatus,
         projects: list[ProjectInfo],
     ) -> HealthStatus:
-        """Determine overall health based on git and test status."""
+        """Determine overall health based on git and test status.
+
+        Returns:
+            HealthStatus.HEALTHY if clean, DEGRADED if dirty or failing,
+            DOWN if no projects and no git repo.
+        """
         if not projects and git_status == GitStatus.NO_REPO:
             return HealthStatus.DOWN
 
