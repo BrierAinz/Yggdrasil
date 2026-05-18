@@ -142,3 +142,65 @@ async def test_complete_exhausts_retries(tmp_path):
         await provider.complete(
             messages=[{"role": "user", "content": "fail"}],
         )
+
+
+@pytest.mark.asyncio
+async def test_stream_mock(tmp_path):
+    """stream() yields structured chunks from litellm.acompletion(stream=True)."""
+    config = Config(root_path=tmp_path)
+    provider = LiteLLMProvider(config=config)
+
+    chunk1 = MagicMock()
+    chunk1.choices = [MagicMock()]
+    chunk1.choices[0].delta = MagicMock()
+    chunk1.choices[0].delta.content = "hel"
+    chunk1.choices[0].finish_reason = None
+    chunk1.model = "gpt-4"
+
+    chunk2 = MagicMock()
+    chunk2.choices = [MagicMock()]
+    chunk2.choices[0].delta = MagicMock()
+    chunk2.choices[0].delta.content = "lo"
+    chunk2.choices[0].finish_reason = "stop"
+    chunk2.model = "gpt-4"
+
+    async def _fake_stream(**kwargs: Any):
+        for c in [chunk1, chunk2]:
+            yield c
+
+    with patch("lilith_core.providers.litellm_provider.litellm") as mock_litellm:
+        # litellm.acompletion(stream=True) returns an async generator when awaited
+        mock_litellm.acompletion = AsyncMock(return_value=_fake_stream())
+
+        chunks = []
+        async for chunk in provider.stream(
+            messages=[{"role": "user", "content": "stream me"}],
+            model="gpt-4",
+        ):
+            chunks.append(chunk)
+
+    assert len(chunks) == 2
+    assert chunks[0]["content"] == "hel"
+    assert chunks[1]["content"] == "lo"
+    assert chunks[1]["finish_reason"] == "stop"
+
+
+@pytest.mark.asyncio
+async def test_stream_error(tmp_path):
+    """stream() raises LLMError when litellm.acompletion fails."""
+    config = Config(root_path=tmp_path)
+    provider = LiteLLMProvider(config=config)
+
+    async def _failing_stream(**kwargs: Any):
+        raise RuntimeError("connection lost")
+        yield  # noqa: unreachable — makes this an async generator  # type: ignore[unreachable]
+
+    with patch("lilith_core.providers.litellm_provider.litellm") as mock_litellm:
+        mock_litellm.acompletion = AsyncMock(return_value=_failing_stream())
+
+        with pytest.raises(LLMError, match="LiteLLM streaming failed"):
+            async for _ in provider.stream(
+                messages=[{"role": "user", "content": "fail"}],
+                model="gpt-4",
+            ):
+                pass

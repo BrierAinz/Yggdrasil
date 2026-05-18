@@ -16,6 +16,12 @@ from lilith_core.providers.local_provider import LocalProvider
 # ------------------------------------------------------------------
 
 
+async def aiter_lines(lines: list[str]):
+    """Async iterator over SSE lines — mimics httpx.Response.aiter_lines()."""
+    for line in lines:
+        yield line
+
+
 def _make_httpx_response(json_body: dict, status_code: int = 200) -> MagicMock:
     """Build a lightweight object that mimics httpx.Response."""
     resp = MagicMock()
@@ -101,3 +107,69 @@ async def test_complete_http_error(tmp_path):
         await provider.complete(
             messages=[{"role": "user", "content": "fail"}],
         )
+
+
+@pytest.mark.asyncio
+async def test_stream_mock(tmp_path):
+    """stream() yields SSE-style chunks from the local server."""
+    config = Config(root_path=tmp_path)
+    provider = LocalProvider(config=config)
+
+    sse_lines = [
+        'data: {"choices":[{"delta":{"content":"hel"},"finish_reason":null}],"model":"local-model"}',
+        'data: {"choices":[{"delta":{"content":"lo"},"finish_reason":"stop"}],"model":"local-model"}',
+        "data: [DONE]",
+    ]
+
+    mock_resp = AsyncMock()
+    mock_resp.raise_for_status = MagicMock()
+    mock_resp.aiter_lines = MagicMock(return_value=aiter_lines(sse_lines))
+
+    mock_stream_ctx = AsyncMock()
+    mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_resp)
+    mock_stream_ctx.__aexit__ = AsyncMock(return_value=None)
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=None)
+    mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+
+    with patch("lilith_core.providers.local_provider.httpx.AsyncClient", return_value=mock_client):
+        chunks = []
+        async for chunk in provider.stream(
+            messages=[{"role": "user", "content": "stream me"}],
+        ):
+            chunks.append(chunk)
+
+    assert len(chunks) == 2
+    assert chunks[0]["content"] == "hel"
+    assert chunks[1]["content"] == "lo"
+    assert chunks[1]["finish_reason"] == "stop"
+
+
+@pytest.mark.asyncio
+async def test_stream_http_error(tmp_path):
+    """stream() raises LLMError when the local server connection fails."""
+    config = Config(root_path=tmp_path)
+    provider = LocalProvider(config=config)
+
+    import httpx
+
+    mock_stream_ctx = AsyncMock()
+    mock_stream_ctx.__aenter__ = AsyncMock(return_value=mock_stream_ctx)
+    mock_stream_ctx.__aexit__ = AsyncMock(return_value=None)
+    mock_stream_ctx.raise_for_status = MagicMock(side_effect=httpx.ConnectError("refused"))
+
+    mock_client = AsyncMock()
+    mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+    mock_client.__aexit__ = AsyncMock(return_value=None)
+    mock_client.stream = MagicMock(return_value=mock_stream_ctx)
+
+    with (
+        patch("lilith_core.providers.local_provider.httpx.AsyncClient", return_value=mock_client),
+        pytest.raises(LLMError, match="Local provider streaming failed"),
+    ):
+        async for _ in provider.stream(
+            messages=[{"role": "user", "content": "fail"}],
+        ):
+            pass
