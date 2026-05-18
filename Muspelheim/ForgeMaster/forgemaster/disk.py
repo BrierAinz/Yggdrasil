@@ -6,6 +6,7 @@ model files, and suggest cleanup actions.
 
 from __future__ import annotations
 
+import contextlib
 import hashlib
 import os
 from dataclasses import dataclass, field
@@ -119,10 +120,8 @@ class DiskScanner:
         for path_str in paths:
             path = Path(path_str)
             if path.is_file():
-                try:
+                with contextlib.suppress(OSError):
                     total_size += path.stat().st_size
-                except OSError:
-                    pass
             elif path.is_dir():
                 total_size += self._dir_total_size(path)
 
@@ -150,8 +149,7 @@ class DiskScanner:
 
         """
         result = self._model_scanner.scan(paths)
-        models = sorted(result.models, key=lambda m: m.size_bytes, reverse=True)
-        return models
+        return sorted(result.models, key=lambda m: m.size_bytes, reverse=True)
 
     def scan_directory_usage(self, paths: Sequence[str | Path]) -> dict[str, int]:
         """Calculate per-directory model sizes.
@@ -173,15 +171,11 @@ class DiskScanner:
     def _dir_total_size(self, directory: Path) -> int:
         """Calculate total size of all files under a directory."""
         total = 0
-        try:
+        with contextlib.suppress(OSError):
             for root, _dirs, files in os.walk(directory):
                 for f in files:
-                    try:
+                    with contextlib.suppress(OSError):
                         total += (Path(root) / f).stat().st_size
-                    except OSError:
-                        pass
-        except OSError:
-            pass
         return total
 
     def _filesystem_stats(self, paths: Sequence[str | Path]) -> tuple[int, int, int]:
@@ -425,7 +419,6 @@ class DuplicateFinder:
 
         # Remove trailing dots, dashes, underscores
         normalized = normalized.rstrip(".-_")
-
         return normalized
 
     def _group_by_similar_size(self, models: list[ModelInfo]) -> list[list[ModelInfo]]:

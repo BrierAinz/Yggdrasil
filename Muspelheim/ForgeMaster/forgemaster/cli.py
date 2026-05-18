@@ -560,7 +560,7 @@ def config_show():
     table.add_row("gpu_profile", cfg.gpu_profile)
     table.add_row("catalog_path", cfg.catalog_path)
     for i, d in enumerate(cfg.scan_dirs):
-        label = f"scan_dirs[{i}]" if i == 0 else f"scan_dirs[{i}]"
+        label = f"scan_dirs[{i}]"
         table.add_row(label, d)
 
     console.print(table)

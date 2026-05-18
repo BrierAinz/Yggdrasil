@@ -15,25 +15,25 @@ def _health_label(health: HealthStatus) -> str:
         HealthStatus.DEGRADED: "yellow",
         HealthStatus.DOWN: "red",
     }
-    l = {
+    labels = {
         HealthStatus.HEALTHY: "HEALTHY",
         HealthStatus.DEGRADED: "DEGRADED",
         HealthStatus.DOWN: "DOWN",
     }
     colour = c.get(health, "white")
-    label = l.get(health, "UNKNOWN")
+    label = labels.get(health, "UNKNOWN")
     return f"[bold {colour}]{label}[/]"
 
 
 def _git_label(gs: GitStatus) -> str:
     c = {GitStatus.CLEAN: "green", GitStatus.DIRTY: "yellow", GitStatus.NO_REPO: "red"}
-    l = {
+    labels = {
         GitStatus.CLEAN: "CLEAN",
         GitStatus.DIRTY: "DIRTY",
         GitStatus.NO_REPO: "NO REPO",
     }
     colour = c.get(gs, "white")
-    label = l.get(gs, "UNKNOWN")
+    label = labels.get(gs, "UNKNOWN")
     return f"[bold {colour}]{label}[/]"
 
 
@@ -43,13 +43,13 @@ def _test_label(ts: ProjTestStatus) -> str:
         ProjTestStatus.FAIL: "red",
         ProjTestStatus.UNKNOWN: "dim",
     }
-    l = {
+    labels = {
         ProjTestStatus.PASS: "PASS",
         ProjTestStatus.FAIL: "FAIL",
         ProjTestStatus.UNKNOWN: "UNKNOWN",
     }
     colour = c.get(ts, "white")
-    label = l.get(ts, "UNKNOWN")
+    label = labels.get(ts, "UNKNOWN")
     return f"[bold {colour}]{label}[/]"
 
 

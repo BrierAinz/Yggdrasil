@@ -8,6 +8,7 @@ git activity.
 
 from __future__ import annotations
 
+import contextlib
 from typing import TYPE_CHECKING
 
 from rich.console import Group
@@ -82,10 +83,8 @@ def _total_size(directory: Path) -> int:
             if entry.is_file() and not any(
                 p.startswith(".") or p == "__pycache__" for p in entry.relative_to(directory).parts
             ):
-                try:
+                with contextlib.suppress(OSError):
                     total += entry.stat().st_size
-                except OSError:
-                    pass
     except OSError:
         pass
     return total
@@ -95,12 +94,11 @@ def _format_size(size_bytes: int) -> str:
     """Format bytes into a human-readable string."""
     if size_bytes < 1024:
         return f"{size_bytes} B"
-    elif size_bytes < 1024 * 1024:
+    if size_bytes < 1024 * 1024:
         return f"{size_bytes / 1024:.1f} KB"
-    elif size_bytes < 1024 * 1024 * 1024:
+    if size_bytes < 1024 * 1024 * 1024:
         return f"{size_bytes / (1024 * 1024):.1f} MB"
-    else:
-        return f"{size_bytes / (1024 * 1024 * 1024):.1f} GB"
+    return f"{size_bytes / (1024 * 1024 * 1024):.1f} GB"
 
 
 def _find_key_files(directory: Path) -> list[str]:
@@ -201,12 +199,10 @@ class RealmDetailView(Static):
         else:
             self._content = self._build_renderable(self._status)
 
-        try:
+        # Widget not yet mounted - the content will be rendered on
+        # the first mount via ``render()``.
+        with contextlib.suppress(Exception):
             self.update(self._content)
-        except Exception:
-            # Widget not yet mounted – the content will be rendered on
-            # the first mount via ``render()``.
-            pass
 
     def render(self) -> object:
         """Render the widget content (called by Textual on mount)."""
@@ -245,13 +241,12 @@ class RealmDetailView(Static):
         if git_section is not None:
             panel_content_items.append(git_section)
 
-        panel = Panel(
+        return Panel(
             Group(*panel_content_items),
             title=f"[{color}]⬥ {escape(status.name)}[/{color}]",
             border_style=style["border"],
             padding=(1, 2),
         )
-        return panel
 
     # ------------------------------------------------------------------
     # Common table (all realms share this)

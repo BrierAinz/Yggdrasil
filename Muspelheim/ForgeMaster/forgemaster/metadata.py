@@ -64,29 +64,29 @@ def _read_gguf_value(data: bytes, offset: int, vtype: int) -> tuple[Any, int]:
     """
     if vtype == GGUF_TYPE_UINT8:
         return struct.unpack_from("<B", data, offset)[0], offset + 1
-    elif vtype == GGUF_TYPE_INT8:
+    if vtype == GGUF_TYPE_INT8:
         return struct.unpack_from("<b", data, offset)[0], offset + 1
-    elif vtype == GGUF_TYPE_UINT16:
+    if vtype == GGUF_TYPE_UINT16:
         return struct.unpack_from("<H", data, offset)[0], offset + 2
-    elif vtype == GGUF_TYPE_INT16:
+    if vtype == GGUF_TYPE_INT16:
         return struct.unpack_from("<h", data, offset)[0], offset + 2
-    elif vtype == GGUF_TYPE_UINT32:
+    if vtype == GGUF_TYPE_UINT32:
         return struct.unpack_from("<I", data, offset)[0], offset + 4
-    elif vtype == GGUF_TYPE_INT32:
+    if vtype == GGUF_TYPE_INT32:
         return struct.unpack_from("<i", data, offset)[0], offset + 4
-    elif vtype == GGUF_TYPE_FLOAT32:
+    if vtype == GGUF_TYPE_FLOAT32:
         return struct.unpack_from("<f", data, offset)[0], offset + 4
-    elif vtype == GGUF_TYPE_BOOL:
+    if vtype == GGUF_TYPE_BOOL:
         return struct.unpack_from("<B", data, offset)[0] != 0, offset + 1
-    elif vtype == GGUF_TYPE_STRING:
+    if vtype == GGUF_TYPE_STRING:
         return _read_gguf_string(data, offset)
-    elif vtype == GGUF_TYPE_UINT64:
+    if vtype == GGUF_TYPE_UINT64:
         return struct.unpack_from("<Q", data, offset)[0], offset + 8
-    elif vtype == GGUF_TYPE_INT64:
+    if vtype == GGUF_TYPE_INT64:
         return struct.unpack_from("<q", data, offset)[0], offset + 8
-    elif vtype == GGUF_TYPE_FLOAT64:
+    if vtype == GGUF_TYPE_FLOAT64:
         return struct.unpack_from("<d", data, offset)[0], offset + 8
-    elif vtype == GGUF_TYPE_ARRAY:
+    if vtype == GGUF_TYPE_ARRAY:
         # array: uint32 elem_type, uint64 count, then count values
         elem_type = struct.unpack_from("<I", data, offset)[0]
         offset += 4
@@ -97,9 +97,8 @@ def _read_gguf_value(data: bytes, offset: int, vtype: int) -> tuple[Any, int]:
             item, offset = _read_gguf_value(data, offset, elem_type)
             items.append(item)
         return items, offset
-    else:
-        # Unknown type — skip nothing, return None
-        return None, offset
+    # Unknown type — skip nothing, return None
+    return None, offset
 
 
 def read_gguf_metadata(path: str | Path) -> dict[str, Any]:
@@ -323,7 +322,7 @@ def get_model_metadata(path: str | Path) -> dict[str, Any]:
 
     if suffix == ".gguf":
         return read_gguf_metadata(path)
-    elif suffix == ".safetensors":
+    if suffix == ".safetensors":
         return read_safetensors_metadata(path)
 
     # For .bin files, try GGUF first, then fall back

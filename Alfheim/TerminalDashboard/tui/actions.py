@@ -106,9 +106,12 @@ class QuickActions:
 
         for cmd in test_commands:
             # Check if the test directory/command makes sense
-            if "pytest" in " ".join(cmd):
-                if not (project / "tests").exists() and not (project / "test").exists():
-                    continue
+            if (
+                "pytest" in " ".join(cmd)
+                and not (project / "tests").exists()
+                and not (project / "test").exists()
+            ):
+                continue
 
             try:
                 result = subprocess.run(

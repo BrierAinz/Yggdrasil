@@ -252,8 +252,7 @@ def _list_saved_conversations() -> list[dict[str, Any]]:
 def _load_conversation(filepath: Path) -> dict[str, Any] | None:
     """Load a conversation JSON file. Returns the full data dict or None."""
     try:
-        data = json.loads(filepath.read_text(encoding="utf-8"))
-        return data
+        return json.loads(filepath.read_text(encoding="utf-8"))
     except Exception as exc:
         render_error(f"Error cargando conversación: {exc}")
         return None

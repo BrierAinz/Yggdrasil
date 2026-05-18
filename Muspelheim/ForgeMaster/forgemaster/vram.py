@@ -275,16 +275,15 @@ class VRAMCalculator:
         # Rough heuristic based on parameter count
         if params <= 1_500_000_000:  # ~1.5B
             return 24
-        elif params <= 7_000_000_000:  # ~7B
+        if params <= 7_000_000_000:  # ~7B
             return 32
-        elif params <= 13_000_000_000:  # ~13B
+        if params <= 13_000_000_000:  # ~13B
             return 40
-        elif params <= 34_000_000_000:  # ~34B
+        if params <= 34_000_000_000:  # ~34B
             return 48
-        elif params <= 70_000_000_000:  # ~70B
+        if params <= 70_000_000_000:  # ~70B
             return 64
-        else:
-            return 80
+        return 80
 
     def estimate_comfyui(self, model: ModelInfo) -> float:
         """Estimate VRAM needed for ComfyUI model loading.

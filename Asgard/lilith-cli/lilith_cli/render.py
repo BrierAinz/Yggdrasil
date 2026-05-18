@@ -472,10 +472,7 @@ def render_tool_call(name: str, args: dict[str, Any], result: str | None = None)
     # Args block.
     args_lines: list[str] = []
     for k, v in args.items():
-        if isinstance(v, str) and len(v) > 120:
-            v_display = v[:120] + "…"
-        else:
-            v_display = v
+        v_display = v[:120] + "…" if isinstance(v, str) and len(v) > 120 else v
         args_lines.append(f"  {k}: {v_display!r}")
     args_text = "\n".join(args_lines) if args_lines else "  (sin argumentos)"
 

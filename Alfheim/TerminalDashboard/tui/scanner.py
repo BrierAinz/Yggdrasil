@@ -118,11 +118,7 @@ class RealmScanner:
             import os
 
             env_val = os.environ.get("YGGDRASIL_ROOT")
-            if env_val:
-                base_path = env_val
-            else:
-                # Walk up from this file to find the Yggdrasil root directory
-                base_path = self._find_yggdrasil_root(Path(__file__).resolve().parent)
+            base_path = env_val or self._find_yggdrasil_root(Path(__file__).resolve().parent)
         self.base_path = Path(base_path)
 
     @staticmethod
