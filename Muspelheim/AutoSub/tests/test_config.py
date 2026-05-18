@@ -1,6 +1,7 @@
 """Tests for autosub.config module."""
 
 import pytest
+
 from autosub.config import AutoSubConfig
 
 

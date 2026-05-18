@@ -5,9 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from autosub.exporter import export_segments
-from autosub.transcriber import Transcriber
-from autosub.translator import Translator
 from rich.console import Console
 from rich.progress import (
     BarColumn,
@@ -16,6 +13,10 @@ from rich.progress import (
     TextColumn,
     TimeElapsedColumn,
 )
+
+from autosub.exporter import export_segments
+from autosub.transcriber import Transcriber
+from autosub.translator import Translator
 
 
 @dataclass

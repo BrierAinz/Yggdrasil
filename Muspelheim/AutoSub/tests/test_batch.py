@@ -1,6 +1,7 @@
 """Tests for autosub.batch module."""
 
 import pytest
+
 from autosub.batch import (
     AUDIO_EXTENSIONS,
     SUPPORTED_EXTENSIONS,

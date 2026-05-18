@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+
 try:
     import tomllib
 except ImportError:
@@ -29,7 +30,7 @@ class AutoSubConfig:
     batch_recursive: bool = False
 
     @classmethod
-    def from_toml(cls, path: str | Path) -> "AutoSubConfig":
+    def from_toml(cls, path: str | Path) -> AutoSubConfig:
         """Load configuration from a TOML file.
 
         Args:
@@ -45,7 +46,7 @@ class AutoSubConfig:
         if not path.exists():
             raise FileNotFoundError(f"Config file not found: {path}")
 
-        with open(path, "rb") as f:
+        with path.open("rb") as f:
             data = tomllib.load(f)
 
         # Extract [autosub] section if present, otherwise use root
@@ -65,7 +66,7 @@ class AutoSubConfig:
         )
 
     @classmethod
-    def find_config(cls) -> "AutoSubConfig":
+    def find_config(cls) -> AutoSubConfig:
         """Search for config file in standard locations.
 
         Looks in:

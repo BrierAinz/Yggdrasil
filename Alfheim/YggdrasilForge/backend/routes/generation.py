@@ -2,22 +2,23 @@
 
 from __future__ import annotations
 
-import uuid
 import asyncio
 import logging
+import uuid
 
-from fastapi import APIRouter, HTTPException, BackgroundTasks
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 
+from backend import database as db
+from backend.blender_client import BlenderMCPError, blender_client
 from backend.models import (
-    TextTo3DRequest,
-    ImageTo3DRequest,
-    GenerationType,
     AIProvider,
     Generation,
     GenerationListResponse,
+    GenerationType,
+    ImageTo3DRequest,
+    TextTo3DRequest,
 )
-from backend import database as db
-from backend.blender_client import blender_client, BlenderMCPError
+
 
 router = APIRouter()
 logger = logging.getLogger("forge.generation")
@@ -127,7 +128,7 @@ async def _poll_with_timeout(
             if isinstance(result, str):
                 # Rodin returns status as string
                 status = result.lower()
-                if status == "done" or status == "completed":
+                if status in {"done", "completed"}:
                     return result
                 if "fail" in status or "cancel" in status or "error" in status:
                     raise BlenderMCPError(

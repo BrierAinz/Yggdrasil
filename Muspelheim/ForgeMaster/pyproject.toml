@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "forgemaster"
 version = "1.0.0"
-description = "Niflheim resource manager — LLM models, VRAM, disk usage"
+description = "Muspelheim resource manager — LLM models, VRAM, disk usage"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"

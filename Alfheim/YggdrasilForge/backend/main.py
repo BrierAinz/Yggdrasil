@@ -1,15 +1,15 @@
 """YggdrasilForge — Viking 3D Asset Studio. FastAPI backend."""
 
-import uvicorn
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from backend.config import settings
-from backend.database import init_db, close_db
-from backend.routes import generation, assets, blender, render
+from backend.database import close_db, init_db
+from backend.routes import assets, blender, generation, render
 
 
 @asynccontextmanager

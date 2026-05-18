@@ -100,6 +100,9 @@ lines-after-imports = 2
 "Alfheim/YggdrasilStudio/backend/routes/ws_routes.py" = ["B904", "TRY301"]
 "Alfheim/YggdrasilStudio/backend/main.py" = ["B904"]
 "Alfheim/YggdrasilStudio/backend/comfyui_client.py" = ["B904"]
+"Alfheim/YggdrasilForge/backend/routes/**" = ["B904", "TRY301"]
+"Alfheim/YggdrasilForge/backend/blender_client.py" = ["B904"]
+"Alfheim/YggdrasilForge/backend/routes/blender.py" = ["TC001"]
 
 [format]
 quote-style = "double"

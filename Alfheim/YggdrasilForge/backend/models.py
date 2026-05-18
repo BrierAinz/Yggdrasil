@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 # ── Enums ──────────────────────────────────────────────────────────────────
 
 
-class GenerationType(str, Enum):
+class GenerationType(StrEnum):
     TEXT_TO_3D = "text_to_3d"
     IMAGE_TO_3D = "image_to_3d"
     TEXTURE_APPLY = "texture_apply"
@@ -19,7 +19,7 @@ class GenerationType(str, Enum):
     RENDER = "render"
 
 
-class AIProvider(str, Enum):
+class AIProvider(StrEnum):
     HUNYUAN3D = "hunyuan3d"
     RODIN = "rodin"
     POLYHAVEN = "polyhaven"
@@ -27,7 +27,7 @@ class AIProvider(str, Enum):
     BLENDER_LOCAL = "blender_local"
 
 
-class GenerationStatus(str, Enum):
+class GenerationStatus(StrEnum):
     QUEUED = "queued"
     PROCESSING = "processing"
     IMPORTING = "importing"
@@ -35,14 +35,14 @@ class GenerationStatus(str, Enum):
     FAILED = "failed"
 
 
-class AssetType(str, Enum):
+class AssetType(StrEnum):
     MODEL = "model"
     TEXTURE = "texture"
     HDRI = "hdri"
     SCENE = "scene"
 
 
-class RenderEngine(str, Enum):
+class RenderEngine(StrEnum):
     EEVEE = "eevee"
     CYCLES = "cycles"
 

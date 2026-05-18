@@ -1,7 +1,9 @@
 """Tests for autosub.cli module."""
 
-from autosub.cli import app
 from typer.testing import CliRunner
+
+from autosub.cli import app
+
 
 runner = CliRunner()
 

@@ -1,4 +1,4 @@
-"""ForgeMaster — Niflheim resource manager for LLM models, VRAM, and disk."""
+"""ForgeMaster — Muspelheim resource manager for LLM models, VRAM, and disk."""
 
 __version__ = "1.0.0"
 

@@ -1,8 +1,8 @@
 """Tests for Asset library routes — PolyHaven, Sketchfab, and local asset history."""
 
-import pytest
 from unittest.mock import AsyncMock
 
+import pytest
 from backend.blender_client import BlenderMCPError
 
 

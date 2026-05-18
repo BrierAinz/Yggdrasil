@@ -1,6 +1,7 @@
 """Tests for autosub.aligner module."""
 
 import pytest
+
 from autosub.aligner import Aligner, Word
 from autosub.transcriber import Segment
 

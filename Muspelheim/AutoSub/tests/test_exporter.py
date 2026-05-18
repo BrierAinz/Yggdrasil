@@ -1,8 +1,10 @@
 """Tests for autosub.exporter module."""
 
 import pytest
+
 from autosub.exporter import export_segments, export_srt, export_txt, export_vtt
 from autosub.transcriber import Segment
+
 
 # Sample segments for testing
 SAMPLE_SEGMENTS = [

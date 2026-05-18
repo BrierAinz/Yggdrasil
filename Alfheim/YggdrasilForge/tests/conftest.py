@@ -1,12 +1,12 @@
 """Pytest configuration — shared fixtures and Blender MCP mock."""
 
+# Set test environment before importing app
+import os
 from unittest.mock import AsyncMock, patch
 
 import pytest_asyncio
-from httpx import AsyncClient, ASGITransport
+from httpx import ASGITransport, AsyncClient
 
-# Set test environment before importing app
-import os
 
 os.environ["BLENDER_MCP_URL"] = "http://mock:9999"
 os.environ["DB_PATH"] = "/tmp/forge_test.db"
@@ -86,7 +86,7 @@ def _make_mock_client() -> AsyncMock:
 @pytest_asyncio.fixture
 async def client():
     """Async test client with mocked Blender MCP."""
-    from backend.database import init_db, close_db
+    from backend.database import close_db, init_db
 
     mock_client = _make_mock_client()
 

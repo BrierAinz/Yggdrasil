@@ -5,15 +5,17 @@ from __future__ import annotations
 from pathlib import Path
 
 import typer
+from rich.console import Console
+from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.table import Table
+
 from autosub.batch import BatchProcessor
 from autosub.config import AutoSubConfig
 from autosub.exporter import export_segments
 from autosub.pipeline import Pipeline
 from autosub.transcriber import Transcriber
 from autosub.translator import Translator
-from rich.console import Console
-from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich.table import Table
+
 
 app = typer.Typer(help="🎬 AutoSub — Automatic subtitle generator")
 console = Console()
@@ -121,7 +123,7 @@ def pipeline(
             console.print(f"  Translated to: {result.target_lang}")
     except FileNotFoundError as e:
         console.print(f"[red]Error: {e}[/]")
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from None
 
 
 @app.command()
@@ -148,7 +150,7 @@ def batch(
         )
     except (FileNotFoundError, ValueError) as e:
         console.print(f"[red]Error: {e}[/]")
-        raise typer.Exit(code=1)
+        raise typer.Exit(code=1) from None
 
 
 @app.command()

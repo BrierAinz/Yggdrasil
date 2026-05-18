@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 import aiosqlite
 
 from backend.config import settings
+
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS generations (
@@ -104,7 +105,7 @@ async def create_generation(
             input_image,
             provider_job_id,
             json.dumps(provider_data) if provider_data else None,
-            datetime.now(timezone.utc).isoformat(),
+            datetime.now(UTC).isoformat(),
         ),
     )
     await db.commit()
@@ -143,7 +144,7 @@ async def update_generation(
         vals.append(json.dumps(provider_data))
     if status in ("completed", "failed"):
         sets.append("completed_at = ?")
-        vals.append(datetime.now(timezone.utc).isoformat())
+        vals.append(datetime.now(UTC).isoformat())
     if sets:
         vals.append(id)
         await db.execute(f"UPDATE generations SET {', '.join(sets)} WHERE id = ?", vals)
@@ -186,7 +187,7 @@ async def list_generations(
 
     cursor = await db.execute(
         f"SELECT * FROM generations {where} ORDER BY created_at DESC LIMIT ? OFFSET ?",
-        params + [limit, offset],
+        [*params, limit, offset],
     )
     rows = await cursor.fetchall()
     items = []
@@ -228,7 +229,7 @@ async def create_asset(
             thumbnail,
             json.dumps(tags) if tags else None,
             json.dumps(metadata) if metadata else None,
-            datetime.now(timezone.utc).isoformat(),
+            datetime.now(UTC).isoformat(),
         ),
     )
     await db.commit()
@@ -271,7 +272,7 @@ async def list_assets(
 
     cursor = await db.execute(
         f"SELECT * FROM assets {where} ORDER BY created_at DESC LIMIT ? OFFSET ?",
-        params + [limit, offset],
+        [*params, limit, offset],
     )
     rows = await cursor.fetchall()
     items = []

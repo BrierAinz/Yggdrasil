@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
-from autosub.transcriber import Segment
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from autosub.transcriber import Segment
 
 
 def _format_srt_time(seconds: float) -> str:
@@ -51,7 +55,7 @@ def export_vtt(segments: list[Segment]) -> str:
         WebVTT-formatted string.
     """
     lines: list[str] = ["WEBVTT", ""]
-    for i, seg in enumerate(segments, start=1):
+    for _i, seg in enumerate(segments, start=1):
         lines.append(f"{_format_vtt_time(seg.start)} --> {_format_vtt_time(seg.end)}")
         lines.append(seg.text)
         lines.append("")  # blank line between entries

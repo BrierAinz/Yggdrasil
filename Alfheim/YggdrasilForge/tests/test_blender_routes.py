@@ -1,8 +1,8 @@
 """Tests for Blender MCP bridge routes — status, scene, object, screenshot, execute."""
 
-import pytest
 from unittest.mock import AsyncMock
 
+import pytest
 from backend.blender_client import BlenderMCPError
 
 

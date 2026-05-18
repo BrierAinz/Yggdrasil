@@ -1,6 +1,7 @@
 """Tests for autosub.transcriber module."""
 
 import pytest
+
 from autosub.transcriber import LanguageInfo, Segment, Transcriber
 
 

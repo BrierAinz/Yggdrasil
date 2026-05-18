@@ -6,16 +6,17 @@ import logging
 
 from fastapi import APIRouter, HTTPException
 
-from backend.models import (
-    AssetSearchRequest,
-    SketchfabDownloadRequest,
-    PolyHavenDownloadRequest,
-    TextureApplyRequest,
-    AIProvider,
-    AssetType,
-)
 from backend import database as db
-from backend.blender_client import blender_client, BlenderMCPError
+from backend.blender_client import BlenderMCPError, blender_client
+from backend.models import (
+    AIProvider,
+    AssetSearchRequest,
+    AssetType,
+    PolyHavenDownloadRequest,
+    SketchfabDownloadRequest,
+    TextureApplyRequest,
+)
+
 
 router = APIRouter()
 logger = logging.getLogger("forge.assets")

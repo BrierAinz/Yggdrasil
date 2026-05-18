@@ -1,6 +1,7 @@
 """Tests for autosub.pipeline module."""
 
 import pytest
+
 from autosub.pipeline import Pipeline, PipelineResult
 
 

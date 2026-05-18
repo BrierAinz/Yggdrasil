@@ -4,12 +4,14 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from rich.console import Console
+from rich.progress import Progress
+
 from autosub.exporter import export_segments
 from autosub.pipeline import PipelineResult
 from autosub.transcriber import Transcriber
 from autosub.translator import Translator
-from rich.console import Console
-from rich.progress import Progress
+
 
 # Supported audio/video extensions
 AUDIO_EXTENSIONS = {".mp3", ".wav", ".flac", ".ogg", ".m4a", ".aac", ".wma"}
@@ -115,7 +117,7 @@ class BatchProcessor:
                     else:
                         segments = result
 
-                    # Translate (optional)
+                    # Translate if translator is configured
                     translated = False
                     if translator:
                         segments = translator.translate_segments(segments)

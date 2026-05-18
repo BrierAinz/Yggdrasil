@@ -6,8 +6,9 @@ import logging
 
 from fastapi import APIRouter, HTTPException
 
-from backend.models import RenderRequest, RenderEngine
-from backend.blender_client import blender_client, BlenderMCPError
+from backend.blender_client import BlenderMCPError, blender_client
+from backend.models import RenderEngine, RenderRequest
+
 
 router = APIRouter()
 logger = logging.getLogger("forge.render")
