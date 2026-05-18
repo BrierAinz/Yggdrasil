@@ -80,7 +80,7 @@ class MemoryStore:
         content: str,
         embedding: bytes | None = None,
         metadata: dict | None = None,
-    ):
+    ) -> None:
         """Insert a new memory entry.
 
         Args:
@@ -100,7 +100,7 @@ class MemoryStore:
         content: str,
         embedding: bytes | None = None,
         metadata: dict | None = None,
-    ):
+    ) -> None:
         """Alias for :meth:`add` — insert a new memory entry.
 
         This method exists because the external API (``lilith_api.main``)

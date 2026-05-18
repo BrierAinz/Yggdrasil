@@ -13,13 +13,13 @@ class ToolRegistry:
     _tools: dict[str, type[BaseTool]] = {}
 
     @classmethod
-    def register(cls, tool_class: type[BaseTool]):
+    def register(cls, tool_class: type[BaseTool]) -> type[BaseTool]:
         """Registrar una clase de herramienta en el registry."""
         cls._tools[tool_class.name] = tool_class
         return tool_class
 
     @classmethod
-    def get(cls, name: str) -> type[BaseTool]:
+    def get(cls, name: str) -> type[BaseTool] | None:
         """Obtener una clase de herramienta por nombre."""
         return cls._tools.get(name)
 
@@ -29,6 +29,6 @@ class ToolRegistry:
         return {name: tool_class.description for name, tool_class in cls._tools.items()}
 
     @classmethod
-    def clear(cls):
+    def clear(cls) -> None:
         """Limpiar todas las herramientas registradas."""
         cls._tools.clear()

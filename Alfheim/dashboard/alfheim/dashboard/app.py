@@ -105,12 +105,12 @@ MOCK_REALMS = {
 }
 
 MOCK_AGENTS = {
-    "eva": {
-        "emoji": "👁️",
+    "shalltear": {
+        "emoji": "🩸",
         "status": "active",
-        "total_calls": 1247,
-        "success_rate": 0.97,
-        "avg_latency": 1.23,
+        "total_calls": 421,
+        "success_rate": 0.93,
+        "avg_latency": 2.88,
     },
     "adan": {
         "emoji": "🔧",
@@ -119,6 +119,13 @@ MOCK_AGENTS = {
         "success_rate": 0.94,
         "avg_latency": 2.15,
     },
+    "eva": {
+        "emoji": "👁️",
+        "status": "active",
+        "total_calls": 1247,
+        "success_rate": 0.97,
+        "avg_latency": 1.23,
+    },
     "odin": {
         "emoji": "🧠",
         "status": "active",
@@ -126,33 +133,12 @@ MOCK_AGENTS = {
         "success_rate": 0.99,
         "avg_latency": 0.89,
     },
-    "lucifer": {
-        "emoji": "🔥",
-        "status": "idle",
-        "total_calls": 567,
-        "success_rate": 0.91,
-        "avg_latency": 3.42,
-    },
-    "crystal": {
-        "emoji": "💎",
+    "mimir": {
+        "emoji": "🔮",
         "status": "active",
-        "total_calls": 342,
-        "success_rate": 0.95,
-        "avg_latency": 1.67,
-    },
-    "shalltear": {
-        "emoji": "🩸",
-        "status": "active",
-        "total_calls": 421,
-        "success_rate": 0.93,
-        "avg_latency": 2.88,
-    },
-    "archivero": {
-        "emoji": "📚",
-        "status": "active",
-        "total_calls": 189,
-        "success_rate": 0.98,
-        "avg_latency": 0.45,
+        "total_calls": 156,
+        "success_rate": 0.96,
+        "avg_latency": 3.12,
     },
 }
 
@@ -191,7 +177,7 @@ MOCK_TASKS = [
     {
         "id": "task-002",
         "name": "Indexación de documentos",
-        "agent": "archivero",
+        "agent": "eva",
         "status": "running",
         "progress": 0.45,
         "started_at": "2026-05-02T14:15:00Z",
@@ -201,7 +187,7 @@ MOCK_TASKS = [
     {
         "id": "task-003",
         "name": "Monitoreo de servicios",
-        "agent": "eva",
+        "agent": "shalltear",
         "status": "pending",
         "progress": 0.0,
         "started_at": None,
@@ -211,7 +197,7 @@ MOCK_TASKS = [
     {
         "id": "task-004",
         "name": "Optimización de memoria",
-        "agent": "shalltear",
+        "agent": "adan",
         "status": "completed",
         "progress": 1.0,
         "started_at": "2026-05-02T13:00:00Z",
@@ -220,13 +206,13 @@ MOCK_TASKS = [
     },
     {
         "id": "task-005",
-        "name": "Generación de reportes",
-        "agent": "crystal",
+        "name": "Investigación profunda",
+        "agent": "mimir",
         "status": "running",
         "progress": 0.88,
         "started_at": "2026-05-02T14:00:00Z",
         "priority": "high",
-        "realm": "alfheim",
+        "realm": "vanaheim",
     },
 ]
 
@@ -246,38 +232,38 @@ MOCK_LOGS = [
     {
         "timestamp": "2026-05-02T15:19:35Z",
         "level": "WARN",
-        "source": "lucifer",
-        "message": "Latencia elevada en consultas de niflheim",
+        "source": "shalltear",
+        "message": "Latencia elevada en clasificación de consultas",
     },
     {
         "timestamp": "2026-05-02T15:19:30Z",
         "level": "INFO",
-        "source": "archivero",
-        "message": "Indexación de lote #47 completada",
+        "source": "adan",
+        "message": "Refactorización de módulo completada",
     },
     {
         "timestamp": "2026-05-02T15:19:25Z",
         "level": "DEBUG",
-        "source": "crystal",
-        "message": "Procesando generación reporte #12",
+        "source": "mimir",
+        "message": "Búsqueda profunda: 3 fuentes analizadas",
     },
     {
         "timestamp": "2026-05-02T15:19:20Z",
         "level": "INFO",
-        "source": "shalltear",
-        "message": "Memoria optimizada: 2.3MB liberados",
+        "source": "eva",
+        "message": "Documentación indexada: 47 archivos procesados",
     },
     {
         "timestamp": "2026-05-02T15:19:15Z",
         "level": "ERROR",
-        "source": "adan",
-        "message": "Error de conexión con helheim - reintento #3",
+        "source": "odin",
+        "message": "Error de conexión con servicio externo - reintento #3",
     },
     {
         "timestamp": "2026-05-02T15:19:10Z",
         "level": "INFO",
-        "source": "odin",
-        "message": "Heartbeat recibido de midgard",
+        "source": "shalltear",
+        "message": "Triaje de consultas: 12 redirigidas correctamente",
     },
 ]
 
@@ -288,7 +274,11 @@ MOCK_LOGS = [
 
 
 def create_app() -> FastAPI:
-    """Create and configure the Alfheim dashboard FastAPI application."""
+    """Create and configure the Alfheim dashboard FastAPI application.
+
+    Returns:
+        Configured FastAPI application instance.
+    """
     app = FastAPI(
         title="Alfheim Dashboard",
         version="1.0.0",
@@ -316,7 +306,11 @@ def create_app() -> FastAPI:
 
     @app.get("/", response_class=HTMLResponse)
     async def dashboard():
-        """Serve the main dashboard page."""
+        """Serve the main dashboard page.
+
+        Returns:
+            HTMLResponse with rendered dashboard template.
+        """
         template = jinja_env.get_template("index.html")
         html = template.render()
         return HTMLResponse(content=html)
@@ -325,62 +319,48 @@ def create_app() -> FastAPI:
 
     @app.get("/api/ecosystem/status")
     async def ecosystem_status():
-        """Return status of all Yggdrasil realms."""
+        """Return status of all Yggdrasil realms.
+
+        Returns:
+            Dict with realm statuses, file counts, and active realm count.
+        """
         raise NotImplementedError("Backend integration pending")
-        return {
-            "realms": MOCK_REALMS,
-            "total_files": sum(r["file_count"] for r in MOCK_REALMS.values()),
-            "total_dirs": sum(r["dir_count"] for r in MOCK_REALMS.values()),
-            "active_realms": sum(1 for r in MOCK_REALMS.values() if r["status"] == "active"),
-            "timestamp": datetime.now(UTC).isoformat(),
-        }
 
     @app.get("/api/pantheon/status")
     async def pantheon_status():
-        """Return status of all Pantheon agents."""
+        """Return status of all Pantheon agents.
+
+        Returns:
+            Dict with agent statuses and aggregated performance metrics.
+        """
         raise NotImplementedError("Backend integration pending")
-        return {
-            "agents": MOCK_AGENTS,
-            "total_calls": sum(a["total_calls"] for a in MOCK_AGENTS.values()),
-            "avg_success_rate": sum(a["success_rate"] for a in MOCK_AGENTS.values())
-            / len(MOCK_AGENTS),
-            "timestamp": datetime.now(UTC).isoformat(),
-        }
 
     @app.get("/api/memory/stats")
     async def memory_stats():
-        """Return memory system statistics."""
+        """Return memory system statistics.
+
+        Returns:
+            Dict with semantic, episodic, and muninn memory stats.
+        """
         raise NotImplementedError("Backend integration pending")
-        return {
-            "semantic": MOCK_MEMORY["semantic"],
-            "episodic": MOCK_MEMORY["episodic"],
-            "muninn": MOCK_MEMORY["muninn"],
-            "total_memories": sum(m["total"] for m in MOCK_MEMORY.values()),
-            "total_size_mb": sum(m["size_mb"] for m in MOCK_MEMORY.values()),
-            "timestamp": datetime.now(UTC).isoformat(),
-        }
 
     @app.get("/api/automode/tasks")
     async def automode_tasks():
-        """Return active AutoMode tasks."""
+        """Return active AutoMode tasks.
+
+        Returns:
+            Dict with task list and status counts.
+        """
         raise NotImplementedError("Backend integration pending")
-        return {
-            "tasks": MOCK_TASKS,
-            "running": sum(1 for t in MOCK_TASKS if t["status"] == "running"),
-            "pending": sum(1 for t in MOCK_TASKS if t["status"] == "pending"),
-            "completed": sum(1 for t in MOCK_TASKS if t["status"] == "completed"),
-            "timestamp": datetime.now(UTC).isoformat(),
-        }
 
     @app.get("/api/logs/recent")
     async def recent_logs(limit: int = 50):
-        """Return recent log entries."""
+        """Return recent log entries.
+
+        Returns:
+            Dict with log entries, count, and timestamp.
+        """
         raise NotImplementedError("Backend integration pending")
-        return {
-            "logs": MOCK_LOGS[:limit],
-            "count": min(limit, len(MOCK_LOGS)),
-            "timestamp": datetime.now(UTC).isoformat(),
-        }
 
     # --- SSE Endpoint ---
 
@@ -389,6 +369,10 @@ def create_app() -> FastAPI:
         """SSE endpoint for real-time log streaming."""
 
         async def event_generator():
+            """Yield heartbeat events until client disconnects.
+
+            Backend integration pending — currently only sends heartbeats.
+            """
             while True:
                 # Check if client disconnected
                 if await request.is_disconnected():
@@ -398,8 +382,7 @@ def create_app() -> FastAPI:
                     "event": "heartbeat",
                     "data": json.dumps({"timestamp": datetime.now(UTC).isoformat()}),
                 }
-                # Also emit a mock log event occasionally
-                raise NotImplementedError("Backend integration pending")
+                # TODO: Emit real log events when backend is connected
                 await asyncio.sleep(30)
 
         return EventSourceResponse(event_generator())
@@ -408,12 +391,14 @@ def create_app() -> FastAPI:
 
     @app.websocket("/api/ws/chat")
     async def websocket_chat(websocket: WebSocket):
-        """WebSocket endpoint for agent chat."""
+        """WebSocket endpoint for agent chat.
+
+        Backend integration pending — currently echoes messages back.
+        """
         await websocket.accept()
         try:
             while True:
                 data = await websocket.receive_text()
-                raise NotImplementedError("Backend integration pending")
                 msg = json.loads(data) if data.startswith("{") else {"message": data}
                 # Echo with agent context for now
                 response = {
@@ -435,7 +420,7 @@ def create_app() -> FastAPI:
 # =============================================================================
 
 
-def main():
+def main() -> None:
     """Run the Alfheim dashboard server."""
     import uvicorn
 
