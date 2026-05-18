@@ -9,6 +9,12 @@ from lilith_tools.base import BaseTool
 
 
 class WebSearchTool(BaseTool):
+    """Web search tool using DuckDuckGo HTML (no API key required).
+
+    Scrapes the DuckDuckGo HTML endpoint, extracts result links and
+    titles, and returns up to ``max_results`` matches.
+    """
+
     name = "web_search"
     description = (
         "Busca en la web usando DuckDuckGo. Parametros: query (str), max_results (int, default 5)"

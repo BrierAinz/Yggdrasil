@@ -8,6 +8,13 @@ from lilith_tools.base import BaseTool
 
 
 class CodingTool(BaseTool):
+    """Sandboxed Python code execution tool.
+
+    Runs user-supplied Python code in a subprocess with a blocked-keyword
+    blacklist (``__import__``, ``eval``, ``exec``, ``open``, etc.) and a
+    configurable timeout.
+    """
+
     name = "coding"
     description = (
         "Ejecuta codigo Python en entorno sandboxed. "

@@ -162,22 +162,30 @@ def get_tools() -> Any:
 # Request / response models
 # ---------------------------------------------------------------------------
 class ChatRequest(BaseModel):
+    """Request body for the /chat endpoint."""
+
     message: str
     model: str | None = None
 
 
 class ChatResponse(BaseModel):
+    """Response body for the /chat endpoint."""
+
     response: str
     context_used: list[str]
     tool_call: dict[str, Any]
 
 
 class ToolCallRequest(BaseModel):
+    """Request body for the /tools/execute endpoint."""
+
     tool: str
     params: dict[str, Any] = {}
 
 
 class MemoryStoreRequest(BaseModel):
+    """Request body for the POST /memory endpoint."""
+
     text: str
     metadata: dict[str, Any] = {}
 
@@ -190,6 +198,7 @@ async def chat(
     req: ChatRequest,
     engine: Any = Depends(get_engine),
 ) -> ChatResponse:
+    """Process a chat message through the Lilith engine and return the response."""
     result = engine.process(req.message)
     response_text = f"Recibido: {req.message}"
     if result["tool_call"]:
@@ -206,6 +215,7 @@ async def execute_tool(
     req: ToolCallRequest,
     engine: Any = Depends(get_engine),
 ) -> dict[str, Any]:
+    """Execute a named tool with the given parameters."""
     return engine.execute_tool(req.tool, req.params)
 
 
@@ -213,11 +223,13 @@ async def execute_tool(
 async def list_tools(
     tools: Any = Depends(get_tools),
 ) -> dict[str, str]:
+    """List all registered tools (name → description)."""
     return tools.list_tools()
 
 
 @app.get("/health")
 async def health() -> dict[str, Any]:
+    """Lightweight health-check endpoint – no heavy initialisation required."""
     conf = get_config()
     tools = get_tools()
     return {
@@ -232,6 +244,7 @@ async def health() -> dict[str, Any]:
 async def status(
     memory: Any = Depends(get_memory),
 ) -> dict[str, Any]:
+    """Detailed status endpoint with memory and tool counts."""
     conf = get_config()
     tools = get_tools()
     return {
@@ -248,6 +261,7 @@ async def memory_recall(
     k: int = 5,
     memory: Any = Depends(get_memory),
 ) -> list[dict[str, Any]]:
+    """Search stored memories by semantic similarity to *query*."""
     return memory.search(query, k=k)
 
 
@@ -256,5 +270,6 @@ async def memory_store(
     req: MemoryStoreRequest,
     memory: Any = Depends(get_memory),
 ) -> dict[str, str]:
+    """Store a new memory entry with optional metadata."""
     memory.store(req.text, req.metadata)
     return {"status": "stored", "text": req.text[:100]}

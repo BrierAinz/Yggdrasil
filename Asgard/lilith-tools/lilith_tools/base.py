@@ -7,12 +7,26 @@ from typing import Any
 
 @dataclass
 class ToolResult:
+    """Result dataclass for tool execution outcomes.
+
+    Attributes:
+        success: Whether the tool execution succeeded.
+        data: The result payload (any type).
+        error: Error message if execution failed.
+    """
+
     success: bool
     data: Any
     error: str = ""
 
 
 class BaseTool(ABC):
+    """Abstract base class for all Lilith tools.
+
+    Subclasses must set ``name``, ``description``, and ``parameters``
+    class attributes and implement the :meth:`execute` method.
+    """
+
     name: str = ""
     description: str = ""
     parameters: dict[str, Any] | None = None

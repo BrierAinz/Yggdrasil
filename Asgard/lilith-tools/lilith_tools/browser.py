@@ -8,6 +8,13 @@ from lilith_tools.base import BaseTool
 
 
 class BrowserTool(BaseTool):
+    """Web browser tool using Playwright with automatic fallback to requests+regex.
+
+    Fetches a URL, extracts visible text, and returns title + truncated
+    content.  Prefers Playwright for JS-heavy pages; falls back to
+    ``urllib.request`` scraping when Playwright is unavailable.
+    """
+
     name = "browser"
     description = (
         "Navega a una URL y extrae texto legible. "

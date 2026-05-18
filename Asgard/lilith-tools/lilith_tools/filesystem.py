@@ -8,6 +8,8 @@ from .registry import ToolRegistry
 
 @ToolRegistry.register
 class FileReadTool(BaseTool):
+    """Tool that reads the text content of a file from the filesystem."""
+
     name = "file_read"
     description = "Lee contenido de un archivo"
     parameters = {
@@ -28,6 +30,8 @@ class FileReadTool(BaseTool):
 
 @ToolRegistry.register
 class DirectoryListTool(BaseTool):
+    """Tool that lists files and subdirectories in a given directory path."""
+
     name = "directory_list"
     description = "Lista archivos en un directorio"
     parameters = {

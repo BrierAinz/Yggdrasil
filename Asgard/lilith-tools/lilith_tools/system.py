@@ -6,6 +6,8 @@ from .registry import ToolRegistry
 
 @ToolRegistry.register
 class SystemInfoTool(BaseTool):
+    """Tool that returns basic operating system information (OS, version, machine)."""
+
     name = "system_info"
     description = "Obtiene informacion del sistema"
     parameters = {}
@@ -24,6 +26,8 @@ class SystemInfoTool(BaseTool):
 
 @ToolRegistry.register
 class SystemTimeTool(BaseTool):
+    """Tool that returns the current date and time in ISO format."""
+
     name = "system_time"
     description = "Obtiene la fecha y hora actual"
     parameters = {}

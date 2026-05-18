@@ -4,6 +4,12 @@ from .base import BaseTool
 
 
 class ToolRegistry:
+    """Global registry that discovers and manages available Lilith tools.
+
+    Tools are registered via the :meth:`register` classmethod (used as a
+    decorator) or by instantiating the tool class directly at import time.
+    """
+
     _tools: dict[str, type[BaseTool]] = {}
 
     @classmethod
