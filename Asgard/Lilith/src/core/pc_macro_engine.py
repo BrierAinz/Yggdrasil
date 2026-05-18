@@ -201,14 +201,21 @@ class PCMacroEngine:
 
     def _expand_path_shortcuts(self, path: str) -> str:
         """Expande atajos de ruta comunes."""
+        import os
+
+        _module_dir = Path(__file__).resolve().parent
+        _yggdrasil_root = Path(os.environ.get("YGGDRASIL_ROOT", str(_module_dir.parents[4])))
+        _proyectos_root = _yggdrasil_root.parent
+        _lilith_root = _yggdrasil_root / "Asgard" / "Lilith"
+
         shortcuts = {
-            "proyectos": "D:/Proyectos",
-            "lilith": "D:/Proyectos/Yggdrasil/Asgard/Lilith",
-            "core": "D:/Proyectos/Yggdrasil/Asgard/Lilith/Core",
-            "backend": "D:/Proyectos/Yggdrasil/Asgard/Lilith/Core/Backend",
-            "config": "D:/Proyectos/Yggdrasil/Asgard/Lilith/Core/Config",
-            "desktop": "C:/Users/Game_/Desktop",
-            "downloads": "C:/Users/Game_/Downloads",
+            "proyectos": str(_proyectos_root),
+            "lilith": str(_lilith_root),
+            "core": str(_lilith_root / "Core"),
+            "backend": str(_lilith_root / "Core" / "Backend"),
+            "config": str(_lilith_root / "Core" / "Config"),
+            "desktop": os.path.expandvars(r"%USERPROFILE%\Desktop"),
+            "downloads": os.path.expandvars(r"%USERPROFILE%\Downloads"),
         }
 
         path_lower = path.lower().strip()
