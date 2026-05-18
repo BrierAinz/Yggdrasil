@@ -102,7 +102,7 @@ def trace_to_node(workflow: dict, link: list, *, max_hops: int = 8) -> str | Non
 
 def find_negative_prompt_node(workflow: dict) -> str | None:
     """Trace `negative` input of a sampler back to the source text encoder."""
-    for nid, node in iter_nodes(workflow):
+    for _, node in iter_nodes(workflow):
         if node["class_type"] not in SAMPLER_NODE_FAMILY:
             continue
         inputs = node.get("inputs", {}) or {}
@@ -118,7 +118,7 @@ def find_negative_prompt_node(workflow: dict) -> str | None:
 
 
 def find_positive_prompt_node(workflow: dict) -> str | None:
-    for nid, node in iter_nodes(workflow):
+    for _, node in iter_nodes(workflow):
         if node["class_type"] not in SAMPLER_NODE_FAMILY:
             continue
         inputs = node.get("inputs", {}) or {}

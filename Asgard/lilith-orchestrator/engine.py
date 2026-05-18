@@ -127,9 +127,8 @@ class LilithEngine:
                     "Swarm initialized with %d agents: %s", len(agents), [a["name"] for a in agents]
                 )
                 return True
-            else:
-                logger.warning("Swarm initialized but no agents registered — will use LLM fallback")
-                return False
+            logger.warning("Swarm initialized but no agents registered — will use LLM fallback")
+            return False
 
         except ImportError:
             logger.debug("lilith_core swarm not available — using LLM fallback")

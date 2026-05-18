@@ -340,7 +340,7 @@ def _get_current_model() -> tuple:
         return None, None
 
 
-def _get_api_key(base_url: str = None) -> str:
+def _get_api_key(base_url: str | None = None) -> str:
     """Get the appropriate API key."""
     if base_url and "openrouter" in base_url:
         return os.getenv("OPENROUTER_API_KEY", "")
@@ -384,7 +384,7 @@ def _build_messages(system_prompt=None, prefill=None, query=None):
     return messages
 
 
-def _write_config(system_prompt: str = None, prefill_file: str = None):
+def _write_config(system_prompt: str | None = None, prefill_file: str | None = None):
     """Write jailbreak settings to config.yaml (merges, doesn't overwrite)."""
     cfg = {}
     if CONFIG_PATH.exists():
@@ -477,7 +477,7 @@ def auto_jailbreak(model=None, base_url=None, api_key=None,
     if verbose:
         print("[BASELINE] Testing without jailbreak...")
     baseline_msgs = _build_messages(query=canary_query)
-    baseline_content, baseline_latency, baseline_error = _test_query(
+    baseline_content, _, baseline_error = _test_query(
         client, model, baseline_msgs
     )
     baseline_score = score_response(baseline_content, canary_query) if baseline_content else {"score": -9999, "is_refusal": True, "hedge_count": 0}
@@ -549,7 +549,7 @@ def auto_jailbreak(model=None, base_url=None, api_key=None,
                     prefill=prefill,
                     query=encoded_query,
                 )
-                content, latency, error = _test_query(client, model, msgs)
+                content, _, error = _test_query(client, model, msgs)
                 result = score_response(content, canary_query) if content else {"score": -9999, "is_refusal": True, "hedge_count": 0}
 
                 attempts.append({
@@ -586,7 +586,7 @@ def auto_jailbreak(model=None, base_url=None, api_key=None,
 
         # Try with system prompt alone
         msgs = _build_messages(system_prompt=system_prompt, query=canary_query)
-        content, latency, error = _test_query(client, model, msgs)
+        content, _, error = _test_query(client, model, msgs)
         result = score_response(content, canary_query) if content else {"score": -9999, "is_refusal": True, "hedge_count": 0}
 
         attempts.append({
@@ -619,7 +619,7 @@ def auto_jailbreak(model=None, base_url=None, api_key=None,
             prefill=STANDARD_PREFILL,
             query=canary_query,
         )
-        content, latency, error = _test_query(client, model, msgs)
+        content, _, error = _test_query(client, model, msgs)
         result = score_response(content, canary_query) if content else {"score": -9999, "is_refusal": True, "hedge_count": 0}
 
         attempts.append({

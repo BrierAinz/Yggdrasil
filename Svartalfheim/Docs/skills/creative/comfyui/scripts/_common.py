@@ -559,7 +559,7 @@ def _http_once(
                     body = r.content
                 return HTTPResponse(
                     status=r.status_code,
-                    headers={k: v for k, v in r.headers.items()},
+                    headers=dict(r.headers),
                     body=body,
                     url=r.url,
                 )
@@ -648,10 +648,7 @@ def is_api_format(workflow: Any) -> bool:
         return False
     if "nodes" in workflow and "links" in workflow:
         return False
-    for v in workflow.values():
-        if isinstance(v, dict) and "class_type" in v:
-            return True
-    return False
+    return any(isinstance(v, dict) and "class_type" in v for v in workflow.values())
 
 
 def unwrap_workflow(payload: Any) -> dict:

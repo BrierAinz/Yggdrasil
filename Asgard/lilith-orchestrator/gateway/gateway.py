@@ -183,21 +183,21 @@ def _pc_fs_sync(op: str, path: str, dst: str, cmd: str, steps: list | None, user
                 "success": True,
                 "output": _json_dumps(result),
             }
-        elif op == "mkdir":
+        if op == "mkdir":
             Path(path).mkdir(parents=True, exist_ok=True)
             return {"success": True, "output": f"Carpeta creada: {path}"}
-        elif op == "read":
+        if op == "read":
             result = file_tool("read_file", {"path": path})
             return {"success": True, "output": result.get("content", "(vacío)")}
-        elif op == "write":
+        if op == "write":
             result = file_tool("write_file", {"path": path, "content": cmd})
             return {"success": True, "output": _json_dumps(result)}
-        elif op == "move":
+        if op == "move":
             import shutil
 
             shutil.move(path, dst)
             return {"success": True, "output": f"Movido: {path} -> {dst}"}
-        elif op == "copy":
+        if op == "copy":
             import shutil
 
             if Path(path).is_dir():
@@ -205,7 +205,7 @@ def _pc_fs_sync(op: str, path: str, dst: str, cmd: str, steps: list | None, user
             else:
                 shutil.copy2(path, dst)
             return {"success": True, "output": f"Copiado: {path} -> {dst}"}
-        elif op == "delete":
+        if op == "delete":
             import shutil
 
             p = Path(path)
@@ -214,13 +214,13 @@ def _pc_fs_sync(op: str, path: str, dst: str, cmd: str, steps: list | None, user
             else:
                 p.unlink()
             return {"success": True, "output": f"Eliminado: {path}"}
-        elif op == "exec":
+        if op == "exec":
             result = system_tool("run_terminal", {"command": cmd})
             return {
                 "success": True,
                 "output": result.get("output", "") or result.get("error", "(sin salida)"),
             }
-        elif op == "batch":
+        if op == "batch":
             outputs = []
             for step in steps or []:
                 sop = step.get("op", "")
@@ -230,14 +230,13 @@ def _pc_fs_sync(op: str, path: str, dst: str, cmd: str, steps: list | None, user
                 res = _pc_fs_sync(sop, spath, sdst, scmd, None, user_id)
                 outputs.append(res.get("output", "(ok)"))
             return {"success": True, "output": "\\n".join(outputs)}
-        elif op == "confirm":
+        if op == "confirm":
             return {"success": True, "output": "Confirmación procesada (stub)."}
-        else:
-            return {
-                "success": False,
-                "error": f"Operación no soportada: {op}",
-                "output": "(no implementado)",
-            }
+        return {
+            "success": False,
+            "error": f"Operación no soportada: {op}",
+            "output": "(no implementado)",
+        }
     except Exception as e:
         traceback.print_exc()
         return {"success": False, "error": str(e), "output": f"Error: {e}"}

@@ -494,7 +494,7 @@ def generate_variants(query, tier="standard", custom_triggers=None):
     max_variants = TIER_SIZES.get(tier, TIER_SIZES['standard'])
 
     variants = []
-    for i, tech in enumerate(TECHNIQUES[:max_variants]):
+    for _, tech in enumerate(TECHNIQUES[:max_variants]):
         variants.append({
             'text': obfuscate_query(query, tech['name'], triggers),
             'technique': tech['name'],
