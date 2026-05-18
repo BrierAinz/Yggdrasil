@@ -30,6 +30,11 @@ class LiteLLMProvider(LLMProvider):
     """
 
     def __init__(self, config: Config | None = None) -> None:
+        """Initialise the LiteLLMProvider.
+
+        Args:
+            config: Optional Config instance. Defaults to a new Config().
+        """
         self.config = config or Config()
 
     # ------------------------------------------------------------------

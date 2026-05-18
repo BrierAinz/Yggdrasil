@@ -9,6 +9,12 @@ class Config:
     """Configuracion centralizada de Lilith."""
 
     def __init__(self, root_path: Path | None = None) -> None:
+        """Initialise Config with an optional root path.
+
+        Args:
+            root_path: Path to the Lilith config directory.
+                       Defaults to ``~/.lilith``.
+        """
         self.root = root_path or Path.home() / ".lilith"
         self.root.mkdir(parents=True, exist_ok=True)
         self.config_file = self.root / "config.json"

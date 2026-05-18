@@ -27,6 +27,12 @@ class Mem0Backend(MemoryBackend):
     """
 
     def __init__(self, db_path: Path | None = None) -> None:
+        """Initialise the Mem0Backend, connecting to mem0 cloud or local storage.
+
+        Args:
+            db_path: Optional path for local storage. Falls back to ``.mem0``
+                     in the current directory.
+        """
         try:
             from mem0 import Memory
         except ImportError as exc:
@@ -228,7 +234,6 @@ class Mem0Backend(MemoryBackend):
 
     def count(self) -> int:
         """Return the total number of entries in the local meta db."""
-
         conn = self._meta_conn()
         try:
             row = conn.execute("SELECT COUNT(*) FROM mem0_meta").fetchone()

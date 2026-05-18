@@ -1,3 +1,5 @@
+"""Persistent key-value memory store backed by SQLite."""
+
 import json
 import sqlite3
 from pathlib import Path
@@ -17,6 +19,7 @@ class MemoryStore:
         Args:
             db_path: Path to the SQLite database file. The file is created
                      automatically on first access.
+
         """
         self.db_path = db_path
         self._conn: sqlite3.Connection | None = None
@@ -95,6 +98,7 @@ class MemoryStore:
             content: The text content to store.
             embedding: Optional binary embedding vector.
             metadata: Optional dict stored as JSON.
+
         """
         conn = self._get_conn()
         try:
@@ -130,6 +134,7 @@ class MemoryStore:
         Returns:
             A list of dicts, each representing a matching row, ordered
             by most recent first.
+
         """
         conn = self._get_conn()
         try:
@@ -151,6 +156,7 @@ class MemoryStore:
 
         Returns:
             A list of dicts ordered by most recent first.
+
         """
         conn = self._get_conn()
         try:
@@ -168,6 +174,7 @@ class MemoryStore:
 
         Returns:
             Integer count of all rows in the ``memories`` table.
+
         """
         conn = self._get_conn()
         try:
@@ -185,6 +192,7 @@ class MemoryStore:
 
         Returns:
             ``True`` if a row was deleted, ``False`` if no row matched.
+
         """
         conn = self._get_conn()
         try:
@@ -200,6 +208,7 @@ class MemoryStore:
 
         Returns:
             The number of rows that were deleted.
+
         """
         conn = self._get_conn()
         try:

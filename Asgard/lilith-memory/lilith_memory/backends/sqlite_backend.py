@@ -24,6 +24,11 @@ class SQLiteBackend(MemoryBackend):
     """
 
     def __init__(self, db_path: Path) -> None:
+        """Initialise the SQLiteBackend with a path to the database file.
+
+        Args:
+            db_path: Path to the SQLite database file.
+        """
         self._store = MemoryStore(db_path)
 
     # ------------------------------------------------------------------

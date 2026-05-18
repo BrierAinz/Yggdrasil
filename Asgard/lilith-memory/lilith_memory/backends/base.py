@@ -25,6 +25,7 @@ class MemoryBackend(ABC):
 
         Returns:
             The unique identifier (entry_id) of the stored entry.
+
         """
 
     @abstractmethod
@@ -37,6 +38,7 @@ class MemoryBackend(ABC):
 
         Returns:
             A list of dicts representing matching entries.
+
         """
 
     @abstractmethod
@@ -48,6 +50,7 @@ class MemoryBackend(ABC):
 
         Returns:
             A list of dicts ordered by most recent first.
+
         """
 
     @abstractmethod
@@ -59,6 +62,7 @@ class MemoryBackend(ABC):
 
         Returns:
             ``True`` if an entry was deleted, ``False`` otherwise.
+
         """
 
     @abstractmethod
@@ -67,6 +71,7 @@ class MemoryBackend(ABC):
 
         Returns:
             The number of entries that were removed.
+
         """
 
     @abstractmethod

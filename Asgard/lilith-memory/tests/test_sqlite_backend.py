@@ -26,7 +26,6 @@ def test_adapter_implements_interface():
 
 def test_crud_operations_match_original(tmp_path: Path):
     """The async SQLiteBackend should produce the same results as MemoryStore."""
-
     # ---- Set up both the raw store and the adapter ----
     db = tmp_path / "compat.db"
     raw = MemoryStore(db)

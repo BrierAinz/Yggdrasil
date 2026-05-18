@@ -20,6 +20,7 @@ class LLMProvider(ABC):
         Returns:
             dict with keys: content (str), model (str),
             usage (dict), finish_reason (str).
+
         """
         ...
 
@@ -35,6 +36,7 @@ class LLMProvider(ABC):
         Yields:
             dict with keys: content (str), model (str),
             finish_reason (str | None).
+
         """
         ...
 
