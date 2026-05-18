@@ -463,7 +463,7 @@ def _inline_schema(workflow: dict) -> dict:
 
 def load_schema(schema_path: str | None, workflow: dict) -> dict:
     if schema_path:
-        with open(schema_path) as f:
+        with Path(schema_path).open() as f:
             return json.load(f)
     return _inline_schema(workflow)
 
@@ -525,12 +525,12 @@ def download_outputs(
     output_dir.mkdir(parents=True, exist_ok=True)
     downloaded: list[dict] = []
 
-    OUTPUT_KEYS = ("images", "gifs", "videos", "video", "audio", "files", "models", "3d")
+    output_keys = ("images", "gifs", "videos", "video", "audio", "files", "models", "3d")
 
     for node_id, node_output in (outputs or {}).items():
         if not isinstance(node_output, dict):
             continue
-        for key in OUTPUT_KEYS:
+        for key in output_keys:
             entries = node_output.get(key)
             if not entries:
                 continue

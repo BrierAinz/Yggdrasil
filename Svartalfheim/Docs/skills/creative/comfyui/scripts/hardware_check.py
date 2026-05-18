@@ -24,12 +24,12 @@ Usage:
 from __future__ import annotations
 
 import json
-import os
 import platform
 import re
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 from typing import Any
 
 
@@ -68,7 +68,7 @@ def is_wsl() -> bool:
     if "microsoft" in platform.release().lower() or "wsl" in platform.release().lower():
         return True
     try:
-        with open("/proc/version") as fh:
+        with Path("/proc/version").open() as fh:
             return "microsoft" in fh.read().lower()
     except OSError:
         return False
@@ -227,7 +227,7 @@ def total_system_ram_gb() -> float:
             return 0.0
     if sysname == "Linux":
         try:
-            with open("/proc/meminfo") as fh:
+            with Path("/proc/meminfo").open() as fh:
                 for line in fh:
                     if line.startswith("MemTotal:"):
                         kb = int(line.split()[1])
@@ -251,9 +251,9 @@ def total_system_ram_gb() -> float:
     return 0.0
 
 
-def total_free_disk_gb(path: str = ".") -> float:
+def total_free_disk_gb(path: str | Path = ".") -> float:
     try:
-        usage = shutil.disk_usage(path)
+        usage = shutil.disk_usage(str(path))
         return round(usage.free / (1024**3), 1)
     except OSError:
         return 0.0
@@ -371,7 +371,7 @@ def build_report(*, check_pytorch: bool = False) -> dict:
     sysname = platform.system()
     arch = platform.machine()
     ram_gb = total_system_ram_gb()
-    free_disk_gb = total_free_disk_gb(os.path.expanduser("~"))
+    free_disk_gb = total_free_disk_gb(Path.home())
 
     rosetta = is_rosetta()
     wsl = is_wsl()
