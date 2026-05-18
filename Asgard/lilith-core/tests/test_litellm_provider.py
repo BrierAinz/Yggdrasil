@@ -193,7 +193,7 @@ async def test_stream_error(tmp_path):
 
     async def _failing_stream(**kwargs: Any):
         raise RuntimeError("connection lost")
-        yield  # noqa: unreachable — makes this an async generator  # type: ignore[unreachable]
+        yield  # type: ignore[unreachable]
 
     with patch("lilith_core.providers.litellm_provider.litellm") as mock_litellm:
         mock_litellm.acompletion = AsyncMock(return_value=_failing_stream())

@@ -24,6 +24,7 @@ try:
         from starlette.responses import JSONResponse as _Base
 
         def __init_subclass__(cls, **kwargs: Any) -> None:
+            """Register subclass for orjson serialization."""
             super().__init_subclass__(**kwargs)
 
         @classmethod

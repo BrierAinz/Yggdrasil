@@ -45,6 +45,7 @@ class HermesClient:
         timeout: float = 120.0,
         max_retries: int = 3,
     ) -> None:
+        """Initialise the Hermes client."""
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
         self.timeout = timeout
@@ -271,6 +272,7 @@ class HermesMCPClient:
         server_url: str | None = None,
         server_command: list[str] | None = None,
     ) -> None:
+        """Initialise the MCP bridge with server connection details."""
         self.server_url = server_url
         self.server_command = server_command or ["hermes", "mcp", "serve"]
         self._available: bool = False
