@@ -6,6 +6,7 @@ Parte 3: Shalltear como LLM default.
 """
 import json
 import logging
+import os
 import re
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -17,16 +18,23 @@ logger = logging.getLogger("lilith.nl_param_extractor")
 
 # ─── Path aliases ─────────────────────────────────────────────────────────────
 
+# Compute project roots using environment variables with Path-based fallbacks
+_MODULE_DIR = Path(__file__).resolve().parent
+_YGGDRASIL_ROOT = Path(os.environ.get("YGGDRASIL_ROOT", str(_MODULE_DIR.parents[4])))
+_PROYECTOS_ROOT = _YGGDRASIL_ROOT.parent
+_LILITH_ROOT = _YGGDRASIL_ROOT / "Asgard" / "Lilith"
+_CORE_ROOT = _LILITH_ROOT / "Core"
+
 PATH_ALIASES: Dict[str, str] = {
-    "proyectos": r"D:\Proyectos",
-    "projects": r"D:\Proyectos",
-    "lilith": r"D:\Proyectos\Yggdrasil\Asgard\Lilith",
-    "core": r"D:\Proyectos\Yggdrasil\Asgard\Lilith\Core",
-    "backend": r"D:\Proyectos\Yggdrasil\Asgard\Lilith\Core\Backend",
-    "config": r"D:\Proyectos\Yggdrasil\Asgard\Lilith\Core\Config",
-    "docs": r"D:\Proyectos\Yggdrasil\Asgard\Lilith\Core\Docs",
-    "yggdrasil": r"D:\Proyectos\Yggdrasil",
-    "ragnarok": r"D:\Proyectos\Ragnarok",
+    "proyectos": str(_PROYECTOS_ROOT),
+    "projects": str(_PROYECTOS_ROOT),
+    "lilith": str(_LILITH_ROOT),
+    "core": str(_CORE_ROOT),
+    "backend": str(_CORE_ROOT / "Backend"),
+    "config": str(_CORE_ROOT / "Config"),
+    "docs": str(_CORE_ROOT / "Docs"),
+    "yggdrasil": str(_YGGDRASIL_ROOT),
+    "ragnarok": str(_PROYECTOS_ROOT / "Ragnarok"),
     "desktop": r"%USERPROFILE%\Desktop",
     "escritorio": r"%USERPROFILE%\Desktop",
     "downloads": r"%USERPROFILE%\Downloads",
@@ -38,8 +46,6 @@ PATH_ALIASES: Dict[str, str] = {
 
 def _resolve_path(path: str) -> str:
     """Resuelve aliases, expande variables de entorno y normaliza rutas."""
-    import os
-
     if not path:
         return path
     p = path.strip().strip('"').strip("'")
@@ -62,7 +68,7 @@ def _resolve_path(path: str) -> str:
 
 # ─── LLM extraction prompt ────────────────────────────────────────────────────
 
-_EXTRACT_PROMPT = """Eres un extractor de parámetros de operaciones de filesystem.
+_EXTRACT_PROMPT = f"""Eres un extractor de parámetros de operaciones de filesystem.
 Dada la instrucción del usuario, extrae los parámetros como JSON.
 Responde SOLO con el JSON, sin explicaciones ni markdown.
 
@@ -76,17 +82,17 @@ Operaciones y parámetros:
 - pc_exec:       {{"command": "comando", "cwd": "directorio_trabajo_o_null"}}
 
 Rutas conocidas:
-- "proyectos" o "projects" = D:\\Proyectos
-- "lilith" = D:\\Proyectos\\Lilith
-- "yggdrasil" = D:\\Proyectos\\Yggdrasil
-- "core" = D:\\Proyectos\\Lilith\\Core
-- "desktop"/"escritorio" = %USERPROFILE%\\Desktop
-- "downloads"/"descargas" = %USERPROFILE%\\Downloads
+- "proyectos" o "projects" = {PATH_ALIASES["proyectos"]}
+- "lilith" = {PATH_ALIASES["lilith"]}
+- "yggdrasil" = {PATH_ALIASES["yggdrasil"]}
+- "core" = {PATH_ALIASES["core"]}
+- "desktop"/"escritorio" = {PATH_ALIASES["desktop"]}
+- "downloads"/"descargas" = {PATH_ALIASES["downloads"]}
 
 Si no puedes determinar un parámetro con certeza, ponlo como null.
 
-Instrucción: {message}
-Operación: {operation}
+Instrucción: {{message}}
+Operación: {{operation}}
 
 JSON:"""
 
