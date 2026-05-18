@@ -4,8 +4,13 @@ from __future__ import annotations
 
 import argparse
 import logging
+from typing import TYPE_CHECKING
 
 import uvicorn
+
+
+if TYPE_CHECKING:
+    from fastapi import FastAPI
 
 
 def main() -> None:
@@ -58,7 +63,7 @@ def main() -> None:
     )
 
 
-def create_app():
+def create_app() -> FastAPI:
     """Factory function for uvicorn import string."""
     from .app import create_app as _create
     from .config import load_bridge_config

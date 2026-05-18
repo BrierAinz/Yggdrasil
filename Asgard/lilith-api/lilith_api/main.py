@@ -189,7 +189,7 @@ class MemoryStoreRequest(BaseModel):
 async def chat(
     req: ChatRequest,
     engine: Any = Depends(get_engine),
-):
+) -> ChatResponse:
     result = engine.process(req.message)
     response_text = f"Recibido: {req.message}"
     if result["tool_call"]:
@@ -205,7 +205,7 @@ async def chat(
 async def execute_tool(
     req: ToolCallRequest,
     engine: Any = Depends(get_engine),
-):
+) -> dict[str, Any]:
     return engine.execute_tool(req.tool, req.params)
 
 
@@ -217,7 +217,7 @@ async def list_tools(
 
 
 @app.get("/health")
-async def health():
+async def health() -> dict[str, Any]:
     conf = get_config()
     tools = get_tools()
     return {
@@ -231,7 +231,7 @@ async def health():
 @app.get("/status")
 async def status(
     memory: Any = Depends(get_memory),
-):
+) -> dict[str, Any]:
     conf = get_config()
     tools = get_tools()
     return {
@@ -247,7 +247,7 @@ async def memory_recall(
     query: str = Query(...),
     k: int = 5,
     memory: Any = Depends(get_memory),
-):
+) -> list[dict[str, Any]]:
     return memory.search(query, k=k)
 
 
@@ -255,6 +255,6 @@ async def memory_recall(
 async def memory_store(
     req: MemoryStoreRequest,
     memory: Any = Depends(get_memory),
-):
+) -> dict[str, str]:
     memory.store(req.text, req.metadata)
     return {"status": "stored", "text": req.text[:100]}
