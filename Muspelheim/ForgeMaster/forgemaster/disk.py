@@ -94,6 +94,7 @@ class DiskScanner:
     """Scan directories for model files and calculate disk usage."""
 
     def __init__(self) -> None:
+        """Initialise scanner with an internal :class:`ModelScanner` instance."""
         self._model_scanner = ModelScanner()
 
     def scan_usage(self, paths: Sequence[str | Path]) -> DiskUsage:

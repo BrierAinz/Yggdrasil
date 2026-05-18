@@ -94,6 +94,7 @@ class ModelScanner:
     """Scan directories for model files and extract metadata."""
 
     def __init__(self) -> None:
+        """Initialise scanner (no persistent state required)."""
         pass
 
     def scan(self, paths: Sequence[str | Path]) -> ScanResult:

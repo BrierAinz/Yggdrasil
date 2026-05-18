@@ -37,14 +37,17 @@ class GPUInfo:
 
     @property
     def vram_total_gb(self) -> float:
+        """Total VRAM in gigabytes (derived from ``vram_total_mb``)."""
         return round(self.vram_total_mb / 1024, 2)
 
     @property
     def vram_used_gb(self) -> float:
+        """Used VRAM in gigabytes (derived from ``vram_used_mb``)."""
         return round(self.vram_used_mb / 1024, 2)
 
     @property
     def vram_free_gb(self) -> float:
+        """Free VRAM in gigabytes (derived from ``vram_free_mb``)."""
         return round(self.vram_free_mb / 1024, 2)
 
 
@@ -58,6 +61,7 @@ class GPUProcess:
 
     @property
     def gpu_memory_gb(self) -> float:
+        """GPU memory usage in gigabytes (derived from ``gpu_memory_mb``)."""
         return round(self.gpu_memory_mb / 1024, 2)
 
 
@@ -73,6 +77,7 @@ class GPUMonitor:
     """
 
     def __init__(self) -> None:
+        """Initialise monitor with cached availability state cleared."""
         self._available: bool | None = None
         self._driver_version: str | None = None
 

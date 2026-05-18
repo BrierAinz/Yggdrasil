@@ -159,6 +159,7 @@ class ModelDownloader:
         max_retries: int = 3,
         retry_delay: float = 2.0,
     ) -> None:
+        """Initialise the downloader with HTTP client and retry settings."""
         self._client = client or httpx.Client(timeout=timeout, follow_redirects=True)
         self._timeout = timeout
         self._max_retries = max_retries
@@ -317,6 +318,7 @@ class ModelDownloader:
         config: DownloadConfig,
         progress_callback: Callable[[DownloadProgress], None] | None,
     ) -> Path:
+        """Download a file with exponential-backoff retries and resume support."""
         last_error: Exception | None = None
 
         for attempt in range(self._max_retries):
@@ -467,6 +469,7 @@ class ModelDownloader:
         callback: Callable[[DownloadProgress], None] | None,
         progress: DownloadProgress,
     ) -> None:
+        """Safely invoke a progress callback if one is provided."""
         if callback is not None:
             callback(progress)
 
