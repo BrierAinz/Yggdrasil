@@ -29,17 +29,6 @@ class MemoryStore:
     # Internal helpers
     # ------------------------------------------------------------------
 
-    def _get_conn(self) -> sqlite3.Connection:
-        """Return the long-lived connection for context-manager usage.
-
-        When used outside a ``with`` block this returns a fresh short-lived
-        connection each time so that the class remains safe to use without
-        a context manager.
-        """
-        if self._conn is not None:
-            return self._conn
-        return sqlite3.connect(self.db_path)
-
     def _init_db(self):
         """Create the ``memories`` table and indexes, and enable WAL mode."""
         with sqlite3.connect(self.db_path) as conn:
@@ -100,16 +89,11 @@ class MemoryStore:
             metadata: Optional dict stored as JSON.
 
         """
-        conn = self._get_conn()
-        try:
+        with sqlite3.connect(self.db_path) as conn:
             conn.execute(
                 "INSERT INTO memories (content, embedding, metadata) VALUES (?, ?, ?)",
                 (content, embedding, json.dumps(metadata) if metadata else None),
             )
-            conn.commit()
-        finally:
-            if self._conn is None:
-                conn.close()
 
     def store(
         self,
@@ -136,17 +120,13 @@ class MemoryStore:
             by most recent first.
 
         """
-        conn = self._get_conn()
-        try:
+        with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             rows = conn.execute(
                 "SELECT * FROM memories WHERE content LIKE ? ORDER BY timestamp DESC LIMIT ?",
                 (f"%{query}%", limit),
             ).fetchall()
             return [dict(row) for row in rows]
-        finally:
-            if self._conn is None:
-                conn.close()
 
     def recent(self, limit: int = 10) -> list[dict]:
         """Return the most recent memory entries.
@@ -158,16 +138,12 @@ class MemoryStore:
             A list of dicts ordered by most recent first.
 
         """
-        conn = self._get_conn()
-        try:
+        with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             rows = conn.execute(
                 "SELECT * FROM memories ORDER BY timestamp DESC LIMIT ?", (limit,)
             ).fetchall()
             return [dict(row) for row in rows]
-        finally:
-            if self._conn is None:
-                conn.close()
 
     def count_entries(self) -> int:
         """Return the total number of entries in the store.
@@ -176,13 +152,8 @@ class MemoryStore:
             Integer count of all rows in the ``memories`` table.
 
         """
-        conn = self._get_conn()
-        try:
-            count = conn.execute("SELECT COUNT(*) FROM memories").fetchone()[0]
-            return count
-        finally:
-            if self._conn is None:
-                conn.close()
+        with sqlite3.connect(self.db_path) as conn:
+            return conn.execute("SELECT COUNT(*) FROM memories").fetchone()[0]
 
     def delete(self, entry_id: int) -> bool:
         """Delete a memory entry by its primary key.
@@ -194,14 +165,9 @@ class MemoryStore:
             ``True`` if a row was deleted, ``False`` if no row matched.
 
         """
-        conn = self._get_conn()
-        try:
+        with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute("DELETE FROM memories WHERE id = ?", (entry_id,))
-            conn.commit()
             return cursor.rowcount > 0
-        finally:
-            if self._conn is None:
-                conn.close()
 
     def clear(self) -> int:
         """Remove all entries from the memory store.
@@ -210,12 +176,7 @@ class MemoryStore:
             The number of rows that were deleted.
 
         """
-        conn = self._get_conn()
-        try:
-            count = self.count_entries()
+        with sqlite3.connect(self.db_path) as conn:
+            count = conn.execute("SELECT COUNT(*) FROM memories").fetchone()[0]
             conn.execute("DELETE FROM memories")
-            conn.commit()
             return count
-        finally:
-            if self._conn is None:
-                conn.close()

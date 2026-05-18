@@ -13,6 +13,9 @@ dependencies = [
     "lilith-core>=2.0.0",
 ]
 
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "ruff>=0.4"]
+
 [project.urls]
 Homepage = "https://github.com/BrierAinz/Yggdrasil"
 Repository = "https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard/lilith-tools"
