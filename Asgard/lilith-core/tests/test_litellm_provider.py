@@ -107,7 +107,7 @@ async def test_complete_retries_on_failure(tmp_path):
 
     call_count = 0
 
-    async def _flaky_completion(**kwargs: Any):
+    async def _flaky_completion(**_kwargs: Any):
         nonlocal call_count
         call_count += 1
         if call_count < 3:
@@ -164,7 +164,7 @@ async def test_stream_mock(tmp_path):
     chunk2.choices[0].finish_reason = "stop"
     chunk2.model = "gpt-4"
 
-    async def _fake_stream(**kwargs: Any):
+    async def _fake_stream(**_kwargs: Any):
         for c in [chunk1, chunk2]:
             yield c
 
@@ -191,7 +191,7 @@ async def test_stream_error(tmp_path):
     config = Config(root_path=tmp_path)
     provider = LiteLLMProvider(config=config)
 
-    async def _failing_stream(**kwargs: Any):
+    async def _failing_stream(**_kwargs: Any):
         raise RuntimeError("connection lost")
         yield  # type: ignore[unreachable]
 

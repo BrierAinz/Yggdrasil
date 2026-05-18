@@ -28,7 +28,10 @@ Usage standalone::
 from __future__ import annotations
 
 import logging
+import threading
 import time
+import uuid
+from contextlib import asynccontextmanager
 from typing import Any
 
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query, Request
@@ -265,8 +268,6 @@ def create_bridge_router(
                 detail="Lilith engine not available (lilith-orchestrator not installed)",
             )
 
-        import uuid
-
         start = time.time()
         session_id = req.session_id or str(uuid.uuid4())
 
@@ -454,8 +455,6 @@ def create_standalone_app(config: BridgeConfig | None = None) -> FastAPI:
     Use this when running the bridge as its own server (port 9001).
     For embedding into Bifrost, use ``create_bridge_router()`` instead.
     """
-    from contextlib import asynccontextmanager
-
     cfg = config or _get_bridge_config()
     _start_time = time.time()
 
@@ -506,7 +505,6 @@ def create_standalone_app(config: BridgeConfig | None = None) -> FastAPI:
 
 # Module-level state for standalone mode
 _lilith_state = _LilithState()
-import threading
 
 
 _lilith_state_lock = threading.Lock()

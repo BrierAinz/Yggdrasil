@@ -9,8 +9,10 @@ Supports two modes:
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
+import uuid
 from typing import Any
 
 import httpx
@@ -163,8 +165,6 @@ class HermesClient:
                 )
 
             # Exponential backoff.
-            import asyncio
-
             await asyncio.sleep(2 ** (attempt - 1))
 
         raise RuntimeError(f"Hermes chat failed after {self.max_retries} retries: {last_exc}")
@@ -246,7 +246,6 @@ class HermesClient:
         """
         # Hermes API Server manages sessions via headers.
         # For now, we use the chat endpoint with a unique identifier.
-        import uuid
 
         return session_id or str(uuid.uuid4())
 

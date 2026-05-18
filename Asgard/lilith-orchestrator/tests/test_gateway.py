@@ -17,7 +17,7 @@ from fastapi.testclient import TestClient
 class TestAppCreation:
     """Verify the FastAPI application can be imported and instantiated."""
 
-    def test_app_is_fastapi_instance(self, client: TestClient):
+    def test_app_is_fastapi_instance(self):
         """The 'app' object should be a FastAPI instance."""
         from fastapi import FastAPI
         from gateway.gateway import app as gw_app
