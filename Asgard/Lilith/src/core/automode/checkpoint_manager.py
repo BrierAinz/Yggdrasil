@@ -3,11 +3,15 @@ CheckpointManager: Sistema de checkpointing para tareas autónomas.
 Guarda y recupera estado de ejecución.
 """
 import json
+import os
 import shutil
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+_MODULE_DIR = Path(__file__).resolve().parent
+_YGGDRASIL_ROOT = Path(os.environ.get("YGGDRASIL_ROOT", str(_MODULE_DIR.parents[5])))
 
 
 @dataclass
@@ -37,7 +41,7 @@ class CheckpointManager:
 
     def __init__(self, task_id: str):
         self.task_id = task_id
-        self.muspelheim_root = Path("D:/Proyectos/Yggdrasil/Muspelheim/AutoMode")
+        self.muspelheim_root = _YGGDRASIL_ROOT / "Muspelheim" / "AutoMode"
         self.task_dir = self.muspelheim_root / "active" / task_id
         self.task_dir.mkdir(parents=True, exist_ok=True)
 
