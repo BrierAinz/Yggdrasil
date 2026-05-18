@@ -91,7 +91,7 @@ class YggdrasilDashboard(App):
     # ── Lifecycle ─────────────────────────────────────────────
 
     def on_mount(self) -> None:
-        """Initial realm scan on startup."""
+        """Perform initial realm scan on startup."""
         self._load_realms()
 
     # ── Data loading ──────────────────────────────────────────

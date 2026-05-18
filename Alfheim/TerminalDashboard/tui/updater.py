@@ -261,7 +261,7 @@ class DashboardUpdater:
         logger.info("Dashboard updater stopped")
 
     async def _refresh_loop(self) -> None:
-        """Internal async loop that refreshes data at the configured interval."""
+        """Run an internal async loop that refreshes data at the configured interval."""
         while self._running:
             try:
                 result = self.refresh()

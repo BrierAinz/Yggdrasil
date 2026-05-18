@@ -186,7 +186,7 @@ class SystemHealthPanel(Static):
         return rich_text
 
     def on_mount(self) -> None:
-        """Initial render on mount."""
+        """Perform initial render on mount."""
         self._render_and_update()
 
     @staticmethod
