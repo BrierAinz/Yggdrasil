@@ -1,4 +1,4 @@
-"""Model scanner and catalog for Niflheim resources."""
+"""Model scanner and catalog for Muspelheim resources."""
 
 from __future__ import annotations
 

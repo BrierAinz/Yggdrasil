@@ -25,7 +25,7 @@ from forgemaster.logging import configure_logging
 
 app = typer.Typer(
     name="forgemaster",
-    help="⚒️  ForgeMaster — Niflheim resource manager for LLM models, VRAM, and disk.",
+    help="⚒️  ForgeMaster — Muspelheim resource manager for LLM models, VRAM, and disk.",
     no_args_is_help=True,
 )
 
@@ -39,7 +39,7 @@ def main(
         False, "--quiet", "-q", help="Suppress info-level logs (warnings only)"
     ),
 ) -> None:
-    """ForgeMaster — Niflheim resource manager for LLM models, VRAM, and disk."""
+    """ForgeMaster — Muspelheim resource manager for LLM models, VRAM, and disk."""
     configure_logging(verbose=verbose, quiet=quiet)
 
 
