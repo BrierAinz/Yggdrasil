@@ -2,11 +2,15 @@
 ProgressReporter: Reportes de progreso para tareas autónomas.
 Envía notificaciones al owner vía Discord.
 """
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
 import aiohttp
+
+_MODULE_DIR = Path(__file__).resolve().parent
+_YGGDRASIL_ROOT = Path(os.environ.get("YGGDRASIL_ROOT", str(_MODULE_DIR.parents[5])))
 
 
 class ProgressReporter:
@@ -264,9 +268,7 @@ Este paso requiere aprobación manual."""
         """
         Log local a archivo de progreso.
         """
-        log_dir = Path(
-            f"D:/Proyectos/Yggdrasil/Muspelheim/AutoMode/active/{self.task_id}"
-        )
+        log_dir = _YGGDRASIL_ROOT / "Muspelheim" / "AutoMode" / "active" / self.task_id
         log_dir.mkdir(parents=True, exist_ok=True)
 
         log_path = log_dir / "progress.log"
