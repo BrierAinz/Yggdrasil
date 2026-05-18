@@ -3,9 +3,8 @@
 import re
 import urllib.parse
 import urllib.request
-from typing import Any
 
-from lilith_tools.base import BaseTool
+from .base import BaseTool, ToolResult
 
 
 class WebSearchTool(BaseTool):
@@ -28,10 +27,10 @@ class WebSearchTool(BaseTool):
         },
     }
 
-    def execute(self, query: str = "", max_results: int = 5) -> dict[str, Any]:
+    def execute(self, query: str = "", max_results: int = 5) -> ToolResult:
         """Busca en la web usando DuckDuckGo HTML."""
         if not query:
-            return {"error": "Query vacia"}
+            return ToolResult(success=False, data=None, error="Query vacia")
         try:
             url = "https://html.duckduckgo.com/html/?q=" + urllib.parse.quote(query)
             req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
@@ -48,6 +47,9 @@ class WebSearchTool(BaseTool):
                 title = re.sub(r"<[^>]+>", "", m.group(2))
                 results.append({"title": title, "url": href})
 
-            return {"query": query, "results": results, "count": len(results)}
+            return ToolResult(
+                success=True,
+                data={"query": query, "results": results, "count": len(results)},
+            )
         except Exception as e:
-            return {"error": str(e), "query": query}
+            return ToolResult(success=False, data=None, error=str(e))

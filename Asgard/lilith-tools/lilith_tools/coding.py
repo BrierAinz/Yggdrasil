@@ -2,9 +2,8 @@
 
 import subprocess
 import tempfile
-from typing import Any
 
-from lilith_tools.base import BaseTool
+from .base import BaseTool, ToolResult
 
 
 class CodingTool(BaseTool):
@@ -29,10 +28,10 @@ class CodingTool(BaseTool):
         },
     }
 
-    def execute(self, code: str = "", timeout: int = 10) -> dict[str, Any]:
+    def execute(self, code: str = "", timeout: int = 10) -> ToolResult:
         """Ejecuta código Python en entorno sandboxed."""
         if not code:
-            return {"error": "Codigo vacio"}
+            return ToolResult(success=False, data=None, error="Codigo vacio")
         blocked = [
             "__import__",
             "eval(",
@@ -46,7 +45,7 @@ class CodingTool(BaseTool):
         ]
         for b in blocked:
             if b in code:
-                return {"error": f"Uso bloqueado detectado: {b}"}
+                return ToolResult(success=False, data=None, error=f"Uso bloqueado detectado: {b}")
         try:
             with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
                 f.write(code)
@@ -57,12 +56,15 @@ class CodingTool(BaseTool):
                     text=True,
                     timeout=timeout,
                 )
-            return {
-                "stdout": result.stdout,
-                "stderr": result.stderr,
-                "returncode": result.returncode,
-            }
+            return ToolResult(
+                success=True,
+                data={
+                    "stdout": result.stdout,
+                    "stderr": result.stderr,
+                    "returncode": result.returncode,
+                },
+            )
         except subprocess.TimeoutExpired:
-            return {"error": "Timeout"}
+            return ToolResult(success=False, data=None, error="Timeout")
         except Exception as e:
-            return {"error": str(e)}
+            return ToolResult(success=False, data=None, error=str(e))

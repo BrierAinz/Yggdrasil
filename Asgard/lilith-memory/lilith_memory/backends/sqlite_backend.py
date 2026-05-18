@@ -37,13 +37,8 @@ class SQLiteBackend(MemoryBackend):
 
     async def add(self, content: str, metadata: dict[str, Any] | None = None) -> str:
         """Store *content* and return its integer id as a string."""
-        await asyncio.to_thread(self._store.add, content=content, metadata=metadata)
-        # After inserting, retrieve the most recent entry to get its id.
-        recent = await asyncio.to_thread(self._store.recent, limit=1)
-        if recent:
-            return str(recent[0]["id"])
-        # Fallback — should not happen in practice.
-        return ""
+        entry_id = await asyncio.to_thread(self._store.add, content=content, metadata=metadata)
+        return str(entry_id)
 
     async def search(self, query: str, limit: int = 5) -> list[dict[str, Any]]:
         """Substring search via SQLite LIKE."""

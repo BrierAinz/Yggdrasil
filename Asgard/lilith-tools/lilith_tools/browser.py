@@ -4,7 +4,7 @@ import re
 import urllib.request
 from typing import Any
 
-from lilith_tools.base import BaseTool
+from .base import BaseTool, ToolResult
 
 
 class BrowserTool(BaseTool):
@@ -37,20 +37,25 @@ class BrowserTool(BaseTool):
 
     def execute(
         self, url: str = "", max_chars: int = 3000, use_playwright: bool = True
-    ) -> dict[str, Any]:
+    ) -> ToolResult:
         """Navega a una URL y extrae texto legible."""
         if not url:
-            return {"error": "URL vacia"}
+            return ToolResult(success=False, data=None, error="URL vacia")
         if not url.startswith(("http://", "https://")):
             url = "https://" + url
 
         if use_playwright:
             try:
-                return self._playwright_fetch(url, max_chars)
+                result = self._playwright_fetch(url, max_chars)
+                return ToolResult(success=True, data=result)
             except Exception:
                 # Fallback silencioso a requests
                 pass
-        return self._requests_fetch(url, max_chars)
+        try:
+            result = self._requests_fetch(url, max_chars)
+            return ToolResult(success=True, data=result)
+        except Exception as e:
+            return ToolResult(success=False, data=None, error=str(e))
 
     def _playwright_fetch(self, url: str, max_chars: int) -> dict[str, Any]:
         from playwright.sync_api import sync_playwright
@@ -72,24 +77,21 @@ class BrowserTool(BaseTool):
         }
 
     def _requests_fetch(self, url: str, max_chars: int) -> dict[str, Any]:
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req, timeout=20) as resp:
-                html = resp.read().decode("utf-8", errors="ignore")
-            html = re.sub(r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL)
-            html = re.sub(r"<style[^>]*>.*?</style>", "", html, flags=re.DOTALL)
-            text = re.sub(r"<[^>]+>", " ", html)
-            text = re.sub(r"\s+", " ", text).strip()
-            title = ""
-            tm = re.search(r"<title>([^<]+)</title>", html, re.I)
-            if tm:
-                title = tm.group(1).strip()
-            return {
-                "url": url,
-                "title": title or "Sin titulo",
-                "text": text[:max_chars],
-                "length": len(text),
-                "engine": "requests",
-            }
-        except Exception as e:
-            return {"error": str(e), "url": url}
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            html = resp.read().decode("utf-8", errors="ignore")
+        html = re.sub(r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL)
+        html = re.sub(r"<style[^>]*>.*?</style>", "", html, flags=re.DOTALL)
+        text = re.sub(r"<[^>]+>", " ", html)
+        text = re.sub(r"\s+", " ", text).strip()
+        title = ""
+        tm = re.search(r"<title>([^<]+)</title>", html, re.I)
+        if tm:
+            title = tm.group(1).strip()
+        return {
+            "url": url,
+            "title": title or "Sin titulo",
+            "text": text[:max_chars],
+            "length": len(text),
+            "engine": "requests",
+        }

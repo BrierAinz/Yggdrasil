@@ -32,7 +32,7 @@ class BaseTool(ABC):
     parameters: dict[str, Any] | None = None
 
     @abstractmethod
-    def execute(self, **kwargs) -> ToolResult:
+    def execute(self, **kwargs: Any) -> ToolResult:
         """Ejecutar la herramienta con los argumentos dados."""
         pass
 

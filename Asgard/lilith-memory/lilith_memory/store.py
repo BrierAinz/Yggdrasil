@@ -80,28 +80,31 @@ class MemoryStore:
         content: str,
         embedding: bytes | None = None,
         metadata: dict | None = None,
-    ) -> None:
-        """Insert a new memory entry.
+    ) -> int:
+        """Insert a new memory entry and return its integer id.
 
         Args:
             content: The text content to store.
             embedding: Optional binary embedding vector.
             metadata: Optional dict stored as JSON.
 
+        Returns:
+            The ``id`` of the newly inserted row.
         """
         with sqlite3.connect(self.db_path) as conn:
-            conn.execute(
+            cursor = conn.execute(
                 "INSERT INTO memories (content, embedding, metadata) VALUES (?, ?, ?)",
                 (content, embedding, json.dumps(metadata) if metadata else None),
             )
+            return cursor.lastrowid
 
     def store(
         self,
         content: str,
         embedding: bytes | None = None,
         metadata: dict | None = None,
-    ) -> None:
-        """Alias for :meth:`add` — insert a new memory entry.
+    ) -> int:
+        """Alias for :meth:`add` — insert a new memory entry and return its id.
 
         This method exists because the external API (``lilith_api.main``)
         calls ``memory.store()`` instead of ``memory.add()``.
