@@ -45,6 +45,7 @@ class EngineUsage:
     agents_used: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
+        """Convert usage stats to a plain dictionary."""
         return {
             "prompt_tokens": self.prompt_tokens,
             "completion_tokens": self.completion_tokens,

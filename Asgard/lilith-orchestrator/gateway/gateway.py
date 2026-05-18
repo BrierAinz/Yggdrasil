@@ -276,6 +276,7 @@ app.add_middleware(
 
 @app.get("/health")
 async def health():
+    """Health check endpoint for the gateway."""
     return {"status": "ok", "gateway": "lilith-v1"}
 
 
