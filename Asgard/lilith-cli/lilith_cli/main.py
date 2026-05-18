@@ -99,7 +99,7 @@ def chat(
     no_tools: Annotated[bool, Parameter(name="--no-tools", help="Disable tools")] = False,
     verbose: Annotated[bool, Parameter(name=["--verbose", "-v"], help="Debug output")] = False,
     config_path: Annotated[str | None, Parameter(name="--config", help="Config file path")] = None,
-):
+) -> None:
     """Iniciar el REPL interactivo de Yggdrasil Agent."""
     import logging
 
@@ -126,7 +126,7 @@ def prompt(
     local: Annotated[bool, Parameter(name="--local", help="Use local LM Studio")] = False,
     no_tools: Annotated[bool, Parameter(name="--no-tools", help="Disable tools")] = False,
     config_path: Annotated[str | None, Parameter(name="--config", help="Config file path")] = None,
-):
+) -> None:
     """Modo one-shot: enviar un prompt y mostrar la respuesta."""
     cfg = load_config(config_path)
     _apply_overrides(cfg, model=model, provider=provider, local=local, no_tools=no_tools)
@@ -139,7 +139,7 @@ def prompt(
 
 
 @app.command
-def status():
+def status() -> None:
     """Mostrar estado de salud de los reinos y servicios de Yggdrasil."""
     try:
         ygg_cli = _lazy_import_yggdrasil_cli()
@@ -151,7 +151,7 @@ def status():
 
 
 @app.command
-def launch():
+def launch() -> None:
     """Abrir menú interactivo para lanzar servicios de Yggdrasil."""
     try:
         ygg_cli = _lazy_import_yggdrasil_cli()
@@ -172,7 +172,7 @@ def config(
     config_path: Annotated[
         str | None, Parameter(name="--path", help="Ruta del archivo de config")
     ] = None,
-):
+) -> None:
     """Mostrar o editar la configuración de Yggdrasil."""
     from .render import console
 
@@ -212,7 +212,7 @@ def default_command(
     verbose: Annotated[bool, Parameter(name=["--verbose", "-v"])] = False,
     config_path: Annotated[str | None, Parameter(name="--config")] = None,
     version: Annotated[bool, Parameter(name=["--version"])] = False,
-):
+) -> None:
     """Punto de entrada por defecto — lanza REPL o procesa un prompt directo."""
     from .render import console
 
@@ -247,6 +247,6 @@ def default_command(
 # ── Entry point ─────────────────────────────────────────────────────
 
 
-def main():
+def main() -> None:
     """CLI entry point."""
     app()

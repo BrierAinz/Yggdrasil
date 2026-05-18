@@ -12,6 +12,10 @@ import json
 import logging
 from typing import TYPE_CHECKING, Any
 
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
+
 import httpx
 
 
@@ -161,7 +165,7 @@ class LLMProviderWrapper:
         model: str | None = None,
         tools: list[dict[str, Any]] | None = None,
         **kwargs: Any,
-    ):
+    ) -> AsyncIterator[dict[str, Any]]:
         """Stream text chunks from the LLM.
 
         Yields dicts with keys:

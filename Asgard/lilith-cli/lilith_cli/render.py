@@ -601,11 +601,11 @@ def make_thinking_spinner() -> dict[str, Any]:
 
     stop_event = threading.Event()
 
-    def stop():
+    def stop() -> None:
         """Signal the spinner to stop."""
         stop_event.set()
 
-    def set_label(new_text: str):
+    def set_label(new_text: str) -> None:
         """Update the spinner label text."""
         label = Text()
         label.append(f"{prefix} ", style=f"bold {theme.border_style}")
