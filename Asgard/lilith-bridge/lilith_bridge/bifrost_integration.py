@@ -66,6 +66,7 @@ class _LilithState:
         self.skills_loaded: int = 0
 
     def ensure_engine(self, config: BridgeConfig) -> Any:
+        """Lazy-initialise the LilithEngine, loading config and memory as needed."""
         if self.engine is None:
             try:
                 from lilith_core.config import Config as LilithConfig
@@ -82,6 +83,7 @@ class _LilithState:
         return self.engine
 
     def ensure_memory(self, config: BridgeConfig) -> Any:
+        """Lazy-initialise the MemoryStore, creating the DB directory if needed."""
         if self.memory is None:
             try:
                 from lilith_memory.store import MemoryStore
@@ -96,6 +98,7 @@ class _LilithState:
         return self.memory
 
     def ensure_skills(self, config: BridgeConfig) -> tuple[Any, int]:
+        """Lazy-initialise the SkillContext, loading skills from the repo."""
         if self.skills_ctx is None:
             try:
                 from lilith_skills.context import SkillContext
@@ -230,6 +233,7 @@ def create_bridge_router(
 
     @router.get("/health", response_model=BridgeHealth)
     async def bridge_health():
+        """Return bridge health status including Hermes connection and loaded skills."""
         hermes = _get_hermes_client()
         hermes_info = await hermes.health()
         skills_count = (
@@ -253,6 +257,7 @@ def create_bridge_router(
         req: BridgeChatRequest,
         user: dict = Depends(_verify_bridge_token),
     ):
+        """Receive a chat message from Hermes and process it through Lilith engine."""
         _engine = state.ensure_engine(_bridge_config) if state else engine
         if _engine is None:
             raise HTTPException(
@@ -291,6 +296,7 @@ def create_bridge_router(
         k: int = Query(5),
         user: dict = Depends(_verify_bridge_token),
     ):
+        """Search Lilith memory for entries matching the query."""
         _memory = state.ensure_memory(_bridge_config) if state else memory
         if _memory is None:
             raise HTTPException(status_code=503, detail="Memory not available")
@@ -306,6 +312,7 @@ def create_bridge_router(
         req: BridgeMemoryStore,
         user: dict = Depends(_verify_bridge_token),
     ):
+        """Store a new memory entry in Lilith's vector store."""
         _memory = state.ensure_memory(_bridge_config) if state else memory
         if _memory is None:
             raise HTTPException(status_code=503, detail="Memory not available")
@@ -321,6 +328,7 @@ def create_bridge_router(
         category: str | None = Query(None),
         user: dict = Depends(_verify_bridge_token),
     ):
+        """List available skill categories or format skills by category."""
         _skills_ctx, _ = (
             state.ensure_skills(_bridge_config)
             if state
@@ -340,6 +348,7 @@ def create_bridge_router(
         req: BridgeSkillSearch,
         user: dict = Depends(_verify_bridge_token),
     ):
+        """Search skills by query string with optional result limit."""
         _skills_ctx, _ = (
             state.ensure_skills(_bridge_config)
             if state
@@ -358,6 +367,7 @@ def create_bridge_router(
         req: HermesChatRequest,
         user: dict = Depends(_verify_bridge_token),
     ):
+        """Send a chat message to Hermes and relay the response back."""
         hermes = _get_hermes_client()
 
         messages: list[dict[str, Any]] = []
@@ -392,6 +402,7 @@ def create_bridge_router(
     async def bridge_hermes_models(
         user: dict = Depends(_verify_bridge_token),
     ):
+        """List available models from the Hermes endpoint."""
         hermes = _get_hermes_client()
         models = await hermes.list_models()
         return {"models": models, "count": len(models)}
@@ -401,6 +412,7 @@ def create_bridge_router(
         req: HermesToolExecute,
         user: dict = Depends(_verify_bridge_token),
     ):
+        """Execute a tool on the Hermes side and return the result."""
         hermes = _get_hermes_client()
 
         try:
@@ -420,6 +432,7 @@ def create_bridge_router(
     async def bridge_hermes_health(
         user: dict = Depends(_verify_bridge_token),
     ):
+        """Check the health of the Hermes endpoint connection."""
         hermes = _get_hermes_client()
         return await hermes.health()
 
@@ -448,6 +461,7 @@ def create_standalone_app(config: BridgeConfig | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
+        """Start lazy-init of all Lilith components and close Hermes client on shutdown."""
         logger.info("Hermes Bridge starting on %s:%d", cfg.host, cfg.port)
         logger.info("Hermes endpoint: %s", cfg.hermes_url)
 

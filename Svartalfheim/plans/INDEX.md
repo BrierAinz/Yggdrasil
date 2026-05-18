@@ -5,20 +5,27 @@
 | # | Plan | Realm | Status | Description |
 |---|------|-------|--------|-------------|
 | 19 | YggdrasilStudio v0.4 | Alfheim | In Progress | Studio improvements: refactor PromptBuilder/Settings, tests, new endpoints |
-| 20 | YggdrasilForge v0.1 | Alfheim | New | Viking 3D Asset Studio — AI generation + Blender Bridge |
-| 21 | Yggdrasil Growth v5 | Cross-realm | New | Growth plan — WS bridge, Mimir agent, build system |
+| 20 | YggdrasilForge v0.1 | Alfheim | Active | Viking 3D Asset Studio — AI generation + Blender Bridge |
+| 21 | Yggdrasil Growth v5 | Cross-realm | Active | Growth plan — WS bridge, Mimir agent, build system |
 | 22 | Photon WASM | Alfheim | Planned | Python→WASM via Pyodide for client-side modules |
 | 23 | Turborepo Monorepo | Alfheim | Planned | Turborepo migration for Alfheim frontend builds |
 
 ## Completed Plans
 
-_None yet._
+| # | Plan | Realm | Version | Description |
+|---|------|-------|---------|-------------|
+| 01 | AutoSub | Muspelheim | v0.1.0 | Generador automático de subtítulos (Whisper → SRT) |
+| 13 | TerminalDashboard | Alfheim | v1.0.0 | TUI dashboard del ecosistema Yggdrasil |
+| 15 | Mimir | Vanaheim | Active | Investigador profundo (SearXNG + arXiv), agente VanirAgent |
+| 18 | ForgeMaster | Muspelheim | v1.0.0 | Gestión de modelos LLM, VRAM, y disk usage |
 
 ## Plan-to-Realm Mapping
 
 | Realm | Plans |
 |-------|-------|
-| Alfheim | 13-TerminalDashboard, 14-PixelForge, 17-YggSiteGenerator, 19-YggdrasilStudio v0.4, **20-YggdrasilForge** |
+| Alfheim | 13-TerminalDashboard ✅, 14-PixelForge, 17-YggSiteGenerator, 19-YggdrasilStudio v0.4, 20-YggdrasilForge |
+| Muspelheim | 01-AutoSub ✅, 02-ClipForge, 03-TrendRadar, 18-ForgeMaster ✅ |
+| Vanaheim | 15-Mimir ✅ |
 
 ## Cross-Realm Dependencies
 

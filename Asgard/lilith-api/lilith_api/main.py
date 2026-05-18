@@ -41,6 +41,8 @@ try:
     if _HAS_ORJSON:
 
         class _ORJSONResponse(FastAPIJSONResponse):
+            """FastAPI response class using orjson for faster JSON serialization."""
+
             media_type = "application/json"
 
             def render(self, content: Any) -> bytes:
