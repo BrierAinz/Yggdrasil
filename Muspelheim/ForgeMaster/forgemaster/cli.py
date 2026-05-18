@@ -505,6 +505,7 @@ def download(
         task = progress.add_task("Downloading", total=None)
 
         def on_progress(p):
+            """Update the Rich progress bar with bytes downloaded so far."""
             total = int(p.total_bytes) if p.total_bytes else None
             downloaded = int(p.downloaded_bytes) if p.downloaded_bytes else 0
             progress.update(task, completed=downloaded, total=total)
