@@ -7,9 +7,9 @@ import os
 import time
 from pathlib import Path
 
-REMINDERS_FILE = Path(
-    "D:/Proyectos/Yggdrasil/Asgard/Lilith/Core/Workspace/Mente/recordatorios.json"
-)
+_MODULE_DIR = Path(__file__).resolve().parent
+_YGGDRASIL_ROOT = Path(os.environ.get("YGGDRASIL_ROOT", str(_MODULE_DIR.parents[5])))
+REMINDERS_FILE = _YGGDRASIL_ROOT / "Asgard" / "Lilith" / "Core" / "Workspace" / "Mente" / "recordatorios.json"
 
 
 def _cargar():

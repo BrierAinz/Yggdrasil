@@ -7,11 +7,14 @@ import os
 import time
 from pathlib import Path
 
+_MODULE_DIR = Path(__file__).resolve().parent
+_YGGDRASIL_ROOT = Path(os.environ.get("YGGDRASIL_ROOT", str(_MODULE_DIR.parents[5])))
+
 
 def ejecutar() -> str:
     """Genera reporte del estado del proyecto."""
-    workspace = Path("D:/Proyectos/Yggdrasil/Asgard/Lilith/Core/Workspace")
-    project = Path("D:/Proyectos/Yggdrasil/Asgard/Lilith/Core")
+    workspace = _YGGDRASIL_ROOT / "Asgard" / "Lilith" / "Core" / "Workspace"
+    project = _YGGDRASIL_ROOT / "Asgard" / "Lilith" / "Core"
 
     reporte = []
     reporte.append(f"# Reporte de Estado - Lilith")
