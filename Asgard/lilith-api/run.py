@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 def main() -> None:
+    """Start the Lilith API server with uvloop acceleration (if available)."""
     import uvicorn
 
     # Try to install uvloop as the event-loop policy for maximum async perf.

@@ -80,7 +80,7 @@ def remove_orphaned_slides(unpacked_dir: Path) -> list[str]:
                         changed = True
 
         if changed:
-            with open(pres_rels_path, "wb") as f:
+            with pres_rels_path.open("wb") as f:
                 f.write(rels_dom.toxml(encoding="utf-8"))
 
     return removed
@@ -232,7 +232,7 @@ def update_content_types(unpacked_dir: Path, removed_files: list[str]) -> None:
                 changed = True
 
     if changed:
-        with open(ct_path, "wb") as f:
+        with ct_path.open("wb") as f:
             f.write(dom.toxml(encoding="utf-8"))
 
 

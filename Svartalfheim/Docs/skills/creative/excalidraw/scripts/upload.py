@@ -24,6 +24,7 @@ import struct
 import sys
 import urllib.request
 import zlib
+from pathlib import Path
 
 
 try:
@@ -70,17 +71,19 @@ def upload(excalidraw_json: str) -> str:
     compressed = zlib.compress(inner_payload)
 
     # 3. AES-GCM 128-bit encrypt
-    raw_key = os.urandom(16)   # 128-bit key
-    iv = os.urandom(12)        # 12-byte nonce
+    raw_key = os.urandom(16)  # 128-bit key
+    iv = os.urandom(12)  # 12-byte nonce
     aesgcm = AESGCM(raw_key)
     encrypted = aesgcm.encrypt(iv, compressed, None)
 
     # 4. Encoding metadata
-    encoding_meta = json.dumps({
-        "version": 2,
-        "compression": "pako@1",
-        "encryption": "AES-GCM",
-    }).encode("utf-8")
+    encoding_meta = json.dumps(
+        {
+            "version": 2,
+            "compression": "pako@1",
+            "encryption": "AES-GCM",
+        }
+    ).encode("utf-8")
 
     # 5. Outer payload: concat_buffers(encoding_meta, iv, encrypted)
     payload = concat_buffers(encoding_meta, iv, encrypted)
@@ -107,13 +110,13 @@ def main():
         print("Usage: python upload.py <path-to-file.excalidraw>")
         sys.exit(1)
 
-    file_path = sys.argv[1]
+    file_path = Path(sys.argv[1])
 
-    if not os.path.isfile(file_path):
+    if not file_path.is_file():
         print(f"Error: File not found: {file_path}")
         sys.exit(1)
 
-    with open(file_path, encoding="utf-8") as f:
+    with file_path.open(encoding="utf-8") as f:
         content = f.read()
 
     # Basic validation: should be valid JSON with an "elements" key

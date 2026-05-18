@@ -41,9 +41,7 @@ def pack(
     if validate and original_file:
         original_path = Path(original_file)
         if original_path.exists():
-            success, output = _run_validation(
-                input_dir, original_path, suffix, infer_author_func
-            )
+            success, output = _run_validation(input_dir, original_path, suffix, infer_author_func)
             if output:
                 print(output)
             if not success:
@@ -107,7 +105,7 @@ def _run_validation(
 
 def _condense_xml(xml_file: Path) -> None:
     try:
-        with open(xml_file, encoding="utf-8") as f:
+        with xml_file.open(encoding="utf-8") as f:
             dom = defusedxml.minidom.parse(f)
 
         for element in dom.getElementsByTagName("*"):
@@ -129,9 +127,7 @@ def _condense_xml(xml_file: Path) -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Pack a directory into a DOCX, PPTX, or XLSX file"
-    )
+    parser = argparse.ArgumentParser(description="Pack a directory into a DOCX, PPTX, or XLSX file")
     parser.add_argument("input_directory", help="Unpacked Office document directory")
     parser.add_argument("output_file", help="Output Office file (.docx/.pptx/.xlsx)")
     parser.add_argument(
