@@ -1,21 +1,25 @@
-"""Lilith Tools - Sistema de herramientas."""
+"""Lilith Tools — Sistema de herramientas del agente."""
 
 from . import filesystem, system
 from .base import BaseTool, ToolResult
+from .browser import BrowserTool
+from .coding import CodingTool
 from .registry import ToolRegistry
+from .web_search import WebSearchTool
 
 
-__all__ = ["BaseTool", "ToolRegistry", "ToolResult", "filesystem", "system"]
-
-from lilith_tools.web_search import WebSearchTool
-
-
+# Auto-register tools that don't use @ToolRegistry.register decorator
 WebSearchTool()
-from lilith_tools.browser import BrowserTool
-
-
 BrowserTool()
-from lilith_tools.coding import CodingTool
-
-
 CodingTool()
+
+__all__ = [
+    "BaseTool",
+    "BrowserTool",
+    "CodingTool",
+    "ToolRegistry",
+    "ToolResult",
+    "WebSearchTool",
+    "filesystem",
+    "system",
+]

@@ -6,6 +6,7 @@ from pathlib import Path  # noqa: TC003
 
 from pydantic import BaseModel, Field
 
+
 class Skill(BaseModel):
     """A single skill entry parsed from SKILL.md frontmatter."""
 

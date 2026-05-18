@@ -60,7 +60,7 @@ def mock_registry():
             skills["creative/comfyui"],
         ]
     )
-    registry.get = MagicMock(side_effect=lambda name: skills.get(name))
+    registry.get = MagicMock(side_effect=skills.get)
     registry.stats = MagicMock(
         return_value={
             "total_skills": 3,
@@ -139,7 +139,7 @@ def test_load_skills_missing_skill(ctx):
 
 
 def test_get_skill_found(ctx, mock_registry):
-    reg, skills = mock_registry
+    _reg, _skills = mock_registry
     skill = ctx.get_skill("mlops/lora-training-pipeline")
     assert skill is not None
     assert skill.name == "lora-training-pipeline"
