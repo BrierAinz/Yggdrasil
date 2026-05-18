@@ -748,7 +748,7 @@ def clean():
     removed_items = []
 
     with Progress(
-        SpinnerColumn("\U0001f52e "),
+        SpinnerColumn("dots"),
         TextColumn("[bold realm]{task.description}"),
         console=console,
         transient=True,
@@ -831,7 +831,7 @@ def backup():
     backed_up = []
 
     with Progress(
-        SpinnerColumn("\u26cf "),
+        SpinnerColumn("line"),
         TextColumn("[bold realm]{task.description}"),
         console=console,
         transient=True,
