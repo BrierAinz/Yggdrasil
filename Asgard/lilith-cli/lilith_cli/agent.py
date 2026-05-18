@@ -374,7 +374,9 @@ class AgentSession:
         temp_messages = [
             {
                 "role": "system",
-                "content": "Eres un asistente que resume conversaciones de forma concisa y precisa.",
+                "content": (
+                    "Eres un asistente que resume conversaciones de forma concisa y precisa."
+                ),
             },
             {"role": "user", "content": summary_prompt},
         ]

@@ -46,6 +46,7 @@ def configure_logging(
         verbose: If True, set level to DEBUG.
         quiet: If True, set level to WARNING.
         level: Explicit logging level (overrides verbose/quiet).
+
     """
     global _CONFIGURED
     if _CONFIGURED:
@@ -85,6 +86,7 @@ def get_logger(name: str) -> logging.Logger:
 
     Returns:
         A ``logging.Logger`` configured under ``forgemaster``.
+
     """
     if not name.startswith("forgemaster"):
         name = f"forgemaster.{name}"

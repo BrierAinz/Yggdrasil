@@ -154,7 +154,8 @@ def main():
 
     print("\n" + "=" * 70)
     print(
-        f"TOTALES: {fmt_size(total_size)} | {total_files:,} files | {total_py:,} py | {total_js:,} js"
+        f"TOTALES: {fmt_size(total_size)} | "
+        f"{total_files:,} files | {total_py:,} py | {total_js:,} js"
     )
     print("=" * 70)
 

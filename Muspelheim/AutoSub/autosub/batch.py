@@ -109,7 +109,8 @@ class BatchProcessor:
                     if isinstance(result, tuple):
                         segments, lang_info = result
                         console.print(
-                            f"  [dim]Detected: {lang_info.language} ({lang_info.language_probability:.0%})[/]"
+                            f"  [dim]Detected: {lang_info.language} "
+                            f"({lang_info.language_probability:.0%})[/]"
                         )
                     else:
                         segments = result

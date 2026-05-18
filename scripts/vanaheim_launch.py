@@ -16,7 +16,6 @@ from bifrost.gateway import app
 
 if __name__ == "__main__":
     print(f"Path: {sys.path[:2]}")
-    print(
-        f"Agents available: {list(app.state.get('agents', {}).keys()) if hasattr(app.state, 'get') else 'N/A'}"
-    )
+    agents = list(app.state.get("agents", {}).keys()) if hasattr(app.state, "get") else "N/A"
+    print(f"Agents available: {agents}")
     uvicorn.run(app, host="0.0.0.0", port=9000, log_level="info")

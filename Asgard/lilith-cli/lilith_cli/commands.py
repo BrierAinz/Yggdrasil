@@ -459,7 +459,8 @@ class CompactCommand(BaseCommand):
                 keep_recent = max(1, int(args.strip()))
             except ValueError:
                 render_error(
-                    "Uso: /compact [n]  — donde n es el número de turnos recientes a conservar (default: 2)"
+                    "Uso: /compact [n]  — donde n es el número de "
+                    "turnos recientes a conservar (default: 2)"
                 )
                 return
 
@@ -735,9 +736,11 @@ class ThemeCommand(BaseCommand):
 
 # Theme preview snippets for the switch confirmation.
 _THEME_DISPLAYS: dict[str, str] = {
-    "norse": "᛭ Runas doradas sobre fondo oscuro\n   Árboles ancestrales y mitología nórdica",
-    "cyberpunk": "⟐ Neon cian y magenta sobre fondo negro\n   Señales digitales desde los nodos periféricos",
-    "minimal": "› Líneas limpias y silencio\n   Máxima legibilidad, cero decoración",
+    "norse": ("᛭ Runas doradas sobre fondo oscuro\n   Árboles ancestrales y mitología nórdica"),
+    "cyberpunk": (
+        "⟐ Neon cian y magenta sobre fondo negro\n   Señales digitales desde los nodos periféricos"
+    ),
+    "minimal": ("› Líneas limpias y silencio\n   Máxima legibilidad, cero decoración"),
 }
 
 

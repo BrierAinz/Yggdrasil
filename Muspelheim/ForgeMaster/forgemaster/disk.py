@@ -104,6 +104,7 @@ class DiskScanner:
 
         Returns:
             DiskUsage with total/used/free/model/other byte counts.
+
         """
         total_size = 0
         model_size = 0
@@ -145,6 +146,7 @@ class DiskScanner:
 
         Returns:
             List of ModelInfo sorted by size_bytes descending.
+
         """
         result = self._model_scanner.scan(paths)
         models = sorted(result.models, key=lambda m: m.size_bytes, reverse=True)
@@ -158,6 +160,7 @@ class DiskScanner:
 
         Returns:
             Dict mapping directory path to total model size in that tree.
+
         """
         result = self._model_scanner.scan(paths)
         dir_sizes: dict[str, int] = {}
@@ -213,6 +216,7 @@ class DuplicateFinder:
         Args:
             size_tolerance: Fractional tolerance for considering two files
                 as "similar size" (0.05 = 5%). Set to 0 for exact match only.
+
         """
         self.size_tolerance = size_tolerance
 
@@ -227,6 +231,7 @@ class DuplicateFinder:
 
         Returns:
             List of DuplicateGroup, sorted by wasted bytes descending.
+
         """
         scanner = ModelScanner()
         result = scanner.scan(paths)
@@ -240,6 +245,7 @@ class DuplicateFinder:
 
         Returns:
             List of DuplicateGroup, sorted by wasted bytes descending.
+
         """
         groups: dict[str, list[ModelInfo]] = {}
 
@@ -286,6 +292,7 @@ class DuplicateFinder:
 
         Returns:
             List of DuplicateGroup for exact content duplicates.
+
         """
         scanner = ModelScanner()
         result = scanner.scan(paths)
@@ -299,6 +306,7 @@ class DuplicateFinder:
 
         Returns:
             List of DuplicateGroup for exact duplicates.
+
         """
         # First group by size (fast filter)
         size_groups: dict[int, list[ModelInfo]] = {}
@@ -351,6 +359,7 @@ class DuplicateFinder:
 
         Returns:
             CleanupReport with recommended actions.
+
         """
         scanner = ModelScanner()
         result = scanner.scan(paths)
@@ -364,6 +373,7 @@ class DuplicateFinder:
 
         Returns:
             CleanupReport with recommended actions.
+
         """
         report = CleanupReport()
 

@@ -61,6 +61,7 @@ class DownloadConfig:
         revision: Branch or commit SHA to download. Defaults to ``"main"``.
         cache_dir: Local directory for caching downloads.
         force_download: If ``True``, redownload even if the file exists locally.
+
     """
 
     model_id: str
@@ -83,6 +84,7 @@ class DownloadProgress:
         downloaded_bytes: Bytes downloaded so far.
         total_bytes: Total file size in bytes (``None`` if unknown).
         error: Error message if the download failed, else ``None``.
+
     """
 
     model_id: str
@@ -191,6 +193,7 @@ class ModelDownloader:
         Raises:
             DownloadError: On any download failure.
             ModelNotFoundError: If the model/file is not found on HF Hub.
+
         """
         self._cancelled = False
         url = _hf_url(config.model_id, config.revision, filename)
@@ -246,6 +249,7 @@ class ModelDownloader:
 
         Returns:
             List of paths to downloaded files.
+
         """
         if filenames is None:
             filenames = self.list_model_files(config)
@@ -266,6 +270,7 @@ class ModelDownloader:
 
         Raises:
             ModelNotFoundError: If the model does not exist.
+
         """
         url = f"{HF_API_BASE}/models/{config.model_id}/tree/{config.revision}"
         for attempt in range(self._max_retries):

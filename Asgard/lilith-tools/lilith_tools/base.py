@@ -15,7 +15,7 @@ class ToolResult:
 class BaseTool(ABC):
     name: str = ""
     description: str = ""
-    parameters: dict[str, Any] = None
+    parameters: dict[str, Any] | None = None
 
     @abstractmethod
     def execute(self, **kwargs) -> ToolResult:

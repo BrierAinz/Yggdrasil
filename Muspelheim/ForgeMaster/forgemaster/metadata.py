@@ -114,6 +114,7 @@ def read_gguf_metadata(path: str | Path) -> dict[str, Any]:
     Returns:
         Dict with keys ``format``, ``architecture``, ``context_length``,
         ``parameter_count``, and any other KV pairs found.
+
     """
     path = Path(path)
     result: dict[str, Any] = {
@@ -192,6 +193,7 @@ def read_safetensors_metadata(path: str | Path) -> dict[str, Any]:
     Returns:
         Dict with keys ``format``, ``tensors`` (list of tensor names and
         shapes), and ``metadata`` (the ``__metadata__`` dict if present).
+
     """
     path = Path(path)
     result: dict[str, Any] = {
@@ -240,6 +242,7 @@ def read_hf_config(path: str | Path) -> dict[str, Any]:
     Returns:
         Dict with keys ``format``, ``architecture``, ``context_length``,
         ``parameter_count``, and any other config keys found.
+
     """
     path = Path(path)
 
@@ -303,6 +306,7 @@ def get_model_metadata(path: str | Path) -> dict[str, Any]:
 
     Returns:
         Metadata dict (contents vary by format).
+
     """
     path = Path(path)
 

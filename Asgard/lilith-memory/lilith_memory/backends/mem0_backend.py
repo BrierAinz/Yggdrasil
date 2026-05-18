@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 from pathlib import Path
@@ -113,7 +114,7 @@ class Mem0Backend(MemoryBackend):
 
     async def add(self, content: str, metadata: dict[str, Any] | None = None) -> str:
         """Add a memory entry via mem0 and record it in the local meta db."""
-        result = self._mem.add(content, metadata=metadata or {})
+        result = await asyncio.to_thread(self._mem.add, content, metadata=metadata or {})
         # mem0 returns a dict like {"id": "..."} or {"results": [...]}
         # Normalise: extract the first id.
         mem0_id: str = ""
@@ -143,7 +144,7 @@ class Mem0Backend(MemoryBackend):
         Falls back to a substring scan if mem0 search raises.
         """
         try:
-            results = self._mem.search(query, limit=limit)
+            results = await asyncio.to_thread(self._mem.search, query, limit=limit)
         except Exception:
             # Graceful degradation: scan the meta db
             return await self._local_search(query, limit)
@@ -194,7 +195,7 @@ class Mem0Backend(MemoryBackend):
     async def delete(self, entry_id: str) -> bool:
         """Delete an entry from mem0 and the local meta db."""
         try:
-            self._mem.delete(entry_id)
+            await asyncio.to_thread(self._mem.delete, entry_id)
         except Exception:
             pass  # best-effort
 
@@ -212,7 +213,7 @@ class Mem0Backend(MemoryBackend):
 
         # Best-effort: try to clear mem0 entries
         try:
-            self._mem.reset()
+            await asyncio.to_thread(self._mem.reset)
         except Exception:
             pass
 

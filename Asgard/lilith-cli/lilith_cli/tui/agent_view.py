@@ -121,6 +121,9 @@ class AgentMonitorView(Static):
             )
 
         self._last_refresh = datetime.now()
-        table.footer = f"[dim]Last refreshed: {self._last_refresh.strftime('%H:%M:%S')} — Placeholder data[/dim]"
+        table.footer = (
+            f"[dim]Last refreshed: "
+            f"{self._last_refresh.strftime('%H:%M:%S')} — Placeholder data[/dim]"
+        )
 
         self.update(table)

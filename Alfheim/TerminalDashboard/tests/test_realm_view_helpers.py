@@ -1,4 +1,7 @@
-"""Tests for realm view helper functions (_count_files, _total_size, _format_size, _find_key_files)."""
+"""Tests for realm view helper functions.
+
+Tests _count_files, _total_size, _format_size, _find_key_files.
+"""
 
 from __future__ import annotations
 

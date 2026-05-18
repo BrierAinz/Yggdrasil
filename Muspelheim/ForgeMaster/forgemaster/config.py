@@ -127,6 +127,7 @@ def save_config(cfg: Config, config_path: str | Path | None = None) -> Path:
 
     Returns:
         The path where the config was saved.
+
     """
     if config_path is not None:
         cfg_file = Path(os.path.expandvars(Path(str(config_path)).expanduser()))
@@ -159,6 +160,7 @@ def set_config_value(key: str, value: str, config_path: str | Path | None = None
 
     Returns:
         The updated Config object.
+
     """
     cfg = load_config(config_path)
 

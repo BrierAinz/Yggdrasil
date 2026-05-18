@@ -76,6 +76,7 @@ class Catalog:
 
         Args:
             db_path: Path to SQLite database file. Use ':memory:' for in-memory DB.
+
         """
         self.db_path = str(db_path)
         self._conn: sqlite3.Connection | None = None
@@ -117,6 +118,7 @@ class Catalog:
 
         Returns:
             The ID of the inserted model.
+
         """
         tags_json = json.dumps(tags or {})
         now = datetime.now().isoformat()
@@ -158,6 +160,7 @@ class Catalog:
 
         Returns:
             Dict with model data, or None if not found.
+
         """
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM models WHERE id = ?", (model_id,))
@@ -185,6 +188,7 @@ class Catalog:
 
         Returns:
             List of model dicts.
+
         """
         query = "SELECT * FROM models WHERE 1=1"
         params: list[Any] = []
@@ -216,6 +220,7 @@ class Catalog:
 
         Returns:
             List of matching model dicts.
+
         """
         search_term = f"%{query}%"
         cursor = self.conn.cursor()
@@ -242,6 +247,7 @@ class Catalog:
 
         Returns:
             True if a model was deleted, False otherwise.
+
         """
         cursor = self.conn.cursor()
         cursor.execute("DELETE FROM models WHERE id = ?", (model_id,))
@@ -256,6 +262,7 @@ class Catalog:
 
         Returns:
             The ID of the inserted profile.
+
         """
         cursor = self.conn.cursor()
         cursor.execute(
@@ -273,6 +280,7 @@ class Catalog:
 
         Returns:
             List of GPUProfile objects.
+
         """
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM gpu_profiles ORDER BY name")

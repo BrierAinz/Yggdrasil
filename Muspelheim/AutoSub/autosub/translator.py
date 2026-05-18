@@ -45,7 +45,8 @@ class Translator:
         """Check if a translation exists in cache."""
         with sqlite3.connect(self._db_path) as conn:
             row = conn.execute(
-                "SELECT translated_text FROM translations WHERE source_lang=? AND target_lang=? AND source_text=?",
+                "SELECT translated_text FROM translations "
+                "WHERE source_lang=? AND target_lang=? AND source_text=?",
                 (self.source_lang, self.target_lang, text),
             ).fetchone()
             return row[0] if row else None
@@ -54,7 +55,9 @@ class Translator:
         """Store a translation in cache."""
         with sqlite3.connect(self._db_path) as conn:
             conn.execute(
-                "INSERT OR REPLACE INTO translations (source_lang, target_lang, source_text, translated_text) VALUES (?, ?, ?, ?)",
+                "INSERT OR REPLACE INTO translations "
+                "(source_lang, target_lang, source_text, translated_text) "
+                "VALUES (?, ?, ?, ?)",
                 (self.source_lang, self.target_lang, text, translated),
             )
             conn.commit()

@@ -104,6 +104,7 @@ class ModelScanner:
 
         Returns:
             ScanResult with found models and any errors.
+
         """
         result = ScanResult()
         for path_str in paths:
@@ -252,6 +253,7 @@ class ModelScanner:
 
         Returns:
             ModelInfo or None if not a recognized model format.
+
         """
         model_path = Path(model_path)
         if not model_path.is_file():

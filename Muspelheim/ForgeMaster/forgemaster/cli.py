@@ -279,7 +279,10 @@ def check(
     if not can_run:
         strategy = calc.suggest_offload(model, gpu)
         if strategy.gpu_layers > 0:
-            offload_str = f"\n[dim]  Partial offload: {strategy.gpu_layers} GPU layers, {strategy.cpu_layers} CPU layers[/]"
+            offload_str = (
+                f"\n[dim]  Partial offload: {strategy.gpu_layers} GPU layers, "
+                f"{strategy.cpu_layers} CPU layers[/]"
+            )
         else:
             offload_str = "\n[dim]  Requires full CPU offload[/]"
 
@@ -331,7 +334,9 @@ def gpu():
 
         panel = Panel(
             f"[bold]{info.name}[/] {type_badge}\n\n"
-            f"VRAM:   {bar} {_format_size(info.vram_used_mb * 1024 * 1024)} / {_format_size(info.vram_total_mb * 1024 * 1024)} ({vram_used_pct:.0f}%)\n"
+            f"VRAM:   {bar} {_format_size(info.vram_used_mb * 1024 * 1024)} "
+            f"/ {_format_size(info.vram_total_mb * 1024 * 1024)} "
+            f"({vram_used_pct:.0f}%)\n"
             f"Temp:   {info.temperature}°C\n"
             f"Util:   {info.utilization_pct}%\n"
             f"Driver: {info.driver_version or 'unknown'}",

@@ -87,6 +87,7 @@ class GPUMonitor:
 
         Returns:
             True if at least one GPU backend is detected, False otherwise.
+
         """
         if self._available is not None:
             return self._available
@@ -174,6 +175,7 @@ class GPUMonitor:
         Returns:
             List of GPUInfo objects, one per detected GPU.
             Returns empty list if no GPU backend is available.
+
         """
         gpus: list[GPUInfo] = []
 
@@ -200,6 +202,7 @@ class GPUMonitor:
         Returns:
             List of GPUProcess objects representing processes using GPU memory.
             Returns empty list if nvidia-smi is unavailable.
+
         """
         if not self._check_nvidia():
             return []
@@ -249,6 +252,7 @@ class GPUMonitor:
 
         Returns:
             Driver version string, or None if unavailable.
+
         """
         gpus = self.get_gpu_info()
         if gpus and gpus[0].driver_version:

@@ -227,7 +227,9 @@ class HermesClient:
         messages = [
             {
                 "role": "user",
-                "content": f"Execute the tool '{tool_name}' with these parameters: {json.dumps(params)}",
+                "content": (
+                    f"Execute the tool '{tool_name}' with these parameters: {json.dumps(params)}"
+                ),
             }
         ]
 

@@ -110,6 +110,7 @@ class VRAMCalculator:
 
         Returns:
             VRAMEstimate with detailed breakdown.
+
         """
         # Model weights
         model_weights_gb = self._estimate_weights_gb(model)
@@ -141,6 +142,7 @@ class VRAMCalculator:
 
         Returns:
             True if the model fits in available VRAM.
+
         """
         estimate = self.calculate(model, context_length)
         return estimate.total_gb <= gpu.vram_available_gb
@@ -160,6 +162,7 @@ class VRAMCalculator:
 
         Returns:
             OffloadStrategy with layer split recommendation.
+
         """
         estimate = self.calculate(model, context_length)
         available_gb = gpu.vram_available_gb
@@ -173,7 +176,9 @@ class VRAMCalculator:
                 gpu_vram_used_gb=estimate.total_gb,
                 cpu_ram_used_gb=0.0,
                 can_run=True,
-                description=f"Model fits entirely on GPU ({estimate.total_gb:.1f}GB / {available_gb:.1f}GB)",
+                description=(
+                    f"Model fits entirely on GPU ({estimate.total_gb:.1f}GB / {available_gb:.1f}GB)"
+                ),
             )
 
         # Calculate how many layers can fit on GPU
@@ -191,7 +196,11 @@ class VRAMCalculator:
                 gpu_vram_used_gb=available_gb,
                 cpu_ram_used_gb=estimate.total_gb,
                 can_run=False,
-                description=f"Not enough VRAM even for KV cache ({kv_and_overhead_gb:.1f}GB needed, {available_gb:.1f}GB available)",
+                description=(
+                    f"Not enough VRAM even for KV cache "
+                    f"({kv_and_overhead_gb:.1f}GB needed, "
+                    f"{available_gb:.1f}GB available)"
+                ),
             )
 
         # Proportional layer split
@@ -287,6 +296,7 @@ class VRAMCalculator:
 
         Returns:
             Estimated total VRAM in GB.
+
         """
         estimate = self.calculate(model, context_length=77, batch_size=1)
         return round(estimate.total_gb + COMFYUI_OVERHEAD_GB, 3)

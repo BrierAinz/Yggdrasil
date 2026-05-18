@@ -19,6 +19,7 @@ extend-exclude = [
     "Vanaheim/Core",
     "Vanaheim/Council",
     "Vanaheim/bifrost",
+    "Vanaheim/gamemaster-mcp-server",
     "Svartalfheim",
     "Midgard",
     "Jotunheim",

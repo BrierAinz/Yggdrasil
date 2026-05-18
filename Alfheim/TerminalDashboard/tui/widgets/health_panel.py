@@ -108,7 +108,8 @@ class SystemHealthPanel(Static):
         # -- Load Average --
         load_text = Text()
         load_text.append(
-            f"Load: {health.load_avg_1m:.2f} / {health.load_avg_5m:.2f} / {health.load_avg_15m:.2f}",
+            f"Load: {health.load_avg_1m:.2f} / "
+            f"{health.load_avg_5m:.2f} / {health.load_avg_15m:.2f}",
             style="dim",
         )
         sections.append(load_text)

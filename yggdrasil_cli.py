@@ -218,7 +218,10 @@ SERVICES = {
         "port": 8000,
         "realm": "Asgard/Lilith",
         "check_cmd": "Core/Backend/main.py",
-        "wsl_cmd": "cd Asgard/Lilith && bash -c 'python3 -m uvicorn lilith_api.main:app --reload --port 8000'",
+        "wsl_cmd": (
+            "cd Asgard/Lilith && bash -c "
+            "'python3 -m uvicorn lilith_api.main:app --reload --port 8000'"
+        ),
         "win_cmd": "scripts/bats/Lilith_Launcher.bat",
     },
     "dashboard": {
@@ -1043,7 +1046,8 @@ def update():
     console.print(table)
     console.print()
     console.print(
-        "[bold realm]\u2713 Yggdrasil actualizado.[/] Ejecuta [bold]yggdrasil status[/] para verificar."
+        "[bold realm]\u2713 Yggdrasil actualizado.[/] "
+        "Ejecuta [bold]yggdrasil status[/] para verificar."
     )
 
 
