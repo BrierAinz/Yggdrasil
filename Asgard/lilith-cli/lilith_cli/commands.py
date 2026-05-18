@@ -7,6 +7,7 @@ and provides routing by command name.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import sys
 from pathlib import Path
@@ -407,10 +408,8 @@ class HistoryCommand(BaseCommand):
         # Parse optional limit.
         limit = len(self.session.history)
         if args.strip():
-            try:
+            with contextlib.suppress(ValueError):
                 limit = min(int(args.strip()), len(self.session.history))
-            except ValueError:
-                pass
 
         # Show the last N messages.
         messages = self.session.history[-limit:]

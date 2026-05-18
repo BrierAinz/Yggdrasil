@@ -418,8 +418,7 @@ class DuplicateFinder:
             normalized = pattern.sub("", normalized)
 
         # Remove trailing dots, dashes, underscores
-        normalized = normalized.rstrip(".-_")
-        return normalized
+        return normalized.rstrip(".-_")
 
     def _group_by_similar_size(self, models: list[ModelInfo]) -> list[list[ModelInfo]]:
         """Group models by similar file size within the tolerance."""

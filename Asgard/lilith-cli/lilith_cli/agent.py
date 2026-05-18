@@ -382,9 +382,7 @@ class AgentSession:
         ]
 
         response = await self.provider.complete(temp_messages, tools=None)
-        summary = response.get("content", "").strip()
-
-        return summary
+        return response.get("content", "").strip()
 
     def _build_messages(self) -> list[dict[str, Any]]:
         """Build the full message list to send to the LLM."""
