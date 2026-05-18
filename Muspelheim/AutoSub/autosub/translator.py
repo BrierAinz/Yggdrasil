@@ -72,6 +72,7 @@ class Translator:
 
         Returns:
             Translated text string.
+
         """
         if not text.strip():
             return text
@@ -100,6 +101,7 @@ class Translator:
 
         Returns:
             New list of Segment objects with translated text.
+
         """
         from autosub.transcriber import Segment
 

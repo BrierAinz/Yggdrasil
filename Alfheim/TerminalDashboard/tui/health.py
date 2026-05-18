@@ -39,6 +39,7 @@ class GPUInfo:
 
         Returns:
             Dictionary with GPU name, utilization, memory, temperature, and power.
+
         """
         return {
             "name": self.name,
@@ -86,6 +87,7 @@ class SystemHealth:
 
         Returns:
             Dictionary with all SystemHealth fields including nested GPU info.
+
         """
         return {
             "cpu_pct": self.cpu_pct,
@@ -122,6 +124,7 @@ class HealthMonitor:
         Args:
             disk_path: Filesystem path to monitor for disk usage.
             nvidia_smi_path: Path or command for nvidia-smi.
+
         """
         self.disk_path = disk_path
         self.nvidia_smi_path = nvidia_smi_path
@@ -132,6 +135,7 @@ class HealthMonitor:
 
         Returns:
             SystemHealth with CPU, RAM, swap, disk, GPU, and process metrics.
+
         """
         cpu_pct = psutil.cpu_percent(interval=None)
         cpu_per_core = psutil.cpu_percent(interval=None, percpu=True)
@@ -205,6 +209,7 @@ class HealthMonitor:
 
         Returns:
             List of GPUInfo objects, or empty list if nvidia-smi unavailable.
+
         """
         if self._nvidia_available is False:
             return []
@@ -265,6 +270,7 @@ class HealthMonitor:
 
         Returns:
             List of dicts with pid, name, cmdline, cpu_percent, memory_percent.
+
         """
         procs: list[dict[str, Any]] = []
         for proc in psutil.process_iter(

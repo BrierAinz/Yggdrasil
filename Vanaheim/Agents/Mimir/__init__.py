@@ -5,7 +5,8 @@ to synthesize insight. The Well of Wisdom never truly dries.
 """
 
 from .agent import MimirAgent
-from .research_tools import ArxivSearchTool, WebSearchTool, SourceAnalyzer, ReportGenerator
+from .research_tools import ArxivSearchTool, ReportGenerator, SourceAnalyzer, WebSearchTool
+
 
 __all__ = [
     "MimirAgent",

@@ -35,6 +35,7 @@ class DashboardHeader(Static):
 
         Returns:
             Rich-formatted string with logo and live clock.
+
         """
         ts = datetime.now().strftime("%Y-%m-%d %H:%M")
         return (
@@ -79,6 +80,7 @@ class YggdrasilDashboard(App):
 
         Yields:
             DashboardHeader, RealmSidebar, RealmDetailView, and Footer widgets.
+
         """
         yield DashboardHeader(id="app-header")
         with Horizontal(id="main-grid"):

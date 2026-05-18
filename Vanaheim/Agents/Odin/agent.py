@@ -7,10 +7,11 @@ import os
 from typing import Any, AsyncGenerator, Dict, Literal
 
 import httpx
-from Agents.Base import VanirAgent
 from Core.memory import get_muninn_client
 from Core.models.agent import AgentCapabilities, AgentConfig
 from Core.persona import get_persona_loader
+
+from Agents.Base import VanirAgent
 
 
 class OdinAgent(VanirAgent):

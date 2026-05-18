@@ -10,6 +10,7 @@ import sys
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
+
 # Add parent to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
@@ -21,19 +22,20 @@ from Agents.Odin.agent import OdinAgent
 
 # Importar agentes para registro automático
 from Agents.Shalltear.agent import ShalltearAgent
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
+
 from Core.models import (
     AgentInfo,
     AgentState,
-    ErrorResponse,
     HealthResponse,
     InvokeRequest,
     InvokeResponse,
     StreamRequest,
 )
 from Core.registry import get_registry
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
+
 
 # Instancia global del registry
 _registry = get_registry()

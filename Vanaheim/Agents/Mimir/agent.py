@@ -5,18 +5,19 @@ to synthesize insight. Where Odin sacrificed his eye for wisdom,
 Mimir offers it freely — through methodical research and analysis.
 """
 
-import asyncio
 import json
 import logging
 import re
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict, List, Optional
+from typing import Any, AsyncGenerator, Dict
+
+from Core.models.agent import AgentCapabilities, AgentConfig
 
 from Agents.Base.vanir_agent import VanirAgent
-from Core.models.agent import AgentCapabilities, AgentConfig, AgentState
 
 from .research_tools import ArxivSearchTool, ReportGenerator, SourceAnalyzer, WebSearchTool
+
 
 logger = logging.getLogger("yggdrasil.mimir")
 
@@ -63,7 +64,6 @@ class MimirAgent(VanirAgent):
         self._output_dir: Path = Path("Svartalfheim/Knowledge")
 
         # Load depth configs from the config json if available
-        raw = config.model_extra or {}
         self._depth_configs = DEPTH_CONFIGS.copy()
         # Merge any depth_configs from the AgentConfig capabilities
         if hasattr(config, "depth_configs") and config.depth_configs:

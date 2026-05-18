@@ -76,6 +76,7 @@ class DashboardUpdater:
             realm_scanner: Scanner for realm data. Created with defaults if None.
             health_monitor: Monitor for system health. Created with defaults if None.
             interval_seconds: Seconds between auto-refresh cycles.
+
         """
         self.realm_scanner = realm_scanner or RealmScanner()
         self.health_monitor = health_monitor or HealthMonitor()
@@ -124,6 +125,7 @@ class DashboardUpdater:
 
         Returns:
             True if the key should flash, False otherwise.
+
         """
         if key in self._flash_keys:
             return True
@@ -143,7 +145,9 @@ class DashboardUpdater:
         """Collect a fresh data snapshot (realm scan + system health).
 
         Returns:
-            Snapshot dictionary with realm and health data."""
+            Snapshot dictionary with realm and health data.
+
+        """
         snapshot: Snapshot = {}
 
         try:
@@ -171,6 +175,7 @@ class DashboardUpdater:
 
         Returns:
             List of ChangeRecord for each detected difference.
+
         """
         changes: list[ChangeRecord] = []
 
@@ -197,6 +202,7 @@ class DashboardUpdater:
 
         Returns:
             UpdateResult with the new snapshot and detected changes.
+
         """
         new_snapshot = self.collect()
 
@@ -274,5 +280,7 @@ class DashboardUpdater:
         """Perform a single async refresh (for manual triggers).
 
         Returns:
-            UpdateResult with fresh snapshot and any detected changes."""
+            UpdateResult with fresh snapshot and any detected changes.
+
+        """
         return self.refresh()

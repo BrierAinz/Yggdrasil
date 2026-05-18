@@ -149,10 +149,8 @@ class VanirRegistry:
         """Cargar estado desde disco."""
         try:
             if os.path.exists(self._persistence_path):
-                with open(self._persistence_path, "r", encoding="utf-8") as f:
-                    data = json.load(f)
-                # Reconstruir agentes si es necesario
-                # Nota: La carga completa requeriría reconstruir AgentInfo
+                # Future: reconstruct AgentInfo from persisted state
+                pass
         except Exception:
             pass
 

@@ -90,6 +90,7 @@ class MemoryStore:
 
         Returns:
             The ``id`` of the newly inserted row.
+
         """
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(

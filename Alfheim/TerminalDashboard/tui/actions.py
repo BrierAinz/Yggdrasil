@@ -53,6 +53,7 @@ class QuickActions:
         Args:
             project_path: Path to the current project directory.
             docs_url: URL for the documentation page.
+
         """
         if project_path is None:
             project_path = Path.cwd()
@@ -67,6 +68,7 @@ class QuickActions:
 
         Returns:
             ActionResult with success status and message.
+
         """
         action_name = self.KEY_MAP.get(key)
         if action_name is None:
@@ -100,6 +102,7 @@ class QuickActions:
         Returns:
             ActionResult with test output and return code on success,
             or failure message if no test runner found.
+
         """
         project = self.project_path
         # Try common test commands
@@ -152,6 +155,7 @@ class QuickActions:
 
         Returns:
             ActionResult with branch, status, recent commits, and ahead/behind info.
+
         """
         project = self.project_path
         try:
@@ -231,6 +235,7 @@ class QuickActions:
 
         Returns:
             ActionResult with CPU, RAM, disk percentages and process count.
+
         """
         from tui.health import HealthMonitor
 
@@ -256,6 +261,7 @@ class QuickActions:
 
         Returns:
             ActionResult with editor name and path on success, or failure message.
+
         """
         project = self.project_path
         # Look for VS Code variants
@@ -294,6 +300,7 @@ class QuickActions:
 
         Returns:
             ActionResult with docs URL on success, or failure message.
+
         """
         try:
             webbrowser.open(self.docs_url)
@@ -316,6 +323,7 @@ class QuickActions:
 
         Returns:
             Dictionary mapping keyboard keys to action descriptions.
+
         """
         return {
             "t": "Run tests",

@@ -4,13 +4,11 @@ Verifies that Mimir draws from the depths of knowledge
 and weaves findings into structured tapestries of insight.
 """
 
-import asyncio
-import json
-from datetime import UTC, datetime
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
+
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -73,7 +71,6 @@ class TestMimirAgentInstantiation:
 
     def test_depth_configs_loaded(self, mimir):
         """Mimir knows the depths of research."""
-        from Agents.Mimir.agent import DEPTH_CONFIGS
         assert "quick" in mimir._depth_configs
         assert "standard" in mimir._depth_configs
         assert "deep" in mimir._depth_configs

@@ -32,6 +32,7 @@ class LocalProvider(LLMProvider):
 
         Args:
             config: Optional Config instance. Defaults to a new Config().
+
         """
         self.config = config or Config()
         self.base_url: str = self.config.get("lm_studio_url", "http://localhost:1234/v1")

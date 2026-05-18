@@ -65,6 +65,7 @@ class Pipeline:
 
         Returns:
             PipelineResult with details of the run.
+
         """
         if console is None:
             console = Console()

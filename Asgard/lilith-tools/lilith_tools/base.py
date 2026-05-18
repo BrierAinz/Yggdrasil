@@ -13,6 +13,7 @@ class ToolResult:
         success: Whether the tool execution succeeded.
         data: The result payload (any type).
         error: Error message if execution failed.
+
     """
 
     success: bool

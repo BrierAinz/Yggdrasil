@@ -34,6 +34,7 @@ class SystemHealthPanel(Static):
 
         Args:
             health: Initial SystemHealth data. If None, shows placeholder.
+
         """
         super().__init__(name=name, id=id, classes=classes)
         self._health = health
@@ -45,6 +46,7 @@ class SystemHealthPanel(Static):
         Args:
             health: New SystemHealth snapshot.
             flash_fields: Set of field names that changed and should flash.
+
         """
         self._health = health
         self._flash_fields = flash_fields or set()
@@ -69,7 +71,9 @@ class SystemHealthPanel(Static):
         """Build the Rich renderable for the health panel.
 
         Returns:
-            Rich Panel containing formatted health information."""
+            Rich Panel containing formatted health information.
+
+        """
         sections: list[Any] = []
 
         # -- CPU Section --
@@ -171,7 +175,9 @@ class SystemHealthPanel(Static):
         """Return Text, styled with flash if the field has changed.
 
         Returns:
-            Rich Text object, optionally styled with flash effect."""
+            Rich Text object, optionally styled with flash effect.
+
+        """
         rich_text = Text(text)
         if field in self._flash_fields:
             rich_text.stylize("bold reverse")
@@ -188,7 +194,9 @@ class SystemHealthPanel(Static):
         """Format uptime in seconds to human-readable string.
 
         Returns:
-            Formatted string like \"2d 3h 15m\"."""
+            Formatted string like \"2d 3h 15m\".
+
+        """
         days = int(seconds // 86400)
         hours = int((seconds % 86400) // 3600)
         minutes = int((seconds % 3600) // 60)

@@ -35,6 +35,7 @@ class Aligner:
 
         Returns:
             List of word lists, one per segment.
+
         """
         all_words: list[list[Word]] = []
         for seg in segments:
@@ -53,6 +54,7 @@ class Aligner:
 
         Returns:
             List of Word objects with estimated timing.
+
         """
         raw_words = segment.text.split()
         if not raw_words:
@@ -80,6 +82,7 @@ class Aligner:
 
         Returns:
             Re-segmented word lists.
+
         """
         # Flatten all words
         flat: list[Word] = []
@@ -114,6 +117,7 @@ class Aligner:
 
         Returns:
             List of Segment objects.
+
         """
         segments = []
         for group in word_groups:

@@ -14,6 +14,7 @@ class Config:
         Args:
             root_path: Path to the Lilith config directory.
                        Defaults to ``~/.lilith``.
+
         """
         self.root = root_path or Path.home() / ".lilith"
         self.root.mkdir(parents=True, exist_ok=True)

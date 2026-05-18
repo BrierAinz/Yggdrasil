@@ -34,6 +34,7 @@ class LiteLLMProvider(LLMProvider):
 
         Args:
             config: Optional Config instance. Defaults to a new Config().
+
         """
         self.config = config or Config()
 

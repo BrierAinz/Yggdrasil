@@ -23,6 +23,7 @@ class GitLogEntry:
 
         Returns:
             Dictionary with 'hash' and 'message' keys.
+
         """
         return {"hash": self.hash, "message": self.message}
 
@@ -52,6 +53,7 @@ class GitActivity:
 
         Returns:
             Dictionary with path, git status, branch, commits, and dirty flag.
+
         """
         return {
             "path": str(self.path),
@@ -77,6 +79,7 @@ def get_git_activity(directory: Path, max_commits: int = 10) -> GitActivity:
         GitActivity with branch, recent commits, and status lines.
         If the directory is not a git repo, returns GitActivity with
         ``is_git_repo=False`` and empty collections.
+
     """
     activity = GitActivity(path=directory)
 
@@ -158,6 +161,7 @@ def get_realm_git_activities(realm_path: Path, max_commits: int = 10) -> dict[st
     Returns:
         Dictionary mapping project names (or '__realm__' for the realm root)
         to their GitActivity objects.
+
     """
     activities: dict[str, GitActivity] = {}
 

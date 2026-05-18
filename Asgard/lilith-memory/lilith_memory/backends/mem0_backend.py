@@ -33,6 +33,7 @@ class Mem0Backend(MemoryBackend):
         Args:
             db_path: Optional path for local storage. Falls back to ``.mem0``
                      in the current directory.
+
         """
         try:
             from mem0 import Memory

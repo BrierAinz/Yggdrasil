@@ -41,6 +41,7 @@ class AutoSubConfig:
 
         Raises:
             FileNotFoundError: If the config file does not exist.
+
         """
         path = Path(path)
         if not path.exists():
@@ -76,6 +77,7 @@ class AutoSubConfig:
 
         Returns:
             AutoSubConfig from first found config, or defaults.
+
         """
         search_paths = [
             Path(DEFAULT_CONFIG_NAME),

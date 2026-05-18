@@ -61,7 +61,9 @@ def _count_files(directory: Path) -> int:
     """Count all files recursively in a directory (excluding hidden dirs).
 
     Returns:
-        Number of files found."""
+        Number of files found.
+
+    """
     if not directory.is_dir():
         return 0
     count = 0
@@ -80,7 +82,9 @@ def _total_size(directory: Path) -> int:
     """Calculate total file size in bytes recursively (excluding hidden dirs).
 
     Returns:
-        Total size in bytes."""
+        Total size in bytes.
+
+    """
     if not directory.is_dir():
         return 0
     total = 0
@@ -100,7 +104,9 @@ def _format_size(size_bytes: int) -> str:
     """Format bytes into a human-readable string.
 
     Returns:
-        Human-readable size string (e.g. \"1.5 GB\")."""
+        Human-readable size string (e.g. \"1.5 GB\").
+
+    """
     if size_bytes < 1024:
         return f"{size_bytes} B"
     if size_bytes < 1024 * 1024:
@@ -114,7 +120,9 @@ def _find_key_files(directory: Path) -> list[str]:
     """Find key configuration files in a directory.
 
     Returns:
-        List of found filenames."""
+        List of found filenames.
+
+    """
     found: list[str] = []
     if not directory.is_dir():
         return found
@@ -220,14 +228,18 @@ class RealmDetailView(Static):
         """Render the widget content (called by Textual on mount).
 
         Returns:
-            Widget content string or Rich renderable."""
+            Widget content string or Rich renderable.
+
+        """
         return getattr(self, "_content", "[dim]No realm selected[/]")
 
     def _build_renderable(self, status: RealmStatus) -> Panel:
         """Construct the full Rich Panel for a realm.
 
         Returns:
-            Rich Panel widget."""
+            Rich Panel widget.
+
+        """
         style = REALM_STYLES.get(status.name, {"color": "white", "border": "white"})
         color = style["color"]
 
@@ -274,7 +286,9 @@ class RealmDetailView(Static):
         """Build a table with projects, git status, test status, last commit.
 
         Returns:
-            Rich Table widget."""
+            Rich Table widget.
+
+        """
         table = Table(
             show_header=True,
             header_style=f"bold {color}",
@@ -320,7 +334,9 @@ class RealmDetailView(Static):
         """Build a table showing realm description, file count, total size, and key files.
 
         Returns:
-            Rich Table or None if realm path is invalid."""
+            Rich Table or None if realm path is invalid.
+
+        """
         realm_path = status.path
         if not realm_path.is_dir():
             return None
@@ -357,7 +373,9 @@ class RealmDetailView(Static):
         """Build a table showing recent git activity for the realm directory.
 
         Returns:
-            Rich Table or None if realm path is invalid."""
+            Rich Table or None if realm path is invalid.
+
+        """
         realm_path = status.path
         if not realm_path.is_dir():
             return None
@@ -403,7 +421,9 @@ class RealmDetailView(Static):
         """Dispatch to the realm-specific render method.
 
         Returns:
-            Rich Table or None if no specific renderer exists."""
+            Rich Table or None if no specific renderer exists.
+
+        """
         dispatch: dict[str, str] = {
             "Asgard": "_render_asgard",
             "Vanaheim": "_render_vanaheim",
@@ -427,7 +447,9 @@ class RealmDetailView(Static):
         """Asgard-specific: Lilith core status and provider count.
 
         Returns:
-            Rich Table with Asgard details."""
+            Rich Table with Asgard details.
+
+        """
         table = Table(
             title="Asgard Details",
             title_style=f"bold {color}",
@@ -465,7 +487,9 @@ class RealmDetailView(Static):
         """Vanaheim-specific: AI agent projects and potential running tasks.
 
         Returns:
-            Rich Table with Vanaheim details."""
+            Rich Table with Vanaheim details.
+
+        """
         table = Table(
             title="Vanaheim Details",
             title_style=f"bold {color}",
@@ -494,7 +518,9 @@ class RealmDetailView(Static):
         """Midgard-specific: personal app dashboards.
 
         Returns:
-            Rich Table with Midgard details."""
+            Rich Table with Midgard details.
+
+        """
         table = Table(
             title="Midgard Details",
             title_style=f"bold {color}",
@@ -524,7 +550,9 @@ class RealmDetailView(Static):
         """Svartalfheim-specific: docs/knowledge/wiki projects.
 
         Returns:
-            Rich Table with Svartalfheim details."""
+            Rich Table with Svartalfheim details.
+
+        """
         table = Table(
             title="Svartalfheim Details",
             title_style=f"bold {color}",
@@ -555,7 +583,9 @@ class RealmDetailView(Static):
         """Alfheim-specific: UI prototypes and front-end projects.
 
         Returns:
-            Rich Table with Alfheim details."""
+            Rich Table with Alfheim details.
+
+        """
         table = Table(
             title="Alfheim Details",
             title_style=f"bold {color}",
@@ -588,7 +618,9 @@ class RealmDetailView(Static):
         """Muspelheim-specific: WIP / active development / branch info.
 
         Returns:
-            Rich Table with Muspelheim details."""
+            Rich Table with Muspelheim details.
+
+        """
         table = Table(
             title="Muspelheim Details",
             title_style=f"bold {color}",
@@ -618,7 +650,9 @@ class RealmDetailView(Static):
         """Niflheim-specific: resources, models, and disk.
 
         Returns:
-            Rich Table with Niflheim details."""
+            Rich Table with Niflheim details.
+
+        """
         table = Table(
             title="Niflheim Details",
             title_style=f"bold {color}",
@@ -649,7 +683,9 @@ class RealmDetailView(Static):
         """Jotunheim-specific: large/massive projects.
 
         Returns:
-            Rich Table with Jotunheim details."""
+            Rich Table with Jotunheim details.
+
+        """
         table = Table(
             title="Jotunheim Details",
             title_style=f"bold {color}",
@@ -677,7 +713,9 @@ class RealmDetailView(Static):
         """Helheim-specific: archived / dead projects.
 
         Returns:
-            Rich Table with Helheim details."""
+            Rich Table with Helheim details.
+
+        """
         table = Table(
             title="Helheim Details",
             title_style=f"bold {color}",

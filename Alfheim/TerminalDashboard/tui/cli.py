@@ -28,6 +28,7 @@ def _version_callback(value: bool) -> None:
 
     Raises:
         typer.Exit: Always raised when value is True.
+
     """
     if value:
         _console.print(f"[bold #c8a23e]☵ Yggdrasil Dashboard[/]  [dim]v{__version__}[/]")

@@ -63,6 +63,7 @@ class ProjectInfo:
 
         Returns:
             Dictionary with all ProjectInfo fields.
+
         """
         return {
             "name": self.name,
@@ -97,6 +98,7 @@ class RealmStatus:
 
         Returns:
             Dictionary with realm name, path, description, and nested project dicts.
+
         """
         return {
             "name": self.name,
@@ -121,6 +123,7 @@ class RealmScanner:
             base_path: Path to the Yggdrasil root directory. Defaults to
                 the YGGDRASIL_ROOT env var or auto-detection by walking up from
                 this file's location to find a directory named 'Yggdrasil'.
+
         """
         if base_path is None:
             import os
@@ -134,7 +137,9 @@ class RealmScanner:
         """Walk up from *start* to find a directory named 'Yggdrasil'.
 
         Returns:
-            Path to the Yggdrasil root directory."""
+            Path to the Yggdrasil root directory.
+
+        """
         current = start
         for _ in range(20):  # safety limit
             if current.name == "Yggdrasil":
@@ -151,6 +156,7 @@ class RealmScanner:
 
         Returns:
             Dictionary mapping realm names to RealmStatus objects.
+
         """
         results: dict[str, RealmStatus] = {}
         for realm_name in REALMS:
@@ -165,6 +171,7 @@ class RealmScanner:
 
         Returns:
             RealmStatus with aggregated information about the realm.
+
         """
         realm_path = self.base_path / realm_name
 
@@ -207,6 +214,7 @@ class RealmScanner:
 
         Returns:
             List of ProjectInfo for each non-hidden subdirectory.
+
         """
         projects: list[ProjectInfo] = []
 
@@ -230,6 +238,7 @@ class RealmScanner:
 
         Returns:
             ProjectInfo with name, branch, uncommitted status, and last commit date.
+
         """
         name = project_path.name
         branch = self._get_git_branch(project_path)
@@ -250,6 +259,7 @@ class RealmScanner:
 
         Returns:
             Branch name string, or empty string if git is unavailable.
+
         """
         try:
             result = subprocess.run(
@@ -270,6 +280,7 @@ class RealmScanner:
 
         Returns:
             True if there are uncommitted changes, False otherwise.
+
         """
         try:
             result = subprocess.run(
@@ -290,6 +301,7 @@ class RealmScanner:
 
         Returns:
             Short date string (YYYY-MM-DD), or empty string if unavailable.
+
         """
         try:
             result = subprocess.run(
@@ -311,6 +323,7 @@ class RealmScanner:
         Returns:
             GitStatus.CLEAN if all projects are clean, DIRTY if any has
             uncommitted changes, NO_REPO if no projects and no .git directory.
+
         """
         if not projects:
             # Check if the realm itself is a git repo
@@ -332,6 +345,7 @@ class RealmScanner:
 
         Returns:
             ProjTestStatus — currently always UNKNOWN (placeholder).
+
         """
         return ProjTestStatus.UNKNOWN
 
@@ -346,6 +360,7 @@ class RealmScanner:
         Returns:
             HealthStatus.HEALTHY if clean, DEGRADED if dirty or failing,
             DOWN if no projects and no git repo.
+
         """
         if not projects and git_status == GitStatus.NO_REPO:
             return HealthStatus.DOWN

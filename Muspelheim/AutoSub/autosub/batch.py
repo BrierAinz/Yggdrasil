@@ -41,6 +41,7 @@ class BatchProcessor:
 
         Returns:
             Sorted list of file paths.
+
         """
         path = Path(directory)
         if not path.exists():
@@ -79,6 +80,7 @@ class BatchProcessor:
 
         Returns:
             List of PipelineResult objects.
+
         """
         if console is None:
             console = Console()

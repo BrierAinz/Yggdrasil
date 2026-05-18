@@ -76,6 +76,7 @@ class Transcriber:
 
         Raises:
             FileNotFoundError: If the audio file does not exist.
+
         """
         path = Path(audio_path)
         if not path.exists():
@@ -110,6 +111,7 @@ class Transcriber:
 
         Raises:
             FileNotFoundError: If the audio file does not exist.
+
         """
         path = Path(audio_path)
         if not path.exists():

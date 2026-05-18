@@ -35,6 +35,7 @@ def export_srt(segments: list[Segment]) -> str:
 
     Returns:
         SRT-formatted string.
+
     """
     lines: list[str] = []
     for i, seg in enumerate(segments, start=1):
@@ -53,6 +54,7 @@ def export_vtt(segments: list[Segment]) -> str:
 
     Returns:
         WebVTT-formatted string.
+
     """
     lines: list[str] = ["WEBVTT", ""]
     for _i, seg in enumerate(segments, start=1):
@@ -70,6 +72,7 @@ def export_txt(segments: list[Segment]) -> str:
 
     Returns:
         Plain text with one segment per line.
+
     """
     return "\n".join(seg.text for seg in segments)
 
@@ -83,6 +86,7 @@ def export_segments(segments: list[Segment], fmt: str = "srt") -> str:
 
     Returns:
         Formatted subtitle string.
+
     """
     exporters = {
         "srt": export_srt,

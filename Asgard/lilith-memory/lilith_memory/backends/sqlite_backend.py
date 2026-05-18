@@ -28,6 +28,7 @@ class SQLiteBackend(MemoryBackend):
 
         Args:
             db_path: Path to the SQLite database file.
+
         """
         self._store = MemoryStore(db_path)
 
