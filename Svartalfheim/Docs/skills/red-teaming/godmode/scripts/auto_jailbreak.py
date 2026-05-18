@@ -486,7 +486,7 @@ def auto_jailbreak(
     baseline_msgs = _build_messages(query=canary_query)
     baseline_content, _, baseline_error = _test_query(client, model, baseline_msgs)
     baseline_score = (
-        score_response(baseline_content, canary_query)
+        score_response(baseline_content, canary_query)  # noqa: F821 — loaded via exec()
         if baseline_content
         else {"score": -9999, "is_refusal": True, "hedge_count": 0}
     )
@@ -559,7 +559,7 @@ def auto_jailbreak(
             prefill = SUBTLE_PREFILL
             # Try encoding escalation levels
             for level in range(5):
-                encoded_query, enc_label = escalate_encoding(canary_query, level)
+                encoded_query, enc_label = escalate_encoding(canary_query, level)  # noqa: F821 — loaded via exec()
                 if verbose:
                     print(f"  [PARSELTONGUE] Level {level} ({enc_label}): {encoded_query[:80]}...")
 
@@ -570,7 +570,7 @@ def auto_jailbreak(
                 )
                 content, _, error = _test_query(client, model, msgs)
                 result = (
-                    score_response(content, canary_query)
+                    score_response(content, canary_query)  # noqa: F821 — loaded via exec()
                     if content
                     else {"score": -9999, "is_refusal": True, "hedge_count": 0}
                 )
@@ -613,7 +613,7 @@ def auto_jailbreak(
         msgs = _build_messages(system_prompt=system_prompt, query=canary_query)
         content, _, error = _test_query(client, model, msgs)
         result = (
-            score_response(content, canary_query)
+            score_response(content, canary_query)  # noqa: F821 — loaded via exec()
             if content
             else {"score": -9999, "is_refusal": True, "hedge_count": 0}
         )
@@ -656,7 +656,7 @@ def auto_jailbreak(
         )
         content, _, error = _test_query(client, model, msgs)
         result = (
-            score_response(content, canary_query)
+            score_response(content, canary_query)  # noqa: F821 — loaded via exec()
             if content
             else {"score": -9999, "is_refusal": True, "hedge_count": 0}
         )
