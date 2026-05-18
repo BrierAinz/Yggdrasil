@@ -3,6 +3,7 @@ APIs de telemetría para Asgard Command Center.
 Dashboard web en tiempo real del ecosistema Yggdrasil.
 """
 import asyncio
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -11,8 +12,10 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 router = APIRouter(prefix="/api/asgard", tags=["asgard"])
 
-# Ruta raíz de Yggdrasil
-YGGDRASIL_ROOT = Path("D:/Proyectos/Yggdrasil")
+# Ruta raíz de Yggdrasil — resolved from environment or project structure
+_MODULE_DIR = Path(__file__).resolve().parent
+_YGGDRASIL_ROOT = Path(os.environ.get("YGGDRASIL_ROOT", str(_MODULE_DIR.parents[4])))
+YGGDRASIL_ROOT = _YGGDRASIL_ROOT
 
 
 @router.get("/ecosystem/status")
@@ -192,7 +195,7 @@ async def get_memory_stats():
     # MuninnDB
     try:
         # Estimación basada en archivos
-        muninn_path = Path("D:/MuninnDB")
+        muninn_path = Path(os.environ.get("MUNINNDB_ROOT", str(Path.home() / "MuninnDB")))
         if muninn_path.exists():
             vaults = [d for d in muninn_path.iterdir() if d.is_dir()]
             stats["muninn"] = {
@@ -236,9 +239,10 @@ async def get_recent_logs(limit: int = 50):
     Logs recientes del sistema.
     """
     # Leer desde archivo de log si existe
+    _lilith_root = YGGDRASIL_ROOT / "Asgard" / "Lilith"
     log_files = [
-        Path("D:/Proyectos/Yggdrasil/Asgard/Lilith/Core/Logs/lilith.log"),
-        Path("D:/Proyectos/Yggdrasil/Asgard/Lilith/lilith.log"),
+        _lilith_root / "Core" / "Logs" / "lilith.log",
+        _lilith_root / "lilith.log",
     ]
 
     logs = []
@@ -293,7 +297,7 @@ async def get_automode_tasks():
     """
     Tareas Auto-Mode activas.
     """
-    muspelheim_active = Path("D:/Proyectos/Yggdrasil/Muspelheim/AutoMode/active")
+    muspelheim_active = YGGDRASIL_ROOT / "Muspelheim" / "AutoMode" / "active"
 
     tasks = []
     if muspelheim_active.exists():
