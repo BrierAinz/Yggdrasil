@@ -73,9 +73,7 @@ class YggdrasilConfig(BaseModel):
     history: HistoryConfig = Field(default_factory=HistoryConfig)
     providers: dict[str, ProviderProfile] = Field(default_factory=dict)
 
-    class Config:
-        # Allow extra keys so forward-compatible configs don't crash.
-        extra = "ignore"
+    model_config = {"extra": "ignore"}  # Allow extra keys for forward-compatibility
 
 
 # ── Env-var interpolation ──────────────────────────────────────────

@@ -1,5 +1,7 @@
 """Lilith Tools — Sistema de herramientas del agente."""
 
+__version__ = "2.0.0"
+
 from . import filesystem, system
 from .base import BaseTool, ToolResult
 from .browser import BrowserTool

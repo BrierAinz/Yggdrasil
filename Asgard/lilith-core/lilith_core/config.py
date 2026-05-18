@@ -5,7 +5,7 @@ from pathlib import Path
 class Config:
     """Configuracion centralizada de Lilith."""
 
-    def __init__(self, root_path: Path | None = None):
+    def __init__(self, root_path: Path | None = None) -> None:
         self.root = root_path or Path.home() / ".lilith"
         self.root.mkdir(parents=True, exist_ok=True)
         self.config_file = self.root / "config.json"
@@ -24,14 +24,14 @@ class Config:
             "temperature": 0.7,
         }
 
-    def get(self, key: str, default=None):
+    def get(self, key: str, default: object = None) -> object:
         return self._data.get(key, default)
 
-    def set(self, key: str, value):
+    def set(self, key: str, value: object) -> None:
         self._data[key] = value
         self._save()
 
-    def _save(self):
+    def _save(self) -> None:
         self.config_file.write_text(
             json.dumps(self._data, indent=2, ensure_ascii=False),
             encoding="utf-8",
