@@ -8,14 +8,14 @@ version = "1.0.0"
 description = "Skill loader and registry for the Yggdrasil knowledge base"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "pydantic>=2.0",
     "pyyaml>=6.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=7.0", "black", "isort", "mypy"]
+dev = ["pytest>=7.0", "ruff>=0.4", "mypy"]
 
 [project.urls]
 Homepage = "https://github.com/BrierAinz/Yggdrasil"

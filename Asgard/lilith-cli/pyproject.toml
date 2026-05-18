@@ -8,7 +8,7 @@ version = "3.0.0"
 description = "Yggdrasil CLI v6.0 — Interactive AI Agent REPL (Where Ancient Meets Digital)"
 readme = "README.md"
 license = "MIT"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = [
     "lilith-core>=2.0.0",
     "lilith-memory>=2.0.0",
