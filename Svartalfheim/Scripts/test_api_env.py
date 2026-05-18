@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Test si el API puede ver las variables de entorno."""
-import urllib.request
 import json
+import urllib.request
+
 
 req = urllib.request.Request('http://localhost:8000/api/status')
 try:

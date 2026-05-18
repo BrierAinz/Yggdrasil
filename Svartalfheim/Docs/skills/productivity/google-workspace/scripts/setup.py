@@ -30,12 +30,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+
 # Ensure sibling modules (_hermes_home) are importable when run standalone.
 _SCRIPTS_DIR = str(Path(__file__).resolve().parent)
 if _SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, _SCRIPTS_DIR)
 
 from _hermes_home import display_hermes_home, get_hermes_home
+
 
 HERMES_HOME = get_hermes_home()
 TOKEN_PATH = HERMES_HOME / "google_token.json"
@@ -95,8 +97,8 @@ def _format_missing_scopes(missing_scopes: list[str]) -> str:
 def install_deps():
     """Install Google API packages if missing. Returns True on success."""
     try:
-        import googleapiclient  # noqa: F401
         import google_auth_oauthlib  # noqa: F401
+        import googleapiclient  # noqa: F401
         print("Dependencies already installed.")
         return True
     except ImportError:
@@ -123,8 +125,8 @@ def install_deps():
 def _ensure_deps():
     """Check deps are available, install if not, exit on failure."""
     try:
-        import googleapiclient  # noqa: F401
         import google_auth_oauthlib  # noqa: F401
+        import googleapiclient  # noqa: F401
     except ImportError:
         if not install_deps():
             sys.exit(1)
@@ -137,8 +139,8 @@ def check_auth_live():
     if not check_auth(quiet=True):
         return False
     try:
-        from googleapiclient.discovery import build
         from google.oauth2.credentials import Credentials
+        from googleapiclient.discovery import build
         creds = Credentials.from_authorized_user_file(str(TOKEN_PATH))
         service = build("calendar", "v3", credentials=creds)
         service.calendarList().list(maxResults=1).execute()
@@ -163,8 +165,8 @@ def check_auth(quiet: bool = False):
         return False
 
     _ensure_deps()
-    from google.oauth2.credentials import Credentials
     from google.auth.transport.requests import Request
+    from google.oauth2.credentials import Credentials
 
     try:
         # Don't pass scopes — user may have authorized only a subset.
@@ -338,8 +340,9 @@ def exchange_auth_code(code: str):
         sys.exit(1)
 
     _ensure_deps()
-    from google_auth_oauthlib.flow import Flow
     from urllib.parse import parse_qs, urlparse
+
+    from google_auth_oauthlib.flow import Flow
 
     # Extract granted scopes from the callback URL if the user pasted the full redirect URL.
     granted_scopes = list(SCOPES)
@@ -397,8 +400,8 @@ def revoke():
         return
 
     _ensure_deps()
-    from google.oauth2.credentials import Credentials
     from google.auth.transport.requests import Request
+    from google.oauth2.credentials import Credentials
 
     try:
         creds = Credentials.from_authorized_user_file(str(TOKEN_PATH), SCOPES)

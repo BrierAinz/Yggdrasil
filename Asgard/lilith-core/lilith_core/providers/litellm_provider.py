@@ -29,7 +29,7 @@ class LiteLLMProvider(LLMProvider):
     local LM Studio URL configured in :class:`Config`.
     """
 
-    def __init__(self, config: Config | None = None):
+    def __init__(self, config: Config | None = None) -> None:
         self.config = config or Config()
 
     # ------------------------------------------------------------------

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import pytest
-
 from extract_schema import (
     extract_schema,
     find_negative_prompt_node,

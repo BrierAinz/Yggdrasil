@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Auto-caption Ehyra dataset for Z-Image LoRA training using Qwen3-VL-4B-Instruct."""
 
-import os
-import glob
 import gc
+import glob
+import os
+
 import torch
 from PIL import Image
-from transformers import Qwen3VLForConditionalGeneration, AutoProcessor
+from transformers import AutoProcessor, Qwen3VLForConditionalGeneration
+
 
 # --- Config ---
 INPUT_DIR = os.path.expanduser("~/comfy/ai-toolkit/dataset/images/ehyra_dataset")

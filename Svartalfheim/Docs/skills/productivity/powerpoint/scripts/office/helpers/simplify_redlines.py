@@ -16,6 +16,7 @@ from pathlib import Path
 
 import defusedxml.minidom
 
+
 WORD_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 
 

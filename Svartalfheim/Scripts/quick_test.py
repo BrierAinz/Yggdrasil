@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Tests rápidos del sistema sin auto-mode."""
-import urllib.request
 import json
 import sys
+import urllib.request
+
 
 def test_endpoint(name, url, method='GET', data=None, timeout=10):
     """Test un endpoint."""

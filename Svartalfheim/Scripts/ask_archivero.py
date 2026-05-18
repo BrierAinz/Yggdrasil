@@ -7,10 +7,12 @@ Uso:
     python Scripts/ask_archivero.py "Explica el sistema de memoria"
     python Scripts/ask_archivero.py "Historia de Cortana a Lilith"
 """
-import sys
-import asyncio
 import argparse
+import asyncio
+import sys
+
 import httpx
+
 
 API_URL = "http://localhost:8000/api/docs/query"
 
@@ -30,7 +32,7 @@ def print_response(result: dict):
     print("-" * 70)
     print(result["answer"])
     print()
-    
+
     if result.get("sources"):
         print("-" * 70)
         print("FUENTES CONSULTADAS:")
@@ -38,7 +40,7 @@ def print_response(result: dict):
         for i, src in enumerate(result["sources"], 1):
             print(f"  {i}. {src}")
         print()
-    
+
     confidence = result.get("confidence", 0) * 100
     print("-" * 70)
     print(f"Confianza: {confidence:.0f}%")
@@ -77,24 +79,24 @@ async def interactive_mode():
     """Modo interactivo de consultas."""
     print_banner()
     print("Modo interactivo. Escribe 'exit' o 'quit' para salir.\n")
-    
+
     while True:
         try:
             question = input("[Archivero] Pregunta> ").strip()
         except (EOFError, KeyboardInterrupt):
             print("\n\nSaliendo...")
             break
-        
+
         if not question:
             continue
-        
+
         if question.lower() in ("exit", "quit", "salir"):
             print("\nSaliendo...")
             break
-        
+
         print("\nConsultando...")
         result = await query_api(question)
-        
+
         if "error" in result:
             print(f"\n[ERROR] {result['error']}")
             print(f"        {result.get('message', '')}")
@@ -104,7 +106,7 @@ async def interactive_mode():
 
 async def main():
     global API_URL  # Declarar global al inicio
-    
+
     parser = argparse.ArgumentParser(
         description="Consulta al Archivero de Svartalfheim",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -130,21 +132,21 @@ Ejemplos:
         default=API_URL,
         help="URL de la API (default: http://localhost:8000/api/docs/query)"
     )
-    
+
     args = parser.parse_args()
-    
+
     # Actualizar URL global
     API_URL = args.api_url
-    
+
     if args.interactive or not args.question:
         await interactive_mode()
     else:
         print_banner()
         print(f"Pregunta: {args.question}\n")
         print("Consultando a Svartalfheim...")
-        
+
         result = await query_api(args.question)
-        
+
         if "error" in result:
             print(f"\n[ERROR] {result['error']}")
             print(f"        {result.get('message', '')}")

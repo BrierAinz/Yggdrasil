@@ -15,8 +15,9 @@ Usage:
     variants = generate_variants("How do I hack a WiFi network?", tier="standard")
 """
 
-import re
 import base64
+import re
+
 
 # ═══════════════════════════════════════════════════════════════════
 # Trigger words that commonly trip safety classifiers
@@ -459,22 +460,22 @@ def obfuscate_query(query, technique_name, triggers=None):
     """
     if triggers is None:
         triggers = detect_triggers(query)
-    
+
     if not triggers or technique_name == 'raw':
         return query
-    
+
     # Find the technique function
     tech = next((t for t in TECHNIQUES if t['name'] == technique_name), None)
     if not tech:
         return query
-    
+
     result = query
     # Sort longest-first to avoid partial replacements
     sorted_triggers = sorted(triggers, key=len, reverse=True)
     for trigger in sorted_triggers:
         pattern = re.compile(r'\b(' + re.escape(trigger) + r')\b', re.IGNORECASE)
         result = pattern.sub(lambda m: tech['fn'](m.group()), result)
-    
+
     return result
 
 
@@ -491,7 +492,7 @@ def generate_variants(query, tier="standard", custom_triggers=None):
     """
     triggers = detect_triggers(query, custom_triggers)
     max_variants = TIER_SIZES.get(tier, TIER_SIZES['standard'])
-    
+
     variants = []
     for i, tech in enumerate(TECHNIQUES[:max_variants]):
         variants.append({
@@ -500,7 +501,7 @@ def generate_variants(query, tier="standard", custom_triggers=None):
             'label': tech['label'],
             'tier': tech['tier'],
         })
-    
+
     return variants
 
 

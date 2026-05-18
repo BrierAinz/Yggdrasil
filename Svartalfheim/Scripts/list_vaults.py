@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Listar vaults disponibles en MuninnDB."""
-import urllib.request
 import json
+import urllib.request
+
 
 req = urllib.request.Request(
     'http://127.0.0.1:8475/api/vaults',

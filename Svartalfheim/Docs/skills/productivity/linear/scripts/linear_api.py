@@ -53,6 +53,7 @@ import urllib.error
 import urllib.request
 from typing import Any
 
+
 API_URL = "https://api.linear.app/graphql"
 
 
@@ -96,7 +97,7 @@ def gql(query: str, variables: dict[str, Any] | None = None) -> dict[str, Any]:
         sys.exit(1)
 
     result = json.loads(body)
-    if "errors" in result and result["errors"]:
+    if result.get("errors"):
         sys.stderr.write(f"GraphQL errors: {json.dumps(result['errors'], indent=2)}\n")
         # Still return data if partial success; let caller decide
         if not result.get("data"):

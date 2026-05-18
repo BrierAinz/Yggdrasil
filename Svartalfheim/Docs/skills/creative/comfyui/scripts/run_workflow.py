@@ -57,14 +57,27 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlencode, urlparse
 
+
 # Local import — _common.py sits next to this script.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import (  # noqa: E402
-    DEFAULT_LOCAL_HOST, ENV_API_KEY,
-    coerce_seed, emit_json, http_get, http_post, http_request,
-    is_cloud_host, is_link, log, looks_like_video_workflow,
-    media_type_from_filename, new_client_id, resolve_api_key, resolve_url,
-    safe_path_join, unwrap_workflow,
+from _common import (
+    DEFAULT_LOCAL_HOST,
+    ENV_API_KEY,
+    coerce_seed,
+    emit_json,
+    http_get,
+    http_post,
+    http_request,
+    is_cloud_host,
+    is_link,
+    log,
+    looks_like_video_workflow,
+    media_type_from_filename,
+    new_client_id,
+    resolve_api_key,
+    resolve_url,
+    safe_path_join,
+    unwrap_workflow,
 )
 
 
@@ -444,7 +457,7 @@ class ComfyRunner:
 
 def _inline_schema(workflow: dict) -> dict:
     """Generate schema using the sibling extract_schema module."""
-    from extract_schema import extract_schema  # noqa: WPS433
+    from extract_schema import extract_schema
     return extract_schema(workflow)
 
 

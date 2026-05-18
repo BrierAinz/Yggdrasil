@@ -27,7 +27,7 @@ class LocalProvider(LLMProvider):
     endpoint.
     """
 
-    def __init__(self, config: Config | None = None):
+    def __init__(self, config: Config | None = None) -> None:
         self.config = config or Config()
         self.base_url: str = self.config.get("lm_studio_url", "http://localhost:1234/v1")
 

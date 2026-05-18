@@ -34,9 +34,15 @@ import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import (  # noqa: E402
-    DEFAULT_LOCAL_HOST, ENV_API_KEY, log, new_client_id, resolve_api_key, is_cloud_host,
+from _common import (
+    DEFAULT_LOCAL_HOST,
+    ENV_API_KEY,
+    is_cloud_host,
+    log,
+    new_client_id,
+    resolve_api_key,
 )
 
 

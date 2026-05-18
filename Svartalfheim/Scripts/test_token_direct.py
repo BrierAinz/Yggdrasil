@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Test token directo de muninn.json."""
-import urllib.request
 import json
+import urllib.request
+
 
 # Token exacto del archivo muninn.json
 TOKEN = "mk_GOTOOZRB5dWooMIZ2A8Mg_pdBpIRloo8Xzca6Oqyd-s"
@@ -11,7 +12,7 @@ def test_token():
     """Test query con token específico."""
     print(f"Probando token: {TOKEN[:20]}...")
     print()
-    
+
     req = urllib.request.Request(
         f'{MUNINN_URL}/activate',
         data=json.dumps({
@@ -25,7 +26,7 @@ def test_token():
         },
         method='POST'
     )
-    
+
     try:
         with urllib.request.urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode())

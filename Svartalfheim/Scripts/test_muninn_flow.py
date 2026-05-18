@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """Test exacto del flujo de MuninnMemory."""
 import json
-import sys
+import urllib.request
 from pathlib import Path
 
+
+YGG_ROOT = Path(__file__).resolve().parents[2]
+
 # Replicar exactamente lo que hace MuninnMemory
-base_path = Path("D:/Proyectos/Yggdrasil/Asgard/Lilith/Core")
+base_path = YGG_ROOT / "Asgard" / "Lilith" / "Core"
 config_path = base_path / "Config" / "muninn.json"
 
 print("=" * 60)
@@ -14,7 +17,7 @@ print("=" * 60)
 print()
 
 # Leer config igual que MuninnMemory
-with open(config_path) as f:
+with config_path.open() as f:
     cfg = json.load(f)
 
 print(f"[Config] URL: {cfg.get('url')}")
@@ -34,26 +37,24 @@ print(f"[Test] Longitud: {len(token_docs)}")
 print()
 
 # Test request con este token exacto
-import urllib.request
-
 req = urllib.request.Request(
-    'http://127.0.0.1:8475/api/activate',
+    "http://127.0.0.1:8475/api/activate",
     data=json.dumps({
-        'vault': 'docs',
-        'context': ['DAG Executor'],
-        'max_results': 3
+        "vault": "docs",
+        "context": ["DAG Executor"],
+        "max_results": 3,
     }).encode(),
     headers={
-        'Authorization': f'Bearer {token_docs}',
-        'Content-Type': 'application/json'
+        "Authorization": f"Bearer {token_docs}",
+        "Content-Type": "application/json",
     },
-    method='POST'
+    method="POST",
 )
 
 try:
     with urllib.request.urlopen(req, timeout=10) as response:
         data = json.loads(response.read().decode())
-        activations = data.get('activations', [])
+        activations = data.get("activations", [])
         print(f"[OK] Resultados: {len(activations)}")
         for a in activations[:3]:
             print(f"  - {a.get('concept', 'N/A')}")

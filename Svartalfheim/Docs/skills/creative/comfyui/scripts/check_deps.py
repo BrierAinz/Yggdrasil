@@ -29,12 +29,22 @@ import json
 import sys
 from pathlib import Path
 
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import (  # noqa: E402
-    DEFAULT_LOCAL_HOST, ENV_API_KEY,
-    emit_json, folder_aliases_for, http_get, is_cloud_host,
-    iter_embedding_refs, iter_model_deps, iter_nodes, parse_model_list,
-    resolve_api_key, resolve_url, unwrap_workflow,
+from _common import (
+    DEFAULT_LOCAL_HOST,
+    ENV_API_KEY,
+    emit_json,
+    folder_aliases_for,
+    http_get,
+    is_cloud_host,
+    iter_embedding_refs,
+    iter_model_deps,
+    iter_nodes,
+    parse_model_list,
+    resolve_api_key,
+    resolve_url,
+    unwrap_workflow,
 )
 
 

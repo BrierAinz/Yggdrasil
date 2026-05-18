@@ -2,15 +2,19 @@
 """Test directo de Kimi API para diagnosticar error 401."""
 import os
 import sys
+from pathlib import Path
+
 import requests
 
+
 # Cargar desde secrets.env
-env_path = "D:/Proyectos/Yggdrasil/Asgard/Lilith/Core/Config/secrets.env"
-if os.path.exists(env_path):
-    with open(env_path) as f:
+YGG_ROOT = Path(__file__).resolve().parents[2]
+env_path = YGG_ROOT / "Asgard" / "Lilith" / "Core" / "Config" / "secrets.env"
+if env_path.exists():
+    with env_path.open() as f:
         for line in f:
-            if '=' in line and not line.startswith('#'):
-                key, val = line.strip().split('=', 1)
+            if "=" in line and not line.startswith("#"):
+                key, val = line.strip().split("=", 1)
                 os.environ[key] = val
 
 API_KEY = os.environ.get("KIMI_API_KEY", "")
@@ -36,7 +40,7 @@ url = "https://api.kimi.com/coding/v1/models"
 headers = {
     "x-api-key": API_KEY,
     "anthropic-version": "2023-06-01",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
 }
 
 try:
@@ -44,7 +48,7 @@ try:
     print(f"         Status: {resp.status_code}")
     if resp.status_code == 200:
         data = resp.json()
-        models = data.get('data', [])
+        models = data.get("data", [])
         print(f"         [OK] {len(models)} modelos disponibles")
         for m in models[:3]:
             print(f"              - {m.get('id', 'N/A')}")
@@ -61,7 +65,7 @@ url = "https://api.kimi.com/coding/v1/messages"
 payload = {
     "model": "kimi-for-coding",
     "max_tokens": 100,
-    "messages": [{"role": "user", "content": "Hola, responde 'OK' si funcionas."}]
+    "messages": [{"role": "user", "content": "Hola, responde 'OK' si funcionas."}],
 }
 
 try:
@@ -69,10 +73,10 @@ try:
     print(f"         Status: {resp.status_code}")
     if resp.status_code == 200:
         data = resp.json()
-        content = data.get('content', [])
+        content = data.get("content", [])
         text = ""
         if isinstance(content, list):
-            text = "".join(b.get('text', '') for b in content if b.get('type') == 'text')
+            text = "".join(b.get("text", "") for b in content if b.get("type") == "text")
         elif isinstance(content, str):
             text = content
         print(f"         [OK] Respuesta: {text[:100]}")
@@ -81,7 +85,7 @@ try:
         try:
             err = resp.json()
             print(f"                 {err}")
-        except:
+        except Exception:
             print(f"                 {resp.text[:200]}")
 except Exception as e:
     print(f"         [ERROR] {e}")

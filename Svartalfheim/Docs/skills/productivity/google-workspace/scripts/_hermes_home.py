@@ -19,6 +19,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+
 try:
     from hermes_constants import display_hermes_home as display_hermes_home
     from hermes_constants import get_hermes_home as get_hermes_home

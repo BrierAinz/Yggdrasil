@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import Any
 
 
 class Config:
@@ -9,14 +10,14 @@ class Config:
         self.root = root_path or Path.home() / ".lilith"
         self.root.mkdir(parents=True, exist_ok=True)
         self.config_file = self.root / "config.json"
-        self._data = self._load()
+        self._data: dict[str, Any] = self._load()
 
-    def _load(self) -> dict:
+    def _load(self) -> dict[str, Any]:
         if self.config_file.exists():
             return json.loads(self.config_file.read_text(encoding="utf-8"))
         return self._defaults()
 
-    def _defaults(self) -> dict:
+    def _defaults(self) -> dict[str, Any]:
         return {
             "model": "auto",
             "lm_studio_url": "http://localhost:1234/v1",
@@ -24,10 +25,10 @@ class Config:
             "temperature": 0.7,
         }
 
-    def get(self, key: str, default: object = None) -> object:
+    def get(self, key: str, default: Any = None) -> Any:
         return self._data.get(key, default)
 
-    def set(self, key: str, value: object) -> None:
+    def set(self, key: str, value: Any) -> None:
         self._data[key] = value
         self._save()
 

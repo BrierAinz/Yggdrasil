@@ -15,6 +15,7 @@ Usage (CLI):
 
 from PIL import Image, ImageEnhance, ImageOps
 
+
 try:
     from .palettes import PALETTES, build_palette_image
 except ImportError:

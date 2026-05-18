@@ -15,11 +15,13 @@ Usage in execute_code:
     result = auto_jailbreak(model="anthropic/claude-sonnet-4")
 """
 
-import os
 import json
+import os
 import time
-import yaml
 from pathlib import Path
+
+import yaml
+
 
 try:
     from openai import OpenAI
@@ -46,6 +48,8 @@ _race_path = _SCRIPTS_DIR / "godmode_race.py"
 
 # Use the calling frame's globals so functions are accessible everywhere
 import inspect as _inspect
+
+
 _caller_globals = _inspect.stack()[0][0].f_globals if len(_inspect.stack()) > 0 else globals()
 
 if _parseltongue_path.exists():
@@ -609,7 +613,7 @@ def auto_jailbreak(model=None, base_url=None, api_key=None,
 
         # Try with system prompt + prefill combined
         if verbose:
-            print(f"  [RETRY] Adding prefill messages...")
+            print("  [RETRY] Adding prefill messages...")
         msgs = _build_messages(
             system_prompt=system_prompt,
             prefill=STANDARD_PREFILL,
@@ -669,9 +673,8 @@ def auto_jailbreak(model=None, base_url=None, api_key=None,
                 print(f"[LOCKED] Config written to: {config_written}")
                 print()
                 print("[DONE] Jailbreak locked in. Restart Hermes for changes to take effect.")
-        else:
-            if verbose:
-                print("[DRY RUN] Would write config + prefill but dry_run=True")
+        elif verbose:
+            print("[DRY RUN] Would write config + prefill but dry_run=True")
 
         return {
             "success": True,
