@@ -5,9 +5,17 @@ Shortcuts de alto nivel que descomponen en operaciones individuales.
 import logging
 import os
 import re
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from src.core.planner import Step
+
+
+# Compute project roots dynamically
+_MODULE_DIR = Path(__file__).resolve().parent
+_YGGDRASIL_ROOT = Path(os.environ.get("YGGDRASIL_ROOT", str(_MODULE_DIR.parents[4])))
+_LILITH_ROOT = _YGGDRASIL_ROOT / "Asgard" / "Lilith"
+_CORE_ROOT = _LILITH_ROOT / "Core"
 
 
 def _expand_path_params(params: Dict[str, Any]) -> Dict[str, Any]:
@@ -141,7 +149,7 @@ PC_MACROS = {
         ],
         "risk": "medium",
     },
-    "backup_lilith": {
+"backup_lilith": {
         "description": "Realiza backup de Config y Data de Lilith con fecha",
         "triggers": [
             "backup de lilith",
@@ -157,7 +165,7 @@ PC_MACROS = {
                     "command": "powershell",
                     "args": [
                         "-Command",
-                        'New-Item -ItemType Directory -Force -Path "D:\\Backups\\Lilith\\Config_$(Get-Date -Format yyyyMMdd_HHmm)"',
+                        f'New-Item -ItemType Directory -Force -Path "{os.path.expandvars("%USERPROFILE%")}\\\\Backups\\\\Lilith\\\\Config_$(Get-Date -Format yyyyMMdd_HHmm)"',
                     ],
                 },
                 "desc": "Crear carpeta de backup Config",
@@ -167,8 +175,8 @@ PC_MACROS = {
                 "params": {
                     "command": "robocopy",
                     "args": [
-                        r"D:\Proyectos\Yggdrasil\Asgard\Lilith\Core\Config",
-                        r"D:\Backups\Lilith\Config_%DATE%",
+                        str(_CORE_ROOT / "Config"),
+                        f'{os.path.expandvars("%USERPROFILE%")}\\Backups\\Lilith\\Config_%DATE%',
                         "/MIR",
                         "/R:3",
                         "/W:5",
@@ -181,8 +189,8 @@ PC_MACROS = {
                 "params": {
                     "command": "robocopy",
                     "args": [
-                        r"D:\Proyectos\Yggdrasil\Asgard\Lilith\Core\Data",
-                        r"D:\Backups\Lilith\Data_%DATE%",
+                        str(_CORE_ROOT / "Data"),
+                        f'{os.path.expandvars("%USERPROFILE%")}\\Backups\\Lilith\\Data_%DATE%',
                         "/MIR",
                         "/R:3",
                         "/W:5",
@@ -236,7 +244,7 @@ PC_MACROS = {
         ],
         "risk": "low",
     },
-    "abrir_proyecto": {
+"abrir_proyecto": {
         "description": "Abre la carpeta de un proyecto en el explorador",
         "triggers": [
             "abre el proyecto",
@@ -250,7 +258,7 @@ PC_MACROS = {
                 "tool": "pc_exec",
                 "params": {
                     "command": "explorer",
-                    "args": [r"D:\Proyectos\Yggdrasil\Asgard\Lilith"],
+                    "args": [str(_LILITH_ROOT)],
                 },
                 "desc": "Abrir explorador en Lilith",
             },
