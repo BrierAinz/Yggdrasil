@@ -40,6 +40,8 @@ except ImportError:
         return json.loads(data)
 
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -245,11 +247,21 @@ def _pc_fs_sync(op: str, path: str, dst: str, cmd: str, steps: list | None, user
 # ───────────────────────────────────────────────────────────────────────────────
 # FastAPI App
 # ───────────────────────────────────────────────────────────────────────────────
-app = FastAPI(title="Lilith Gateway", version="1.0.0")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Startup: pre-warm the orchestrator; shutdown: no-op for now."""
+    try:
+        _get_orchestrator()
+    except Exception as e:
+        logger.warning("Could not pre-initialize orchestrator: %s", e)
+    yield
+
+
+app = FastAPI(title="Lilith Gateway", version="1.0.0", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    # TODO: Move allowed origins to environment variable / config for production.
-    #       The wildcard "*" must not be used in production deployments.
     allow_origins=[
         "http://localhost:3000",
         "http://localhost:8000",
@@ -260,15 +272,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.on_event("startup")
-async def startup():
-    # Pre-warm del orchestrator
-    try:
-        _get_orchestrator()
-    except Exception as e:
-        logger.warning("Could not pre-initialize orchestrator: %s", e)
 
 
 @app.get("/health")
