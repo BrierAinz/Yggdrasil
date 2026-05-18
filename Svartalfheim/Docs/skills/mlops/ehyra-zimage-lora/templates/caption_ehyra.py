@@ -2,8 +2,7 @@
 """Auto-caption Ehyra dataset for Z-Image LoRA training using Qwen3-VL-4B-Instruct."""
 
 import gc
-import glob
-import os
+from pathlib import Path
 
 import torch
 from PIL import Image
@@ -11,7 +10,7 @@ from transformers import AutoProcessor, Qwen3VLForConditionalGeneration
 
 
 # --- Config ---
-INPUT_DIR = os.path.expanduser("~/comfy/ai-toolkit/dataset/images/ehyra_dataset")
+INPUT_DIR = Path.home() / "comfy/ai-toolkit/dataset/images/ehyra_dataset"
 TRIGGER_WORD = "ehyra"  # MUST match LoRA training trigger word
 QUANTIZE = True          # 4-bit quantization for 12GB VRAM
 MAX_NEW_TOKENS = 200    # Detailed captions for Z-Image
@@ -34,11 +33,9 @@ processor = AutoProcessor.from_pretrained("Qwen/Qwen3-VL-4B-Instruct")
 print("[INFO] Model loaded successfully.")
 
 # --- Gather Images ---
-extensions = ("*.jpg", "*.jpeg", "*.png")
-image_paths = []
-for ext in extensions:
-    image_paths.extend(glob.glob(os.path.join(INPUT_DIR, ext)))
-image_paths.sort()
+image_paths = sorted(
+    p for ext in ("*.jpg", "*.jpeg", "*.png") for p in INPUT_DIR.glob(ext)
+)
 print(f"[INFO] Found {len(image_paths)} images in {INPUT_DIR}")
 
 # --- Caption Loop ---
@@ -47,11 +44,11 @@ skipped = 0
 errors = 0
 
 for i, img_path in enumerate(image_paths):
-    txt_path = os.path.splitext(img_path)[0] + ".txt"
+    txt_path = Path(img_path).with_suffix(".txt")
 
     # Resume: skip already-captioned images
-    if os.path.exists(txt_path):
-        print(f"[SKIP] ({i+1}/{len(image_paths)}) {os.path.basename(txt_path)} already exists")
+    if txt_path.exists():
+        print(f"[SKIP] ({i+1}/{len(image_paths)}) {txt_path.name} already exists")
         skipped += 1
         continue
 
@@ -99,11 +96,10 @@ for i, img_path in enumerate(image_paths):
     )[0].strip()
 
     # Write caption with trigger word prefix
-    with open(txt_path, "w", encoding="utf-8") as f:
-        f.write(f"{TRIGGER_WORD} {caption}")
+    txt_path.write_text(f"{TRIGGER_WORD} {caption}", encoding="utf-8")
 
     captioned += 1
-    print(f"[OK] ({i+1}/{len(image_paths)}) {os.path.basename(txt_path)}: {TRIGGER_WORD} {caption[:80]}...")
+    print(f"[OK] ({i+1}/{len(image_paths)}) {txt_path.name}: {TRIGGER_WORD} {caption[:80]}...")
 
 # --- Cleanup ---
 del model

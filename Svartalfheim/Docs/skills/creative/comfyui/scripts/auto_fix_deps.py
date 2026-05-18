@@ -62,7 +62,7 @@ def run_cmd(cmd: list[str], *, dry_run: bool = False) -> tuple[int, str]:
 
 
 def install_node(package: str, *, dry_run: bool = False, comfy_cmd: str = "comfy") -> bool:
-    cmd = comfy_cmd.split() + ["--skip-prompt", "node", "install", package]
+    cmd = [*comfy_cmd.split(), "--skip-prompt", "node", "install", package]
     code, _ = run_cmd(cmd, dry_run=dry_run)
     return code == 0
 
@@ -70,11 +70,7 @@ def install_node(package: str, *, dry_run: bool = False, comfy_cmd: str = "comfy
 def install_model(url: str, folder: str, filename: str | None = None,
                   *, dry_run: bool = False, comfy_cmd: str = "comfy",
                   hf_token: str | None = None, civitai_token: str | None = None) -> bool:
-    cmd = comfy_cmd.split() + [
-        "--skip-prompt", "model", "download",
-        "--url", url,
-        "--relative-path", f"models/{folder}",
-    ]
+    cmd = [*comfy_cmd.split(), "--skip-prompt", "model", "download", "--url", url, "--relative-path", f"models/{folder}"]
     if filename:
         cmd.extend(["--filename", filename])
     if hf_token:

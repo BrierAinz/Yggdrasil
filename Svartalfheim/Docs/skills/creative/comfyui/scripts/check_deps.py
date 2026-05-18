@@ -115,7 +115,7 @@ NODE_TO_PACKAGE: dict[str, str] = {
     "Florence2Run": "comfyui-florence2",
     # WAS
     "Image Filter Adjustments": "was-node-suite-comfyui",
-    # PhotoMaker (case-sensitive)
+    # PhotoMaker — case-sensitive node name
     "PhotoMakerLoader": "ComfyUI-PhotoMaker-Plus",
     # Wan video (case-sensitive)
     "WanVideoSampler": "ComfyUI-WanVideoWrapper",

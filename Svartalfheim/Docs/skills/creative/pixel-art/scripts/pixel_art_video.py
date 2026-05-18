@@ -17,11 +17,11 @@ Usage (CLI):
 """
 
 import math
-import os
 import random
 import shutil
 import subprocess
 import tempfile
+from pathlib import Path
 
 from PIL import Image, ImageDraw
 
@@ -30,7 +30,7 @@ from PIL import Image, ImageDraw
 
 def _px(draw, x, y, color, size=2):
     x, y = int(x), int(y)
-    W, H = draw.im.size
+    W, H = draw.im.size  # noqa: N806
     if 0 <= x < W and 0 <= y < H:
         draw.rectangle([x, y, x + size - 1, y + size - 1], fill=color)
 
@@ -43,22 +43,23 @@ def _pixel_cross(draw, x, y, color, arm=2):
 
 
 # ── Animation init/draw pairs ──────────────────────────────────────────
+# W/H are standard graphics abbreviations for width/height.
 
-def init_stars(rng, W, H):
+def init_stars(rng, W, H):  # noqa: N803
     return [(rng.randint(0, W), rng.randint(0, H // 2)) for _ in range(15)]
 
-def draw_stars(draw, stars, t, W, H):
+def draw_stars(draw, stars, t, W, H):  # noqa: N803
     for i, (sx, sy) in enumerate(stars):
         if math.sin(t * 2.0 + i * 0.7) > 0.65:
             _pixel_cross(draw, sx, sy, (255, 255, 220), arm=2)
 
 
-def init_fireflies(rng, W, H):
+def init_fireflies(rng, W, H):  # noqa: N803
     return [{"x": rng.randint(20, W - 20), "y": rng.randint(H // 4, H - 20),
              "phase": rng.uniform(0, 6.28), "speed": rng.uniform(0.3, 0.8)}
             for _ in range(10)]
 
-def draw_fireflies(draw, ff, t, W, H):
+def draw_fireflies(draw, ff, t, W, H):  # noqa: N803
     for f in ff:
         if math.sin(t * 1.5 + f["phase"]) < 0.15:
             continue
@@ -68,14 +69,14 @@ def draw_fireflies(draw, ff, t, W, H):
             (200, 255, 100), 2)
 
 
-def init_leaves(rng, W, H):
+def init_leaves(rng, W, H):  # noqa: N803
     return [{"x": rng.randint(0, W), "y": rng.randint(-H, 0),
              "speed": rng.uniform(0.5, 1.5), "wobble": rng.uniform(0.02, 0.05),
              "phase": rng.uniform(0, 6.28),
              "color": rng.choice([(180, 120, 50), (160, 100, 40), (200, 140, 60)])}
             for _ in range(12)]
 
-def draw_leaves(draw, leaves, t, W, H):
+def draw_leaves(draw, leaves, t, W, H):  # noqa: N803
     for leaf in leaves:
         _px(draw,
             leaf["x"] + math.sin(t * leaf["wobble"] + leaf["phase"]) * 15,
@@ -83,12 +84,12 @@ def draw_leaves(draw, leaves, t, W, H):
             leaf["color"], 2)
 
 
-def init_dust_motes(rng, W, H):
+def init_dust_motes(rng, W, H):  # noqa: N803
     return [{"x": rng.randint(30, W - 30), "y": rng.randint(30, H - 30),
              "phase": rng.uniform(0, 6.28), "speed": rng.uniform(0.2, 0.5),
              "amp": rng.uniform(2, 6)} for _ in range(20)]
 
-def draw_dust_motes(draw, motes, t, W, H):
+def draw_dust_motes(draw, motes, t, W, H):  # noqa: N803
     for m in motes:
         if math.sin(t * 2.0 + m["phase"]) > 0.3:
             _px(draw,
@@ -97,33 +98,33 @@ def draw_dust_motes(draw, motes, t, W, H):
                 (255, 210, 100), 1)
 
 
-def init_sparkles(rng, W, H):
+def init_sparkles(rng, W, H):  # noqa: N803
     return [(rng.randint(W // 4, 3 * W // 4), rng.randint(H // 4, 3 * H // 4),
              rng.uniform(0, 6.28),
              rng.choice([(180, 200, 255), (255, 220, 150), (200, 180, 255)]))
             for _ in range(10)]
 
-def draw_sparkles(draw, sparkles, t, W, H):
+def draw_sparkles(draw, sparkles, t, W, H):  # noqa: N803
     for sx, sy, phase, color in sparkles:
         if math.sin(t * 1.8 + phase) > 0.6:
             _pixel_cross(draw, sx, sy, color, arm=2)
 
 
-def init_rain(rng, W, H):
+def init_rain(rng, W, H):  # noqa: N803
     return [{"x": rng.randint(0, W), "y": rng.randint(0, H),
              "speed": rng.uniform(4, 8)} for _ in range(30)]
 
-def draw_rain(draw, rain, t, W, H):
+def draw_rain(draw, rain, t, W, H):  # noqa: N803
     for r in rain:
         y = (r["y"] + t * r["speed"] * 20) % H
         _px(draw, r["x"], y, (120, 150, 200), 1)
         _px(draw, r["x"], y + 4, (100, 130, 180), 1)
 
 
-def init_lightning(rng, W, H):
+def init_lightning(rng, W, H):  # noqa: N803
     return {"timer": 0, "flash": False, "rng": rng}
 
-def draw_lightning(draw, state, t, W, H):
+def draw_lightning(draw, state, t, W, H):  # noqa: N803
     state["timer"] += 1
     if state["timer"] > 45 and state["rng"].random() < 0.04:
         state["flash"] = True
@@ -136,12 +137,12 @@ def draw_lightning(draw, state, t, W, H):
         state["flash"] = False
 
 
-def init_bubbles(rng, W, H):
+def init_bubbles(rng, W, H):  # noqa: N803
     return [{"x": rng.randint(20, W - 20), "y": rng.randint(H, H * 2),
              "speed": rng.uniform(0.3, 0.8), "size": rng.choice([1, 2, 2])}
             for _ in range(15)]
 
-def draw_bubbles(draw, bubbles, t, W, H):
+def draw_bubbles(draw, bubbles, t, W, H):  # noqa: N803
     for b in bubbles:
         x = b["x"] + math.sin(t * 0.5 + b["x"]) * 3
         y = b["y"] - (t * b["speed"] * 20) % (H + 40)
@@ -149,13 +150,13 @@ def draw_bubbles(draw, bubbles, t, W, H):
             _px(draw, x, y, (150, 200, 255), b["size"])
 
 
-def init_embers(rng, W, H):
+def init_embers(rng, W, H):  # noqa: N803
     return [{"x": rng.randint(0, W), "y": rng.randint(0, H),
              "speed": rng.uniform(0.3, 0.9), "phase": rng.uniform(0, 6.28),
              "color": rng.choice([(255, 150, 30), (255, 100, 20), (255, 200, 50)])}
             for _ in range(18)]
 
-def draw_embers(draw, embers, t, W, H):
+def draw_embers(draw, embers, t, W, H):  # noqa: N803
     for e in embers:
         x = e["x"] + math.sin(t * 0.4 + e["phase"]) * 5
         y = e["y"] - (t * e["speed"] * 15) % H
@@ -163,13 +164,13 @@ def draw_embers(draw, embers, t, W, H):
             _px(draw, x, y, e["color"], 2)
 
 
-def init_snowflakes(rng, W, H):
+def init_snowflakes(rng, W, H):  # noqa: N803
     return [{"x": rng.randint(0, W), "y": rng.randint(-H, 0),
              "speed": rng.uniform(0.3, 0.6), "wobble": rng.uniform(0.04, 0.09),
              "size": rng.choice([2, 2, 3])}
             for _ in range(40)]
 
-def draw_snowflakes(draw, flakes, t, W, H):
+def draw_snowflakes(draw, flakes, t, W, H):  # noqa: N803
     for f in flakes:
         x = f["x"] + math.sin(t * f["wobble"] + f["x"]) * 20
         y = (f["y"] + t * f["speed"] * 8) % (H + 20) - 10
@@ -179,22 +180,22 @@ def draw_snowflakes(draw, flakes, t, W, H):
             _px(draw, x, y, (230, 235, 255), 2)
 
 
-def init_neon_pulse(rng, W, H):
+def init_neon_pulse(rng, W, H):  # noqa: N803
     return [(rng.randint(0, W), rng.randint(0, H), rng.uniform(0, 6.28),
              rng.choice([(255, 0, 200), (0, 255, 255), (255, 50, 150)]))
             for _ in range(8)]
 
-def draw_neon_pulse(draw, points, t, W, H):
+def draw_neon_pulse(draw, points, t, W, H):  # noqa: N803
     for x, y, phase, color in points:
         if math.sin(t * 2.5 + phase) > 0.5:
             _pixel_cross(draw, x, y, color, arm=3)
 
 
-def init_heat_shimmer(rng, W, H):
+def init_heat_shimmer(rng, W, H):  # noqa: N803
     return [{"x": rng.randint(0, W), "y": rng.randint(H // 2, H),
              "phase": rng.uniform(0, 6.28)} for _ in range(12)]
 
-def draw_heat_shimmer(draw, points, t, W, H):
+def draw_heat_shimmer(draw, points, t, W, H):  # noqa: N803
     for p in points:
         x = p["x"] + math.sin(t * 0.8 + p["phase"]) * 2
         y = p["y"] + math.sin(t * 1.2 + p["phase"]) * 1
@@ -274,7 +275,7 @@ def pixel_art_video(
     _ensure_ffmpeg()
 
     base = Image.open(base_image).convert("RGB")
-    W, H = base.size
+    W, H = base.size  # noqa: N806
 
     rng = random.Random(seed if seed is not None else 42)
     layers = []
@@ -283,21 +284,23 @@ def pixel_art_video(
         layers.append((draw_fn, init_fn(rng, W, H)))
 
     n_frames = fps * duration
-    os.makedirs(os.path.dirname(os.path.abspath(output_path)) or ".", exist_ok=True)
+    out_path = Path(output_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
 
     with tempfile.TemporaryDirectory(prefix="pixelart_frames_") as frames_dir:
+        frames = Path(frames_dir)
         for frame_idx in range(n_frames):
             canvas = base.copy()
             draw = ImageDraw.Draw(canvas)
             t = frame_idx / fps
             for draw_fn, state in layers:
                 draw_fn(draw, state, t, W, H)
-            canvas.save(os.path.join(frames_dir, f"frame_{frame_idx:04d}.png"))
+            canvas.save(str(frames / f"frame_{frame_idx:04d}.png"))
 
         subprocess.run(
             ["ffmpeg", "-y", "-loglevel", "error",
              "-framerate", str(fps),
-             "-i", os.path.join(frames_dir, "frame_%04d.png"),
+             "-i", str(frames / "frame_%04d.png"),
              "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18",
              output_path],
             check=True,
@@ -309,7 +312,7 @@ def pixel_art_video(
             subprocess.run(
                 ["ffmpeg", "-y", "-loglevel", "error",
                  "-framerate", str(fps),
-                 "-i", os.path.join(frames_dir, "frame_%04d.png"),
+                 "-i", str(frames / "frame_%04d.png"),
                  "-vf",
                  "scale=320:-1:flags=neighbor,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse",
                  "-loop", "0",

@@ -13,7 +13,6 @@ Usage:
     python extract_marker.py document.pdf --json        # Structured output
     python extract_marker.py document.pdf --use_llm     # LLM-boosted accuracy
 """
-import os
 import sys
 
 
@@ -43,11 +42,11 @@ def convert(path, output_dir=None, output_format="markdown", use_llm=False):
     # Save images if output_dir specified
     if output_dir and hasattr(rendered, "images") and rendered.images:
         from pathlib import Path
-        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
         for name, img_data in rendered.images.items():
-            img_path = os.path.join(output_dir, name)
-            with open(img_path, "wb") as f:
-                f.write(img_data)
+            img_path = out / name
+            img_path.write_bytes(img_data)
         print(f"\nSaved {len(rendered.images)} image(s) to {output_dir}/", file=sys.stderr)
 
 

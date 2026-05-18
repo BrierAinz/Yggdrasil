@@ -107,7 +107,7 @@ def install_deps():
     print("Installing Google API dependencies...")
     try:
         subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", "--quiet"] + REQUIRED_PACKAGES,
+            [sys.executable, "-m", "pip", "install", "--quiet", *REQUIRED_PACKAGES],
             stdout=subprocess.DEVNULL,
         )
         print("Dependencies installed.")
