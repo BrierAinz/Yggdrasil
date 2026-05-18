@@ -142,7 +142,7 @@ class ModelScanner:
                 if info is not None:
                     result.models.append(info)
 
-    def _find_model_files(self, dir_path: Path, files: list[str]) -> list[str]:
+    def _find_model_files(self, _dir_path: Path, files: list[str]) -> list[str]:
         """Find model files in a directory listing."""
         return [f for f in files if Path(f).suffix in FORMAT_EXTENSIONS]
 

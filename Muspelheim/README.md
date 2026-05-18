@@ -23,10 +23,10 @@ Muspelheim/
 
 | Proyecto | Versión | Estado | Notas |
 |---|---|---|---|
-| AI-Influencer (Eir) | v0.1.0 | 🌱 FASE 0 | Entrenamiento LoRA para influencer IA |
-| AutoSub | v0.1.0 | ✅ COMPLETO | Generador de subtítulos |
-| AutoMode | — | 🔧 EN CURSO | Plantillas y modos |
-| ForgeMaster | — | 🔧 ACTIVO | Gestión de modelos LLM — migrado desde Niflheim |
+|| AI-Influencer (Eir) | v0.1.0 | 🌱 FASE 0 | Entrenamiento LoRA para influencer IA |
+|| AutoSub | v0.1.0 | ✅ COMPLETO | Generador de subtítulos |
+|| AutoMode | — | 🔧 EN CURSO | Plantillas y modos |
+|| ForgeMaster | v1.0.0 | ✅ ACTIVO | Gestión de modelos LLM — migrado desde Niflheim |
 | Docs | — | 📖 ACTIVO | Documentación general |
 
 ---
@@ -39,4 +39,4 @@ Muspelheim/
 
 ---
 
-*Última actualización: 2026-05-02*
+*Última actualización: 2026-05-18*
