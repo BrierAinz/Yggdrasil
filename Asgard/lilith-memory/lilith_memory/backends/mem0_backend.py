@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 import os
 from pathlib import Path
@@ -200,10 +201,8 @@ class Mem0Backend(MemoryBackend):
 
     async def delete(self, entry_id: str) -> bool:
         """Delete an entry from mem0 and the local meta db."""
-        try:
+        with contextlib.suppress(Exception):
             await asyncio.to_thread(self._mem.delete, entry_id)
-        except Exception:
-            pass  # best-effort
 
         conn = self._meta_conn()
         try:
@@ -218,10 +217,8 @@ class Mem0Backend(MemoryBackend):
         count = self.count()
 
         # Best-effort: try to clear mem0 entries
-        try:
+        with contextlib.suppress(Exception):
             await asyncio.to_thread(self._mem.reset)
-        except Exception:
-            pass
 
         conn = self._meta_conn()
         try:

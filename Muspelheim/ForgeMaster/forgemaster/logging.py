@@ -53,10 +53,7 @@ def configure_logging(
         return
     _CONFIGURED = True
 
-    if level is not None:
-        effective_level = level
-    else:
-        effective_level = _LEVEL_MAP.get((verbose, quiet), logging.INFO)
+    effective_level = level if level is not None else _LEVEL_MAP.get((verbose, quiet), logging.INFO)
 
     handler = RichHandler(
         show_time=False,

@@ -246,10 +246,7 @@ def read_hf_config(path: str | Path) -> dict[str, Any]:
     path = Path(path)
 
     # If path points to config.json directly, use it; otherwise look inside dir
-    if path.is_dir():
-        config_path = path / "config.json"
-    else:
-        config_path = path
+    config_path = path / "config.json" if path.is_dir() else path
 
     result: dict[str, Any] = {
         "format": "huggingface",
