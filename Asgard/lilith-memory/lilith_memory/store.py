@@ -150,7 +150,8 @@ class MemoryStore:
             conn.row_factory = sqlite3.Row
             conn.execute("PRAGMA case_sensitive_like = OFF")
             rows = conn.execute(
-                "SELECT * FROM memories WHERE content LIKE ? ESCAPE '\\' ORDER BY timestamp DESC LIMIT ?",
+                "SELECT * FROM memories WHERE content LIKE ? ESCAPE '\\' "
+                "ORDER BY timestamp DESC LIMIT ?",
                 (f"%{escaped}%", limit),
             ).fetchall()
             return [dict(row) for row in rows]

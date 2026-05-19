@@ -58,6 +58,15 @@ class BrowserTool(BaseTool):
             return ToolResult(success=False, data=None, error=str(e))
 
     def _playwright_fetch(self, url: str, max_chars: int) -> dict[str, Any]:
+        """Fetch a URL using Playwright for JS-rendered content.
+
+        Args:
+            url: The URL to fetch.
+            max_chars: Maximum characters of text to return.
+
+        Returns:
+            Dict with url, title, text, length, and engine='playwright'.
+        """
         from playwright.sync_api import sync_playwright
 
         with sync_playwright() as p:
@@ -77,6 +86,15 @@ class BrowserTool(BaseTool):
         }
 
     def _requests_fetch(self, url: str, max_chars: int) -> dict[str, Any]:
+        """Fetch a URL using urllib for simple HTML content.
+
+        Args:
+            url: The URL to fetch.
+            max_chars: Maximum characters of text to return.
+
+        Returns:
+            Dict with url, title, text, length, and engine='requests'.
+        """
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req, timeout=20) as resp:
             html = resp.read().decode("utf-8", errors="ignore")

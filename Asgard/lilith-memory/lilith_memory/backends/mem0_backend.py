@@ -111,6 +111,7 @@ class Mem0Backend(MemoryBackend):
         conn.close()
 
     def _meta_conn(self) -> sqlite3.Connection:
+        """Return a connection to the local metadata tracking database."""
         return sqlite3.connect(self._local_db_path)
 
     # ------------------------------------------------------------------

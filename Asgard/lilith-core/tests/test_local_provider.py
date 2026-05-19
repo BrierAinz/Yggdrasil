@@ -116,8 +116,14 @@ async def test_stream_mock(tmp_path):
     provider = LocalProvider(config=config)
 
     sse_lines = [
-        'data: {"choices":[{"delta":{"content":"hel"},"finish_reason":null}],"model":"local-model"}',
-        'data: {"choices":[{"delta":{"content":"lo"},"finish_reason":"stop"}],"model":"local-model"}',
+        (
+            'data: {"choices":[{"delta":{"content":"hel"},'
+            '"finish_reason":null}],"model":"local-model"}'
+        ),
+        (
+            'data: {"choices":[{"delta":{"content":"lo"},'
+            '"finish_reason":"stop"}],"model":"local-model"}'
+        ),
         "data: [DONE]",
     ]
 
