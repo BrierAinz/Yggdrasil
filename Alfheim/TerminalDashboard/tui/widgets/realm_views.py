@@ -123,13 +123,9 @@ def _find_key_files(directory: Path) -> list[str]:
         List of found filenames.
 
     """
-    found: list[str] = []
     if not directory.is_dir():
-        return found
-    for name in _KEY_FILE_NAMES:
-        if (directory / name).is_file():
-            found.append(name)
-    return found
+        return []
+    return [name for name in _KEY_FILE_NAMES if (directory / name).is_file()]
 
 
 # ---------------------------------------------------------------------------

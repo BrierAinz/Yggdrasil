@@ -172,9 +172,10 @@ class Mem0Backend(MemoryBackend):
         conn = self._meta_conn()
         try:
             conn.row_factory = sqlite3.Row
+            escaped = query.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
             rows = conn.execute(
-                "SELECT * FROM mem0_meta WHERE content LIKE ? ORDER BY id DESC LIMIT ?",
-                (f"%{query}%", limit),
+                "SELECT * FROM mem0_meta WHERE content LIKE ? ESCAPE '\\' ORDER BY id DESC LIMIT ?",
+                (f"%{escaped}%", limit),
             ).fetchall()
             return [dict(row) for row in rows]
         finally:

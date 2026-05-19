@@ -84,6 +84,15 @@ class MemoryStore:
         return self.count_entries()
 
     # ------------------------------------------------------------------
+    # Internal helpers
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _escape_like(value: str) -> str:
+        """Escape ``%`` and ``_`` wildcards so user input is treated as literal."""
+        return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+
+    # ------------------------------------------------------------------
     # CRUD operations
     # ------------------------------------------------------------------
 
@@ -136,11 +145,13 @@ class MemoryStore:
             by most recent first.
 
         """
+        escaped = self._escape_like(query)
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
+            conn.execute("PRAGMA case_sensitive_like = OFF")
             rows = conn.execute(
-                "SELECT * FROM memories WHERE content LIKE ? ORDER BY timestamp DESC LIMIT ?",
-                (f"%{query}%", limit),
+                "SELECT * FROM memories WHERE content LIKE ? ESCAPE '\\' ORDER BY timestamp DESC LIMIT ?",
+                (f"%{escaped}%", limit),
             ).fetchall()
             return [dict(row) for row in rows]
 
@@ -193,6 +204,6 @@ class MemoryStore:
 
         """
         with sqlite3.connect(self.db_path) as conn:
-            count = conn.execute("SELECT COUNT(*) FROM memories").fetchone()[0]
             conn.execute("DELETE FROM memories")
-            return count
+            conn.commit()
+            return conn.total_changes
