@@ -88,7 +88,10 @@ class BlenderMCPClient:
         except httpx.ConnectError as exc:
             raise BlenderMCPError(
                 code=-32001,
-                message=f"Cannot connect to Blender MCP at {self.base_url}. Is Blender running with the MCP addon enabled?",
+                message=(
+                    f"Cannot connect to Blender MCP at {self.base_url}. "
+                    "Is Blender running with the MCP addon enabled?"
+                ),
                 data=str(exc),
             ) from exc
         except httpx.TimeoutException as exc:
