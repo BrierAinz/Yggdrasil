@@ -1,4 +1,5 @@
 """Modelos de requests para la API de Vanaheim."""
+
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -8,9 +9,7 @@ class InvokeRequest(BaseModel):
     """Request para invocar un agente."""
 
     task: str = Field(..., description="Tarea a ejecutar")
-    context: dict[str, Any] = Field(
-        default_factory=dict, description="Contexto adicional"
-    )
+    context: dict[str, Any] = Field(default_factory=dict, description="Contexto adicional")
     conversation_history: list[dict[str, str]] = Field(default_factory=list)
     user_id: str | None = None
     channel: str = "api"

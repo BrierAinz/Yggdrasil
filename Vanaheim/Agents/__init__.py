@@ -1,4 +1,5 @@
 """Agentes del Panteón ejecutándose en Vanaheim."""
+
 import sys
 from pathlib import Path
 

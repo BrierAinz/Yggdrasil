@@ -1,4 +1,5 @@
 """Circuit Breaker para resiliencia en llamadas externas."""
+
 import logging
 from datetime import datetime
 
@@ -54,9 +55,7 @@ class CircuitBreaker:
 
         if self.failures >= self.failure_threshold:
             if self.state != "open":
-                logger.warning(
-                    f"[CircuitBreaker] Opening circuit after {self.failures} failures"
-                )
+                logger.warning(f"[CircuitBreaker] Opening circuit after {self.failures} failures")
                 self.state = "open"
 
     def get_status(self) -> dict:
@@ -65,7 +64,5 @@ class CircuitBreaker:
             "state": self.state,
             "failures": self.failures,
             "threshold": self.failure_threshold,
-            "last_failure": self.last_failure_time.isoformat()
-            if self.last_failure_time
-            else None,
+            "last_failure": self.last_failure_time.isoformat() if self.last_failure_time else None,
         }

@@ -3,6 +3,7 @@
 Backend: Grok/xAI (grok-4-fast-reasoning)
 Especialidad: Análisis de contexto largo, documentación, insights
 """
+
 import os
 from collections.abc import AsyncGenerator
 from typing import Any
@@ -122,9 +123,7 @@ class EvaAgent(VanirAgent):
         finally:
             self._set_idle()
 
-    async def stream(
-        self, task: str, context: dict[str, Any]
-    ) -> AsyncGenerator[str, None]:
+    async def stream(self, task: str, context: dict[str, Any]) -> AsyncGenerator[str, None]:
         """Streaming de análisis."""
         self._set_busy(task)
 

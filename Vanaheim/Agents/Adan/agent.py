@@ -3,6 +3,7 @@
 Backend: Ollama local (qwen2.5-coder:7b)
 Especialidad: Generación de código, tests, refactoring
 """
+
 from collections.abc import AsyncGenerator
 from typing import Any
 
@@ -79,7 +80,9 @@ class AdanAgent(VanirAgent):
             system_prompt = self._get_system_prompt()
             full_prompt = task
             if code_context:
-                full_prompt = f"Contexto de código ({language}):\n```\n{code_context}\n```\n\nTarea: {task}"
+                full_prompt = (
+                    f"Contexto de código ({language}):\n```\n{code_context}\n```\n\nTarea: {task}"
+                )
 
             async with httpx.AsyncClient(timeout=self.config.timeout) as client:
                 resp = await client.post(
@@ -111,9 +114,7 @@ class AdanAgent(VanirAgent):
         finally:
             self._set_idle()
 
-    async def stream(
-        self, task: str, context: dict[str, Any]
-    ) -> AsyncGenerator[str, None]:
+    async def stream(self, task: str, context: dict[str, Any]) -> AsyncGenerator[str, None]:
         """Streaming de generación de código."""
         self._set_busy(task)
 
@@ -123,7 +124,9 @@ class AdanAgent(VanirAgent):
         system_prompt = self._get_system_prompt()
         full_prompt = task
         if code_context:
-            full_prompt = f"Contexto de código ({language}):\n```\n{code_context}\n```\n\nTarea: {task}"
+            full_prompt = (
+                f"Contexto de código ({language}):\n```\n{code_context}\n```\n\nTarea: {task}"
+            )
 
         try:
             async with httpx.AsyncClient(timeout=self.config.timeout) as client:

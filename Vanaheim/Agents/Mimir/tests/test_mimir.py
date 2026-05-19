@@ -12,10 +12,12 @@ import pytest
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
+
 @pytest.fixture
 def agent_config():
     """Create a test AgentConfig for Mimir."""
     from Core.models.agent import AgentCapabilities, AgentConfig
+
     return AgentConfig(
         agent_id="mimir",
         name="Mimir",
@@ -29,7 +31,12 @@ def agent_config():
             supports_tools=True,
             max_context_tokens=128000,
             specialties=["research", "analysis", "synthesis", "arxiv", "web_search"],
-            supported_tasks=["deep_research", "literature_review", "topic_analysis", "report_generation"],
+            supported_tasks=[
+                "deep_research",
+                "literature_review",
+                "topic_analysis",
+                "report_generation",
+            ],
         ),
     )
 
@@ -38,10 +45,12 @@ def agent_config():
 def mimir(agent_config):
     """Create a MimirAgent instance for testing."""
     from Agents.Mimir.agent import MimirAgent
+
     return MimirAgent(agent_config)
 
 
 # ── Test 1: Agent instantiation and properties ───────────────────────────────
+
 
 class TestMimirAgentInstantiation:
     """The Well of Wisdom must be properly constructed."""
@@ -82,17 +91,24 @@ class TestMimirAgentInstantiation:
 
 # ── Test 2: Research phases execution ────────────────────────────────────────
 
+
 class TestResearchPhases:
     """Mimir follows the four phases of wisdom."""
 
     @pytest.mark.asyncio
     async def test_research_quick_depth(self, mimir):
         """Quick depth research completes in minimal steps."""
-        with patch.object(mimir._web_search, "search", new_callable=AsyncMock) as mock_web, \
-             patch.object(mimir._arxiv_search, "search", new_callable=AsyncMock) as mock_arxiv:
-
+        with (
+            patch.object(mimir._web_search, "search", new_callable=AsyncMock) as mock_web,
+            patch.object(mimir._arxiv_search, "search", new_callable=AsyncMock) as mock_arxiv,
+        ):
             mock_web.return_value = [
-                {"title": "Test Source", "url": "https://example.com/1", "snippet": "Test snippet about AI", "source_type": "mock"}
+                {
+                    "title": "Test Source",
+                    "url": "https://example.com/1",
+                    "snippet": "Test snippet about AI",
+                    "source_type": "mock",
+                }
             ]
             mock_arxiv.return_value = []
 
@@ -108,15 +124,27 @@ class TestResearchPhases:
     @pytest.mark.asyncio
     async def test_research_standard_depth(self, mimir):
         """Standard depth research orchestrates all four phases."""
-        with patch.object(mimir._web_search, "search", new_callable=AsyncMock) as mock_web, \
-             patch.object(mimir._arxiv_search, "search", new_callable=AsyncMock) as mock_arxiv:
-
+        with (
+            patch.object(mimir._web_search, "search", new_callable=AsyncMock) as mock_web,
+            patch.object(mimir._arxiv_search, "search", new_callable=AsyncMock) as mock_arxiv,
+        ):
             mock_web.return_value = [
-                {"title": f"Source {i}", "url": f"https://example.com/{i}", "snippet": f"Info about quantum computing {i}", "source_type": "mock"}
+                {
+                    "title": f"Source {i}",
+                    "url": f"https://example.com/{i}",
+                    "snippet": f"Info about quantum computing {i}",
+                    "source_type": "mock",
+                }
                 for i in range(5)
             ]
             mock_arxiv.return_value = [
-                {"title": "Quantum Paper", "authors": ["Dr. Smith"], "abstract": "Quantum computing research", "url": "https://arxiv.org/abs/1234", "published": "2025-01-15"}
+                {
+                    "title": "Quantum Paper",
+                    "authors": ["Dr. Smith"],
+                    "abstract": "Quantum computing research",
+                    "url": "https://arxiv.org/abs/1234",
+                    "published": "2025-01-15",
+                }
             ]
 
             result = await mimir.research("quantum computing", depth="standard")
@@ -148,6 +176,7 @@ class TestResearchPhases:
 
 # ── Test 3: Report generation format ────────────────────────────────────────
 
+
 class TestReportGeneration:
     """The loom weaves a proper tapestry."""
 
@@ -157,10 +186,23 @@ class TestReportGeneration:
 
         gen = ReportGenerator()
         sources = [
-            {"title": "Test", "url": "https://example.com", "snippet": "A test snippet", "source_type": "web", "relevance_score": 0.8, "engine": "google"}
+            {
+                "title": "Test",
+                "url": "https://example.com",
+                "snippet": "A test snippet",
+                "source_type": "web",
+                "relevance_score": 0.8,
+                "engine": "google",
+            }
         ]
         papers = [
-            {"title": "Test Paper", "authors": ["Author A"], "abstract": "Abstract text", "url": "https://arxiv.org/abs/1234", "published": "2025-01-01"}
+            {
+                "title": "Test Paper",
+                "authors": ["Author A"],
+                "abstract": "Abstract text",
+                "url": "https://arxiv.org/abs/1234",
+                "published": "2025-01-01",
+            }
         ]
 
         markdown, _path = gen.generate(
@@ -182,10 +224,18 @@ class TestReportGeneration:
 
         gen = ReportGenerator()
         papers = [
-            {"title": "Attention Is All You Need", "authors": ["Vaswani", "Shazeer"], "abstract": "We propose a new network architecture", "url": "https://arxiv.org/abs/1706.03762", "published": "2017-06-12"}
+            {
+                "title": "Attention Is All You Need",
+                "authors": ["Vaswani", "Shazeer"],
+                "abstract": "We propose a new network architecture",
+                "url": "https://arxiv.org/abs/1706.03762",
+                "published": "2017-06-12",
+            }
         ]
 
-        markdown, _ = gen.generate("transformers", sources=[], arxiv_papers=papers, depth="standard")
+        markdown, _ = gen.generate(
+            "transformers", sources=[], arxiv_papers=papers, depth="standard"
+        )
 
         assert "## Academic Papers" in markdown
         assert "Attention Is All You Need" in markdown
@@ -204,6 +254,7 @@ class TestReportGeneration:
 
 # ── Test 4: Source ranking ──────────────────────────────────────────────────
 
+
 class TestSourceRanking:
     """Mimir's sieve separates gold from sediment."""
 
@@ -213,8 +264,20 @@ class TestSourceRanking:
 
         analyzer = SourceAnalyzer()
         sources = [
-            {"title": "Quantum Computing Basics", "url": "https://example.com/quantum", "snippet": "Quantum computing uses quantum bits", "source_type": "web", "published": "2025-01-01"},
-            {"title": "Cooking Recipes", "url": "https://example.com/cook", "snippet": "How to make pasta at home", "source_type": "web", "published": "2025-01-01"},
+            {
+                "title": "Quantum Computing Basics",
+                "url": "https://example.com/quantum",
+                "snippet": "Quantum computing uses quantum bits",
+                "source_type": "web",
+                "published": "2025-01-01",
+            },
+            {
+                "title": "Cooking Recipes",
+                "url": "https://example.com/cook",
+                "snippet": "How to make pasta at home",
+                "source_type": "web",
+                "published": "2025-01-01",
+            },
         ]
 
         ranked = analyzer.rank(sources, topic="quantum computing", top_k=2)
@@ -229,8 +292,20 @@ class TestSourceRanking:
 
         analyzer = SourceAnalyzer()
         sources = [
-            {"title": "ML Research", "url": "https://arxiv.org/abs/1234", "snippet": "Research on machine learning", "source_type": "arxiv", "published": "2025-01-01"},
-            {"title": "ML Blog", "url": "https://random-blog.com/ml", "snippet": "Research on machine learning", "source_type": "web", "published": "2025-01-01"},
+            {
+                "title": "ML Research",
+                "url": "https://arxiv.org/abs/1234",
+                "snippet": "Research on machine learning",
+                "source_type": "arxiv",
+                "published": "2025-01-01",
+            },
+            {
+                "title": "ML Blog",
+                "url": "https://random-blog.com/ml",
+                "snippet": "Research on machine learning",
+                "source_type": "web",
+                "published": "2025-01-01",
+            },
         ]
 
         ranked = analyzer.rank(sources, topic="machine learning", top_k=2)
@@ -243,7 +318,13 @@ class TestSourceRanking:
 
         analyzer = SourceAnalyzer()
         sources = [
-            {"title": f"Source {i}", "url": f"https://example.com/{i}", "snippet": f"About quantum {i}", "source_type": "web", "published": "2025-01-01"}
+            {
+                "title": f"Source {i}",
+                "url": f"https://example.com/{i}",
+                "snippet": f"About quantum {i}",
+                "source_type": "web",
+                "published": "2025-01-01",
+            }
             for i in range(10)
         ]
 
@@ -253,12 +334,14 @@ class TestSourceRanking:
 
 # ── Test 5: Depth level configuration ───────────────────────────────────────
 
+
 class TestDepthConfiguration:
     """The depths of the well are measured precisely."""
 
     def test_quick_depth_settings(self):
         """Quick depth uses minimal resources."""
         from Agents.Mimir.agent import DEPTH_CONFIGS
+
         quick = DEPTH_CONFIGS["quick"]
         assert quick["max_sources"] == 5
         assert quick["max_arxiv_papers"] == 3
@@ -267,6 +350,7 @@ class TestDepthConfiguration:
     def test_standard_depth_settings(self):
         """Standard depth balances breadth and depth."""
         from Agents.Mimir.agent import DEPTH_CONFIGS
+
         standard = DEPTH_CONFIGS["standard"]
         assert standard["max_sources"] == 10
         assert standard["max_arxiv_papers"] == 5
@@ -275,6 +359,7 @@ class TestDepthConfiguration:
     def test_deep_depth_settings(self):
         """Deep depth uses maximum resources."""
         from Agents.Mimir.agent import DEPTH_CONFIGS
+
         deep = DEPTH_CONFIGS["deep"]
         assert deep["max_sources"] == 20
         assert deep["max_arxiv_papers"] == 10
@@ -282,6 +367,7 @@ class TestDepthConfiguration:
 
 
 # ── Test 6: is_available check ───────────────────────────────────────────────
+
 
 class TestAvailability:
     """The Well of Wisdom never truly dries."""
@@ -294,6 +380,7 @@ class TestAvailability:
 
 
 # ── Test 7: Markdown output formatting ───────────────────────────────────────
+
 
 class TestMarkdownFormatting:
     """The tapestry must be woven with proper formatting."""
@@ -312,10 +399,19 @@ class TestMarkdownFormatting:
 
         gen = ReportGenerator()
         sources = [
-            {"title": "Test Source", "url": "https://example.com", "snippet": "Test", "source_type": "web", "relevance_score": 0.5, "engine": "test"}
+            {
+                "title": "Test Source",
+                "url": "https://example.com",
+                "snippet": "Test",
+                "source_type": "web",
+                "relevance_score": 0.5,
+                "engine": "test",
+            }
         ]
 
-        markdown, _ = gen.generate("neural networks", sources=sources, arxiv_papers=[], depth="standard")
+        markdown, _ = gen.generate(
+            "neural networks", sources=sources, arxiv_papers=[], depth="standard"
+        )
 
         # Must start with H1 title
         assert markdown.startswith("# ")
@@ -332,6 +428,7 @@ class TestMarkdownFormatting:
 
 # ── Test 8: File saving to Knowledge directory ───────────────────────────────
 
+
 class TestFileSaving:
     """Wisdom preserved in the archives of Svartalfheim."""
 
@@ -340,11 +437,19 @@ class TestFileSaving:
         """Reports are saved to the specified output directory."""
         mimir._output_dir = tmp_path / "Knowledge"
 
-        with patch.object(mimir._web_search, "search", new_callable=AsyncMock) as mock_web, \
-             patch.object(mimir._arxiv_search, "search", new_callable=AsyncMock) as mock_arxiv:
-
+        with (
+            patch.object(mimir._web_search, "search", new_callable=AsyncMock) as mock_web,
+            patch.object(mimir._arxiv_search, "search", new_callable=AsyncMock) as mock_arxiv,
+        ):
             mock_web.return_value = [
-                {"title": "Test", "url": "https://example.com", "snippet": "Test data", "source_type": "mock", "engine": "test", "published": "2025-01-01"}
+                {
+                    "title": "Test",
+                    "url": "https://example.com",
+                    "snippet": "Test data",
+                    "source_type": "mock",
+                    "engine": "test",
+                    "published": "2025-01-01",
+                }
             ]
             mock_arxiv.return_value = []
 
@@ -367,9 +472,10 @@ class TestFileSaving:
         deep_dir = tmp_path / "nested" / "deep" / "dir"
         mimir._output_dir = deep_dir
 
-        with patch.object(mimir._web_search, "search", new_callable=AsyncMock) as mock_web, \
-             patch.object(mimir._arxiv_search, "search", new_callable=AsyncMock) as mock_arxiv:
-
+        with (
+            patch.object(mimir._web_search, "search", new_callable=AsyncMock) as mock_web,
+            patch.object(mimir._arxiv_search, "search", new_callable=AsyncMock) as mock_arxiv,
+        ):
             mock_web.return_value = []
             mock_arxiv.return_value = []
 
@@ -386,9 +492,10 @@ class TestFileSaving:
         """execute() returns the report file path."""
         mimir._output_dir = tmp_path / "Knowledge"
 
-        with patch.object(mimir._web_search, "search", new_callable=AsyncMock) as mock_web, \
-             patch.object(mimir._arxiv_search, "search", new_callable=AsyncMock) as mock_arxiv:
-
+        with (
+            patch.object(mimir._web_search, "search", new_callable=AsyncMock) as mock_web,
+            patch.object(mimir._arxiv_search, "search", new_callable=AsyncMock) as mock_arxiv,
+        ):
             mock_web.return_value = []
             mock_arxiv.return_value = []
 

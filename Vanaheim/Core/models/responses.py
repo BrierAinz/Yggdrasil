@@ -1,4 +1,5 @@
 """Modelos de respuestas para la API de Vanaheim."""
+
 from typing import Any
 
 from pydantic import BaseModel, Field

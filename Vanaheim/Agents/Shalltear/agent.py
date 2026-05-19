@@ -3,6 +3,7 @@
 Backend: Venice AI (llama-3.3-70b)
 Especialidad: Clasificación rápida, parsing NL, triaje de intents
 """
+
 import os
 from collections.abc import AsyncGenerator
 from typing import Any
@@ -115,9 +116,7 @@ class ShalltearAgent(VanirAgent):
         finally:
             self._set_idle()
 
-    async def stream(
-        self, task: str, context: dict[str, Any]
-    ) -> AsyncGenerator[str, None]:
+    async def stream(self, task: str, context: dict[str, Any]) -> AsyncGenerator[str, None]:
         """Streaming de respuesta (Shalltear rara vez necesita stream)."""
         # Para shalltear, devolvemos el resultado completo de una vez
         result = await self.execute(task, context)

@@ -2,6 +2,7 @@
 
 Adaptado de Asgard/Lilith para funcionar de forma independiente.
 """
+
 import json
 import os
 

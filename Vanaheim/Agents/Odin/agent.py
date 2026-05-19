@@ -3,6 +3,7 @@
 Backend: Kimi 262k context (kimi-for-coding)
 Especialidad: Análisis masivo, investigación profunda, creativo (absorbió a Lucifer)
 """
+
 import os
 from collections.abc import AsyncGenerator
 from typing import Any, Literal
@@ -143,9 +144,7 @@ class OdinAgent(VanirAgent):
             large_context = context.get("large_context", "")
             full_prompt = task
             if large_context:
-                full_prompt = (
-                    f"Contexto:\n{large_context[:200000]}\n\n---\n\nTarea: {task}"
-                )
+                full_prompt = f"Contexto:\n{large_context[:200000]}\n\n---\n\nTarea: {task}"
             if memory_context:
                 full_prompt += memory_context
 
@@ -185,9 +184,7 @@ class OdinAgent(VanirAgent):
         finally:
             self._set_idle()
 
-    async def stream(
-        self, task: str, context: dict[str, Any]
-    ) -> AsyncGenerator[str, None]:
+    async def stream(self, task: str, context: dict[str, Any]) -> AsyncGenerator[str, None]:
         """Streaming para análisis/creatividad."""
         self._set_busy(task)
 
@@ -198,9 +195,7 @@ class OdinAgent(VanirAgent):
             large_context = context.get("large_context", "")
             full_prompt = task
             if large_context:
-                full_prompt = (
-                    f"Contexto:\n{large_context[:100000]}\n\n---\n\nTarea: {task}"
-                )
+                full_prompt = f"Contexto:\n{large_context[:100000]}\n\n---\n\nTarea: {task}"
 
             async with httpx.AsyncClient(timeout=self.config.timeout) as client:
                 async with client.stream(

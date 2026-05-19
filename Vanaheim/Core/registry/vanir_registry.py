@@ -3,6 +3,7 @@
 Singleton thread-safe que mantiene el estado de todos los agentes
 registrados en Vanaheim.
 """
+
 import json
 import os
 from datetime import datetime
@@ -70,11 +71,7 @@ class VanirRegistry:
 
     def list_available(self) -> list[AgentInfo]:
         """Listar agentes disponibles (idle u online)."""
-        return [
-            a
-            for a in self._agents.values()
-            if a.state in (AgentState.IDLE, AgentState.BUSY)
-        ]
+        return [a for a in self._agents.values() if a.state in (AgentState.IDLE, AgentState.BUSY)]
 
     def update_state(self, agent_id: str, state: AgentState) -> bool:
         """Actualizar estado de un agente.
@@ -135,9 +132,7 @@ class VanirRegistry:
         try:
             os.makedirs(os.path.dirname(self._persistence_path), exist_ok=True)
             data = {
-                "agents": [
-                    json.loads(a.model_dump_json()) for a in self._agents.values()
-                ],
+                "agents": [json.loads(a.model_dump_json()) for a in self._agents.values()],
                 "updated_at": datetime.now().isoformat(),
             }
             with open(self._persistence_path, "w", encoding="utf-8") as f:

@@ -1,4 +1,5 @@
 """Clase base abstracta para todos los agentes de Vanaheim."""
+
 import time
 from abc import ABC, abstractmethod
 from collections.abc import AsyncGenerator
@@ -46,9 +47,7 @@ class VanirAgent(ABC):
         pass
 
     @abstractmethod
-    async def stream(
-        self, task: str, context: dict[str, Any]
-    ) -> AsyncGenerator[str, None]:
+    async def stream(self, task: str, context: dict[str, Any]) -> AsyncGenerator[str, None]:
         """Ejecutar una tarea con streaming de respuesta.
 
         Args:

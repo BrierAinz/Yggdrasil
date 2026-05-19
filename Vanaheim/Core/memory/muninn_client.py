@@ -3,6 +3,7 @@
 Reemplaza las importaciones directas de muninn_memory con
 llamadas HTTP al API de Lilith.
 """
+
 import asyncio
 import os
 from typing import Any
@@ -17,9 +18,7 @@ class MuninnClient:
         self.base_url = base_url or os.getenv("MUNINN_URL", "http://localhost:8000")
         self.timeout = 30.0
 
-    async def get_memory(
-        self, agent_id: str, query: str, limit: int = 5
-    ) -> list[dict[str, Any]]:
+    async def get_memory(self, agent_id: str, query: str, limit: int = 5) -> list[dict[str, Any]]:
         """Recuperar memorias relevantes para un agente.
 
         Args:
@@ -85,9 +84,7 @@ class MuninnClient:
         except Exception:
             pass
 
-    async def get_agent_context(
-        self, agent_id: str, user_id: str | None = None
-    ) -> dict[str, Any]:
+    async def get_agent_context(self, agent_id: str, user_id: str | None = None) -> dict[str, Any]:
         """Obtener contexto completo para un agente.
 
         Args:

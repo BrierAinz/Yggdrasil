@@ -49,6 +49,7 @@ DEPTH_CONFIGS = {
 
 # ── MimirAgent ───────────────────────────────────────────────────────────────
 
+
 class MimirAgent(VanirAgent):
     """Deep Research Agent — The Well of Wisdom.
 
@@ -171,22 +172,46 @@ class MimirAgent(VanirAgent):
         try:
             # Phase 1: Broad web search
             yield json.dumps({"phase": "search", "status": "running", "topic": task})
-            web_results = await self._web_search.search(task, max_results=DEPTH_CONFIGS[depth]["max_sources"])
-            yield json.dumps({"phase": "search", "status": "complete", "sources_found": len(web_results)})
+            web_results = await self._web_search.search(
+                task, max_results=DEPTH_CONFIGS[depth]["max_sources"]
+            )
+            yield json.dumps(
+                {"phase": "search", "status": "complete", "sources_found": len(web_results)}
+            )
 
             # Phase 2: Arxiv paper search
             yield json.dumps({"phase": "arxiv", "status": "running"})
-            arxiv_results = await self._arxiv_search.search(task, max_results=DEPTH_CONFIGS[depth]["max_arxiv_papers"])
-            yield json.dumps({"phase": "arxiv", "status": "complete", "papers_found": len(arxiv_results)})
+            arxiv_results = await self._arxiv_search.search(
+                task, max_results=DEPTH_CONFIGS[depth]["max_arxiv_papers"]
+            )
+            yield json.dumps(
+                {"phase": "arxiv", "status": "complete", "papers_found": len(arxiv_results)}
+            )
 
             # Phase 3: Deep dive into top sources
-            yield json.dumps({"phase": "deep_dive", "status": "running", "top_k": DEPTH_CONFIGS[depth]["deep_dive_top_k"]})
+            yield json.dumps(
+                {
+                    "phase": "deep_dive",
+                    "status": "running",
+                    "top_k": DEPTH_CONFIGS[depth]["deep_dive_top_k"],
+                }
+            )
             all_sources = web_results + [
-                {"title": p["title"], "url": p["url"], "snippet": p["abstract"], "source_type": "arxiv", "published": p.get("published", "")}
+                {
+                    "title": p["title"],
+                    "url": p["url"],
+                    "snippet": p["abstract"],
+                    "source_type": "arxiv",
+                    "published": p.get("published", ""),
+                }
                 for p in arxiv_results
             ]
-            ranked = self._source_analyzer.rank(all_sources, topic=task, top_k=DEPTH_CONFIGS[depth]["deep_dive_top_k"])
-            yield json.dumps({"phase": "deep_dive", "status": "complete", "ranked_sources": len(ranked)})
+            ranked = self._source_analyzer.rank(
+                all_sources, topic=task, top_k=DEPTH_CONFIGS[depth]["deep_dive_top_k"]
+            )
+            yield json.dumps(
+                {"phase": "deep_dive", "status": "complete", "ranked_sources": len(ranked)}
+            )
 
             # Phase 4: Synthesis
             yield json.dumps({"phase": "synthesis", "status": "running"})
@@ -197,7 +222,9 @@ class MimirAgent(VanirAgent):
                 depth=depth,
                 output_dir=self._output_dir,
             )
-            yield json.dumps({"phase": "synthesis", "status": "complete", "report_length": len(report_markdown)})
+            yield json.dumps(
+                {"phase": "synthesis", "status": "complete", "report_length": len(report_markdown)}
+            )
 
             # Save the report
             saved_path = self._save_report(task, report_markdown)
@@ -232,9 +259,7 @@ class MimirAgent(VanirAgent):
 
         # ── Phase 1: Broad web search ──────────────────────────────────────
         logger.info("Phase 1: Casting the wide net — web search for '%s'", topic)
-        web_results = await self._web_search.search(
-            topic, max_results=config["max_sources"]
-        )
+        web_results = await self._web_search.search(topic, max_results=config["max_sources"])
         logger.info("Phase 1 complete: %d sources found", len(web_results))
 
         # ── Phase 2: Arxiv paper search ─────────────────────────────────────
@@ -308,9 +333,11 @@ class MimirAgent(VanirAgent):
         base = await super().health()
         web_available = await self._web_search.is_available()
         arxiv_available = await self._arxiv_search.is_available()
-        base.update({
-            "searxng_available": web_available,
-            "arxiv_available": arxiv_available,
-            "output_dir": str(self._output_dir),
-        })
+        base.update(
+            {
+                "searxng_available": web_available,
+                "arxiv_available": arxiv_available,
+                "output_dir": str(self._output_dir),
+            }
+        )
         return base

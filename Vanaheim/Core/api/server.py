@@ -5,6 +5,7 @@ Expone endpoints para:
 - Invocación de agentes individuales
 - Health checks
 """
+
 import os
 import sys
 from collections.abc import AsyncGenerator
@@ -217,9 +218,7 @@ async def _get_agent_instance(agent_id: str):
     # Crear instancia con su config
     agent_class = agent_map.get(agent_id)
     if not agent_class:
-        raise HTTPException(
-            status_code=500, detail=f"Agent class not found for {agent_id}"
-        )
+        raise HTTPException(status_code=500, detail=f"Agent class not found for {agent_id}")
 
     return agent_class(agent_info.config)
 

@@ -1,4 +1,5 @@
 """Modelos de datos para agentes en Vanaheim."""
+
 from enum import StrEnum
 from typing import Any
 
