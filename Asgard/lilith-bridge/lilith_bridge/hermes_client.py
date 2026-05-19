@@ -234,8 +234,7 @@ class HermesClient:
             },
         ]
 
-        result = await self.chat(messages)
-        return result
+        return await self.chat(messages)
 
     # ── Session management (for persistent conversations) ──────────
 

@@ -15,8 +15,7 @@ class TestSidebarFilter:
 
     def _make_sidebar(self) -> RealmSidebar:
         """Create a RealmSidebar instance (without mounting)."""
-        sidebar = RealmSidebar()
-        return sidebar
+        return RealmSidebar()
 
     def test_filter_text_default_empty(self) -> None:
         """Default filter text is empty."""

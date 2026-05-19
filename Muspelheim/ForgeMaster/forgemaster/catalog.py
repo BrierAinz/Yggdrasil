@@ -284,7 +284,7 @@ class Catalog:
         """
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM gpu_profiles ORDER BY name")
-        profiles = [
+        return [
             GPUProfile(
                 id=row["id"],
                 name=row["name"],
@@ -293,7 +293,6 @@ class Catalog:
             )
             for row in cursor.fetchall()
         ]
-        return profiles
 
     def count_models(self) -> int:
         """Count total number of models in the catalog."""

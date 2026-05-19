@@ -353,8 +353,7 @@ async def api_pc_fs(request: Request):
         pass
 
     loop = asyncio.get_event_loop()
-    result = await loop.run_in_executor(_executor, _pc_fs_sync, op, path, dst, cmd, steps, user_id)
-    return result
+    return await loop.run_in_executor(_executor, _pc_fs_sync, op, path, dst, cmd, steps, user_id)
 
 
 # ───────────────────────────────────────────────────────────────────────────────

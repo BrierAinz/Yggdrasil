@@ -244,9 +244,7 @@ class TestBridgeApp:
         from lilith_bridge.app import create_app
 
         config = BridgeConfig(auth_token=None)  # No auth for testing
-        app = create_app(config)
-
-        return app
+        return create_app(config)
 
     def test_create_app_no_auth(self):
         from lilith_bridge.app import create_app
