@@ -439,7 +439,8 @@ def find_duplicates(
         console.print("\n[bold]Cleanup recommendations:[/]")
         for action in report.actions:
             console.print(
-                f"  • [yellow]{action.reason}[/]: {action.path} ({_format_size(action.size_bytes)})",
+                f"  • [yellow]{action.reason}[/]: "
+                f"{action.path} ({_format_size(action.size_bytes)})",
             )
         console.print(
             f"\n[green]Total reclaimable: {_format_size(report.total_reclaimable_bytes)}[/]",
