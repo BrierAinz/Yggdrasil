@@ -70,12 +70,14 @@ class _LazyState:
     __slots__ = ("config", "engine", "memory", "tools")
 
     def __init__(self) -> None:
+        """Initialise all lazy singleton slots to None."""
         self.config: Any | None = None
         self.memory: Any | None = None
         self.engine: Any | None = None
         self.tools: Any | None = None
 
     def _ensure_config(self) -> Any:
+        """Lazily create and cache the Config singleton."""
         if self.config is None:
             from lilith_core.config import Config
 
@@ -83,6 +85,7 @@ class _LazyState:
         return self.config
 
     def _ensure_memory(self) -> Any:
+        """Lazily create and cache the MemoryStore singleton."""
         if self.memory is None:
             from lilith_memory.store import MemoryStore
 
@@ -91,6 +94,7 @@ class _LazyState:
         return self.memory
 
     def _ensure_engine(self) -> Any:
+        """Lazily create and cache the LilithEngine singleton."""
         if self.engine is None:
             from lilith_orchestrator.engine import LilithEngine
 
@@ -100,6 +104,7 @@ class _LazyState:
         return self.engine
 
     def _ensure_tools(self) -> Any:
+        """Lazily load and cache the ToolRegistry class reference."""
         if self.tools is None:
             from lilith_tools.registry import ToolRegistry
 

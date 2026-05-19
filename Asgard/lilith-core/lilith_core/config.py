@@ -22,11 +22,13 @@ class Config:
         self._data: dict[str, Any] = self._load()
 
     def _load(self) -> dict[str, Any]:
+        """Load configuration from disk, falling back to defaults."""
         if self.config_file.exists():
             return json.loads(self.config_file.read_text(encoding="utf-8"))
         return self._defaults()
 
     def _defaults(self) -> dict[str, Any]:
+        """Return sensible default configuration values."""
         return {
             "model": "auto",
             "lm_studio_url": "http://localhost:1234/v1",
@@ -44,6 +46,7 @@ class Config:
         self._save()
 
     def _save(self) -> None:
+        """Persist the current configuration to disk as JSON."""
         self.config_file.write_text(
             json.dumps(self._data, indent=2, ensure_ascii=False),
             encoding="utf-8",
