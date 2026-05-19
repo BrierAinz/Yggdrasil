@@ -8,9 +8,10 @@ Mimir offers it freely — through methodical research and analysis.
 import json
 import logging
 import re
+from collections.abc import AsyncGenerator
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict
+from typing import Any
 
 from Core.models.agent import AgentCapabilities, AgentConfig
 
@@ -106,7 +107,7 @@ class MimirAgent(VanirAgent):
 
     # ── Execute: synchronous research ──────────────────────────────────────
 
-    async def execute(self, task: str, context: Dict[str, Any]) -> str:
+    async def execute(self, task: str, context: dict[str, Any]) -> str:
         """Execute a research task and return the report path.
 
         The roots of Yggdrasil reach deep — Mimir gathers knowledge
@@ -147,7 +148,7 @@ class MimirAgent(VanirAgent):
 
     # ── Stream: yield research updates ──────────────────────────────────────
 
-    async def stream(self, task: str, context: Dict[str, Any]) -> AsyncGenerator[str, None]:
+    async def stream(self, task: str, context: dict[str, Any]) -> AsyncGenerator[str, None]:
         """Stream research progress as JSON-LD events.
 
         Yields events like:
@@ -189,7 +190,7 @@ class MimirAgent(VanirAgent):
 
             # Phase 4: Synthesis
             yield json.dumps({"phase": "synthesis", "status": "running"})
-            report_markdown, report_path = self._report_generator.generate(
+            report_markdown, _report_path = self._report_generator.generate(
                 topic=task,
                 sources=ranked,
                 arxiv_papers=arxiv_results,
@@ -302,7 +303,7 @@ class MimirAgent(VanirAgent):
 
     # ── Health check override ──────────────────────────────────────────────
 
-    async def health(self) -> Dict[str, Any]:
+    async def health(self) -> dict[str, Any]:
         """Mimir's health — the depth of the well and clarity of the water."""
         base = await super().health()
         web_available = await self._web_search.is_available()

@@ -133,10 +133,10 @@ class AgentSession:
         """Load tools from *lilith_tools* based on config flags."""
         try:
             # Force registration of all tool classes.
-            from lilith_tools import ToolRegistry, filesystem, system
+            from lilith_tools import ToolRegistry, filesystem, system  # noqa: F401
 
             with contextlib.suppress(ImportError):
-                from lilith_tools import browser, coding, web_search
+                from lilith_tools import browser, coding, web_search  # noqa: F401
 
             self._tool_registry = ToolRegistry
         except ImportError:

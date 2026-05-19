@@ -7,8 +7,8 @@ Expone endpoints para:
 """
 import os
 import sys
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 
 # Add parent to path for imports
@@ -275,7 +275,7 @@ async def agent_invoke(agent_id: str, request: InvokeRequest):
 
     except Exception as e:
         _registry.update_state(agent_id, AgentState.ERROR)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from None
 
 
 @app.post("/agents/{agent_id}/stream")
@@ -300,7 +300,7 @@ async def agent_stream(agent_id: str, request: StreamRequest):
                 yield f"data: {chunk}\n\n"
             yield "data: [DONE]\n\n"
         except Exception as e:
-            yield f"data: [ERROR] {str(e)}\n\n"
+            yield f"data: [ERROR] {e!s}\n\n"
         finally:
             _registry.update_state(agent_id, AgentState.IDLE)
 

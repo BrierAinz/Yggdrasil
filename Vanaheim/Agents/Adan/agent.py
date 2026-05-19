@@ -3,7 +3,8 @@
 Backend: Ollama local (qwen2.5-coder:7b)
 Especialidad: Generación de código, tests, refactoring
 """
-from typing import Any, AsyncGenerator, Dict
+from collections.abc import AsyncGenerator
+from typing import Any
 
 import httpx
 from Core.memory import get_muninn_client
@@ -66,7 +67,7 @@ class AdanAgent(VanirAgent):
         """Obtener system prompt de Adán."""
         return self._persona_loader.get_system_prompt("adan")
 
-    async def execute(self, task: str, context: Dict[str, Any]) -> str:
+    async def execute(self, task: str, context: dict[str, Any]) -> str:
         """Ejecutar tarea de código."""
         self._set_busy(task)
 
@@ -111,7 +112,7 @@ class AdanAgent(VanirAgent):
             self._set_idle()
 
     async def stream(
-        self, task: str, context: Dict[str, Any]
+        self, task: str, context: dict[str, Any]
     ) -> AsyncGenerator[str, None]:
         """Streaming de generación de código."""
         self._set_busy(task)
@@ -160,6 +161,6 @@ class AdanAgent(VanirAgent):
             )
 
         except Exception as e:
-            yield f"[Error: {str(e)}]"
+            yield f"[Error: {e!s}]"
         finally:
             self._set_idle()

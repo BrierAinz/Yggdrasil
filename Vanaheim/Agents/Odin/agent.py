@@ -4,7 +4,8 @@ Backend: Kimi 262k context (kimi-for-coding)
 Especialidad: Análisis masivo, investigación profunda, creativo (absorbió a Lucifer)
 """
 import os
-from typing import Any, AsyncGenerator, Dict, Literal
+from collections.abc import AsyncGenerator
+from typing import Any, Literal
 
 import httpx
 from Core.memory import get_muninn_client
@@ -119,7 +120,7 @@ class OdinAgent(VanirAgent):
             return "analysis"
         return "default"
 
-    async def execute(self, task: str, context: Dict[str, Any]) -> str:
+    async def execute(self, task: str, context: dict[str, Any]) -> str:
         """Ejecutar tarea de análisis profundo."""
         self._set_busy(task)
 
@@ -185,7 +186,7 @@ class OdinAgent(VanirAgent):
             self._set_idle()
 
     async def stream(
-        self, task: str, context: Dict[str, Any]
+        self, task: str, context: dict[str, Any]
     ) -> AsyncGenerator[str, None]:
         """Streaming para análisis/creatividad."""
         self._set_busy(task)
@@ -238,6 +239,6 @@ class OdinAgent(VanirAgent):
                                 continue
 
         except Exception as e:
-            yield f"[Error: {str(e)}]"
+            yield f"[Error: {e!s}]"
         finally:
             self._set_idle()

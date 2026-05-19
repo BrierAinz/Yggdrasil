@@ -4,7 +4,8 @@ Backend: Grok/xAI (grok-4-fast-reasoning)
 Especialidad: Análisis de contexto largo, documentación, insights
 """
 import os
-from typing import Any, AsyncGenerator, Dict
+from collections.abc import AsyncGenerator
+from typing import Any
 
 import httpx
 from Core.memory import get_muninn_client
@@ -69,7 +70,7 @@ class EvaAgent(VanirAgent):
         """Obtener system prompt de Eva."""
         return self._persona_loader.get_system_prompt("eva")
 
-    async def execute(self, task: str, context: Dict[str, Any]) -> str:
+    async def execute(self, task: str, context: dict[str, Any]) -> str:
         """Ejecutar tarea de análisis."""
         self._set_busy(task)
 
@@ -122,7 +123,7 @@ class EvaAgent(VanirAgent):
             self._set_idle()
 
     async def stream(
-        self, task: str, context: Dict[str, Any]
+        self, task: str, context: dict[str, Any]
     ) -> AsyncGenerator[str, None]:
         """Streaming de análisis."""
         self._set_busy(task)
@@ -175,6 +176,6 @@ class EvaAgent(VanirAgent):
                                 continue
 
         except Exception as e:
-            yield f"[Error: {str(e)}]"
+            yield f"[Error: {e!s}]"
         finally:
             self._set_idle()

@@ -163,7 +163,7 @@ class TestReportGeneration:
             {"title": "Test Paper", "authors": ["Author A"], "abstract": "Abstract text", "url": "https://arxiv.org/abs/1234", "published": "2025-01-01"}
         ]
 
-        markdown, path = gen.generate(
+        markdown, _path = gen.generate(
             topic="test topic",
             sources=sources,
             arxiv_papers=papers,

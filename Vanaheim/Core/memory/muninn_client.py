@@ -5,7 +5,7 @@ llamadas HTTP al API de Lilith.
 """
 import asyncio
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import httpx
 
@@ -13,13 +13,13 @@ import httpx
 class MuninnClient:
     """Cliente HTTP para comunicarse con MuninnDB en Asgard."""
 
-    def __init__(self, base_url: Optional[str] = None):
+    def __init__(self, base_url: str | None = None):
         self.base_url = base_url or os.getenv("MUNINN_URL", "http://localhost:8000")
         self.timeout = 30.0
 
     async def get_memory(
         self, agent_id: str, query: str, limit: int = 5
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Recuperar memorias relevantes para un agente.
 
         Args:
@@ -47,7 +47,7 @@ class MuninnClient:
             return []
 
     async def write_memory(
-        self, agent_id: str, content: str, metadata: Optional[Dict[str, Any]] = None
+        self, agent_id: str, content: str, metadata: dict[str, Any] | None = None
     ) -> bool:
         """Escribir una memoria para un agente (fire-and-forget).
 
@@ -74,7 +74,7 @@ class MuninnClient:
             return False
 
     def write_memory_sync(
-        self, agent_id: str, content: str, metadata: Optional[Dict[str, Any]] = None
+        self, agent_id: str, content: str, metadata: dict[str, Any] | None = None
     ) -> None:
         """Escribir memoria de forma síncrona (fire-and-forget).
 
@@ -86,8 +86,8 @@ class MuninnClient:
             pass
 
     async def get_agent_context(
-        self, agent_id: str, user_id: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, agent_id: str, user_id: str | None = None
+    ) -> dict[str, Any]:
         """Obtener contexto completo para un agente.
 
         Args:

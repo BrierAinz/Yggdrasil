@@ -1,11 +1,11 @@
 """Modelos de datos para agentes en Vanaheim."""
-from enum import Enum
-from typing import Any, Dict, List, Optional
+from enum import StrEnum
+from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class AgentState(str, Enum):
+class AgentState(StrEnum):
     """Estados posibles de un agente."""
 
     IDLE = "idle"
@@ -20,8 +20,8 @@ class AgentCapabilities(BaseModel):
     can_stream: bool = True
     supports_tools: bool = False
     max_context_tokens: int = 8192
-    specialties: List[str] = Field(default_factory=list)
-    supported_tasks: List[str] = Field(default_factory=list)
+    specialties: list[str] = Field(default_factory=list)
+    supported_tasks: list[str] = Field(default_factory=list)
 
 
 class AgentConfig(BaseModel):
@@ -32,13 +32,13 @@ class AgentConfig(BaseModel):
     description: str
     model: str
     provider: str  # grok, ollama, kimi, venice
-    base_url: Optional[str] = None
-    api_key_env: Optional[str] = None
+    base_url: str | None = None
+    api_key_env: str | None = None
     timeout: int = 120
     temperature: float = 0.7
     capabilities: AgentCapabilities = Field(default_factory=AgentCapabilities)
-    persona_key: Optional[str] = None
-    fallback_agent: Optional[str] = None
+    persona_key: str | None = None
+    fallback_agent: str | None = None
 
 
 class AgentInfo(BaseModel):
@@ -50,6 +50,6 @@ class AgentInfo(BaseModel):
     state: AgentState = AgentState.IDLE
     config: AgentConfig
     capabilities: AgentCapabilities
-    current_task: Optional[str] = None
-    last_heartbeat: Optional[str] = None
-    metrics: Dict[str, Any] = Field(default_factory=dict)
+    current_task: str | None = None
+    last_heartbeat: str | None = None
+    metrics: dict[str, Any] = Field(default_factory=dict)

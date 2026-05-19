@@ -1,7 +1,6 @@
 """Circuit Breaker para resiliencia en llamadas externas."""
 import logging
 from datetime import datetime
-from typing import Optional
 
 
 logger = logging.getLogger("bifrost.circuit_breaker")
@@ -20,7 +19,7 @@ class CircuitBreaker:
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
         self.failures = 0
-        self.last_failure_time: Optional[datetime] = None
+        self.last_failure_time: datetime | None = None
         self.state = "closed"  # closed, open, half-open
 
     def can_execute(self) -> bool:

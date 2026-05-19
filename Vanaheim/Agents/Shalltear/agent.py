@@ -4,7 +4,8 @@ Backend: Venice AI (llama-3.3-70b)
 Especialidad: Clasificación rápida, parsing NL, triaje de intents
 """
 import os
-from typing import Any, AsyncGenerator, Dict
+from collections.abc import AsyncGenerator
+from typing import Any
 
 import httpx
 from Core.memory import get_muninn_client
@@ -62,7 +63,7 @@ class ShalltearAgent(VanirAgent):
         """Obtener system prompt de Shalltear."""
         return self._persona_loader.get_system_prompt("shalltear")
 
-    async def execute(self, task: str, context: Dict[str, Any]) -> str:
+    async def execute(self, task: str, context: dict[str, Any]) -> str:
         """Ejecutar tarea de clasificación."""
         self._set_busy(task)
 
@@ -115,7 +116,7 @@ class ShalltearAgent(VanirAgent):
             self._set_idle()
 
     async def stream(
-        self, task: str, context: Dict[str, Any]
+        self, task: str, context: dict[str, Any]
     ) -> AsyncGenerator[str, None]:
         """Streaming de respuesta (Shalltear rara vez necesita stream)."""
         # Para shalltear, devolvemos el resultado completo de una vez

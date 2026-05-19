@@ -1,5 +1,5 @@
 """Modelos de respuestas para la API de Vanaheim."""
-from typing import Any, Dict, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -21,14 +21,14 @@ class InvokeResponse(BaseModel):
 
     agent_id: str
     result: str
-    tokens_used: Optional[int] = None
-    execution_time_ms: Optional[float] = None
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    tokens_used: int | None = None
+    execution_time_ms: float | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 class ErrorResponse(BaseModel):
     """Respuesta de error."""
 
     error: str
-    detail: Optional[str] = None
-    agent_id: Optional[str] = None
+    detail: str | None = None
+    agent_id: str | None = None

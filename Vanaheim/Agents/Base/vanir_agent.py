@@ -1,7 +1,8 @@
 """Clase base abstracta para todos los agentes de Vanaheim."""
 import time
 from abc import ABC, abstractmethod
-from typing import Any, AsyncGenerator, Dict, Optional
+from collections.abc import AsyncGenerator
+from typing import Any
 
 from Core.models.agent import AgentCapabilities, AgentConfig, AgentState
 
@@ -16,8 +17,8 @@ class VanirAgent(ABC):
     def __init__(self, config: AgentConfig):
         self.config = config
         self.state = AgentState.IDLE
-        self._current_task: Optional[str] = None
-        self._start_time: Optional[float] = None
+        self._current_task: str | None = None
+        self._start_time: float | None = None
 
     @property
     @abstractmethod
@@ -32,7 +33,7 @@ class VanirAgent(ABC):
         pass
 
     @abstractmethod
-    async def execute(self, task: str, context: Dict[str, Any]) -> str:
+    async def execute(self, task: str, context: dict[str, Any]) -> str:
         """Ejecutar una tarea de forma síncrona.
 
         Args:
@@ -46,7 +47,7 @@ class VanirAgent(ABC):
 
     @abstractmethod
     async def stream(
-        self, task: str, context: Dict[str, Any]
+        self, task: str, context: dict[str, Any]
     ) -> AsyncGenerator[str, None]:
         """Ejecutar una tarea con streaming de respuesta.
 
@@ -68,7 +69,7 @@ class VanirAgent(ABC):
         """
         pass
 
-    async def health(self) -> Dict[str, Any]:
+    async def health(self) -> dict[str, Any]:
         """Obtener estado de salud del agente."""
         return {
             "agent_id": self.agent_id,
@@ -97,7 +98,7 @@ class VanirAgent(ABC):
         self.state = AgentState.ERROR
         self._current_task = None
 
-    def _get_execution_time_ms(self) -> Optional[float]:
+    def _get_execution_time_ms(self) -> float | None:
         """Obtener tiempo de ejecución en ms."""
         if self._start_time:
             return (time.time() - self._start_time) * 1000

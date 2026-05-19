@@ -4,15 +4,14 @@ Adaptado de Asgard/Lilith para funcionar de forma independiente.
 """
 import json
 import os
-from typing import Dict, Optional
 
 
 class PersonaLoader:
     """Cargador de personalidades de agentes."""
 
-    def __init__(self, base_path: Optional[str] = None):
+    def __init__(self, base_path: str | None = None):
         self.base_path = base_path or self._find_personas_path()
-        self._cache: Dict[str, Dict] = {}
+        self._cache: dict[str, dict] = {}
 
     def _find_personas_path(self) -> str:
         """Encontrar la ruta al archivo de personalidades."""
@@ -28,10 +27,10 @@ class PersonaLoader:
         # Default relativo a Vanaheim
         return "Config/personas.json"
 
-    def load_personas(self) -> Dict:
+    def load_personas(self) -> dict:
         """Cargar todas las personalidades."""
         try:
-            with open(self.base_path, "r", encoding="utf-8") as f:
+            with open(self.base_path, encoding="utf-8") as f:
                 return json.load(f)
         except Exception:
             return {"agents": {}, "common": {}}
@@ -76,7 +75,7 @@ class PersonaLoader:
     def _get_common_instructions(self) -> str:
         """Obtener instrucciones comunes a todos los agentes."""
         try:
-            with open(self.base_path, "r", encoding="utf-8") as f:
+            with open(self.base_path, encoding="utf-8") as f:
                 data = json.load(f)
             common = data.get("common", {})
             return common.get("instructions", "")
@@ -84,6 +83,6 @@ class PersonaLoader:
             return ""
 
 
-def get_persona_loader(base_path: Optional[str] = None) -> PersonaLoader:
+def get_persona_loader(base_path: str | None = None) -> PersonaLoader:
     """Obtener instancia del cargador de personalidades."""
     return PersonaLoader(base_path)

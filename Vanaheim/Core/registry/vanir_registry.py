@@ -7,7 +7,7 @@ import json
 import os
 from datetime import datetime
 from threading import Lock
-from typing import Dict, List, Optional
+from typing import Optional
 
 from Core.models.agent import AgentInfo, AgentState
 
@@ -23,7 +23,7 @@ class VanirRegistry:
             with cls._lock:
                 if cls._instance is None:
                     cls._instance = super().__new__(cls)
-                    cls._instance._agents: Dict[str, AgentInfo] = {}
+                    cls._instance._agents: dict[str, AgentInfo] = {}
                     cls._instance._persistence_path = "Config/vanir_registry.json"
         return cls._instance
 
@@ -53,7 +53,7 @@ class VanirRegistry:
                 return True
             return False
 
-    def get(self, agent_id: str) -> Optional[AgentInfo]:
+    def get(self, agent_id: str) -> AgentInfo | None:
         """Obtener información de un agente.
 
         Args:
@@ -64,11 +64,11 @@ class VanirRegistry:
         """
         return self._agents.get(agent_id)
 
-    def list_all(self) -> List[AgentInfo]:
+    def list_all(self) -> list[AgentInfo]:
         """Listar todos los agentes registrados."""
         return list(self._agents.values())
 
-    def list_available(self) -> List[AgentInfo]:
+    def list_available(self) -> list[AgentInfo]:
         """Listar agentes disponibles (idle u online)."""
         return [
             a
@@ -109,7 +109,7 @@ class VanirRegistry:
                 return True
             return False
 
-    def get_metrics(self) -> Dict:
+    def get_metrics(self) -> dict:
         """Obtener métricas del registro."""
         total = len(self._agents)
         by_state = {}

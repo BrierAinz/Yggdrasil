@@ -7,6 +7,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
+
+pytest.importorskip("litellm", reason="litellm not installed")
+
 from lilith_core.config import Config
 from lilith_core.exceptions import LLMError
 from lilith_core.providers.litellm_provider import LiteLLMProvider
