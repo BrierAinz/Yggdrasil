@@ -23,6 +23,7 @@ try:
         media_type = "application/json"
 
         def render(self, content: Any) -> bytes:
+            """Serialize response content using orjson."""
             return orjson.dumps(content)
 
     DefaultResponse = _ORJSONResponse
