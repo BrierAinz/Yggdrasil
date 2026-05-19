@@ -48,14 +48,21 @@
 | 14 | [PixelForge](plan-14-pixelforge.md) | PixelForge | Alfheim | 📋 Plan | Editor de pixel art con paletas retro |
 | 17 | [YggSiteGenerator](plan-17-yggsitegenerator.md) | YggSiteGenerator | Alfheim | 📋 Plan | Generador de sitio estático para GitHub Pages |
 
+## Alfheim — Planes de Infraestructura UI
+
+| # | Plan | Proyecto | Realm | Estado | Descripción |
+|---|------|----------|-------|--------|-------------|
+| 19 | [YggdrasilStudio v0.4](plan-19-yggdrasilstudio-v0.4.md) | Studio | Alfheim | 🔄 Active | Refactor PromptBuilder/Settings, tests, nuevos endpoints |
+| 20 | [YggdrasilForge](plan-20-yggdrasilforge.md) | Forge | Alfheim | 🔄 v0.1.0 | Estudio 3D Viking — AI generation + Blender Bridge |
+| 22 | [Photon WASM](plan-22-photon-wasm.md) | Photon | Alfheim | 📋 Plan | Python→WASM via Pyodide para módulos client-side |
+| 23 | [Turborepo](plan-23-turborepo.md) | Turbo | Alfheim | 📋 Plan | Migración Turborepo para builds de frontends Alfheim |
+
 ## Cross-Realm — Infraestructura
 
 | # | Plan | Proyecto | Realm | Estado | Descripción |
 |---|------|----------|-------|--------|-------------|
-| — | YggdrasilStudio | Studio | Alfheim | 🔄 v0.3.0 | Estudio de generación AI (ver skill) |
-| — | YggdrasilForge | Forge | Alfheim | 🔄 v0.1.0 | Estudio 3D Viking (ver skill) |
+| 21 | [Yggdrasil Growth v5](plan-21-yggdrasil-growth-v5.md) | Growth | Cross-realm | 🔄 Active | WS Bridge, agente Mimir, build system |
 | — | Alfheim Dashboard | Dashboard | Alfheim | ✅ v1.0.0 | HTMX + Alpine.js dashboard |
-| — | WS Bridge | Bridge | Alfheim | 🔄 Active | ComfyUI WebSocket fan-out bridge |
 
 ---
 
@@ -79,7 +86,8 @@ YggdrasilStudio ──→ WS Bridge (real-time progress)
 ## Convenciones
 
 - Cada plan está en `Svartalfheim/Docs/plans/plan-XX-nombre.md`
-- Los proyectos se crean en el realm correspondiente: `Muspelheim/AutoSub/`, `Vanaheim/CodeGhost/`, etc.
+- Plan files: `plan-NN-projectname.md` (zero-padded, kebab-case)
+- All plans located at: `Svartalfheim/Docs/plans/`
 - Todo proyecto usa: `pyproject.toml`, Typer CLI, Rich output, SQLite, pytest
 - Los tests se configuran según `REGLAS_YGGDRASIL.md`
 - Proyectos completados tienen ✅ y su versión
