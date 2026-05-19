@@ -106,7 +106,7 @@ class TestBridgeModels:
     def test_bridge_health_defaults(self):
         h = BridgeHealth()
         assert h.status == "healthy"
-        assert h.bridge_version == "1.0.0"
+        assert h.bridge_version == ""  # Populated at runtime from lilith_bridge.__version__
         assert h.lilith_engine is False
         assert h.hermes_connected is False
         assert h.skills_loaded == 0

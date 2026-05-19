@@ -96,7 +96,7 @@ class BridgeHealth(BaseModel):
     """Health check response."""
 
     status: str = "healthy"
-    bridge_version: str = "1.0.0"
+    bridge_version: str = ""
     lilith_engine: bool = False
     hermes_connected: bool = False
     memory_available: bool = False

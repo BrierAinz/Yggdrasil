@@ -27,6 +27,8 @@ Usage standalone::
 
 from __future__ import annotations
 
+# Import version without triggering circular import (don't use `from . import __version__`)
+import importlib
 import logging
 import threading
 import time
@@ -50,6 +52,12 @@ from .models import (
     HermesToolExecute,
     HermesToolResult,
 )
+
+
+try:
+    _bridge_version = importlib.import_module("lilith_bridge").__version__
+except (AttributeError, ImportError):
+    _bridge_version = "1.0.0"
 
 
 logger = logging.getLogger(__name__)
@@ -242,7 +250,7 @@ def create_bridge_router(
 
         return BridgeHealth(
             status="healthy",
-            bridge_version="1.0.0",
+            bridge_version=_bridge_version,
             lilith_engine=(state.engine if state else engine) is not None,
             hermes_connected=hermes_info.get("connected", False),
             memory_available=(state.memory if state else memory) is not None,
@@ -479,7 +487,7 @@ def create_standalone_app(config: BridgeConfig | None = None) -> FastAPI:
     app = FastAPI(
         title="Hermes Bridge",
         description="Bidirectional gateway connecting Yggdrasil to Hermes Agent",
-        version="1.0.0",
+        version=_bridge_version,
         lifespan=lifespan,
     )
 
