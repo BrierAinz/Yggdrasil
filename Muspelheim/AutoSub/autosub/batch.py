@@ -12,7 +12,6 @@ from autosub.pipeline import PipelineResult
 from autosub.transcriber import Transcriber
 from autosub.translator import Translator
 
-
 # Supported audio/video extensions
 AUDIO_EXTENSIONS = {".mp3", ".wav", ".flac", ".ogg", ".m4a", ".aac", ".wma"}
 VIDEO_EXTENSIONS = {".mp4", ".mkv", ".avi", ".mov", ".webm", ".flv", ".wmv"}

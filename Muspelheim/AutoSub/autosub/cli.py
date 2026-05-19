@@ -16,7 +16,6 @@ from autosub.pipeline import Pipeline
 from autosub.transcriber import Transcriber
 from autosub.translator import Translator
 
-
 app = typer.Typer(help="🎬 AutoSub — Automatic subtitle generator")
 console = Console()
 

@@ -12,47 +12,22 @@ from pydantic import BaseModel
 # ---------------------------------------------------------------------------
 # orjson integration – faster JSON serialisation with stdlib fallback
 # ---------------------------------------------------------------------------
+# orjson – ~10x faster JSON serialisation than stdlib; graceful fallback.
 try:
     import orjson
-
-    def _orjson_dumps(obj: Any) -> str:
-        return orjson.dumps(obj).decode()
-
-    class ORJSONResponse:
-        """Drop-in replacement that uses orjson under the hood."""
-
-        from starlette.responses import JSONResponse as _Base
-
-        def __init_subclass__(cls, **kwargs: Any) -> None:
-            """Register subclass for orjson serialization."""
-            super().__init_subclass__(**kwargs)
-
-        @classmethod
-        def _serialize(cls, obj: Any) -> str:
-            return _orjson_dumps(obj)
-
-    _HAS_ORJSON = True
-except ImportError:  # pragma: no cover
-    _HAS_ORJSON = False
-
-try:
     from fastapi.responses import JSONResponse as FastAPIJSONResponse
 
-    if _HAS_ORJSON:
+    class _ORJSONResponse(FastAPIJSONResponse):
+        """FastAPI response class using orjson for faster JSON serialization."""
 
-        class _ORJSONResponse(FastAPIJSONResponse):
-            """FastAPI response class using orjson for faster JSON serialization."""
+        media_type = "application/json"
 
-            media_type = "application/json"
+        def render(self, content: Any) -> bytes:
+            return orjson.dumps(content)
 
-            def render(self, content: Any) -> bytes:
-                return orjson.dumps(content)
-
-        DefaultResponse = _ORJSONResponse
-    else:
-        DefaultResponse = FastAPIJSONResponse
-except Exception:  # pragma: no cover
-    DefaultResponse = None  # type: ignore[assignment,misc]
+    DefaultResponse = _ORJSONResponse
+except ImportError:  # pragma: no cover
+    from fastapi.responses import JSONResponse as DefaultResponse  # type: ignore[assignment]
 
 # ---------------------------------------------------------------------------
 # Application factory

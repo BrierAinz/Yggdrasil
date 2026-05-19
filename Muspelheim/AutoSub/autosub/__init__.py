@@ -10,7 +10,6 @@ from autosub.pipeline import Pipeline, PipelineResult
 from autosub.transcriber import LanguageInfo, Segment, Transcriber
 from autosub.translator import Translator
 
-
 __all__ = [
     "Aligner",
     "AutoSubConfig",
