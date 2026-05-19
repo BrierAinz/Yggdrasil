@@ -2,10 +2,12 @@
 
 __version__ = "3.0.0"
 
+from .client import LilithClient
 from .config import YggdrasilConfig, load_config, save_config
 
 
 __all__ = [
+    "LilithClient",
     "YggdrasilConfig",
     "load_config",
     "save_config",
