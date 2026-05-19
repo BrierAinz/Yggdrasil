@@ -6,9 +6,11 @@ import sys
 from pathlib import Path
 
 
-# Add Backend to path
-sys.path.insert(0, str(Path("D:/Proyectos/Yggdrasil/Asgard/Lilith/Core/Backend")))
+# Add Backend to path (legacy monolith)
+_YGG_ROOT = Path(__file__).resolve().parents[2]  # Svartalfheim/Scripts/ → Yggdrasil root
+sys.path.insert(0, str(_YGG_ROOT / "Asgard" / "Lilith" / "Core" / "Backend"))
 
+# NOTE: ArchiveroAgent is archived — see Helheim/Hermes-Lilith_v4_legacy/
 from Backend.core.agents.archivero_agent import ArchiveroAgent
 
 

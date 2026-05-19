@@ -6,9 +6,10 @@ import sys
 from pathlib import Path
 
 
-# Paths para imports
-sys.path.insert(0, str(Path("D:/Proyectos/Yggdrasil/Asgard/Lilith/Core/Backend")))
-sys.path.insert(0, str(Path("D:/Proyectos/Yggdrasil/Asgard/Lilith/Core/Backend/core")))
+# Paths para imports (legacy monolith)
+_YGG_ROOT = Path(__file__).resolve().parents[1]  # Svartalfheim/Scripts/ → Svartalfheim/
+sys.path.insert(0, str(_YGG_ROOT.parent / "Asgard" / "Lilith" / "Core" / "Backend"))
+sys.path.insert(0, str(_YGG_ROOT.parent / "Asgard" / "Lilith" / "Core" / "Backend" / "core"))
 
 from muninn_memory import MuninnMemory
 
@@ -16,7 +17,7 @@ from muninn_memory import MuninnMemory
 async def test_search():
     print("[TEST] Buscando en vault 'docs'...\n")
 
-    muninn = MuninnMemory(base_path=Path("D:/Proyectos/Yggdrasil/Asgard/Lilith"), vault_name="docs")
+    muninn = MuninnMemory(base_path=_YGG_ROOT.parent / "Asgard" / "Lilith", vault_name="docs")
 
     queries = ["DAG Executor", "sistema de memoria", "MuninnDB"]
 
