@@ -42,6 +42,7 @@ class RealmButton(Button):
     """A button representing a single realm in the sidebar."""
 
     def __init__(self, realm_name: str, index: int, **kwargs: object) -> None:
+        """Initialize the realm button with icon and label."""
         icon = REALM_ICONS.get(realm_name, "◆")
         label = f" {index}. {icon} {realm_name}"
         super().__init__(label, id=f"realm-{realm_name.lower()}", **kwargs)
@@ -97,6 +98,7 @@ class RealmSidebar(VerticalScroll):
         """Message posted when a realm is selected."""
 
         def __init__(self, realm_name: str) -> None:
+            """Initialize the realm selection message."""
             super().__init__()
             self.realm_name = realm_name
 

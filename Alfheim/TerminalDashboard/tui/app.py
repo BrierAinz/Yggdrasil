@@ -74,6 +74,7 @@ class YggdrasilDashboard(App):
     ]
 
     def __init__(self, scanner: RealmScanner | None = None, **kwargs: object) -> None:
+        """Initialize the dashboard with an optional scanner override."""
         super().__init__(**kwargs)
         self._scanner = scanner or RealmScanner()
         self._realm_data: dict[str, RealmStatus] = {}

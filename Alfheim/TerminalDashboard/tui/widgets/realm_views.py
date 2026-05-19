@@ -167,6 +167,7 @@ class RealmDetailView(Static):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
+        """Initialize the realm detail view with an optional scanner and realm."""
         super().__init__(name=name, id=id, classes=classes)
         self._scanner = scanner or RealmScanner()
         self._realm_name: str | None = None
