@@ -7,12 +7,12 @@ from typing import Any
 
 from fastapi import Depends, FastAPI, Query
 from pydantic import BaseModel
+from starlette.middleware.cors import CORSMiddleware
 
 
 # ---------------------------------------------------------------------------
 # orjson integration – faster JSON serialisation with stdlib fallback
 # ---------------------------------------------------------------------------
-# orjson – ~10x faster JSON serialisation than stdlib; graceful fallback.
 try:
     import orjson
     from fastapi.responses import JSONResponse as FastAPIJSONResponse
@@ -40,9 +40,6 @@ app = FastAPI(
 )
 
 # CORS – restrict to localhost for dev environments
-from starlette.middleware.cors import CORSMiddleware
-
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -212,16 +209,13 @@ async def list_tools(
 
 
 @app.get("/health")
-async def health() -> dict[str, Any]:
-    """Lightweight health-check endpoint – no heavy initialisation required."""
-    conf = get_config()
-    tools = get_tools()
-    return {
-        "status": "ok",
-        "version": "2.2.0",
-        "tools": len(tools.list_tools()),
-        "model": conf.get("model", "auto"),
-    }
+async def health() -> dict[str, str]:
+    """Lightweight health-check endpoint – no heavy initialisation required.
+
+    Returns instantly without loading sentence-transformers, SQLite, or LLM
+    clients.  Use ``/status`` for detailed service information.
+    """
+    return {"status": "ok", "version": "2.2.0"}
 
 
 @app.get("/status")
