@@ -473,7 +473,7 @@ def download(
     """Download a model from HuggingFace Hub."""
     import logging
 
-    from forgemaster.downloader import DownloadConfig, ModelDownloader
+    from forgemaster.downloader import DownloadConfig, DownloadProgress, ModelDownloader
 
     log = logging.getLogger("forgemaster.cli")
     config = DownloadConfig(
@@ -523,7 +523,7 @@ def download(
     ) as progress:
         task = progress.add_task("Downloading", total=None)
 
-        def on_progress(p):
+        def on_progress(p: DownloadProgress) -> None:
             """Update the Rich progress bar with bytes downloaded so far."""
             total = int(p.total_bytes) if p.total_bytes else None
             downloaded = int(p.downloaded_bytes) if p.downloaded_bytes else 0
