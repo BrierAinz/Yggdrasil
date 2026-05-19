@@ -98,21 +98,16 @@ class Mem0Backend(MemoryBackend):
     def _init_meta_db(self) -> None:
         """Create a lightweight SQLite db to track entry count & id mapping."""
         self._local_db_path.parent.mkdir(parents=True, exist_ok=True)
-        conn = sqlite3.connect(self._local_db_path)
-        conn.execute(
-            """CREATE TABLE IF NOT EXISTS mem0_meta (
-                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                 mem0_id TEXT NOT NULL UNIQUE,
-                 content TEXT NOT NULL,
-                 metadata TEXT
-               )"""
-        )
-        conn.commit()
-        conn.close()
-
-    def _meta_conn(self) -> sqlite3.Connection:
-        """Return a connection to the local metadata tracking database."""
-        return sqlite3.connect(self._local_db_path)
+        with sqlite3.connect(self._local_db_path) as conn:
+            conn.execute(
+                """CREATE TABLE IF NOT EXISTS mem0_meta (
+                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                     mem0_id TEXT NOT NULL UNIQUE,
+                     content TEXT NOT NULL,
+                     metadata TEXT
+                   )"""
+            )
+            conn.commit()
 
     # ------------------------------------------------------------------
     # MemoryBackend interface
@@ -132,15 +127,12 @@ class Mem0Backend(MemoryBackend):
             # Fallback: use the content hash as identifier
             mem0_id = str(hash(content))
 
-        conn = self._meta_conn()
-        try:
+        with sqlite3.connect(self._local_db_path) as conn:
             conn.execute(
                 "INSERT INTO mem0_meta (mem0_id, content, metadata) VALUES (?, ?, ?)",
                 (mem0_id, content, json.dumps(metadata) if metadata else None),
             )
             conn.commit()
-        finally:
-            conn.close()
 
         return mem0_id
 
@@ -170,8 +162,7 @@ class Mem0Backend(MemoryBackend):
 
     async def _local_search(self, query: str, limit: int = 5) -> list[dict[str, Any]]:
         """Fallback substring search over the local meta db."""
-        conn = self._meta_conn()
-        try:
+        with sqlite3.connect(self._local_db_path) as conn:
             conn.row_factory = sqlite3.Row
             escaped = query.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
             rows = conn.execute(
@@ -179,33 +170,25 @@ class Mem0Backend(MemoryBackend):
                 (f"%{escaped}%", limit),
             ).fetchall()
             return [dict(row) for row in rows]
-        finally:
-            conn.close()
 
     async def recent(self, limit: int = 10) -> list[dict[str, Any]]:
         """Return recent entries from the local meta db."""
-        conn = self._meta_conn()
-        try:
+        with sqlite3.connect(self._local_db_path) as conn:
             conn.row_factory = sqlite3.Row
             rows = conn.execute(
                 "SELECT * FROM mem0_meta ORDER BY id DESC LIMIT ?", (limit,)
             ).fetchall()
             return [dict(row) for row in rows]
-        finally:
-            conn.close()
 
     async def delete(self, entry_id: str) -> bool:
         """Delete an entry from mem0 and the local meta db."""
         with contextlib.suppress(Exception):
             await asyncio.to_thread(self._mem.delete, entry_id)
 
-        conn = self._meta_conn()
-        try:
+        with sqlite3.connect(self._local_db_path) as conn:
             cursor = conn.execute("DELETE FROM mem0_meta WHERE mem0_id = ?", (entry_id,))
             conn.commit()
             return cursor.rowcount > 0
-        finally:
-            conn.close()
 
     async def clear(self) -> int:
         """Clear all entries from mem0 and the local meta db."""
@@ -215,20 +198,14 @@ class Mem0Backend(MemoryBackend):
         with contextlib.suppress(Exception):
             await asyncio.to_thread(self._mem.reset)
 
-        conn = self._meta_conn()
-        try:
+        with sqlite3.connect(self._local_db_path) as conn:
             conn.execute("DELETE FROM mem0_meta")
             conn.commit()
-        finally:
-            conn.close()
 
         return count
 
     def count(self) -> int:
         """Return the total number of entries in the local meta db."""
-        conn = self._meta_conn()
-        try:
+        with sqlite3.connect(self._local_db_path) as conn:
             row = conn.execute("SELECT COUNT(*) FROM mem0_meta").fetchone()
             return row[0] if row else 0
-        finally:
-            conn.close()
