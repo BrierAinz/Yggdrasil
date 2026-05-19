@@ -1,4 +1,4 @@
-"""Alfheim Dashboard – HTMX + Alpine.js + Jinja2 dashboard for Yggdrasil."""
+"""Alfheim Dashboard - HTMX + Alpine.js + Jinja2 dashboard for Yggdrasil."""
 
 from alfheim.dashboard.app import create_app
 

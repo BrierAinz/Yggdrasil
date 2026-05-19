@@ -191,7 +191,7 @@ class SystemHealthPanel(Static):
 
     @staticmethod
     def format_uptime(seconds: float) -> str:
-        """Format uptime in seconds to human-readable string.
+        r"""Format uptime in seconds to human-readable string.
 
         Returns:
             Formatted string like \"2d 3h 15m\".

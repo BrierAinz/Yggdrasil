@@ -101,7 +101,7 @@ def _total_size(directory: Path) -> int:
 
 
 def _format_size(size_bytes: int) -> str:
-    """Format bytes into a human-readable string.
+    r"""Format bytes into a human-readable string.
 
     Returns:
         Human-readable size string (e.g. \"1.5 GB\").
