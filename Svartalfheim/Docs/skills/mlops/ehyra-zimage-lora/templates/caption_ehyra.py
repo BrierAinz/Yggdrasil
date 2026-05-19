@@ -12,8 +12,8 @@ from transformers import AutoProcessor, Qwen3VLForConditionalGeneration
 # --- Config ---
 INPUT_DIR = Path.home() / "comfy/ai-toolkit/dataset/images/ehyra_dataset"
 TRIGGER_WORD = "ehyra"  # MUST match LoRA training trigger word
-QUANTIZE = True          # 4-bit quantization for 12GB VRAM
-MAX_NEW_TOKENS = 200    # Detailed captions for Z-Image
+QUANTIZE = True  # 4-bit quantization for 12GB VRAM
+MAX_NEW_TOKENS = 200  # Detailed captions for Z-Image
 
 # --- Load Model ---
 print("[INFO] Loading Qwen3-VL-4B-Instruct...")
@@ -23,6 +23,7 @@ model_kwargs = {
 }
 if QUANTIZE:
     from transformers import BitsAndBytesConfig
+
     model_kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True)
 
 model = Qwen3VLForConditionalGeneration.from_pretrained(
@@ -33,9 +34,7 @@ processor = AutoProcessor.from_pretrained("Qwen/Qwen3-VL-4B-Instruct")
 print("[INFO] Model loaded successfully.")
 
 # --- Gather Images ---
-image_paths = sorted(
-    p for ext in ("*.jpg", "*.jpeg", "*.png") for p in INPUT_DIR.glob(ext)
-)
+image_paths = sorted(p for ext in ("*.jpg", "*.jpeg", "*.png") for p in INPUT_DIR.glob(ext))
 print(f"[INFO] Found {len(image_paths)} images in {INPUT_DIR}")
 
 # --- Caption Loop ---
@@ -48,7 +47,7 @@ for i, img_path in enumerate(image_paths):
 
     # Resume: skip already-captioned images
     if txt_path.exists():
-        print(f"[SKIP] ({i+1}/{len(image_paths)}) {txt_path.name} already exists")
+        print(f"[SKIP] ({i + 1}/{len(image_paths)}) {txt_path.name} already exists")
         skipped += 1
         continue
 
@@ -81,7 +80,9 @@ for i, img_path in enumerate(image_paths):
         }
     ]
 
-    text_prompt = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    text_prompt = processor.apply_chat_template(
+        messages, tokenize=False, add_generation_prompt=True
+    )
     inputs = processor(
         text=[text_prompt],
         images=[image],
@@ -91,15 +92,14 @@ for i, img_path in enumerate(image_paths):
     output_ids = model.generate(**inputs, max_new_tokens=MAX_NEW_TOKENS)
     # IMPORTANT: use batch_decode(), NOT batch_text_decoder (removed in newer transformers)
     caption = processor.batch_decode(
-        output_ids[:, inputs.input_ids.shape[1]:],
-        skip_special_tokens=True
+        output_ids[:, inputs.input_ids.shape[1] :], skip_special_tokens=True
     )[0].strip()
 
     # Write caption with trigger word prefix
     txt_path.write_text(f"{TRIGGER_WORD} {caption}", encoding="utf-8")
 
     captioned += 1
-    print(f"[OK] ({i+1}/{len(image_paths)}) {txt_path.name}: {TRIGGER_WORD} {caption[:80]}...")
+    print(f"[OK] ({i + 1}/{len(image_paths)}) {txt_path.name}: {TRIGGER_WORD} {caption[:80]}...")
 
 # --- Cleanup ---
 del model

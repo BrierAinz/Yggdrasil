@@ -61,8 +61,11 @@ def fetch_history_entry(host: str, headers: dict, prompt_id: str, *, is_cloud: b
     except Exception:
         return {"ok": False, "reason": "non-JSON response"}
     if not isinstance(data, dict) or prompt_id not in data:
-        return {"ok": False, "reason": "prompt_id not found in history",
-                "history_keys": list(data.keys())[:5] if isinstance(data, dict) else []}
+        return {
+            "ok": False,
+            "reason": "prompt_id not found in history",
+            "history_keys": list(data.keys())[:5] if isinstance(data, dict) else [],
+        }
     return {"ok": True, "entry": data[prompt_id], "source": "/history"}
 
 
@@ -125,10 +128,12 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("prompt_id", nargs="?", help="prompt_id to look up")
     p.add_argument("--host", default=DEFAULT_LOCAL_HOST)
     p.add_argument("--api-key", help=f"or set ${ENV_API_KEY}")
-    p.add_argument("--raw", action="store_true",
-                   help="Print the full history entry instead of the digest")
-    p.add_argument("--tail-queue", action="store_true",
-                   help="Show currently running/pending jobs instead")
+    p.add_argument(
+        "--raw", action="store_true", help="Print the full history entry instead of the digest"
+    )
+    p.add_argument(
+        "--tail-queue", action="store_true", help="Show currently running/pending jobs instead"
+    )
     args = p.parse_args(argv)
 
     api_key = resolve_api_key(args.api_key)

@@ -36,7 +36,7 @@ _REQUEST_TIMEOUT = 120.0  # seconds
 
 
 def create_provider(config: YggdrasilConfig) -> LLMProviderWrapper:
-    """Instantiates the appropriate :class:`LLMProviderWrapper`."""
+    """Instantiate the appropriate :class:`LLMProviderWrapper`."""
     return LLMProviderWrapper(config)
 
 

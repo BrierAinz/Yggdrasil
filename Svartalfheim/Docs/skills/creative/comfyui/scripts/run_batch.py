@@ -76,20 +76,34 @@ def expand_sweep(sweep: dict, base_args: dict, count: int, randomize_seed: bool)
 
 
 def execute_one(
-    runner: ComfyRunner, workflow: dict, schema: dict, args: dict,
-    *, output_dir: Path, timeout: int, ws: bool,
+    runner: ComfyRunner,
+    workflow: dict,
+    schema: dict,
+    args: dict,
+    *,
+    output_dir: Path,
+    timeout: int,
+    ws: bool,
 ) -> dict:
     wf, warnings = inject_params(workflow, schema, args)
     sub = runner.submit(wf)
     if "_http_error" in sub:
-        return {"status": "error", "error": "submission HTTP error",
-                "details": sub.get("body"), "args": args}
+        return {
+            "status": "error",
+            "error": "submission HTTP error",
+            "details": sub.get("body"),
+            "args": args,
+        }
     pid = sub.get("prompt_id")
     if not pid:
         return {"status": "error", "error": "no prompt_id", "response": sub, "args": args}
     if sub.get("node_errors"):
-        return {"status": "error", "error": "validation failed",
-                "node_errors": sub["node_errors"], "args": args}
+        return {
+            "status": "error",
+            "error": "validation failed",
+            "node_errors": sub["node_errors"],
+            "args": args,
+        }
 
     if ws:
         result = runner.monitor_ws(pid, timeout=timeout)
@@ -121,24 +135,33 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument("--workflow", required=True)
     p.add_argument("--args", default="{}", help="Base parameters JSON")
-    p.add_argument("--count", type=int, default=0,
-                   help="Number of runs (use with --randomize-seed)")
-    p.add_argument("--sweep", default="",
-                   help='JSON dict of param→list of values. Cartesian product. '
-                        'e.g. \'{"seed":[1,2,3],"cfg":[5,8]}\'')
-    p.add_argument("--randomize-seed", action="store_true",
-                   help="In --count mode, vary seed per run")
+    p.add_argument(
+        "--count", type=int, default=0, help="Number of runs (use with --randomize-seed)"
+    )
+    p.add_argument(
+        "--sweep",
+        default="",
+        help="JSON dict of param→list of values. Cartesian product. "
+        'e.g. \'{"seed":[1,2,3],"cfg":[5,8]}\'',
+    )
+    p.add_argument(
+        "--randomize-seed", action="store_true", help="In --count mode, vary seed per run"
+    )
     p.add_argument("--host", default=DEFAULT_LOCAL_HOST)
     p.add_argument("--api-key", help=f"or set ${ENV_API_KEY}")
     p.add_argument("--partner-key")
-    p.add_argument("--parallel", type=int, default=1,
-                   help="Concurrent submissions (cloud: up to your tier limit). "
-                        "Default 1 (sequential)")
+    p.add_argument(
+        "--parallel",
+        type=int,
+        default=1,
+        help="Concurrent submissions (cloud: up to your tier limit). Default 1 (sequential)",
+    )
     p.add_argument("--output-dir", default="./outputs/batch")
     p.add_argument("--timeout", type=int, default=0)
     p.add_argument("--ws", action="store_true")
-    p.add_argument("--continue-on-error", action="store_true",
-                   help="Don't stop the batch when a run fails")
+    p.add_argument(
+        "--continue-on-error", action="store_true", help="Don't stop the batch when a run fails"
+    )
     args = p.parse_args(argv)
 
     if args.count <= 0 and not args.sweep:
@@ -200,8 +223,14 @@ def main(argv: list[str] | None = None) -> int:
             for i, ar in enumerate(runs):
                 run_dir = base_dir / f"run_{i:04d}"
                 fut = ex.submit(
-                    execute_one, runner, workflow, schema, ar,
-                    output_dir=run_dir, timeout=timeout, ws=args.ws,
+                    execute_one,
+                    runner,
+                    workflow,
+                    schema,
+                    ar,
+                    output_dir=run_dir,
+                    timeout=timeout,
+                    ws=args.ws,
                 )
                 future_to_idx[fut] = i
             for fut in as_completed(future_to_idx):
@@ -214,7 +243,7 @@ def main(argv: list[str] | None = None) -> int:
                 results.append(r)
                 if r["status"] != "success":
                     failures += 1
-                    log(f"  run {i} → {r['status']}: {r.get('error','?')}")
+                    log(f"  run {i} → {r['status']}: {r.get('error', '?')}")
                     if not args.continue_on_error:
                         log("  --continue-on-error not set; aborting batch")
                         break
@@ -223,13 +252,14 @@ def main(argv: list[str] | None = None) -> int:
     else:
         for i, ar in enumerate(runs):
             run_dir = base_dir / f"run_{i:04d}"
-            r = execute_one(runner, workflow, schema, ar,
-                           output_dir=run_dir, timeout=timeout, ws=args.ws)
+            r = execute_one(
+                runner, workflow, schema, ar, output_dir=run_dir, timeout=timeout, ws=args.ws
+            )
             r["index"] = i
             results.append(r)
             if r["status"] != "success":
                 failures += 1
-                log(f"  run {i} → {r['status']}: {r.get('error','?')}")
+                log(f"  run {i} → {r['status']}: {r.get('error', '?')}")
                 if not args.continue_on_error:
                     log("  --continue-on-error not set; aborting batch")
                     break
@@ -237,14 +267,16 @@ def main(argv: list[str] | None = None) -> int:
                 log(f"  run {i} → success: {len(r.get('outputs', []))} files")
 
     results.sort(key=lambda x: x.get("index", 0))
-    emit_json({
-        "status": "success" if failures == 0 else "partial",
-        "total": len(runs),
-        "completed": sum(1 for r in results if r["status"] == "success"),
-        "failed": failures,
-        "output_dir": str(base_dir),
-        "results": results,
-    })
+    emit_json(
+        {
+            "status": "success" if failures == 0 else "partial",
+            "total": len(runs),
+            "completed": sum(1 for r in results if r["status"] == "success"),
+            "failed": failures,
+            "output_dir": str(base_dir),
+            "results": results,
+        }
+    )
     return 0 if failures == 0 else 1
 
 

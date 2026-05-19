@@ -3,6 +3,7 @@
 Script para generar metadata de documentos en Svartalfheim Knowledge Base.
 Uso: python Scripts/generate_docs_metadata.py
 """
+
 import json
 import re
 from datetime import datetime
@@ -66,9 +67,16 @@ def extract_metadata(md_file: Path) -> dict | None:
     if not metadata["description"]:
         for raw_line in lines:
             stripped_line = raw_line.strip()
-            if stripped_line and not stripped_line.startswith("#") and not stripped_line.startswith(">") and not stripped_line.startswith("---"):
+            if (
+                stripped_line
+                and not stripped_line.startswith("#")
+                and not stripped_line.startswith(">")
+                and not stripped_line.startswith("---")
+            ):
                 if len(stripped_line) > 20:  # Párrafo sustancial
-                    metadata["description"] = stripped_line[:200] + ("..." if len(stripped_line) > 200 else "")
+                    metadata["description"] = stripped_line[:200] + (
+                        "..." if len(stripped_line) > 200 else ""
+                    )
                     break
 
     return metadata
@@ -87,7 +95,7 @@ def main():
         meta = extract_metadata(md_file)
         if meta:
             docs.append(meta)
-            print(f"OK ({meta['size_bytes']//1024}KB, {meta.get('section_count', 0)} secciones)")
+            print(f"OK ({meta['size_bytes'] // 1024}KB, {meta.get('section_count', 0)} secciones)")
         else:
             print("ERROR")
 

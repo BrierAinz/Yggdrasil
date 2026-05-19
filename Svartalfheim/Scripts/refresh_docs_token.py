@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Refrescar token del vault docs usando el token maestro."""
+
 import urllib.request
 
 

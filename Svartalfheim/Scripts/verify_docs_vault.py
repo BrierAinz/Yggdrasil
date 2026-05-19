@@ -2,6 +2,7 @@
 """
 Verifica que el vault "docs" funcione correctamente.
 """
+
 import json
 from pathlib import Path
 

@@ -155,7 +155,11 @@ def fetch_object_info(url: str, headers: dict) -> tuple[set[str] | None, dict | 
 
 
 def _fetch_one_folder(
-    base: str, folder: str, headers: dict, *, is_cloud: bool,
+    base: str,
+    folder: str,
+    headers: dict,
+    *,
+    is_cloud: bool,
 ) -> tuple[set[str] | None, dict | None]:
     """Single-folder fetch, no aliasing. Returns (installed_set, error_info)."""
     url = resolve_url(base, f"/models/{folder}", is_cloud=is_cloud)
@@ -187,7 +191,11 @@ def _fetch_one_folder(
 
 
 def fetch_models_for_folder(
-    base: str, folder: str, headers: dict, *, is_cloud: bool,
+    base: str,
+    folder: str,
+    headers: dict,
+    *,
+    is_cloud: bool,
 ) -> tuple[set[str] | None, dict | None]:
     """Fetch installed models for a folder, trying aliases.
 
@@ -214,7 +222,9 @@ def fetch_models_for_folder(
     return combined, None
 
 
-def fetch_embeddings(base: str, headers: dict, *, is_cloud: bool) -> tuple[set[str] | None, dict | None]:
+def fetch_embeddings(
+    base: str, headers: dict, *, is_cloud: bool
+) -> tuple[set[str] | None, dict | None]:
     """Local ComfyUI exposes /embeddings; cloud uses /experiment/models/embeddings."""
     if is_cloud:
         return fetch_models_for_folder(base, "embeddings", headers, is_cloud=True)
@@ -275,7 +285,10 @@ def suggest_git_url(node_class: str) -> str | None:
 
 
 def check_deps(
-    workflow: dict, host: str, *, api_key: str | None = None,
+    workflow: dict,
+    host: str,
+    *,
+    api_key: str | None = None,
 ) -> dict:
     headers: dict[str, str] = {}
     if api_key:
@@ -326,7 +339,10 @@ def check_deps(
         folder = dep["folder"]
         if folder not in model_cache:
             model_cache[folder] = fetch_models_for_folder(
-                base, folder, headers, is_cloud=is_cloud,
+                base,
+                folder,
+                headers,
+                is_cloud=is_cloud,
             )
         installed, err = model_cache[folder]
         if installed is None:
@@ -355,16 +371,18 @@ def check_deps(
             # folder_errors block
             continue
         if not model_present(emb_name, emb_installed):
-            missing_embeddings.append({
-                "node_id": nid,
-                "embedding_name": emb_name,
-                "folder": "embeddings",
-                "fix_hint": (
-                    f"Download {emb_name}.pt or .safetensors and place in "
-                    f"models/embeddings/, or `comfy model download --url <URL> "
-                    f"--relative-path models/embeddings`"
-                ),
-            })
+            missing_embeddings.append(
+                {
+                    "node_id": nid,
+                    "embedding_name": emb_name,
+                    "folder": "embeddings",
+                    "fix_hint": (
+                        f"Download {emb_name}.pt or .safetensors and place in "
+                        f"models/embeddings/, or `comfy model download --url <URL> "
+                        f"--relative-path models/embeddings`"
+                    ),
+                }
+            )
 
     if emb_err and emb_installed is None:
         folder_errors.setdefault("embeddings", emb_err)
@@ -394,19 +412,25 @@ def check_deps(
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description="Check ComfyUI workflow dependencies against a running server")
+    p = argparse.ArgumentParser(
+        description="Check ComfyUI workflow dependencies against a running server"
+    )
     p.add_argument("workflow", help="Path to workflow API JSON file")
     p.add_argument("--host", default=DEFAULT_LOCAL_HOST, help="ComfyUI server URL")
     p.add_argument("--port", type=int, help="Server port (overrides --host port)")
     p.add_argument("--api-key", help=f"API key for cloud (or set ${ENV_API_KEY} env var)")
-    p.add_argument("--strict", action="store_true",
-                   help="Exit non-zero if node check is skipped (e.g. on cloud free tier)")
+    p.add_argument(
+        "--strict",
+        action="store_true",
+        help="Exit non-zero if node check is skipped (e.g. on cloud free tier)",
+    )
     args = p.parse_args(argv)
 
     host = args.host
     if args.port is not None:
         # Strip any port from host and append --port
         from urllib.parse import urlparse, urlunparse
+
         parsed = urlparse(host if "://" in host else f"http://{host}")
         new_netloc = f"{parsed.hostname}:{args.port}"
         host = urlunparse(parsed._replace(netloc=new_netloc))

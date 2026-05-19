@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test directo de Kimi API para diagnosticar error 401."""
+
 import os
 import sys
 from pathlib import Path

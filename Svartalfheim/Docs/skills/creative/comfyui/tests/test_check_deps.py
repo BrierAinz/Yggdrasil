@@ -63,6 +63,7 @@ class TestNodePackageMap:
         # Registry slugs must be alphanumerics + hyphens/underscores only
         # (passed straight to `comfy node install <pkg>`).
         import re
+
         safe = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._\-]*$")
         for pkg in NODE_TO_PACKAGE.values():
             assert safe.match(pkg), f"Unsafe package slug: {pkg!r}"

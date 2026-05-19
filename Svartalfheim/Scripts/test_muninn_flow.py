@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test exacto del flujo de MuninnMemory."""
+
 import json
 import urllib.request
 from pathlib import Path
@@ -39,11 +40,13 @@ print()
 # Test request con este token exacto
 req = urllib.request.Request(
     "http://127.0.0.1:8475/api/activate",
-    data=json.dumps({
-        "vault": "docs",
-        "context": ["DAG Executor"],
-        "max_results": 3,
-    }).encode(),
+    data=json.dumps(
+        {
+            "vault": "docs",
+            "context": ["DAG Executor"],
+            "max_results": 3,
+        }
+    ).encode(),
     headers={
         "Authorization": f"Bearer {token_docs}",
         "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test de búsqueda en MuninnDB via HTTP directo."""
+
 import asyncio
 import json
 from pathlib import Path
@@ -62,7 +63,9 @@ async def main():
             score = r.get("score", 0)
             why = r.get("why", {})
             print(f"  {i}. {concept}")
-            print(f"     Score: {score:.3f} (bm25: {why.get('bm25', 0):.2f}, hebbian: {why.get('hebbian', 0):.2f})")
+            print(
+                f"     Score: {score:.3f} (bm25: {why.get('bm25', 0):.2f}, hebbian: {why.get('hebbian', 0):.2f})"
+            )
             print(f"     {content[:100]}...")
             print()
 

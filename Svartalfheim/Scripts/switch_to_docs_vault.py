@@ -8,6 +8,7 @@ Pasos:
 3. Actualizar Core/Config/muninn.json con el token
 4. Ejecutar este script para reindexar
 """
+
 import json
 from pathlib import Path
 
@@ -18,7 +19,9 @@ CONFIG_PATH = YGG_ROOT / "Asgard" / "Lilith" / "Core" / "Config" / "muninn.json"
 VAULT_CONFIG = YGG_ROOT / "Asgard" / "Lilith" / "Core" / "Config" / "muninn_docs_vault.json"
 
 INDEXER_SCRIPT = YGG_ROOT / "Svartalfheim" / "Scripts" / "index_docs_to_muninn.py"
-AGENT_SCRIPT = YGG_ROOT / "Asgard" / "Lilith" / "Core" / "Backend" / "core" / "agents" / "archivero_agent.py"
+AGENT_SCRIPT = (
+    YGG_ROOT / "Asgard" / "Lilith" / "Core" / "Backend" / "core" / "agents" / "archivero_agent.py"
+)
 API_SCRIPT = YGG_ROOT / "Asgard" / "Lilith" / "Core" / "Backend" / "api" / "docs_api.py"
 
 

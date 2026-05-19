@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test ArchiveroAgent directamente."""
+
 import asyncio
 import sys
 from pathlib import Path
@@ -38,6 +39,7 @@ async def test():
     print(f"  Respuesta: {result['answer'][:200]}...")
     print(f"  Fuentes: {result['sources']}")
     print(f"  Confianza: {result['confidence']}")
+
 
 if __name__ == "__main__":
     asyncio.run(test())

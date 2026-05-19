@@ -67,10 +67,26 @@ def install_node(package: str, *, dry_run: bool = False, comfy_cmd: str = "comfy
     return code == 0
 
 
-def install_model(url: str, folder: str, filename: str | None = None,
-                  *, dry_run: bool = False, comfy_cmd: str = "comfy",
-                  hf_token: str | None = None, civitai_token: str | None = None) -> bool:
-    cmd = [*comfy_cmd.split(), "--skip-prompt", "model", "download", "--url", url, "--relative-path", f"models/{folder}"]
+def install_model(
+    url: str,
+    folder: str,
+    filename: str | None = None,
+    *,
+    dry_run: bool = False,
+    comfy_cmd: str = "comfy",
+    hf_token: str | None = None,
+    civitai_token: str | None = None,
+) -> bool:
+    cmd = [
+        *comfy_cmd.split(),
+        "--skip-prompt",
+        "model",
+        "download",
+        "--url",
+        url,
+        "--relative-path",
+        f"models/{folder}",
+    ]
     if filename:
         cmd.extend(["--filename", filename])
     if hf_token:
@@ -86,14 +102,20 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("workflow")
     p.add_argument("--host", default=DEFAULT_LOCAL_HOST)
     p.add_argument("--api-key", help=f"or set ${ENV_API_KEY}")
-    p.add_argument("--models-from-file",
-                   help="JSON file mapping {model_filename: download_url} for models that need install")
+    p.add_argument(
+        "--models-from-file",
+        help="JSON file mapping {model_filename: download_url} for models that need install",
+    )
     p.add_argument("--hf-token", help="HuggingFace token for downloads")
     p.add_argument("--civitai-token", help="CivitAI token for downloads")
-    p.add_argument("--dry-run", action="store_true",
-                   help="Show what would be installed without doing it")
-    p.add_argument("--no-restart", action="store_true",
-                   help="Don't suggest restarting the server after node install")
+    p.add_argument(
+        "--dry-run", action="store_true", help="Show what would be installed without doing it"
+    )
+    p.add_argument(
+        "--no-restart",
+        action="store_true",
+        help="Don't suggest restarting the server after node install",
+    )
     args = p.parse_args(argv)
 
     api_key = resolve_api_key(args.api_key)
@@ -116,20 +138,24 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if report["is_cloud"]:
-        emit_json({
-            "status": "cannot_fix_cloud",
-            "reason": "Comfy Cloud preinstalls nodes; if something is genuinely missing, contact support.",
-            "report": report,
-        })
+        emit_json(
+            {
+                "status": "cannot_fix_cloud",
+                "reason": "Comfy Cloud preinstalls nodes; if something is genuinely missing, contact support.",
+                "report": report,
+            }
+        )
         return 1
 
     comfy_cmd = comfy_cli_available()
     if not comfy_cmd:
-        emit_json({
-            "status": "cannot_fix",
-            "reason": "comfy-cli not on PATH; install with `pip install comfy-cli` or `pipx install comfy-cli`",
-            "report": report,
-        })
+        emit_json(
+            {
+                "status": "cannot_fix",
+                "reason": "comfy-cli not on PATH; install with `pip install comfy-cli` or `pipx install comfy-cli`",
+                "report": report,
+            }
+        )
         return 1
 
     actions: list[dict] = []
@@ -145,15 +171,23 @@ def main(argv: list[str] | None = None) -> int:
                 continue
             seen_packages.add(package)
             ok = install_node(package, dry_run=args.dry_run, comfy_cmd=comfy_cmd)
-            (actions if ok else failures).append({
-                "kind": "node", "package": package, "node_class": entry["class_type"],
-                "ok": ok,
-            })
+            (actions if ok else failures).append(
+                {
+                    "kind": "node",
+                    "package": package,
+                    "node_class": entry["class_type"],
+                    "ok": ok,
+                }
+            )
         else:
-            failures.append({
-                "kind": "node", "node_class": entry["class_type"],
-                "ok": False, "reason": "No registry mapping known. " + entry.get("fix_hint", ""),
-            })
+            failures.append(
+                {
+                    "kind": "node",
+                    "node_class": entry["class_type"],
+                    "ok": False,
+                    "reason": "No registry mapping known. " + entry.get("fix_hint", ""),
+                }
+            )
 
     # ---- Install missing models (only when URL provided) ----
     sources: dict[str, str] = {}
@@ -167,58 +201,87 @@ def main(argv: list[str] | None = None) -> int:
         filename = entry["value"]
         url = sources.get(filename)
         if not url:
-            failures.append({
-                "kind": "model", "filename": filename, "folder": entry["folder"],
-                "ok": False, "reason": "No URL provided in --models-from-file. "
-                                       "Refusing to guess.",
-            })
+            failures.append(
+                {
+                    "kind": "model",
+                    "filename": filename,
+                    "folder": entry["folder"],
+                    "ok": False,
+                    "reason": "No URL provided in --models-from-file. Refusing to guess.",
+                }
+            )
             continue
         ok = install_model(
-            url, entry["folder"], filename,
-            dry_run=args.dry_run, comfy_cmd=comfy_cmd,
-            hf_token=args.hf_token, civitai_token=args.civitai_token,
+            url,
+            entry["folder"],
+            filename,
+            dry_run=args.dry_run,
+            comfy_cmd=comfy_cmd,
+            hf_token=args.hf_token,
+            civitai_token=args.civitai_token,
         )
-        (actions if ok else failures).append({
-            "kind": "model", "filename": filename, "folder": entry["folder"],
-            "url": url, "ok": ok,
-        })
+        (actions if ok else failures).append(
+            {
+                "kind": "model",
+                "filename": filename,
+                "folder": entry["folder"],
+                "url": url,
+                "ok": ok,
+            }
+        )
 
     # ---- Embeddings ----
     for entry in report["missing_embeddings"]:
         emb_name = entry["embedding_name"]
         # Try common extensions in user-supplied source map
-        url = (sources.get(f"{emb_name}.pt")
-               or sources.get(f"{emb_name}.safetensors")
-               or sources.get(emb_name))
+        url = (
+            sources.get(f"{emb_name}.pt")
+            or sources.get(f"{emb_name}.safetensors")
+            or sources.get(emb_name)
+        )
         if not url:
-            failures.append({
-                "kind": "embedding", "name": emb_name,
-                "ok": False, "reason": "No URL provided in --models-from-file.",
-            })
+            failures.append(
+                {
+                    "kind": "embedding",
+                    "name": emb_name,
+                    "ok": False,
+                    "reason": "No URL provided in --models-from-file.",
+                }
+            )
             continue
         target_filename = (
-            f"{emb_name}.safetensors" if url.endswith(".safetensors")
-            else f"{emb_name}.pt"
+            f"{emb_name}.safetensors" if url.endswith(".safetensors") else f"{emb_name}.pt"
         )
         ok = install_model(
-            url, "embeddings", target_filename,
-            dry_run=args.dry_run, comfy_cmd=comfy_cmd,
-            hf_token=args.hf_token, civitai_token=args.civitai_token,
+            url,
+            "embeddings",
+            target_filename,
+            dry_run=args.dry_run,
+            comfy_cmd=comfy_cmd,
+            hf_token=args.hf_token,
+            civitai_token=args.civitai_token,
         )
-        (actions if ok else failures).append({
-            "kind": "embedding", "name": emb_name, "url": url, "ok": ok,
-        })
+        (actions if ok else failures).append(
+            {
+                "kind": "embedding",
+                "name": emb_name,
+                "url": url,
+                "ok": ok,
+            }
+        )
 
     needs_restart = any(a["kind"] == "node" and a.get("ok") for a in actions)
 
-    emit_json({
-        "status": "fixed" if not failures else "partial",
-        "actions_taken": actions,
-        "failures": failures,
-        "needs_server_restart": needs_restart and not args.no_restart,
-        "restart_hint": "comfy stop && comfy launch --background",
-        "dry_run": args.dry_run,
-    })
+    emit_json(
+        {
+            "status": "fixed" if not failures else "partial",
+            "actions_taken": actions,
+            "failures": failures,
+            "needs_server_restart": needs_restart and not args.no_restart,
+            "restart_hint": "comfy stop && comfy launch --background",
+            "dry_run": args.dry_run,
+        }
+    )
     return 0 if not failures else 1
 
 

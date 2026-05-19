@@ -53,9 +53,7 @@ _COMFY_CLI_FLAG = {
 
 def _run(cmd: list[str], timeout: int = 8) -> str:
     try:
-        out = subprocess.run(
-            cmd, capture_output=True, text=True, timeout=timeout, check=False
-        )
+        out = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, check=False)
         return (out.stdout or "") + (out.stderr or "")
     except (FileNotFoundError, subprocess.TimeoutExpired, OSError):
         return ""
@@ -89,11 +87,13 @@ def detect_nvidia() -> dict | None:
     """Detect NVIDIA GPUs. Returns the GPU with the most VRAM, plus list of all."""
     if not shutil.which("nvidia-smi"):
         return None
-    out = _run([
-        "nvidia-smi",
-        "--query-gpu=index,name,memory.total,driver_version",
-        "--format=csv,noheader,nounits",
-    ])
+    out = _run(
+        [
+            "nvidia-smi",
+            "--query-gpu=index,name,memory.total,driver_version",
+            "--format=csv,noheader,nounits",
+        ]
+    )
     if not out.strip():
         return None
     gpus = []
@@ -108,13 +108,15 @@ def detect_nvidia() -> dict | None:
         except ValueError:
             continue
         driver = parts[3] if len(parts) > 3 else ""
-        gpus.append({
-            "vendor": "nvidia",
-            "index": idx,
-            "name": name,
-            "vram_gb": round(vram_mb / 1024, 1),
-            "driver": driver,
-        })
+        gpus.append(
+            {
+                "vendor": "nvidia",
+                "index": idx,
+                "name": name,
+                "vram_gb": round(vram_mb / 1024, 1),
+                "driver": driver,
+            }
+        )
     if not gpus:
         return None
     # Pick GPU with most VRAM
@@ -136,19 +138,25 @@ def detect_rocm() -> dict | None:
             for card_id, info in data.items():
                 if not card_id.startswith("card"):
                     continue
-                name = (info.get("Card series") or info.get("Card model")
-                        or info.get("Marketing Name") or "AMD GPU")
+                name = (
+                    info.get("Card series")
+                    or info.get("Card model")
+                    or info.get("Marketing Name")
+                    or "AMD GPU"
+                )
                 vram_b = info.get("VRAM Total Memory (B)") or info.get("vram_total_memory_b") or 0
                 try:
                     vram_b = int(vram_b)
                 except (ValueError, TypeError):
                     vram_b = 0
-                cards.append({
-                    "vendor": "amd",
-                    "name": str(name).strip(),
-                    "vram_gb": round(vram_b / (1024**3), 1),
-                    "driver": "rocm",
-                })
+                cards.append(
+                    {
+                        "vendor": "amd",
+                        "name": str(name).strip(),
+                        "vram_gb": round(vram_b / (1024**3), 1),
+                        "driver": "rocm",
+                    }
+                )
             if cards:
                 best = max(cards, key=lambda c: c["vram_gb"])
                 if len(cards) > 1:
@@ -211,8 +219,13 @@ def detect_intel_arc() -> dict | None:
             return {"vendor": "intel", "name": "Intel Arc/Xe", "vram_gb": 0.0}
     # Windows: try Get-CimInstance
     if platform.system() == "Windows" and shutil.which("powershell"):
-        out = _run(["powershell", "-NoProfile",
-                    "Get-CimInstance Win32_VideoController | Select-Object Name | Format-List"])
+        out = _run(
+            [
+                "powershell",
+                "-NoProfile",
+                "Get-CimInstance Win32_VideoController | Select-Object Name | Format-List",
+            ]
+        )
         if "Intel" in out and ("Arc" in out or "Iris Xe" in out):
             return {"vendor": "intel", "name": "Intel Arc/Iris Xe", "vram_gb": 0.0}
     return None
@@ -236,10 +249,13 @@ def total_system_ram_gb() -> float:
             return 0.0
     if sysname == "Windows":
         if shutil.which("powershell"):
-            out = _run([
-                "powershell", "-NoProfile",
-                "(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory",
-            ])
+            out = _run(
+                [
+                    "powershell",
+                    "-NoProfile",
+                    "(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory",
+                ]
+            )
             m = re.search(r"(\d{8,})", out)
             if m:
                 return round(int(m.group(1)) / (1024**3), 1)
@@ -283,7 +299,9 @@ def check_pytorch_cuda() -> dict | None:
     return info
 
 
-def classify(gpu: dict | None, ram_gb: float, free_disk_gb: float, *, wsl: bool, rosetta: bool) -> tuple[str, str, list[str]]:
+def classify(
+    gpu: dict | None, ram_gb: float, free_disk_gb: float, *, wsl: bool, rosetta: bool
+) -> tuple[str, str, list[str]]:
     notes: list[str] = []
 
     if rosetta:
@@ -295,7 +313,9 @@ def classify(gpu: dict | None, ram_gb: float, free_disk_gb: float, *, wsl: bool,
         return "cloud", "comfy-cloud", notes
 
     if wsl and gpu and gpu["vendor"] == "nvidia":
-        notes.append("Detected WSL2 + NVIDIA — confirm `nvidia-smi` works in your WSL distro before installing.")
+        notes.append(
+            "Detected WSL2 + NVIDIA — confirm `nvidia-smi` works in your WSL distro before installing."
+        )
 
     if free_disk_gb and free_disk_gb < MIN_FREE_DISK_GB:
         notes.append(
@@ -343,7 +363,9 @@ def classify(gpu: dict | None, ram_gb: float, free_disk_gb: float, *, wsl: bool,
         return "ok", "apple-silicon", notes
 
     if gpu["vendor"] == "intel":
-        notes.append("Intel Arc detected — ComfyUI IPEX support is experimental; Comfy Cloud is more reliable.")
+        notes.append(
+            "Intel Arc detected — ComfyUI IPEX support is experimental; Comfy Cloud is more reliable."
+        )
         return "marginal", "intel", notes
 
     # Discrete NVIDIA / AMD
@@ -356,12 +378,12 @@ def classify(gpu: dict | None, ram_gb: float, free_disk_gb: float, *, wsl: bool,
         notes.append("Most modern models won't load. Recommend Comfy Cloud.")
         return "cloud", "comfy-cloud", notes
     if vram < OK_VRAM_GB:
-        notes.append(
-            f"{name} ({vram} GB VRAM) — SD1.5 works, SDXL tight, Flux/video unlikely."
-        )
+        notes.append(f"{name} ({vram} GB VRAM) — SD1.5 works, SDXL tight, Flux/video unlikely.")
         return "marginal", gpu["vendor"], notes
     if vram < GREAT_VRAM_GB:
-        notes.append(f"{name} ({vram} GB VRAM) — SDXL comfortable, Flux possible with optimizations.")
+        notes.append(
+            f"{name} ({vram} GB VRAM) — SDXL comfortable, Flux possible with optimizations."
+        )
         return "ok", gpu["vendor"], notes
     notes.append(f"{name} ({vram} GB VRAM) — can run everything including Flux/video.")
     return "ok", gpu["vendor"], notes
@@ -376,12 +398,7 @@ def build_report(*, check_pytorch: bool = False) -> dict:
     rosetta = is_rosetta()
     wsl = is_wsl()
 
-    gpu = (
-        detect_nvidia()
-        or detect_rocm()
-        or detect_apple_silicon()
-        or detect_intel_arc()
-    )
+    gpu = detect_nvidia() or detect_rocm() or detect_apple_silicon() or detect_intel_arc()
 
     # Intel Mac: arm64 detect failed AND no other GPU paths
     if gpu is None and sysname == "Darwin" and arch != "arm64" and not rosetta:
@@ -408,7 +425,11 @@ def build_report(*, check_pytorch: bool = False) -> dict:
         return report
 
     verdict, install_path, notes = classify(
-        gpu, ram_gb, free_disk_gb, wsl=wsl, rosetta=rosetta,
+        gpu,
+        ram_gb,
+        free_disk_gb,
+        wsl=wsl,
+        rosetta=rosetta,
     )
 
     report = {
@@ -441,10 +462,14 @@ def _install_urls() -> dict:
 
 def main(argv: list[str] | None = None) -> int:
     import argparse
+
     p = argparse.ArgumentParser(description="Check whether this machine can run ComfyUI locally.")
     p.add_argument("--json", action="store_true", help="Emit machine-readable JSON only")
-    p.add_argument("--check-pytorch", action="store_true",
-                   help="Also probe `torch` for CUDA/MPS availability (slower)")
+    p.add_argument(
+        "--check-pytorch",
+        action="store_true",
+        help="Also probe `torch` for CUDA/MPS availability (slower)",
+    )
     args = p.parse_args(argv)
 
     report = build_report(check_pytorch=args.check_pytorch)

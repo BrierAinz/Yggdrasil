@@ -2,6 +2,7 @@
 """
 Reindexa documentos al vault "docs" recién creado.
 """
+
 import json
 import sys
 from pathlib import Path

@@ -85,6 +85,7 @@ from _common import (
 # Runner
 # =============================================================================
 
+
 class WorkflowRunError(Exception):
     """Raised when a workflow run fails (validation, execution, timeout)."""
 
@@ -138,8 +139,15 @@ class ComfyRunner:
             return False, {"error": str(e)}
 
     # ---------- upload ----------
-    def upload_image(self, path: Path, *, image_type: str = "input", overwrite: bool = True,
-                     endpoint: str = "/upload/image", extra_form: dict | None = None) -> dict:
+    def upload_image(
+        self,
+        path: Path,
+        *,
+        image_type: str = "input",
+        overwrite: bool = True,
+        endpoint: str = "/upload/image",
+        extra_form: dict | None = None,
+    ) -> dict:
         """Upload an image file via multipart. Returns server-side ref dict."""
         if not path.exists():
             raise FileNotFoundError(f"input image not found: {path}")
@@ -152,9 +160,13 @@ class ComfyRunner:
             if extra_form:
                 form.update({k: str(v) for k, v in extra_form.items()})
             r = http_request(
-                "POST", self._url(endpoint),
-                headers=self.headers, files=files, form=form,
-                timeout=300, retries=2,
+                "POST",
+                self._url(endpoint),
+                headers=self.headers,
+                files=files,
+                form=form,
+                timeout=300,
+                retries=2,
             )
         if r.status != 200:
             raise WorkflowRunError(
@@ -198,8 +210,14 @@ class ComfyRunner:
         return body
 
     # ---------- HTTP polling ----------
-    def poll_status(self, prompt_id: str, *, timeout: float = 300.0,
-                    initial_interval: float = 1.5, max_interval: float = 8.0) -> dict:
+    def poll_status(
+        self,
+        prompt_id: str,
+        *,
+        timeout: float = 300.0,
+        initial_interval: float = 1.5,
+        max_interval: float = 8.0,
+    ) -> dict:
         start = time.time()
         interval = initial_interval
 
@@ -207,7 +225,9 @@ class ComfyRunner:
             if self.is_cloud:
                 r = http_get(
                     self._url(f"/job/{prompt_id}/status"),
-                    headers=self.headers, retries=2, timeout=30,
+                    headers=self.headers,
+                    retries=2,
+                    timeout=30,
                 )
                 if r.status == 200:
                     try:
@@ -232,7 +252,9 @@ class ComfyRunner:
                 # Local: /history/{id} grows once execution completes
                 r = http_get(
                     self._url(f"/history/{prompt_id}"),
-                    headers=self.headers, retries=2, timeout=30,
+                    headers=self.headers,
+                    retries=2,
+                    timeout=30,
                 )
                 if r.status == 200:
                     try:
@@ -256,8 +278,9 @@ class ComfyRunner:
         return {"status": "timeout", "elapsed": time.time() - start}
 
     # ---------- WebSocket monitoring ----------
-    def monitor_ws(self, prompt_id: str, *, timeout: float = 300.0,
-                   on_progress: Any = None) -> dict:
+    def monitor_ws(
+        self, prompt_id: str, *, timeout: float = 300.0, on_progress: Any = None
+    ) -> dict:
         """Connect to /ws and listen until execution_success / execution_error.
 
         Falls back to HTTP polling if `websocket-client` is not installed.
@@ -307,12 +330,14 @@ class ComfyRunner:
 
                 if mtype == "progress":
                     if callable(on_progress):
-                        on_progress({
-                            "type": "progress",
-                            "value": mdata.get("value"),
-                            "max": mdata.get("max"),
-                            "node": mdata.get("node"),
-                        })
+                        on_progress(
+                            {
+                                "type": "progress",
+                                "value": mdata.get("value"),
+                                "max": mdata.get("max"),
+                                "node": mdata.get("node"),
+                            }
+                        )
                 elif mtype == "progress_state":
                     if callable(on_progress):
                         on_progress({"type": "progress_state", "nodes": mdata.get("nodes", {})})
@@ -388,8 +413,14 @@ class ComfyRunner:
         return entry.get("outputs", {}) or {}
 
     def download_output(
-        self, *, filename: str, subfolder: str, file_type: str,
-        output_dir: Path, preserve_subfolder: bool = True, overwrite: bool = False,
+        self,
+        *,
+        filename: str,
+        subfolder: str,
+        file_type: str,
+        output_dir: Path,
+        preserve_subfolder: bool = True,
+        overwrite: bool = False,
     ) -> Path:
         """Stream a single output to disk. Path-traversal-safe."""
         params = {"filename": filename, "subfolder": subfolder, "type": file_type}
@@ -421,9 +452,14 @@ class ComfyRunner:
         # via _strip_api_key_on_redirect, so a single follow_redirects=True call
         # is safe AND simpler.
         r = http_request(
-            "GET", url, headers=self.headers,
-            timeout=600, retries=3, follow_redirects=True,
-            stream=True, sink=out_path,
+            "GET",
+            url,
+            headers=self.headers,
+            timeout=600,
+            retries=3,
+            follow_redirects=True,
+            stream=True,
+            sink=out_path,
         )
         if r.status != 200:
             try:
@@ -442,8 +478,10 @@ class ComfyRunner:
     def cancel(self, prompt_id: str | None = None) -> bool:
         if prompt_id:
             r = http_post(
-                self._url("/queue"), headers=self.headers,
-                json_body={"delete": [prompt_id]}, retries=1,
+                self._url("/queue"),
+                headers=self.headers,
+                json_body={"delete": [prompt_id]},
+                retries=1,
             )
             return r.status == 200
         # Interrupt currently running
@@ -455,9 +493,11 @@ class ComfyRunner:
 # Schema / parameter injection
 # =============================================================================
 
+
 def _inline_schema(workflow: dict) -> dict:
     """Generate schema using the sibling extract_schema module."""
     from extract_schema import extract_schema
+
     return extract_schema(workflow)
 
 
@@ -469,8 +509,11 @@ def load_schema(schema_path: str | None, workflow: dict) -> dict:
 
 
 def inject_params(
-    workflow: dict, schema: dict, args: dict,
-    *, randomize_seed_if_unset: bool = False,
+    workflow: dict,
+    schema: dict,
+    args: dict,
+    *,
+    randomize_seed_if_unset: bool = False,
 ) -> tuple[dict, list[str]]:
     """Inject user args into the workflow. Returns (new_workflow, warnings)."""
     wf = copy.deepcopy(workflow)
@@ -516,9 +559,14 @@ def inject_params(
 # Output download helper
 # =============================================================================
 
+
 def download_outputs(
-    runner: ComfyRunner, outputs: dict, output_dir: Path,
-    *, preserve_subfolder: bool = True, overwrite: bool = False,
+    runner: ComfyRunner,
+    outputs: dict,
+    output_dir: Path,
+    *,
+    preserve_subfolder: bool = True,
+    overwrite: bool = False,
 ) -> list[dict]:
     """Walk the outputs dict and download every file. Cloud uses `video` (singular);
     local uses `videos` (plural). We accept both."""
@@ -546,18 +594,23 @@ def download_outputs(
                 file_type = fi.get("type") or "output"
                 try:
                     out_path = runner.download_output(
-                        filename=filename, subfolder=subfolder, file_type=file_type,
-                        output_dir=output_dir, preserve_subfolder=preserve_subfolder,
+                        filename=filename,
+                        subfolder=subfolder,
+                        file_type=file_type,
+                        output_dir=output_dir,
+                        preserve_subfolder=preserve_subfolder,
                         overwrite=overwrite,
                     )
-                    downloaded.append({
-                        "file": str(out_path),
-                        "node_id": node_id,
-                        "type": media_type_from_filename(filename),
-                        "filename": filename,
-                        "subfolder": subfolder,
-                        "source_type": file_type,
-                    })
+                    downloaded.append(
+                        {
+                            "file": str(out_path),
+                            "node_id": node_id,
+                            "type": media_type_from_filename(filename),
+                            "filename": filename,
+                            "subfolder": subfolder,
+                            "source_type": file_type,
+                        }
+                    )
                 except Exception as e:
                     log(f"WARN: failed to download {filename}: {e}")
     return downloaded
@@ -566,6 +619,7 @@ def download_outputs(
 # =============================================================================
 # CLI
 # =============================================================================
+
 
 def parse_input_image_arg(spec: str) -> tuple[str, Path]:
     """Parse `name=path` (or `path` alone, defaulting to name='image')."""
@@ -581,35 +635,61 @@ def main(argv: list[str] | None = None) -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     p.add_argument("--workflow", required=True, help="Path to workflow API JSON file")
-    p.add_argument("--args", default="{}",
-                   help="JSON parameters to inject (or `@/path/to/args.json`)")
+    p.add_argument(
+        "--args", default="{}", help="JSON parameters to inject (or `@/path/to/args.json`)"
+    )
     p.add_argument("--schema", help="Path to schema JSON (auto-generated if omitted)")
     p.add_argument("--host", default=DEFAULT_LOCAL_HOST, help="ComfyUI server URL")
-    p.add_argument("--api-key",
-                   help=f"API key for cloud (or set ${ENV_API_KEY} env var)")
-    p.add_argument("--partner-key",
-                   help="Partner-node API key (extra_data.api_key_comfy_org). "
-                        "Required for Flux Pro / Ideogram / etc. Defaults to --api-key if not set.")
+    p.add_argument("--api-key", help=f"API key for cloud (or set ${ENV_API_KEY} env var)")
+    p.add_argument(
+        "--partner-key",
+        help="Partner-node API key (extra_data.api_key_comfy_org). "
+        "Required for Flux Pro / Ideogram / etc. Defaults to --api-key if not set.",
+    )
     p.add_argument("--output-dir", default="./outputs", help="Directory to save outputs")
-    p.add_argument("--timeout", type=int, default=0,
-                   help="Max seconds to wait (0=auto: 300 / 900 for video workflows)")
-    p.add_argument("--input-image", action="append", default=[],
-                   help="Upload local image before running. Format: `name=path` or `path`. "
-                        "The `name` becomes the value injected into the matching schema parameter.")
-    p.add_argument("--randomize-seed", action="store_true",
-                   help="If schema has a 'seed' parameter and --args didn't set one, randomize it")
-    p.add_argument("--ws", action="store_true",
-                   help="Use WebSocket for real-time progress (requires `websocket-client`)")
+    p.add_argument(
+        "--timeout",
+        type=int,
+        default=0,
+        help="Max seconds to wait (0=auto: 300 / 900 for video workflows)",
+    )
+    p.add_argument(
+        "--input-image",
+        action="append",
+        default=[],
+        help="Upload local image before running. Format: `name=path` or `path`. "
+        "The `name` becomes the value injected into the matching schema parameter.",
+    )
+    p.add_argument(
+        "--randomize-seed",
+        action="store_true",
+        help="If schema has a 'seed' parameter and --args didn't set one, randomize it",
+    )
+    p.add_argument(
+        "--ws",
+        action="store_true",
+        help="Use WebSocket for real-time progress (requires `websocket-client`)",
+    )
     p.add_argument("--no-download", action="store_true", help="Skip downloading outputs")
-    p.add_argument("--flat-output", action="store_true",
-                   help="Don't preserve server-side subfolder structure when saving outputs")
-    p.add_argument("--overwrite", action="store_true",
-                   help="Overwrite existing files instead of appending _1, _2, ...")
-    p.add_argument("--submit-only", action="store_true",
-                   help="Submit and return prompt_id without waiting")
+    p.add_argument(
+        "--flat-output",
+        action="store_true",
+        help="Don't preserve server-side subfolder structure when saving outputs",
+    )
+    p.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Overwrite existing files instead of appending _1, _2, ...",
+    )
+    p.add_argument(
+        "--submit-only", action="store_true", help="Submit and return prompt_id without waiting"
+    )
     p.add_argument("--client-id", help="Override generated client_id (UUID)")
-    p.add_argument("--use-partner-key-as-auth", action="store_true",
-                   help="(Compat) Use --partner-key value as cloud X-API-Key. Don't use unless you know why.")
+    p.add_argument(
+        "--use-partner-key-as-auth",
+        action="store_true",
+        help="(Compat) Use --partner-key value as cloud X-API-Key. Don't use unless you know why.",
+    )
 
     args = p.parse_args(argv)
 
@@ -654,21 +734,25 @@ def main(argv: list[str] | None = None) -> int:
 
     # ---- Connect ----
     runner = ComfyRunner(
-        host=args.host, api_key=api_key, partner_key=partner_key,
+        host=args.host,
+        api_key=api_key,
+        partner_key=partner_key,
         client_id=args.client_id,
     )
 
     # Server reachability
     ok, info = runner.check_server()
     if not ok:
-        emit_json({
-            "error": f"Cannot reach server at {args.host}",
-            "details": info,
-            "hint": (
-                "Check `comfy launch --background` is running for local, "
-                f"or set ${ENV_API_KEY} for cloud."
-            ),
-        })
+        emit_json(
+            {
+                "error": f"Cannot reach server at {args.host}",
+                "details": info,
+                "hint": (
+                    "Check `comfy launch --background` is running for local, "
+                    f"or set ${ENV_API_KEY} for cloud."
+                ),
+            }
+        )
         return 1
 
     # ---- Upload input images ----
@@ -692,7 +776,10 @@ def main(argv: list[str] | None = None) -> int:
     # ---- Inject params ----
     schema = load_schema(args.schema, workflow)
     workflow, inj_warnings = inject_params(
-        workflow, schema, user_args, randomize_seed_if_unset=args.randomize_seed,
+        workflow,
+        schema,
+        user_args,
+        randomize_seed_if_unset=args.randomize_seed,
     )
     warnings = upload_warnings + inj_warnings
     for w in warnings:
@@ -701,19 +788,23 @@ def main(argv: list[str] | None = None) -> int:
     # ---- Submit ----
     submit_resp = runner.submit(workflow)
     if "_http_error" in submit_resp:
-        emit_json({
-            "error": "Submission HTTP error",
-            "http_status": submit_resp["_http_error"],
-            "body": submit_resp.get("body"),
-        })
+        emit_json(
+            {
+                "error": "Submission HTTP error",
+                "http_status": submit_resp["_http_error"],
+                "body": submit_resp.get("body"),
+            }
+        )
         return 1
 
     if isinstance(submit_resp.get("error"), dict):
-        emit_json({
-            "error": "Workflow validation failed",
-            "details": submit_resp["error"],
-            "node_errors": submit_resp.get("node_errors"),
-        })
+        emit_json(
+            {
+                "error": "Workflow validation failed",
+                "details": submit_resp["error"],
+                "node_errors": submit_resp.get("node_errors"),
+            }
+        )
         return 1
 
     prompt_id = submit_resp.get("prompt_id")
@@ -757,20 +848,24 @@ def main(argv: list[str] | None = None) -> int:
             runner.cancel(prompt_id)
         except Exception as e:
             log(f"  (cancel request failed: {e})")
-        emit_json({
-            "status": "interrupted",
-            "prompt_id": prompt_id,
-            "note": "Ctrl+C received; sent cancellation to server.",
-        })
+        emit_json(
+            {
+                "status": "interrupted",
+                "prompt_id": prompt_id,
+                "note": "Ctrl+C received; sent cancellation to server.",
+            }
+        )
         return 130
 
     if wait_result["status"] == "timeout":
-        emit_json({
-            "status": "timeout",
-            "prompt_id": prompt_id,
-            "elapsed": wait_result.get("elapsed"),
-            "hint": "Re-run with larger --timeout, or use --submit-only and check later.",
-        })
+        emit_json(
+            {
+                "status": "timeout",
+                "prompt_id": prompt_id,
+                "elapsed": wait_result.get("elapsed"),
+                "hint": "Re-run with larger --timeout, or use --submit-only and check later.",
+            }
+        )
         return 1
     if wait_result["status"] == "error":
         emit_json({"status": "error", "prompt_id": prompt_id, "details": wait_result.get("data")})
@@ -785,23 +880,32 @@ def main(argv: list[str] | None = None) -> int:
         outputs = runner.get_outputs(prompt_id)
 
     if args.no_download:
-        emit_json({
-            "status": "success", "prompt_id": prompt_id,
-            "outputs": outputs, "warnings": warnings,
-        })
+        emit_json(
+            {
+                "status": "success",
+                "prompt_id": prompt_id,
+                "outputs": outputs,
+                "warnings": warnings,
+            }
+        )
         return 0
 
     downloaded = download_outputs(
-        runner, outputs, Path(args.output_dir).expanduser(),
-        preserve_subfolder=not args.flat_output, overwrite=args.overwrite,
+        runner,
+        outputs,
+        Path(args.output_dir).expanduser(),
+        preserve_subfolder=not args.flat_output,
+        overwrite=args.overwrite,
     )
 
-    emit_json({
-        "status": "success",
-        "prompt_id": prompt_id,
-        "outputs": downloaded,
-        "warnings": warnings,
-    })
+    emit_json(
+        {
+            "status": "success",
+            "prompt_id": prompt_id,
+            "outputs": downloaded,
+            "warnings": warnings,
+        }
+    )
     return 0
 
 

@@ -43,6 +43,7 @@ Auth:
 Output:
   JSON to stdout. Errors to stderr with non-zero exit code.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -110,6 +111,7 @@ def emit(obj: Any) -> None:
 
 
 # ---------- Commands ----------
+
 
 def cmd_whoami(_args: argparse.Namespace) -> None:
     q = "query { viewer { id name email displayName } }"
@@ -296,6 +298,7 @@ def cmd_add_comment(args: argparse.Namespace) -> None:
 
 # ---- Documents ----
 
+
 def cmd_list_documents(args: argparse.Namespace) -> None:
     q = """query($first: Int!) {
       documents(first: $first, orderBy: updatedAt) {
@@ -355,6 +358,7 @@ def cmd_raw(args: argparse.Namespace) -> None:
 
 
 # ---------- Arg parsing ----------
+
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="linear_api.py", description="Linear GraphQL CLI")

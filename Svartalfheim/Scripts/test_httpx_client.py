@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Test usando httpx como MuninnMemory."""
+
 import asyncio
 
 import httpx
@@ -7,6 +8,7 @@ import httpx
 
 TOKEN = "mk_GOTOOZRB5dWooMIZ2A8Mg_pdBpIRloo8Xzca6Oqyd-s"
 URL = "http://127.0.0.1:8475"
+
 
 async def test():
     """Test con httpx."""
@@ -17,11 +19,7 @@ async def test():
 
     headers = {"Authorization": f"Bearer {TOKEN}"}
     async with httpx.AsyncClient(base_url=URL + "/api", headers=headers, timeout=10.0) as client:
-        payload = {
-            "vault": "docs",
-            "context": ["DAG Executor"],
-            "max_results": 3
-        }
+        payload = {"vault": "docs", "context": ["DAG Executor"], "max_results": 3}
 
         print(f"Token: {TOKEN[:30]}...")
         print(f"Headers: {headers}")
@@ -38,6 +36,7 @@ async def test():
                 print(f"  - {a.get('concept', 'N/A')}")
         else:
             print(f"[ERROR] {r.text}")
+
 
 if __name__ == "__main__":
     asyncio.run(test())

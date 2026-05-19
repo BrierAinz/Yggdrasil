@@ -3,6 +3,7 @@
 Setup del vault "docs" en MuninnDB para el Archivero.
 Si el vault no existe, usa "default" y muestra instrucciones.
 """
+
 import json
 import sys
 from pathlib import Path
@@ -34,7 +35,9 @@ def check_vault_exists(token: str, vault_name: str):
     headers = {"Authorization": f"Bearer {token}"} if token else {}
     try:
         with httpx.Client(timeout=10.0) as client:
-            response = client.get(f"{MUNINN_URL}/engrams?vault={vault_name}&limit=1", headers=headers)
+            response = client.get(
+                f"{MUNINN_URL}/engrams?vault={vault_name}&limit=1", headers=headers
+            )
             return response.status_code == 200
     except Exception:
         return False

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Test si el API puede ver las variables de entorno."""
+
 import json
 import urllib.request
 
 
-req = urllib.request.Request('http://localhost:8000/api/status')
+req = urllib.request.Request("http://localhost:8000/api/status")
 try:
     with urllib.request.urlopen(req, timeout=5) as r:
         result = json.loads(r.read().decode())
@@ -13,7 +14,7 @@ except Exception as e:
     print(f"Error: {e}")
 
 # Test custom endpoint to check env
-req = urllib.request.Request('http://localhost:8000/api/debug/env')
+req = urllib.request.Request("http://localhost:8000/api/debug/env")
 try:
     with urllib.request.urlopen(req, timeout=5) as r:
         result = json.loads(r.read().decode())

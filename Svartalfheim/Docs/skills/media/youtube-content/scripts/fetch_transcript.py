@@ -27,8 +27,8 @@ def extract_video_id(url_or_id: str) -> str:
     """Extract the 11-character video ID from various YouTube URL formats."""
     url_or_id = url_or_id.strip()
     patterns = [
-        r'(?:v=|youtu\.be/|shorts/|embed/|live/)([a-zA-Z0-9_-]{11})',
-        r'^([a-zA-Z0-9_-]{11})$',
+        r"(?:v=|youtu\.be/|shorts/|embed/|live/)([a-zA-Z0-9_-]{11})",
+        r"^([a-zA-Z0-9_-]{11})$",
     ]
     for pattern in patterns:
         match = re.search(pattern, url_or_id)
@@ -56,8 +56,10 @@ def fetch_transcript(video_id: str, languages: list | None = None):
     try:
         from youtube_transcript_api import YouTubeTranscriptApi
     except ImportError:
-        print("Error: youtube-transcript-api not installed. Run: pip install youtube-transcript-api",
-              file=sys.stderr)
+        print(
+            "Error: youtube-transcript-api not installed. Run: pip install youtube-transcript-api",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     api = YouTubeTranscriptApi()
@@ -67,21 +69,24 @@ def fetch_transcript(video_id: str, languages: list | None = None):
         result = api.fetch(video_id)
 
     # v1.x returns FetchedTranscriptSnippet objects; normalize to dicts
-    return [
-        {"text": seg.text, "start": seg.start, "duration": seg.duration}
-        for seg in result
-    ]
+    return [{"text": seg.text, "start": seg.start, "duration": seg.duration} for seg in result]
 
 
 def main():
     parser = argparse.ArgumentParser(description="Fetch YouTube transcript as JSON")
     parser.add_argument("url", help="YouTube URL or video ID")
-    parser.add_argument("--language", "-l", default=None,
-                        help="Comma-separated language codes (e.g. en,tr). Default: auto")
-    parser.add_argument("--timestamps", "-t", action="store_true",
-                        help="Include timestamped text in output")
-    parser.add_argument("--text-only", action="store_true",
-                        help="Output plain text instead of JSON")
+    parser.add_argument(
+        "--language",
+        "-l",
+        default=None,
+        help="Comma-separated language codes (e.g. en,tr). Default: auto",
+    )
+    parser.add_argument(
+        "--timestamps", "-t", action="store_true", help="Include timestamped text in output"
+    )
+    parser.add_argument(
+        "--text-only", action="store_true", help="Output plain text instead of JSON"
+    )
     args = parser.parse_args()
 
     video_id = extract_video_id(args.url)
@@ -94,15 +99,17 @@ def main():
         if "disabled" in error_msg.lower():
             print(json.dumps({"error": "Transcripts are disabled for this video."}))
         elif "no transcript" in error_msg.lower():
-            print(json.dumps({"error": "No transcript found. Try specifying a language with --language."}))
+            print(
+                json.dumps(
+                    {"error": "No transcript found. Try specifying a language with --language."}
+                )
+            )
         else:
             print(json.dumps({"error": error_msg}))
         sys.exit(1)
 
     full_text = " ".join(seg["text"] for seg in segments)
-    timestamped = "\n".join(
-        f"{format_timestamp(seg['start'])} {seg['text']}" for seg in segments
-    )
+    timestamped = "\n".join(f"{format_timestamp(seg['start'])} {seg['text']}" for seg in segments)
 
     if args.text_only:
         print(timestamped if args.timestamps else full_text)
@@ -111,7 +118,9 @@ def main():
     result = {
         "video_id": video_id,
         "segment_count": len(segments),
-        "duration": format_timestamp(segments[-1]["start"] + segments[-1]["duration"]) if segments else "0:00",
+        "duration": format_timestamp(segments[-1]["start"] + segments[-1]["duration"])
+        if segments
+        else "0:00",
         "full_text": full_text,
     }
     if args.timestamps:

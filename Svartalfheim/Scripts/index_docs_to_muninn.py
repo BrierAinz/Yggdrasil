@@ -3,6 +3,7 @@
 Indexador standalone de documentación a MuninnDB.
 No depende de imports de Lilith Backend.
 """
+
 import asyncio
 import json
 import re
@@ -65,14 +66,16 @@ def chunk_markdown(content: str, doc_metadata: dict) -> list[dict]:
         # Si cabe en un chunk
         if len(section_content) <= CHUNK_CHARS:
             chunk_id = f"{doc_id}_s{section_idx}_c0"
-            chunks.append({
-                "chunk_id": chunk_id,
-                "content": section_content,
-                "section": section_title,
-                "subsection": "",
-                "doc_id": doc_id,
-                "metadata": doc_metadata,
-            })
+            chunks.append(
+                {
+                    "chunk_id": chunk_id,
+                    "content": section_content,
+                    "section": section_title,
+                    "subsection": "",
+                    "doc_id": doc_id,
+                    "metadata": doc_metadata,
+                }
+            )
         else:
             # Dividir en sub-chunks
             start = 0
@@ -94,21 +97,25 @@ def chunk_markdown(content: str, doc_metadata: dict) -> list[dict]:
                         cutoff = paragraph_end
                     else:
                         sentence_end = section_content.rfind(".\n", search_start, search_end)
-                        cutoff = (sentence_end + 1
-                                  if sentence_end != -1 and sentence_end > start + 100
-                                  else search_end)
+                        cutoff = (
+                            sentence_end + 1
+                            if sentence_end != -1 and sentence_end > start + 100
+                            else search_end
+                        )
 
                     sub_content = section_content[start:cutoff].strip()
 
                 chunk_id = f"{doc_id}_s{section_idx}_c{sub_idx}"
-                chunks.append({
-                    "chunk_id": chunk_id,
-                    "content": sub_content,
-                    "section": section_title,
-                    "subsection": f"Parte {sub_idx + 1}",
-                    "doc_id": doc_id,
-                    "metadata": doc_metadata,
-                })
+                chunks.append(
+                    {
+                        "chunk_id": chunk_id,
+                        "content": sub_content,
+                        "section": section_title,
+                        "subsection": f"Parte {sub_idx + 1}",
+                        "doc_id": doc_id,
+                        "metadata": doc_metadata,
+                    }
+                )
 
                 start = max(end - OVERLAP_CHARS, start + 100)
                 sub_idx += 1
