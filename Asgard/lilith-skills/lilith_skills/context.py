@@ -42,7 +42,7 @@ class SkillContext:
         repo_root: Path | str | None = None,
         max_skills: int = 5,
         max_chars_per_skill: int = 4000,
-    ):
+    ) -> None:
         """Initialize the skill context.
 
         Args:

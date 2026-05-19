@@ -46,7 +46,7 @@ class SkillRegistry:
         tagged = registry.by_tag("blender")
     """
 
-    def __init__(self, skills_root: Path | str):
+    def __init__(self, skills_root: Path | str) -> None:
         """Initialize the registry by scanning the skills directory.
 
         Args:

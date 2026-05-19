@@ -45,7 +45,7 @@ class SkillLoader:
         ...
     """
 
-    def __init__(self, skills_root: Path | str):
+    def __init__(self, skills_root: Path | str) -> None:
         """Initialize with the root directory containing skill categories.
 
         Args:
