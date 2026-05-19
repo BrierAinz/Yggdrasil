@@ -252,7 +252,7 @@ class TestWidgetConstants:
         assert set(REALM_ICONS.keys()) == set(REALMS.keys())
 
     def test_realm_icons_are_strings(self) -> None:
-        for _name, icon in REALM_ICONS.items():
+        for icon in REALM_ICONS.values():
             assert isinstance(icon, str)
             assert len(icon) > 0
 

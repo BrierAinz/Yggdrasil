@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import re
 
 import pytest
@@ -69,12 +70,8 @@ class TestSidebarFilter:
     def test_apply_filter_invalid_regex_shows_all(self) -> None:
         """Invalid regex falls back to showing all."""
         pattern = "["
-        try:
+        with contextlib.suppress(re.error):
             re.search(pattern, "Asgard", re.IGNORECASE)
-            # If no error, skip
-        except re.error:
-            # Invalid regex – should handle gracefully
-            pass
 
 
 class TestSidebarComposeWithFilter:
