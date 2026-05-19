@@ -19,7 +19,6 @@ from backend.models import (
     TextTo3DRequest,
 )
 
-
 router = APIRouter()
 logger = logging.getLogger("forge.generation")
 

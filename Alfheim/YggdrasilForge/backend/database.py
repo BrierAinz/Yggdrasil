@@ -11,7 +11,6 @@ import aiosqlite
 
 from backend.config import settings
 
-
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS generations (
     id TEXT PRIMARY KEY,

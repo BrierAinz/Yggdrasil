@@ -14,7 +14,6 @@ import httpx
 
 from backend.config import settings
 
-
 logger = logging.getLogger("forge.blender")
 
 
