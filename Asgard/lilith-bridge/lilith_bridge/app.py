@@ -27,7 +27,7 @@ app = create_standalone_app()
 
 
 def create_app(config: BridgeConfig | None = None) -> FastAPI:
-    """Factory function for uvicorn import string and CLI entry-point."""
+    """Create a FastAPI app for uvicorn or CLI entry-point."""
     return create_standalone_app(config)
 
 

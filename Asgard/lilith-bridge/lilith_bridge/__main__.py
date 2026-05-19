@@ -67,7 +67,7 @@ def main() -> None:
 
 
 def create_app() -> FastAPI:
-    """Factory function for uvicorn import string."""
+    """Create a FastAPI app for uvicorn import."""
     from .app import create_app as _create
     from .config import load_bridge_config
 
