@@ -93,7 +93,7 @@ class TestCatalog:
         for m in models:
             catalog.add_model(m)
 
-        gguf_models = catalog.list_models(format="gguf")
+        gguf_models = catalog.list_models(fmt="gguf")
         assert len(gguf_models) == 1
         assert gguf_models[0]["format"] == "gguf"
 

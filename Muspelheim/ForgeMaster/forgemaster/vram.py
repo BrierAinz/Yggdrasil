@@ -242,7 +242,8 @@ class VRAMCalculator:
         # Estimate from parameter count
         if model.parameters:
             bytes_per_param = QUANT_BYTES_PER_PARAM.get(
-                model.quantization or "", DEFAULT_BYTES_PER_PARAM
+                model.quantization or "",
+                DEFAULT_BYTES_PER_PARAM,
             )
             if model.quantization is None and model.format == "gguf":
                 bytes_per_param = DEFAULT_BYTES_PER_PARAM
@@ -251,7 +252,10 @@ class VRAMCalculator:
         return 0.0
 
     def _estimate_kv_cache_gb(
-        self, model: ModelInfo, context_length: int, batch_size: int
+        self,
+        model: ModelInfo,
+        context_length: int,
+        batch_size: int,
     ) -> float:
         """Estimate KV cache size in GB."""
         # For stable-diffusion, no KV cache

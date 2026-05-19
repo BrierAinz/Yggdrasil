@@ -6,7 +6,7 @@ import json
 import os
 import re
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -95,7 +95,6 @@ class ModelScanner:
 
     def __init__(self) -> None:
         """Initialise scanner (no persistent state required)."""
-        pass
 
     def scan(self, paths: Sequence[str | Path]) -> ScanResult:
         """Scan given paths for model files.
@@ -298,7 +297,7 @@ class ModelScanner:
         download_date = None
         try:
             mtime = model_path.stat().st_mtime
-            download_date = datetime.fromtimestamp(mtime).strftime("%Y-%m-%d")
+            download_date = datetime.fromtimestamp(mtime, tz=UTC).strftime("%Y-%m-%d")
         except OSError:
             pass
 

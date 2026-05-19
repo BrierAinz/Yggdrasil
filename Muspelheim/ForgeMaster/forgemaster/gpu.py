@@ -466,7 +466,7 @@ class GPUMonitor:
                 GPUInfo(
                     name="AMD GPU (details unavailable)",
                     gpu_type="amd",
-                )
+                ),
             )
 
         return gpus
@@ -534,7 +534,7 @@ class GPUMonitor:
                         GPUInfo(
                             name=chipset_match.group(1).strip(),
                             gpu_type="apple",
-                        )
+                        ),
                     )
 
         return gpus

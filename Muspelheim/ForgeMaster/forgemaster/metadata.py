@@ -225,7 +225,7 @@ def read_safetensors_metadata(path: str | Path) -> dict[str, Any]:
                     "name": name,
                     "dtype": info.get("dtype", ""),
                     "shape": info["shape"],
-                }
+                },
             )
 
     return result

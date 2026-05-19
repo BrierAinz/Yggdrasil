@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import sqlite3
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
 
@@ -121,7 +121,7 @@ class Catalog:
 
         """
         tags_json = json.dumps(tags or {})
-        now = datetime.now().isoformat()
+        now = datetime.now(UTC).isoformat()
 
         cursor = self.conn.cursor()
         cursor.execute(
@@ -173,7 +173,7 @@ class Catalog:
 
     def list_models(
         self,
-        format: str | None = None,
+        fmt: str | None = None,
         architecture: str | None = None,
         limit: int = 100,
         offset: int = 0,
@@ -181,7 +181,7 @@ class Catalog:
         """List models with optional filtering.
 
         Args:
-            format: Filter by model format (gguf, safetensors, etc.)
+            fmt: Filter by model format (gguf, safetensors, etc.)
             architecture: Filter by architecture (llama, etc.)
             limit: Maximum number of results.
             offset: Number of results to skip.
@@ -193,9 +193,9 @@ class Catalog:
         query = "SELECT * FROM models WHERE 1=1"
         params: list[Any] = []
 
-        if format:
+        if fmt:
             query += " AND format = ?"
-            params.append(format)
+            params.append(fmt)
         if architecture:
             query += " AND architecture = ?"
             params.append(architecture)
@@ -284,16 +284,15 @@ class Catalog:
         """
         cursor = self.conn.cursor()
         cursor.execute("SELECT * FROM gpu_profiles ORDER BY name")
-        profiles = []
-        for row in cursor.fetchall():
-            profiles.append(
-                GPUProfile(
-                    id=row["id"],
-                    name=row["name"],
-                    vram_total_gb=row["vram_total_gb"],
-                    vram_available_gb=row["vram_available_gb"],
-                )
+        profiles = [
+            GPUProfile(
+                id=row["id"],
+                name=row["name"],
+                vram_total_gb=row["vram_total_gb"],
+                vram_available_gb=row["vram_available_gb"],
             )
+            for row in cursor.fetchall()
+        ]
         return profiles
 
     def count_models(self) -> int:

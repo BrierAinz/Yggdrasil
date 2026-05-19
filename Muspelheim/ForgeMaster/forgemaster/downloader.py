@@ -67,7 +67,7 @@ class DownloadConfig:
     model_id: str
     revision: str = DEFAULT_REVISION
     cache_dir: str = field(
-        default_factory=lambda: str(Path("~").expanduser() / ".cache" / "huggingface" / "hub")
+        default_factory=lambda: str(Path("~").expanduser() / ".cache" / "huggingface" / "hub"),
     )
     force_download: bool = False
 
@@ -485,7 +485,5 @@ class ModelDownloader:
                     filenames.extend(ModelDownloader._extract_filenames(entry.get("children", [])))
         elif isinstance(data, dict):
             siblings = data.get("siblings", [])
-            for sib in siblings:
-                if "rfilename" in sib:
-                    filenames.append(sib["rfilename"])
+            filenames.extend(sib["rfilename"] for sib in siblings if "rfilename" in sib)
         return filenames

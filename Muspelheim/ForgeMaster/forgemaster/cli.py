@@ -36,7 +36,10 @@ console = Console()
 def main(
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable debug-level logging"),
     quiet: bool = typer.Option(
-        False, "--quiet", "-q", help="Suppress info-level logs (warnings only)"
+        False,
+        "--quiet",
+        "-q",
+        help="Suppress info-level logs (warnings only)",
     ),
 ) -> None:
     """ForgeMaster — Muspelheim resource manager for LLM models, VRAM, and disk."""
@@ -82,7 +85,7 @@ def scan(
 
     if not scan_paths:
         console.print(
-            "[bold red]No valid paths to scan.[/] Specify --path or ensure defaults exist."
+            "[bold red]No valid paths to scan.[/] Specify --path or ensure defaults exist.",
         )
         raise typer.Exit(1)
 
@@ -137,7 +140,10 @@ def scan(
 @app.command(name="list")
 def list_models(
     fmt: str = typer.Option(
-        "all", "--format", "-f", help="Filter by format: gguf, safetensors, pt, all"
+        "all",
+        "--format",
+        "-f",
+        help="Filter by format: gguf, safetensors, pt, all",
     ),
     architecture: str = typer.Option("all", "--arch", "-a", help="Filter by architecture"),
 ) -> None:
@@ -149,7 +155,7 @@ def list_models(
 
     if not models:
         console.print(
-            "[yellow]No models in catalog. Run [bold]forgemaster scan --catalog[/] first.[/]"
+            "[yellow]No models in catalog. Run [bold]forgemaster scan --catalog[/] first.[/]",
         )
         return
 
@@ -234,7 +240,10 @@ def stats(
 def check(
     model_name: str = typer.Argument(..., help="Model name to check VRAM compatibility"),
     gpu_vram: int | None = typer.Option(
-        None, "--gpu-vram", "-g", help="GPU VRAM in MB (default: auto-detect)"
+        None,
+        "--gpu-vram",
+        "-g",
+        help="GPU VRAM in MB (default: auto-detect)",
     ),
 ) -> None:
     """Check if a model can run on the current GPU."""
@@ -369,7 +378,10 @@ def gpu() -> None:
 @app.command(name="dupes")
 def find_duplicates(
     paths: list[str] | None = typer.Option(
-        None, "--path", "-p", help="Paths to scan for duplicates"
+        None,
+        "--path",
+        "-p",
+        help="Paths to scan for duplicates",
     ),
     cleanup: bool = typer.Option(False, "--cleanup", "-c", help="Generate cleanup recommendations"),
 ) -> None:
@@ -419,7 +431,7 @@ def find_duplicates(
     console.print(table)
     total_wasted = sum(g.total_wasted_bytes for g in dupes)
     console.print(
-        f"\n[bold red]{len(dupes)} duplicate group(s) — {_format_size(total_wasted)} wasted[/]"
+        f"\n[bold red]{len(dupes)} duplicate group(s) — {_format_size(total_wasted)} wasted[/]",
     )
 
     if cleanup:
@@ -427,10 +439,10 @@ def find_duplicates(
         console.print("\n[bold]Cleanup recommendations:[/]")
         for action in report.actions:
             console.print(
-                f"  • [yellow]{action.reason}[/]: {action.path} ({_format_size(action.size_bytes)})"
+                f"  • [yellow]{action.reason}[/]: {action.path} ({_format_size(action.size_bytes)})",
             )
         console.print(
-            f"\n[green]Total reclaimable: {_format_size(report.total_reclaimable_bytes)}[/]"
+            f"\n[green]Total reclaimable: {_format_size(report.total_reclaimable_bytes)}[/]",
         )
 
 
@@ -440,15 +452,22 @@ def find_duplicates(
 @app.command()
 def download(
     model_id: str = typer.Argument(
-        ..., help="HuggingFace model ID (e.g. 'TheBloke/Llama-2-7B-GGUF')"
+        ...,
+        help="HuggingFace model ID (e.g. 'TheBloke/Llama-2-7B-GGUF')",
     ),
     revision: str = typer.Option("main", "--revision", "-r", help="Model revision/branch"),
     output: str | None = typer.Option(None, "--output", "-o", help="Output directory"),
     force: bool = typer.Option(
-        False, "--force", "-f", help="Force re-download even if file exists"
+        False,
+        "--force",
+        "-f",
+        help="Force re-download even if file exists",
     ),
     list_only: bool = typer.Option(
-        False, "--list-only", "-l", help="List available files without downloading"
+        False,
+        "--list-only",
+        "-l",
+        help="List available files without downloading",
     ),
 ) -> None:
     """Download a model from HuggingFace Hub."""
@@ -567,7 +586,7 @@ def config_show() -> None:
 
     if cfg.yggdrasil_root:
         console.print(
-            "\n[dim]YGGDRASIL_ROOT is set — scan_dirs and catalog_path may be overridden.[/]"
+            "\n[dim]YGGDRASIL_ROOT is set — scan_dirs and catalog_path may be overridden.[/]",
         )
 
 
