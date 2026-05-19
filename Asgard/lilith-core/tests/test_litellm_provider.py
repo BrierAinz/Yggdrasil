@@ -45,9 +45,9 @@ def _make_response(content: str = "hello", model: str = "test-model") -> MagicMo
 
 def test_litellm_import():
     """Verify that litellm can be imported (it's listed as a dependency)."""
-    import litellm  # noqa: F401
+    import litellm
 
-    assert True
+    assert litellm is not None
 
 
 def test_provider_init(tmp_path):

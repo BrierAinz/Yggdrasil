@@ -79,7 +79,7 @@ class DownloadProgress:
     Attributes:
         model_id: The model being downloaded.
         status: Current download status.
-        progress_pct: Percentage complete (0–100).
+        progress_pct: Percentage complete (0-100).
         speed_mb: Current download speed in MiB/s.
         downloaded_bytes: Bytes downloaded so far.
         total_bytes: Total file size in bytes (``None`` if unknown).

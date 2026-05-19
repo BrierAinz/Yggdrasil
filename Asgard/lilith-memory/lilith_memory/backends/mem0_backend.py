@@ -61,7 +61,7 @@ class Mem0Backend(MemoryBackend):
                 }
             )
         else:
-            # Local mode – store data alongside the requested db_path
+            # Local mode - store data alongside the requested db_path
             local_dir = str(db_path.parent) if db_path else ".mem0"
             Path(local_dir).mkdir(parents=True, exist_ok=True)
             self._mem = Memory.from_config(

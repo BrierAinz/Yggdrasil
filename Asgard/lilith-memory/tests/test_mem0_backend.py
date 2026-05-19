@@ -18,11 +18,11 @@ if TYPE_CHECKING:
 
 _mem0_available: bool = False
 try:
-    import mem0  # noqa: F401
+    import mem0 as _mem0_module
 
     _mem0_available = True
 except ImportError:
-    pass
+    _mem0_module = None  # type: ignore[assignment]
 
 skip_no_mem0 = pytest.mark.skipif(
     not _mem0_available,
@@ -39,7 +39,7 @@ def test_mem0_import_or_skip():
     """Verify that the import guard works (may skip in CI without mem0)."""
     if not _mem0_available:
         pytest.skip("mem0ai not installed")
-    from mem0 import Memory  # noqa: F401
+    assert _mem0_module is not None
 
 
 @skip_no_mem0
