@@ -220,6 +220,10 @@ class SkillLoader:
                 if value.startswith("[") and value.endswith("]"):
                     value = [v.strip().strip("'\"") for v in value[1:-1].split(",")]
                     result[key] = value
+                # Handle comma-separated values (YAML bare list)
+                elif "," in value and key in ("tags", "categories"):
+                    value = [v.strip().strip("'\"") for v in value.split(",")]
+                    result[key] = value
                 else:
                     result[key] = value
 
