@@ -16,11 +16,15 @@ import platform
 import subprocess
 import sys
 from pathlib import Path
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 
 from cyclopts import App, Parameter
 
 from .config import CONFIG_DIR, YggdrasilConfig, load_config, save_config
+
+
+if TYPE_CHECKING:
+    import types
 
 
 # ── Version ─────────────────────────────────────────────────────────
@@ -49,7 +53,7 @@ def _resolve_yggdrasil_root() -> Path:
     return Path(__file__).resolve().parents[3]
 
 
-def _lazy_import_yggdrasil_cli():
+def _lazy_import_yggdrasil_cli() -> types.ModuleType:
     """Import the existing yggdrasil_cli module, adding the root to sys.path."""
     root = str(_resolve_yggdrasil_root())
     if root not in sys.path:

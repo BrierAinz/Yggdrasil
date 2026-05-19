@@ -21,7 +21,7 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
 from prompt_toolkit.completion import WordCompleter
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.key_binding import KeyBindings, KeyPressEvent
 from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.styles import Style as PtStyle
 from pygments.lexers import MarkdownLexer as PygmentsMarkdownLexer
@@ -301,7 +301,7 @@ async def run_repl(session: AgentSession) -> None:
     # resolved so that /theme switches update the prompt immediately.
     from prompt_toolkit.styles import DynamicStyle
 
-    def _build_pt_style():
+    def _build_pt_style() -> PtStyle:
         """Build a PtStyle dict from the current theme (called dynamically)."""
         t = get_theme()
         return PtStyle.from_dict(t.pt_style)
@@ -315,7 +315,7 @@ async def run_repl(session: AgentSession) -> None:
     _multiline_mode = {"active": False}
     _live_tokens = {"prompt": 0, "completion": 0, "total": 0, "turns": 0}
 
-    def _bottom_toolbar():
+    def _bottom_toolbar() -> list[tuple[str, str]]:
         """Dynamic bottom toolbar showing input mode, turns, and token usage."""
         t = get_theme()
         mode = (
@@ -354,12 +354,12 @@ async def run_repl(session: AgentSession) -> None:
     kb = KeyBindings()
 
     @kb.add("c-c")
-    def _cancel_current(event):
+    def _cancel_current(event: KeyPressEvent) -> None:
         """Ctrl+C cancels the current generation (not the REPL)."""
         event.app.exit(exception=KeyboardInterrupt, style="class:aborting")
 
     @kb.add("escape", "enter")
-    def _insert_newline(event):
+    def _insert_newline(event: KeyPressEvent) -> None:
         """Alt+Enter inserts a newline for multi-line input.
 
         On Windows Terminal, Shift+Enter also sends Escape+Enter,
@@ -368,7 +368,7 @@ async def run_repl(session: AgentSession) -> None:
         event.current_buffer.insert_text("\n")
 
     @kb.add("c-o")
-    def _toggle_multiline(event):
+    def _toggle_multiline(event: KeyPressEvent) -> None:
         """Ctrl+O toggles multiline mode for the current input."""
         _multiline_mode["active"] = not _multiline_mode["active"]
         buf = event.current_buffer

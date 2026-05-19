@@ -41,7 +41,7 @@ HEALTH_MARKERS: dict[HealthStatus, str] = {
 class RealmButton(Button):
     """A button representing a single realm in the sidebar."""
 
-    def __init__(self, realm_name: str, index: int, **kwargs) -> None:
+    def __init__(self, realm_name: str, index: int, **kwargs: object) -> None:
         icon = REALM_ICONS.get(realm_name, "◆")
         label = f" {index}. {icon} {realm_name}"
         super().__init__(label, id=f"realm-{realm_name.lower()}", **kwargs)

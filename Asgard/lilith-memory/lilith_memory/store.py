@@ -1,8 +1,15 @@
 """Persistent key-value memory store backed by SQLite."""
 
+from __future__ import annotations
+
 import json
 import sqlite3
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from types import TracebackType
 
 
 class MemoryStore:
@@ -13,7 +20,7 @@ class MemoryStore:
     for better concurrent read/write performance.
     """
 
-    def __init__(self, db_path: Path):
+    def __init__(self, db_path: Path) -> None:
         """Initialise the store and create the database schema if needed.
 
         Args:
@@ -29,7 +36,7 @@ class MemoryStore:
     # Internal helpers
     # ------------------------------------------------------------------
 
-    def _init_db(self):
+    def _init_db(self) -> None:
         """Create the ``memories`` table and indexes, and enable WAL mode."""
         with sqlite3.connect(self.db_path) as conn:
             conn.execute("PRAGMA journal_mode=WAL")
@@ -50,13 +57,18 @@ class MemoryStore:
     # Context manager support
     # ------------------------------------------------------------------
 
-    def __enter__(self):
+    def __enter__(self) -> MemoryStore:
         """Enter the context manager, opening a long-lived connection."""
         self._conn = sqlite3.connect(self.db_path)
         self._conn.execute("PRAGMA journal_mode=WAL")
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> bool:
         """Exit the context manager, closing the long-lived connection."""
         if self._conn is not None:
             self._conn.close()
@@ -97,7 +109,7 @@ class MemoryStore:
                 "INSERT INTO memories (content, embedding, metadata) VALUES (?, ?, ?)",
                 (content, embedding, json.dumps(metadata) if metadata else None),
             )
-            return cursor.lastrowid
+            return int(cursor.lastrowid or 0)
 
     def store(
         self,

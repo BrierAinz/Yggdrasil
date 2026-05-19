@@ -6,6 +6,7 @@ import asyncio
 import contextlib
 import json
 import os
+import sqlite3
 from pathlib import Path
 from typing import Any
 
@@ -96,8 +97,6 @@ class Mem0Backend(MemoryBackend):
 
     def _init_meta_db(self) -> None:
         """Create a lightweight SQLite db to track entry count & id mapping."""
-        import sqlite3
-
         self._local_db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = sqlite3.connect(self._local_db_path)
         conn.execute(
@@ -111,9 +110,7 @@ class Mem0Backend(MemoryBackend):
         conn.commit()
         conn.close()
 
-    def _meta_conn(self):
-        import sqlite3
-
+    def _meta_conn(self) -> sqlite3.Connection:
         return sqlite3.connect(self._local_db_path)
 
     # ------------------------------------------------------------------
@@ -173,8 +170,6 @@ class Mem0Backend(MemoryBackend):
 
     async def _local_search(self, query: str, limit: int = 5) -> list[dict[str, Any]]:
         """Fallback substring search over the local meta db."""
-        import sqlite3
-
         conn = self._meta_conn()
         try:
             conn.row_factory = sqlite3.Row
@@ -188,8 +183,6 @@ class Mem0Backend(MemoryBackend):
 
     async def recent(self, limit: int = 10) -> list[dict[str, Any]]:
         """Return recent entries from the local meta db."""
-        import sqlite3
-
         conn = self._meta_conn()
         try:
             conn.row_factory = sqlite3.Row

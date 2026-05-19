@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -12,6 +13,10 @@ from textual.widgets import Footer, Static
 from tui.scanner import REALMS, RealmScanner, RealmStatus
 from tui.widgets.detail import RealmDetailView
 from tui.widgets.sidebar import RealmSidebar
+
+
+if TYPE_CHECKING:
+    from textual import events
 
 
 # Mapping of number keys (1-9) to realm names
@@ -68,7 +73,7 @@ class YggdrasilDashboard(App):
         Binding("9", "select_realm", "Midgard", show=True),
     ]
 
-    def __init__(self, scanner: RealmScanner | None = None, **kwargs) -> None:
+    def __init__(self, scanner: RealmScanner | None = None, **kwargs: object) -> None:
         super().__init__(**kwargs)
         self._scanner = scanner or RealmScanner()
         self._realm_data: dict[str, RealmStatus] = {}
@@ -124,7 +129,7 @@ class YggdrasilDashboard(App):
 
     # ── Key handling ──────────────────────────────────────────
 
-    def on_key(self, event) -> None:  # type: ignore[override]
+    def on_key(self, event: events.Key) -> None:  # type: ignore[override]
         """Handle number keys 1-9 for realm switching."""
         realm_name = _REALM_KEYS.get(event.key)
         if realm_name:

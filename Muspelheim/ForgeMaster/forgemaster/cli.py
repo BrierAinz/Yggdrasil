@@ -72,7 +72,7 @@ def scan(
         help="Paths to scan (default: HF cache, LM Studio, ComfyUI)",
     ),
     catalog: bool = typer.Option(False, "--catalog", "-c", help="Save results to catalog database"),
-):
+) -> None:
     """Scan directories for model files (GGUF, safetensors, PyTorch)."""
     from forgemaster.scanner import ModelScanner
 
@@ -140,7 +140,7 @@ def list_models(
         "all", "--format", "-f", help="Filter by format: gguf, safetensors, pt, all"
     ),
     architecture: str = typer.Option("all", "--arch", "-a", help="Filter by architecture"),
-):
+) -> None:
     """List all cataloged models with Rich table output."""
     from forgemaster.catalog import Catalog
 
@@ -190,7 +190,7 @@ def list_models(
 @app.command()
 def stats(
     paths: list[str] | None = typer.Option(None, "--path", "-p", help="Paths to analyze"),
-):
+) -> None:
     """Show disk usage statistics and model distribution."""
     from forgemaster.disk import DiskScanner
 
@@ -236,7 +236,7 @@ def check(
     gpu_vram: int | None = typer.Option(
         None, "--gpu-vram", "-g", help="GPU VRAM in MB (default: auto-detect)"
     ),
-):
+) -> None:
     """Check if a model can run on the current GPU."""
     from forgemaster.gpu import GPUMonitor
     from forgemaster.scanner import ModelScanner
@@ -306,7 +306,7 @@ def check(
 
 
 @app.command()
-def gpu():
+def gpu() -> None:
     """Show GPU information and current utilization."""
     from forgemaster.gpu import GPUMonitor
 
@@ -372,7 +372,7 @@ def find_duplicates(
         None, "--path", "-p", help="Paths to scan for duplicates"
     ),
     cleanup: bool = typer.Option(False, "--cleanup", "-c", help="Generate cleanup recommendations"),
-):
+) -> None:
     """Find duplicate or similar model files."""
     from forgemaster.disk import DuplicateFinder
 
@@ -450,7 +450,7 @@ def download(
     list_only: bool = typer.Option(
         False, "--list-only", "-l", help="List available files without downloading"
     ),
-):
+) -> None:
     """Download a model from HuggingFace Hub."""
     import logging
 
@@ -527,7 +527,7 @@ def download(
 
 
 @app.command()
-def version():
+def version() -> None:
     """Show ForgeMaster version."""
     from forgemaster import __version__
 
@@ -546,7 +546,7 @@ app.add_typer(config_app, name="config")
 
 
 @config_app.command(name="show")
-def config_show():
+def config_show() -> None:
     """Show current configuration."""
     from forgemaster.config import load_config
 
@@ -575,7 +575,7 @@ def config_show():
 def config_set(
     key: str = typer.Argument(help="Config key (e.g. gpu_profile, scan_dirs.0)"),
     value: str = typer.Argument(help="New value"),
-):
+) -> None:
     """Set a configuration value and save to disk."""
     from forgemaster.config import set_config_value
 

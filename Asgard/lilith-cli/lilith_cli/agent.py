@@ -613,16 +613,16 @@ class AgentSession:
 
     _on_tool_call_callbacks: list = []
 
-    def __init_subclass__(cls, **kwargs):
+    def __init_subclass__(cls, **kwargs: object) -> None:
         super().__init_subclass__(**kwargs)
 
     @property
-    def _on_tool_call(self):
+    def _on_tool_call(self) -> object:
         """Callback for tool call notifications (set by REPL)."""
         return getattr(self, "__on_tool_call", None)
 
     @_on_tool_call.setter
-    def _on_tool_call(self, fn):
+    def _on_tool_call(self, fn: object) -> None:
         self.__on_tool_call = fn
 
     # ── Convenience ──────────────────────────────────────────────────

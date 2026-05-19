@@ -1,6 +1,7 @@
 """Filesystem tools for reading files and listing directories."""
 
 from pathlib import Path
+from typing import Any
 
 from .base import BaseTool, ToolResult
 from .registry import ToolRegistry
@@ -16,7 +17,7 @@ class FileReadTool(BaseTool):
         "path": {"type": "string", "required": True},
     }
 
-    def execute(self, **kwargs) -> ToolResult:
+    def execute(self, **kwargs: Any) -> ToolResult:
         """Lee el contenido de un archivo."""
         path = Path(kwargs.get("path", ""))
         if not path.exists():
@@ -38,7 +39,7 @@ class DirectoryListTool(BaseTool):
         "path": {"type": "string", "required": True},
     }
 
-    def execute(self, **kwargs) -> ToolResult:
+    def execute(self, **kwargs: Any) -> ToolResult:
         """Lista archivos y subdirectorios en un directorio."""
         path = Path(kwargs.get("path", "."))
         if not path.exists():
