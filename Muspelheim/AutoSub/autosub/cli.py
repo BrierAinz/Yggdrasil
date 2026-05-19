@@ -16,6 +16,7 @@ from autosub.pipeline import Pipeline
 from autosub.transcriber import Transcriber
 from autosub.translator import Translator
 
+
 app = typer.Typer(help="🎬 AutoSub — Automatic subtitle generator")
 console = Console()
 
@@ -52,10 +53,7 @@ def transcribe(
 
     result = export_segments(segments, fmt=format)
 
-    if output:
-        out_path = Path(output)
-    else:
-        out_path = path.with_suffix(f".{format}")
+    out_path = Path(output) if output else path.with_suffix(f".{format}")
 
     out_path.write_text(result, encoding="utf-8")
     console.print(f"[green]Written to: {out_path}[/]")
@@ -86,10 +84,7 @@ def translate(
 
     result = "\n".join(translated_lines)
 
-    if output:
-        out_path = Path(output)
-    else:
-        out_path = path.with_suffix(f".{target_lang}{path.suffix}")
+    out_path = Path(output) if output else path.with_suffix(f".{target_lang}{path.suffix}")
 
     out_path.write_text(result, encoding="utf-8")
     console.print(f"[green]Written to: {out_path}[/]")

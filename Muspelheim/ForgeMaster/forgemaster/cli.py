@@ -54,7 +54,7 @@ DEFAULT_PATHS = [
 ]
 
 
-def _format_size(size_bytes: int | float) -> str:
+def _format_size(size_bytes: float) -> str:
     """Format bytes as human-readable size."""
     for unit in ["B", "KB", "MB", "GB", "TB"]:
         if size_bytes < 1024:
