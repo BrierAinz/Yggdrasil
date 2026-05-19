@@ -37,7 +37,7 @@ class BaseCommand:
     description: str = ""
     aliases: list[str] = []
 
-    def __init__(self, session: AgentSession):
+    def __init__(self, session: AgentSession) -> None:
         self.session = session
 
     async def execute(self, args: str) -> None:
@@ -995,7 +995,7 @@ class ExportCommand(BaseCommand):
 class CommandRegistry:
     """Discovers, registers, and routes slash commands."""
 
-    def __init__(self, session: AgentSession):
+    def __init__(self, session: AgentSession) -> None:
         self.session = session
         self._commands: dict[str, BaseCommand] = {}
         self._aliases: dict[str, str] = {}

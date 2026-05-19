@@ -34,7 +34,11 @@ import threading
 import time
 import uuid
 from contextlib import asynccontextmanager
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -464,7 +468,7 @@ def create_standalone_app(config: BridgeConfig | None = None) -> FastAPI:
     _start_time = time.time()
 
     @asynccontextmanager
-    async def lifespan(app: FastAPI):
+    async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         """Start lazy-init of all Lilith components and close Hermes client on shutdown."""
         logger.info("Hermes Bridge starting on %s:%d", cfg.host, cfg.port)
         logger.info("Hermes endpoint: %s", cfg.hermes_url)

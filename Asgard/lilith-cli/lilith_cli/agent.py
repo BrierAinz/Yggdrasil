@@ -84,7 +84,7 @@ class AgentSession:
         self,
         config: YggdrasilConfig,
         provider: LLMProviderWrapper | None = None,
-    ):
+    ) -> None:
         self.config = config
         self.provider = provider or create_provider(config)
         self.history: list[dict[str, Any]] = []

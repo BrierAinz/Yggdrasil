@@ -48,7 +48,7 @@ class ToolCall:
 
     __slots__ = ("arguments", "id", "name")
 
-    def __init__(self, id: str, name: str, arguments: dict[str, Any]):
+    def __init__(self, id: str, name: str, arguments: dict[str, Any]) -> None:
         self.id = id
         self.name = name
         self.arguments = arguments
@@ -62,7 +62,7 @@ class ToolResult:
 
     __slots__ = ("content", "name", "tool_call_id")
 
-    def __init__(self, tool_call_id: str, name: str, content: str):
+    def __init__(self, tool_call_id: str, name: str, content: str) -> None:
         self.tool_call_id = tool_call_id
         self.name = name
         self.content = content
@@ -85,7 +85,7 @@ class LLMProviderWrapper:
     Falls back to litellm for Anthropic/Ollama/etc. if available.
     """
 
-    def __init__(self, config: YggdrasilConfig):
+    def __init__(self, config: YggdrasilConfig) -> None:
         self.config = config
         self._client: httpx.AsyncClient | None = None
 

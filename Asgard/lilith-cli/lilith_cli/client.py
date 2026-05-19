@@ -11,7 +11,7 @@ DEFAULT_URL = "http://localhost:8000"
 class LilithClient:
     """Synchronous HTTP client for the Lilith Agent API."""
 
-    def __init__(self, base_url: str = DEFAULT_URL):
+    def __init__(self, base_url: str = DEFAULT_URL) -> None:
         self.base_url = base_url.rstrip("/")
         self.client = httpx.Client(timeout=30.0)
 

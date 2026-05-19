@@ -16,7 +16,7 @@ class Translator:
         source_lang: str = "auto",
         target_lang: str = "es",
         cache_dir: Path | None = None,
-    ):
+    ) -> None:
         self.source_lang = source_lang
         self.target_lang = target_lang
         self.cache_dir = Path(cache_dir) if cache_dir else Path.home() / ".cache" / "autosub"

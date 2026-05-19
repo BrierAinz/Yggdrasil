@@ -34,7 +34,7 @@ class Transcriber:
         model_size: str = "base",
         device: str = "auto",
         compute_type: str = "int8",
-    ):
+    ) -> None:
         self.model_size = model_size
         self.device = device
         self.compute_type = compute_type
