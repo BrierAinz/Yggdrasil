@@ -34,6 +34,9 @@ class SystemHealthPanel(Static):
 
         Args:
             health: Initial SystemHealth data. If None, shows placeholder.
+            name: Widget name (passed to Textual Widget).
+            id: Widget ID (passed to Textual Widget).
+            classes: Widget CSS classes (passed to Textual Widget).
 
         """
         super().__init__(name=name, id=id, classes=classes)

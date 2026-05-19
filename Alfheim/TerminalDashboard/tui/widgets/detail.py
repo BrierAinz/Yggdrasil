@@ -66,11 +66,11 @@ class RealmDetailView(Static):
     realm_data: reactive[dict[str, RealmStatus]] = reactive({}, layout=True)
     selected_realm: reactive[str] = reactive("Asgard")
 
-    def watch_selected_realm(self, new_realm: str) -> None:
+    def watch_selected_realm(self, _new_realm: str) -> None:
         """Re-render when the selected realm changes."""
         self._update()
 
-    def watch_realm_data(self, new_data: dict[str, RealmStatus]) -> None:
+    def watch_realm_data(self, _new_data: dict[str, RealmStatus]) -> None:
         """Re-render when realm data is refreshed."""
         self._update()
 

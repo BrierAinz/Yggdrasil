@@ -53,7 +53,7 @@ class HelpCommand(BaseCommand):
     description = "Mostrar comandos disponibles"
     aliases = ["h", "?"]
 
-    async def execute(self, args: str) -> None:
+    async def execute(self, _args: str) -> None:
         from .commands import CommandRegistry
 
         registry = CommandRegistry(self.session)
@@ -70,7 +70,7 @@ class ToolsCommand(BaseCommand):
     name = "tools"
     description = "Listar herramientas disponibles"
 
-    async def execute(self, args: str) -> None:
+    async def execute(self, _args: str) -> None:
         tools = self.session.get_tool_descriptions()
         if not tools:
             console.print("[warning]No hay herramientas disponibles.[/]")
@@ -170,7 +170,7 @@ class ClearCommand(BaseCommand):
     description = "Limpiar historial de conversación"
     aliases = ["cls"]
 
-    async def execute(self, args: str) -> None:
+    async def execute(self, _args: str) -> None:
         self.session.clear_history()
         console.print("[success]✓ Historial limpiado.[/]")
 
@@ -179,7 +179,7 @@ class StatusCommand(BaseCommand):
     name = "status"
     description = "Estado del ecosistema Yggdrasil"
 
-    async def execute(self, args: str) -> None:
+    async def execute(self, _args: str) -> None:
         # Try importing from yggdrasil_cli for realm status.
         try:
             # Add root to sys.path if needed.
@@ -237,7 +237,7 @@ class ConfigCommand(BaseCommand):
     name = "config"
     description = "Mostrar configuración actual"
 
-    async def execute(self, args: str) -> None:
+    async def execute(self, _args: str) -> None:
         data = self.session.config.model_dump()
         # Mask API keys.
         if data.get("api_key"):
@@ -263,7 +263,7 @@ class QuitCommand(BaseCommand):
     description = "Salir del agente"
     aliases = ["exit", "q"]
 
-    async def execute(self, args: str) -> None:
+    async def execute(self, _args: str) -> None:
         console.print("[dim]Odin te guíe. Hasta la próxima.[/]")
         raise SystemExit(0)
 
@@ -272,7 +272,7 @@ class SaveCommand(BaseCommand):
     name = "save"
     description = "Guardar la conversación a un archivo"
 
-    async def execute(self, args: str) -> None:
+    async def execute(self, _args: str) -> None:
         from .repl import _auto_save_conversation
 
         filepath = _auto_save_conversation(self.session)
@@ -292,7 +292,7 @@ class RedoCommand(BaseCommand):
     description = "Reenviar el último mensaje al modelo"
     aliases = ["retry"]
 
-    async def execute(self, args: str) -> None:
+    async def execute(self, _args: str) -> None:
         last_msg = getattr(self.session, "_last_user_message", "") or ""
         if not last_msg:
             render_error("No hay mensaje anterior para reenviar.")

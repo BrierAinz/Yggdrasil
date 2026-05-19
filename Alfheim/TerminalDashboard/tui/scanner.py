@@ -340,7 +340,7 @@ class RealmScanner:
             return GitStatus.CLEAN
         return GitStatus.DIRTY
 
-    def _aggregate_test_status(self, projects: list[ProjectInfo]) -> ProjTestStatus:
+    def _aggregate_test_status(self, _projects: list[ProjectInfo]) -> ProjTestStatus:
         """Aggregate test status from all projects in a realm.
 
         Since running tests is expensive, we default to UNKNOWN unless

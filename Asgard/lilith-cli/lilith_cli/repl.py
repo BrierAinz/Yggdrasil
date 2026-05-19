@@ -92,7 +92,7 @@ _SLASH_COMMANDS = [
 ]
 
 
-def _prompt_continuation(width: int, row: int, column: int) -> list[tuple[str, str]]:
+def _prompt_continuation(_width: int, _row: int, _column: int) -> list[tuple[str, str]]:
     """Return the continuation prompt for multi-line input.
 
     Shows theme-aligned dots aligned with the main prompt.

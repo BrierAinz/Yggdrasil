@@ -120,7 +120,7 @@ class RealmSidebar(VerticalScroll):
         """Inicializar el resaltado del botón activo al montar."""
         self._highlight_active()
 
-    def watch_selected_realm(self, new_realm: str) -> None:
+    def watch_selected_realm(self, _new_realm: str) -> None:
         """React to selection changes – highlight active button."""
         self._highlight_active()
 

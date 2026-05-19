@@ -37,7 +37,7 @@ def _version_callback(value: bool) -> None:
 
 @app.command()
 def dashboard(
-    version: bool = typer.Option(
+    _version: bool = typer.Option(
         False,
         "--version",
         "-v",

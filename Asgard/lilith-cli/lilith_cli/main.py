@@ -168,7 +168,7 @@ def launch() -> None:
 
 @app.command
 def config(
-    show: Annotated[bool, Parameter(name="--show", help="Mostrar configuración")] = True,
+    _show: Annotated[bool, Parameter(name="--show", help="Mostrar configuración")] = True,
     edit: Annotated[bool, Parameter(name="--edit", help="Abrir configuración en editor")] = False,
     reset: Annotated[
         bool, Parameter(name="--reset", help="Restablecer configuración por defecto")

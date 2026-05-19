@@ -267,7 +267,7 @@ def create_bridge_router(
     @router.post("/chat", response_model=BridgeChatResponse)
     async def bridge_chat_inbound(
         req: BridgeChatRequest,
-        user: dict = Depends(_verify_bridge_token),
+        _user: dict = Depends(_verify_bridge_token),
     ) -> BridgeChatResponse:
         """Receive a chat message from Hermes and process it through Lilith engine."""
         _engine = state.ensure_engine(_bridge_config) if state else engine
@@ -304,7 +304,7 @@ def create_bridge_router(
     async def bridge_memory_recall(
         query: str = Query(...),
         k: int = Query(5),
-        user: dict = Depends(_verify_bridge_token),
+        _user: dict = Depends(_verify_bridge_token),
     ) -> dict[str, Any]:
         """Search Lilith memory for entries matching the query."""
         _memory = state.ensure_memory(_bridge_config) if state else memory
@@ -320,7 +320,7 @@ def create_bridge_router(
     @router.post("/memory")
     async def bridge_memory_store(
         req: BridgeMemoryStore,
-        user: dict = Depends(_verify_bridge_token),
+        _user: dict = Depends(_verify_bridge_token),
     ) -> dict[str, Any]:
         """Store a new memory entry in Lilith's vector store."""
         _memory = state.ensure_memory(_bridge_config) if state else memory
@@ -336,7 +336,7 @@ def create_bridge_router(
     @router.get("/skills")
     async def bridge_list_skills(
         category: str | None = Query(None),
-        user: dict = Depends(_verify_bridge_token),
+        _user: dict = Depends(_verify_bridge_token),
     ) -> dict[str, Any]:
         """List available skill categories or format skills by category."""
         _skills_ctx, _ = (
@@ -356,7 +356,7 @@ def create_bridge_router(
     @router.post("/skills/search")
     async def bridge_search_skills(
         req: BridgeSkillSearch,
-        user: dict = Depends(_verify_bridge_token),
+        _user: dict = Depends(_verify_bridge_token),
     ) -> dict[str, Any]:
         """Search skills by query string with optional result limit."""
         _skills_ctx, _ = (
@@ -375,7 +375,7 @@ def create_bridge_router(
     @router.post("/hermes/chat", response_model=HermesChatResponse)
     async def bridge_chat_outbound(
         req: HermesChatRequest,
-        user: dict = Depends(_verify_bridge_token),
+        _user: dict = Depends(_verify_bridge_token),
     ) -> HermesChatResponse:
         """Send a chat message to Hermes and relay the response back."""
         hermes = _get_hermes_client()
@@ -410,7 +410,7 @@ def create_bridge_router(
 
     @router.get("/hermes/models")
     async def bridge_hermes_models(
-        user: dict = Depends(_verify_bridge_token),
+        _user: dict = Depends(_verify_bridge_token),
     ) -> dict[str, Any]:
         """List available models from the Hermes endpoint."""
         hermes = _get_hermes_client()
@@ -420,7 +420,7 @@ def create_bridge_router(
     @router.post("/hermes/execute", response_model=HermesToolResult)
     async def bridge_hermes_execute(
         req: HermesToolExecute,
-        user: dict = Depends(_verify_bridge_token),
+        _user: dict = Depends(_verify_bridge_token),
     ) -> HermesToolResult:
         """Execute a tool on the Hermes side and return the result."""
         hermes = _get_hermes_client()
@@ -440,7 +440,7 @@ def create_bridge_router(
 
     @router.get("/hermes/health")
     async def bridge_hermes_health(
-        user: dict = Depends(_verify_bridge_token),
+        _user: dict = Depends(_verify_bridge_token),
     ) -> dict[str, Any]:
         """Check the health of the Hermes endpoint connection."""
         hermes = _get_hermes_client()
@@ -468,7 +468,7 @@ def create_standalone_app(config: BridgeConfig | None = None) -> FastAPI:
     _start_time = time.time()
 
     @asynccontextmanager
-    async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
         """Start lazy-init of all Lilith components and close Hermes client on shutdown."""
         logger.info("Hermes Bridge starting on %s:%d", cfg.host, cfg.port)
         logger.info("Hermes endpoint: %s", cfg.hermes_url)
