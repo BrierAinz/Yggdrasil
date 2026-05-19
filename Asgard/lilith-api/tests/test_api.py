@@ -111,12 +111,19 @@ class TestHealth:
         assert "version" in response.json()
 
     def test_health_is_lightweight(self, isolated_client, mock_config):
-        """Health endpoint should not trigger heavy initialization."""
+        """Health endpoint should not trigger heavy initialization.
+
+        The /health endpoint returns only status and version — no model,
+        tools, or memory data.  Those are on /status instead.
+        """
         response = isolated_client.get("/health")
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "ok"
-        assert data["model"] == "auto"
+        assert data["version"] == "2.2.0"
+        # Verify it does NOT include heavy fields (moved to /status)
+        assert "model" not in data
+        assert "tools" not in data
 
 
 # ── Status endpoint ─────────────────────────────────────────────────────
