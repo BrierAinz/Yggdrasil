@@ -7,7 +7,7 @@ name = "lilith-bridge"
 version = "1.0.0"
 description = "Bidirectional gateway connecting Yggdrasil to Hermes Agent via MCP and HTTP"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 requires-python = ">=3.11"
 dependencies = [
     "lilith-core>=2.0.0",

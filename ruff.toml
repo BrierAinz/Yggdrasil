@@ -107,6 +107,9 @@ lines-after-imports = 2
 "Alfheim/YggdrasilForge/backend/blender_client.py" = ["B904"]
 "Alfheim/YggdrasilForge/backend/routes/blender.py" = ["TC001"]
 
+# Svartalfheim skill scripts: section-separator comments are not dead code
+"Svartalfheim/Docs/skills/**/*.py" = ["ERA001", "N806"]
+
 [format]
 quote-style = "double"
 indent-style = "space"

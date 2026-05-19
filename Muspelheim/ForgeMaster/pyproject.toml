@@ -25,6 +25,10 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=7.0", "pytest-cov", "mypy>=1.0"]
 
+[project.urls]
+Homepage = "https://github.com/BrierAinz/Yggdrasil"
+Repository = "https://github.com/BrierAinz/Yggdrasil/tree/main/Muspelheim/ForgeMaster"
+
 [project.scripts]
 forgemaster = "forgemaster.cli:app"
 

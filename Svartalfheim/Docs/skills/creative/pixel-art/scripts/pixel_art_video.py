@@ -30,7 +30,7 @@ from PIL import Image, ImageDraw
 
 def _px(draw, x, y, color, size=2):
     x, y = int(x), int(y)
-    W, H = draw.im.size  # noqa: N806
+    W, H = draw.im.size
     if 0 <= x < W and 0 <= y < H:
         draw.rectangle([x, y, x + size - 1, y + size - 1], fill=color)
 
@@ -275,7 +275,7 @@ def pixel_art_video(
     _ensure_ffmpeg()
 
     base = Image.open(base_image).convert("RGB")
-    W, H = base.size  # noqa: N806
+    W, H = base.size
 
     rng = random.Random(seed if seed is not None else 42)
     layers = []
