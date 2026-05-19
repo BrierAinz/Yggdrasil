@@ -240,7 +240,7 @@ def create_bridge_router(
     # ── Health ─────────────────────────────────────────────────────
 
     @router.get("/health", response_model=BridgeHealth)
-    async def bridge_health():
+    async def bridge_health() -> BridgeHealth:
         """Return bridge health status including Hermes connection and loaded skills."""
         hermes = _get_hermes_client()
         hermes_info = await hermes.health()
@@ -264,7 +264,7 @@ def create_bridge_router(
     async def bridge_chat_inbound(
         req: BridgeChatRequest,
         user: dict = Depends(_verify_bridge_token),
-    ):
+    ) -> BridgeChatResponse:
         """Receive a chat message from Hermes and process it through Lilith engine."""
         _engine = state.ensure_engine(_bridge_config) if state else engine
         if _engine is None:
@@ -301,7 +301,7 @@ def create_bridge_router(
         query: str = Query(...),
         k: int = Query(5),
         user: dict = Depends(_verify_bridge_token),
-    ):
+    ) -> dict[str, Any]:
         """Search Lilith memory for entries matching the query."""
         _memory = state.ensure_memory(_bridge_config) if state else memory
         if _memory is None:
@@ -317,7 +317,7 @@ def create_bridge_router(
     async def bridge_memory_store(
         req: BridgeMemoryStore,
         user: dict = Depends(_verify_bridge_token),
-    ):
+    ) -> dict[str, Any]:
         """Store a new memory entry in Lilith's vector store."""
         _memory = state.ensure_memory(_bridge_config) if state else memory
         if _memory is None:
@@ -333,7 +333,7 @@ def create_bridge_router(
     async def bridge_list_skills(
         category: str | None = Query(None),
         user: dict = Depends(_verify_bridge_token),
-    ):
+    ) -> dict[str, Any]:
         """List available skill categories or format skills by category."""
         _skills_ctx, _ = (
             state.ensure_skills(_bridge_config)
@@ -353,7 +353,7 @@ def create_bridge_router(
     async def bridge_search_skills(
         req: BridgeSkillSearch,
         user: dict = Depends(_verify_bridge_token),
-    ):
+    ) -> dict[str, Any]:
         """Search skills by query string with optional result limit."""
         _skills_ctx, _ = (
             state.ensure_skills(_bridge_config)
@@ -372,7 +372,7 @@ def create_bridge_router(
     async def bridge_chat_outbound(
         req: HermesChatRequest,
         user: dict = Depends(_verify_bridge_token),
-    ):
+    ) -> HermesChatResponse:
         """Send a chat message to Hermes and relay the response back."""
         hermes = _get_hermes_client()
 
@@ -407,7 +407,7 @@ def create_bridge_router(
     @router.get("/hermes/models")
     async def bridge_hermes_models(
         user: dict = Depends(_verify_bridge_token),
-    ):
+    ) -> dict[str, Any]:
         """List available models from the Hermes endpoint."""
         hermes = _get_hermes_client()
         models = await hermes.list_models()
@@ -417,7 +417,7 @@ def create_bridge_router(
     async def bridge_hermes_execute(
         req: HermesToolExecute,
         user: dict = Depends(_verify_bridge_token),
-    ):
+    ) -> HermesToolResult:
         """Execute a tool on the Hermes side and return the result."""
         hermes = _get_hermes_client()
 
@@ -437,7 +437,7 @@ def create_bridge_router(
     @router.get("/hermes/health")
     async def bridge_hermes_health(
         user: dict = Depends(_verify_bridge_token),
-    ):
+    ) -> dict[str, Any]:
         """Check the health of the Hermes endpoint connection."""
         hermes = _get_hermes_client()
         return await hermes.health()
