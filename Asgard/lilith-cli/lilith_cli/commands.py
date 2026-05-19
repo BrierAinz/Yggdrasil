@@ -299,9 +299,12 @@ class RedoCommand(BaseCommand):
             return
 
         # Pop last user message from history if it matches.
-        if self.session.history and self.session.history[-1].get("role") == "user":
-            if self.session.history[-1].get("content", "") == last_msg:
-                self.session.history.pop()
+        if (
+            self.session.history
+            and self.session.history[-1].get("role") == "user"
+            and self.session.history[-1].get("content", "") == last_msg
+        ):
+            self.session.history.pop()
 
         # Pop any trailing assistant messages too.
         while self.session.history and self.session.history[-1].get("role") == "assistant":

@@ -217,10 +217,7 @@ def create_bridge_router(
         Optional pre-initialised SkillContext. If None, lazy-loads.
     """
     global _bridge_config
-    if config:
-        _bridge_config = config
-    else:
-        _bridge_config = _get_bridge_config()
+    _bridge_config = config or _get_bridge_config()
 
     # Use injected dependencies or lazy-load via _LilithState.
     state = _LilithState() if engine is None else None

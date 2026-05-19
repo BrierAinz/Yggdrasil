@@ -7,6 +7,7 @@ tool-call resolution.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import logging
 from typing import TYPE_CHECKING, Any
@@ -132,12 +133,10 @@ class AgentSession:
         """Load tools from *lilith_tools* based on config flags."""
         try:
             # Force registration of all tool classes.
-            from lilith_tools import ToolRegistry, filesystem, system  # noqa: F401
+            from lilith_tools import ToolRegistry, filesystem, system
 
-            try:
-                from lilith_tools import browser, coding, web_search  # noqa: F401
-            except ImportError:
-                pass
+            with contextlib.suppress(ImportError):
+                from lilith_tools import browser, coding, web_search
 
             self._tool_registry = ToolRegistry
         except ImportError:
