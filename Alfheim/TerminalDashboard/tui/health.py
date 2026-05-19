@@ -225,6 +225,7 @@ class HealthMonitor:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
             if result.returncode != 0:
                 self._nvidia_available = False

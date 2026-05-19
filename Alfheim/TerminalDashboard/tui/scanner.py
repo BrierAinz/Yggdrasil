@@ -268,6 +268,7 @@ class RealmScanner:
                 capture_output=True,
                 text=True,
                 timeout=5,
+                check=False,
             )
             if result.returncode == 0:
                 return result.stdout.strip()
@@ -289,6 +290,7 @@ class RealmScanner:
                 capture_output=True,
                 text=True,
                 timeout=5,
+                check=False,
             )
             if result.returncode == 0:
                 return bool(result.stdout.strip())
@@ -310,6 +312,7 @@ class RealmScanner:
                 capture_output=True,
                 text=True,
                 timeout=5,
+                check=False,
             )
             if result.returncode == 0:
                 return result.stdout.strip()

@@ -128,6 +128,7 @@ class QuickActions:
                     capture_output=True,
                     text=True,
                     timeout=120,
+                    check=False,
                 )
                 output = result.stdout[-500:] if len(result.stdout) > 500 else result.stdout
                 success = result.returncode == 0
@@ -166,6 +167,7 @@ class QuickActions:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
             branch = branch_result.stdout.strip() if branch_result.returncode == 0 else "unknown"
 
@@ -176,6 +178,7 @@ class QuickActions:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
             status_output = status_result.stdout.strip() if status_result.returncode == 0 else "N/A"
 
@@ -186,6 +189,7 @@ class QuickActions:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
             recent_commits = log_result.stdout.strip() if log_result.returncode == 0 else ""
 
@@ -204,6 +208,7 @@ class QuickActions:
                     capture_output=True,
                     text=True,
                     timeout=10,
+                    check=False,
                 )
                 if ab_result.returncode == 0:
                     parts = ab_result.stdout.strip().split()
@@ -274,6 +279,7 @@ class QuickActions:
                     cwd=str(project),
                     capture_output=True,
                     timeout=10,
+                    check=False,
                     # Detach – we don't want to block
                     start_new_session=True,
                 )

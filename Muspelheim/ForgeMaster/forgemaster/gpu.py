@@ -115,6 +115,7 @@ class GPUMonitor:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
             if result.returncode == 0 and result.stdout.strip():
                 return True
@@ -135,6 +136,7 @@ class GPUMonitor:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
             if result.returncode == 0 and result.stdout.strip():
                 return True
@@ -156,6 +158,7 @@ class GPUMonitor:
                 capture_output=True,
                 text=True,
                 timeout=15,
+                check=False,
             )
             if result.returncode == 0 and "chipset" in result.stdout.lower():
                 return True
@@ -222,6 +225,7 @@ class GPUMonitor:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return []
@@ -319,6 +323,7 @@ class GPUMonitor:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return []
@@ -378,6 +383,7 @@ class GPUMonitor:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
             # Get VRAM info
             vram_result = subprocess.run(
@@ -385,6 +391,7 @@ class GPUMonitor:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
             # Get utilization
             util_result = subprocess.run(
@@ -392,6 +399,7 @@ class GPUMonitor:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
             # Get temperature
             temp_result = subprocess.run(
@@ -399,6 +407,7 @@ class GPUMonitor:
                 capture_output=True,
                 text=True,
                 timeout=10,
+                check=False,
             )
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return []
@@ -490,6 +499,7 @@ class GPUMonitor:
                 capture_output=True,
                 text=True,
                 timeout=15,
+                check=False,
             )
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return []

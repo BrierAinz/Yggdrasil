@@ -91,6 +91,7 @@ def get_git_activity(directory: Path, max_commits: int = 10) -> GitActivity:
             capture_output=True,
             text=True,
             timeout=5,
+            check=False,
         )
         if result.returncode != 0:
             return activity
@@ -107,6 +108,7 @@ def get_git_activity(directory: Path, max_commits: int = 10) -> GitActivity:
             capture_output=True,
             text=True,
             timeout=5,
+            check=False,
         )
         if result.returncode == 0:
             activity.branch = result.stdout.strip()
@@ -121,6 +123,7 @@ def get_git_activity(directory: Path, max_commits: int = 10) -> GitActivity:
             capture_output=True,
             text=True,
             timeout=5,
+            check=False,
         )
         if result.returncode == 0:
             for line in result.stdout.strip().splitlines():
@@ -142,6 +145,7 @@ def get_git_activity(directory: Path, max_commits: int = 10) -> GitActivity:
             capture_output=True,
             text=True,
             timeout=5,
+            check=False,
         )
         if result.returncode == 0:
             activity.status_lines = [line for line in result.stdout.strip().splitlines() if line]

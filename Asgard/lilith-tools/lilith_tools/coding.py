@@ -55,6 +55,7 @@ class CodingTool(BaseTool):
                     capture_output=True,
                     text=True,
                     timeout=timeout,
+                    check=False,
                 )
             return ToolResult(
                 success=True,
