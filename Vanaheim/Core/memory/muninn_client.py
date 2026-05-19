@@ -80,7 +80,7 @@ class MuninnClient:
         Usar en contextos donde no se puede usar async.
         """
         try:
-            asyncio.create_task(self.write_memory(agent_id, content, metadata))
+            _task = asyncio.create_task(self.write_memory(agent_id, content, metadata))  # noqa: RUF006
         except Exception:
             pass
 

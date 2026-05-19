@@ -5,8 +5,8 @@ registrados en Vanaheim.
 """
 
 import json
-import os
 from datetime import datetime
+from pathlib import Path
 from threading import Lock
 from typing import Optional
 
@@ -130,20 +130,21 @@ class VanirRegistry:
     def _persist(self) -> None:
         """Persistir estado a disco."""
         try:
-            os.makedirs(os.path.dirname(self._persistence_path), exist_ok=True)
+            path = Path(self._persistence_path)
+            path.parent.mkdir(parents=True, exist_ok=True)
             data = {
                 "agents": [json.loads(a.model_dump_json()) for a in self._agents.values()],
                 "updated_at": datetime.now().isoformat(),
             }
-            with open(self._persistence_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=2)
+            path.write_text(json.dumps(data, indent=2), encoding="utf-8")
         except Exception:
             pass  # Fail silently on persistence errors
 
     def load(self) -> None:
         """Cargar estado desde disco."""
         try:
-            if os.path.exists(self._persistence_path):
+            path = Path(self._persistence_path)
+            if path.exists():
                 # Future: reconstruct AgentInfo from persisted state
                 pass
         except Exception:

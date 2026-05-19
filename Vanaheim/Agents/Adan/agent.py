@@ -129,8 +129,9 @@ class AdanAgent(VanirAgent):
             )
 
         try:
-            async with httpx.AsyncClient(timeout=self.config.timeout) as client:
-                async with client.stream(
+            async with (
+                httpx.AsyncClient(timeout=self.config.timeout) as client,
+                client.stream(
                     "POST",
                     f"{self._base_url}/api/generate",
                     json={
@@ -140,7 +141,8 @@ class AdanAgent(VanirAgent):
                         "temperature": self.config.temperature,
                         "stream": True,
                     },
-                ) as resp:
+                ) as resp,
+            ):
                     resp.raise_for_status()
                     async for line in resp.aiter_lines():
                         if line:

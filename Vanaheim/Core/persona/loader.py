@@ -4,7 +4,7 @@ Adaptado de Asgard/Lilith para funcionar de forma independiente.
 """
 
 import json
-import os
+from pathlib import Path
 
 
 class PersonaLoader:
@@ -18,20 +18,20 @@ class PersonaLoader:
         """Encontrar la ruta al archivo de personalidades."""
         # Intentar rutas posibles
         candidates = [
-            "Config/personas.json",
-            "../Asgard/Lilith/Core/Config/personas.json",
-            "../../Asgard/Lilith/Core/Config/personas.json",
+            Path("Config/personas.json"),
+            Path("../Asgard/Lilith/Core/Config/personas.json"),
+            Path("../../Asgard/Lilith/Core/Config/personas.json"),
         ]
         for candidate in candidates:
-            if os.path.exists(candidate):
-                return candidate
+            if candidate.exists():
+                return str(candidate)
         # Default relativo a Vanaheim
         return "Config/personas.json"
 
     def load_personas(self) -> dict:
         """Cargar todas las personalidades."""
         try:
-            with open(self.base_path, encoding="utf-8") as f:
+            with Path(self.base_path).open(encoding="utf-8") as f:
                 return json.load(f)
         except Exception:
             return {"agents": {}, "common": {}}
@@ -76,7 +76,7 @@ class PersonaLoader:
     def _get_common_instructions(self) -> str:
         """Obtener instrucciones comunes a todos los agentes."""
         try:
-            with open(self.base_path, encoding="utf-8") as f:
+            with Path(self.base_path).open(encoding="utf-8") as f:
                 data = json.load(f)
             common = data.get("common", {})
             return common.get("instructions", "")

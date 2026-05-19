@@ -138,8 +138,9 @@ class EvaAgent(VanirAgent):
             system_prompt = self._get_system_prompt()
             full_prompt = f"{task}{memory_context}"
 
-            async with httpx.AsyncClient(timeout=self.config.timeout) as client:
-                async with client.stream(
+            async with (
+                httpx.AsyncClient(timeout=self.config.timeout) as client,
+                client.stream(
                     "POST",
                     self.GROK_API_URL,
                     headers={
@@ -156,7 +157,8 @@ class EvaAgent(VanirAgent):
                         "max_tokens": 8192,
                         "stream": True,
                     },
-                ) as resp:
+                ) as resp,
+            ):
                     resp.raise_for_status()
                     async for line in resp.aiter_lines():
                         if line.startswith("data: "):

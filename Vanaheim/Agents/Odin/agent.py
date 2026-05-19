@@ -197,8 +197,9 @@ class OdinAgent(VanirAgent):
             if large_context:
                 full_prompt = f"Contexto:\n{large_context[:100000]}\n\n---\n\nTarea: {task}"
 
-            async with httpx.AsyncClient(timeout=self.config.timeout) as client:
-                async with client.stream(
+            async with (
+                httpx.AsyncClient(timeout=self.config.timeout) as client,
+                client.stream(
                     "POST",
                     self.KIMI_API_URL,
                     headers={
@@ -215,7 +216,8 @@ class OdinAgent(VanirAgent):
                         "max_tokens": 16384,
                         "stream": True,
                     },
-                ) as resp:
+                ) as resp,
+            ):
                     resp.raise_for_status()
                     async for line in resp.aiter_lines():
                         if line.startswith("data: "):
