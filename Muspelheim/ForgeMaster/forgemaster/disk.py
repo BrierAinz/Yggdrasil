@@ -251,7 +251,7 @@ class DuplicateFinder:
             groups[key].append(model)
 
         duplicate_groups: list[DuplicateGroup] = []
-        for _key, group_models in groups.items():
+        for group_models in groups.values():
             if len(group_models) < 2:
                 continue
 
@@ -312,7 +312,7 @@ class DuplicateFinder:
             size_groups[s].append(model)
 
         duplicate_groups: list[DuplicateGroup] = []
-        for _size, group in size_groups.items():
+        for group in size_groups.values():
             if len(group) < 2:
                 continue
 
@@ -326,7 +326,7 @@ class DuplicateFinder:
                     hash_groups[file_hash] = []
                 hash_groups[file_hash].append(model)
 
-            for _hash_val, hash_group in hash_groups.items():
+            for hash_group in hash_groups.values():
                 if len(hash_group) < 2:
                     continue
 

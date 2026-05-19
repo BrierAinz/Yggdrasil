@@ -154,18 +154,17 @@ class Mem0Backend(MemoryBackend):
             # Graceful degradation: scan the meta db
             return await self._local_search(query, limit)
 
-        entries: list[dict[str, Any]] = []
         raw = results if isinstance(results, list) else results.get("results", [])
-        for item in raw:
-            if isinstance(item, dict):
-                entries.append(
-                    {
-                        "id": item.get("id", ""),
-                        "content": item.get("memory", item.get("content", "")),
-                        "metadata": item.get("metadata"),
-                        "score": item.get("score"),
-                    }
-                )
+        entries: list[dict[str, Any]] = [
+            {
+                "id": item.get("id", ""),
+                "content": item.get("memory", item.get("content", "")),
+                "metadata": item.get("metadata"),
+                "score": item.get("score"),
+            }
+            for item in raw
+            if isinstance(item, dict)
+        ]
         return entries[:limit]
 
     async def _local_search(self, query: str, limit: int = 5) -> list[dict[str, Any]]:

@@ -45,15 +45,14 @@ class DirectoryListTool(BaseTool):
         if not path.exists():
             return ToolResult(success=False, data=None, error=f"Directorio no encontrado: {path}")
         try:
-            items = []
-            for item in sorted(path.iterdir()):
-                items.append(
-                    {
-                        "name": item.name,
-                        "type": "directory" if item.is_dir() else "file",
-                        "size": item.stat().st_size if item.is_file() else None,
-                    }
-                )
+            items = [
+                {
+                    "name": item.name,
+                    "type": "directory" if item.is_dir() else "file",
+                    "size": item.stat().st_size if item.is_file() else None,
+                }
+                for item in sorted(path.iterdir())
+            ]
             return ToolResult(success=True, data=items)
         except Exception as e:
             return ToolResult(success=False, data=None, error=str(e))

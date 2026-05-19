@@ -231,7 +231,7 @@ class HermesClient:
                 "content": (
                     f"Execute the tool '{tool_name}' with these parameters: {json.dumps(params)}"
                 ),
-            }
+            },
         ]
 
         result = await self.chat(messages)
@@ -297,5 +297,5 @@ class HermesMCPClient:
         """Call a tool on the Hermes MCP server."""
         # MCP tool call would go here.
         raise NotImplementedError(
-            "MCP tool calling requires an active Hermes MCP server. Start with: hermes mcp serve"
+            "MCP tool calling requires an active Hermes MCP server. Start with: hermes mcp serve",
         )
