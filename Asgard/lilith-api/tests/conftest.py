@@ -43,7 +43,8 @@ _LILITH_ORCHESTRATOR_STUBS = {
     "lilith_orchestrator": _make_stub(
         "lilith_orchestrator",
         engine=_make_stub(
-            "lilith_orchestrator.engine", LilithEngine=MagicMock(return_value=_mock_engine)
+            "lilith_orchestrator.engine",
+            LilithEngine=MagicMock(return_value=_mock_engine),
         ),
     ),
     "lilith_orchestrator.engine": None,  # set after orchestrator above

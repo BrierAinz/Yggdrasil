@@ -50,7 +50,7 @@ def mock_memory():
     mem = MagicMock()
     mem.count_entries.return_value = 42
     mem.search.return_value = [
-        {"content": "Hola mundo", "metadata": {"source": "test"}, "score": 0.95}
+        {"content": "Hola mundo", "metadata": {"source": "test"}, "score": 0.95},
     ]
     mem.store.return_value = None
     return mem
@@ -84,7 +84,7 @@ def isolated_client(mock_config, mock_memory, mock_engine):
     app.dependency_overrides[get_memory] = lambda: mock_memory
     app.dependency_overrides[get_engine] = lambda: mock_engine
     app.dependency_overrides[get_tools] = lambda: MagicMock(
-        list_tools=MagicMock(return_value={"system_info": "Sistema"})
+        list_tools=MagicMock(return_value={"system_info": "Sistema"}),
     )
     try:
         yield TestClient(app)

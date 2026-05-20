@@ -151,7 +151,9 @@ class TestCatalog:
     def test_add_model_with_tags_and_notes(self, catalog):
         model = ModelInfo(name="tagged-model", path="/m1")
         model_id = catalog.add_model(
-            model, tags={"type": "chat", "language": "en"}, notes="My favorite model"
+            model,
+            tags={"type": "chat", "language": "en"},
+            notes="My favorite model",
         )
 
         result = catalog.get_model(model_id)

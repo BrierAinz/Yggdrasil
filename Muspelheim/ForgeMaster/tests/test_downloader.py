@@ -247,7 +247,7 @@ class TestListModelFiles:
             "siblings": [
                 {"rfilename": "config.json"},
                 {"rfilename": "model.safetensors"},
-            ]
+            ],
         }
         mock_client.get.return_value = mock_resp
 
@@ -329,7 +329,9 @@ class TestDownloadFile:
 
         mock_client = MagicMock()
         fake_resp = FakeStreamResponse(
-            chunks=[b'{"new": true}'], status_code=200, headers={"content-length": "10"}
+            chunks=[b'{"new": true}'],
+            status_code=200,
+            headers={"content-length": "10"},
         )
         mock_client.stream.return_value = FakeStreamContext(fake_resp)
 
@@ -535,7 +537,7 @@ class TestExtractFilenames:
             "siblings": [
                 {"rfilename": "config.json"},
                 {"rfilename": "model.safetensors"},
-            ]
+            ],
         }
         result = ModelDownloader._extract_filenames(data)
         assert result == ["config.json", "model.safetensors"]

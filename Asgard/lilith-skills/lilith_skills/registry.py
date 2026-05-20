@@ -84,7 +84,7 @@ class SkillRegistry:
         if not skills_dir.is_dir():
             raise FileNotFoundError(
                 f"Skills directory not found at {skills_dir}. "
-                f"Ensure the Yggdrasil repo is at {repo}."
+                f"Ensure the Yggdrasil repo is at {repo}.",
             )
 
         return cls(skills_dir)

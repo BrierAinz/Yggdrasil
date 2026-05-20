@@ -41,7 +41,7 @@ class Mem0Backend(MemoryBackend):
         except ImportError as exc:
             raise ImportError(
                 "mem0ai is required for Mem0Backend. "
-                "Install it with: pip install lilith-memory[mem0]"
+                "Install it with: pip install lilith-memory[mem0]",
             ) from exc
 
         api_key = os.environ.get("MEM0_API_KEY")
@@ -58,7 +58,7 @@ class Mem0Backend(MemoryBackend):
                         "provider": "openai",
                         "config": {"api_key": api_key},
                     },
-                }
+                },
             )
         else:
             # Local mode - store data alongside the requested db_path
@@ -84,7 +84,7 @@ class Mem0Backend(MemoryBackend):
                             "path": str(Path(local_dir) / "mem0.db"),
                         },
                     },
-                }
+                },
             )
 
         # Internal counter for fast count (mem0 doesn't expose count natively)
@@ -105,7 +105,7 @@ class Mem0Backend(MemoryBackend):
                      mem0_id TEXT NOT NULL UNIQUE,
                      content TEXT NOT NULL,
                      metadata TEXT
-                   )"""
+                   )""",
             )
             conn.commit()
 
@@ -176,7 +176,8 @@ class Mem0Backend(MemoryBackend):
         with sqlite3.connect(self._local_db_path) as conn:
             conn.row_factory = sqlite3.Row
             rows = conn.execute(
-                "SELECT * FROM mem0_meta ORDER BY id DESC LIMIT ?", (limit,)
+                "SELECT * FROM mem0_meta ORDER BY id DESC LIMIT ?",
+                (limit,),
             ).fetchall()
             return [dict(row) for row in rows]
 

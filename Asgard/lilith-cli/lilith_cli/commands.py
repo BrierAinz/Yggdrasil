@@ -79,7 +79,7 @@ class ToolsCommand(BaseCommand):
         console.print("\n[bold realm]᛭ Herramientas[/]\n")
         for tool in tools:
             console.print(
-                f"  [tool.name]{tool['name']}[/]  [dim]— {tool.get('description', '')}[/]"
+                f"  [tool.name]{tool['name']}[/]  [dim]— {tool.get('description', '')}[/]",
             )
         console.print()
 
@@ -229,7 +229,7 @@ class StatusCommand(BaseCommand):
                     "Proveedor": self.session.config.provider,
                     "Memoria": self.session.memory is not None,
                     "Herramientas": len(self.session.get_tool_descriptions()),
-                }
+                },
             )
 
 
@@ -254,7 +254,7 @@ class ConfigCommand(BaseCommand):
                 title="[bold realm]⚙ Configuración[/]",
                 border_style="gold1",
                 expand=False,
-            )
+            ),
         )
 
 
@@ -311,7 +311,7 @@ class RedoCommand(BaseCommand):
             self.session.history.pop()
 
         console.print(
-            f"[dim]⟳ Reenviando: [model]{last_msg[:80]}{'…' if len(last_msg) > 80 else ''}[/][/]"
+            f"[dim]⟳ Reenviando: [model]{last_msg[:80]}{'…' if len(last_msg) > 80 else ''}[/][/]",
         )
         # Import here to avoid circular imports.
         from .repl import _process_with_streaming, render_turn_start
@@ -349,7 +349,7 @@ class CopyCommand(BaseCommand):
                     return
             except ValueError:
                 render_error(
-                    "Uso: /copy [número]  — donde número es el índice de respuesta (1-based)"
+                    "Uso: /copy [número]  — donde número es el índice de respuesta (1-based)",
                 )
                 return
 
@@ -388,7 +388,7 @@ class SystemCommand(BaseCommand):
                     border_style="gold1",
                     expand=False,
                     padding=(0, 1),
-                )
+                ),
             )
         else:
             # Set new system prompt.
@@ -462,7 +462,7 @@ class CompactCommand(BaseCommand):
             except ValueError:
                 render_error(
                     "Uso: /compact [n]  — donde n es el número de "
-                    "turnos recientes a conservar (default: 2)"
+                    "turnos recientes a conservar (default: 2)",
                 )
                 return
 
@@ -501,11 +501,11 @@ class CompactCommand(BaseCommand):
                     border_style="frost",
                     expand=False,
                     padding=(0, 1),
-                )
+                ),
             )
             console.print(
                 f"[success]✓ {before} mensajes → {after} "
-                f"(1 resumen + {keep_recent} turnos recientes)[/]"
+                f"(1 resumen + {keep_recent} turnos recientes)[/]",
             )
             console.print(f"[dim]{timer.elapsed:.1f}s para generar resumen[/]")
 
@@ -580,7 +580,7 @@ class ResumeCommand(BaseCommand):
                 conv = conversations[idx]
             else:
                 render_error(
-                    f"Índice fuera de rango: {selection} (hay {len(conversations)} conversaciones)"
+                    f"Índice fuera de rango: {selection} (hay {len(conversations)} conversaciones)",
                 )
                 return
         except ValueError:
@@ -597,7 +597,7 @@ class ResumeCommand(BaseCommand):
             if len(matches) > 1:
                 render_error(
                     f"Múltiples coincidencias para '{selection}'. "
-                    f"Usa /resume <número> para seleccionar una específica."
+                    f"Usa /resume <número> para seleccionar una específica.",
                 )
                 return
             conv = matches[0]
@@ -635,10 +635,10 @@ class ResumeCommand(BaseCommand):
                 border_style="green",
                 expand=False,
                 padding=(0, 1),
-            )
+            ),
         )
         console.print(
-            f"[success]✓ Restaurados {conv['message_count']} mensajes (antes: {old_count})[/]"
+            f"[success]✓ Restaurados {conv['message_count']} mensajes (antes: {old_count})[/]",
         )
 
 
@@ -692,7 +692,7 @@ class ThemeCommand(BaseCommand):
             console.print(table)
             console.print(
                 f"\n[dim]Tema actual: [bold]{current.label}[/]. "
-                f"Usa /theme <nombre> para cambiar.[/]"
+                f"Usa /theme <nombre> para cambiar.[/]",
             )
             return
 
@@ -730,7 +730,7 @@ class ThemeCommand(BaseCommand):
                 border_style=new_theme.border_style,
                 expand=False,
                 padding=(0, 1),
-            )
+            ),
         )
         console.print(f"[success]✓ Tema cambiado a {new_theme.label}[/]")
         console.print("[dim]Los cambios se reflejan en el siguiente prompt.[/]")
@@ -790,7 +790,7 @@ class FileCommand(BaseCommand):
         if size > self.MAX_SIZE:
             render_error(
                 f"Archivo demasiado grande ({size / 1024 / 1024:.1f} MB). "
-                f"Máximo: {self.MAX_SIZE // 1024 // 1024} MB"
+                f"Máximo: {self.MAX_SIZE // 1024 // 1024} MB",
             )
             return
 
@@ -844,7 +844,7 @@ class FileCommand(BaseCommand):
                 title=f"[bold gold1]📄 {file_path.name}[/] ({line_count} líneas, {size:,} bytes)",
                 border_style="frost",
                 expand=False,
-            )
+            ),
         )
 
         # Build context message.
@@ -888,7 +888,7 @@ class ExportCommand(BaseCommand):
             lines.append(
                 f"- **Tokens**: {usage.get('prompt_tokens', 0)}↑ "
                 f"{usage.get('completion_tokens', 0)}↓ "
-                f"{usage.get('total_tokens', 0)}Σ"
+                f"{usage.get('total_tokens', 0)}Σ",
             )
         lines.append("")
         lines.append("---")
@@ -988,7 +988,7 @@ class ExportCommand(BaseCommand):
                 title="[bold gold1]📦 Exportación Completa[/]",
                 border_style="frost",
                 expand=False,
-            )
+            ),
         )
 
 
@@ -1055,7 +1055,7 @@ class CommandRegistry:
         cmd = self.get(cmd_name)
         if cmd is None:
             render_error(
-                f"Comando desconocido: /{cmd_name}  — escribe /help para ver los disponibles"
+                f"Comando desconocido: /{cmd_name}  — escribe /help para ver los disponibles",
             )
             return True
 

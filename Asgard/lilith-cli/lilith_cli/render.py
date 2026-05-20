@@ -353,7 +353,7 @@ def render_welcome(
             border_style=theme.border_style,
             expand=False,
             padding=(0, 2),
-        )
+        ),
     )
 
     # Session info line.
@@ -380,7 +380,7 @@ def render_turn_start(turn: int) -> None:
     theme = get_theme()
     console.print()
     console.print(
-        Rule(f"[turn]Turno {turn}[/]", style=theme.border_style, characters=theme.rule_chars)
+        Rule(f"[turn]Turno {turn}[/]", style=theme.border_style, characters=theme.rule_chars),
     )
     console.print()
 
@@ -455,7 +455,7 @@ def render_thinking(text: str) -> None:
             border_style=theme.border_style,
             expand=False,
             padding=(0, 1),
-        )
+        ),
     )
 
 
@@ -489,7 +489,7 @@ def render_tool_call(name: str, args: dict[str, Any], result: str | None = None)
 
     renderable = Group(*body_parts) if body_parts else Text(args_text, style="tool.arg")
     console.print(
-        Panel(renderable, title=header, border_style="cyan", expand=False, padding=(0, 1))
+        Panel(renderable, title=header, border_style="cyan", expand=False, padding=(0, 1)),
     )
 
 
@@ -524,7 +524,7 @@ def render_status(status_dict: dict[str, Any]) -> None:
             title="[bold realm]⚔ Status Report ⚔[/]",
             border_style=theme.border_style,
             expand=False,
-        )
+        ),
     )
 
 
@@ -537,7 +537,7 @@ def render_token_usage(usage: dict[str, int]) -> None:
     completion = usage.get("completion_tokens", 0)
     total = usage.get("total_tokens", 0)
     console.print(
-        f"[usage]Tokens — prompt: {prompt} · completion: {completion} · total: {total}[/]"
+        f"[usage]Tokens — prompt: {prompt} · completion: {completion} · total: {total}[/]",
     )
 
 

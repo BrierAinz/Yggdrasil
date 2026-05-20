@@ -39,7 +39,8 @@ class LilithClient:
     def execute_tool(self, tool: str, params: dict[str, Any]) -> Any:
         """Execute a tool with the given parameters."""
         r = self.client.post(
-            f"{self.base_url}/tools/execute", json={"tool": tool, "params": params}
+            f"{self.base_url}/tools/execute",
+            json={"tool": tool, "params": params},
         )
         r.raise_for_status()
         return r.json()

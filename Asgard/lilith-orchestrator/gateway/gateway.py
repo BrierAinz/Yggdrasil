@@ -377,7 +377,7 @@ async def api_dashboard_stats():
                 },
                 "agentes_operativos": 4,
                 "memory": stats,
-            }
+            },
         }
     except Exception as e:
         return {

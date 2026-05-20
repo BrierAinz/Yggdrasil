@@ -49,7 +49,7 @@ class MemoryStore:
                     metadata TEXT,
                     timestamp REAL DEFAULT (unixepoch())
                 )
-            """
+            """,
             )
             conn.execute("CREATE INDEX IF NOT EXISTS idx_time ON memories(timestamp)")
 
@@ -169,7 +169,8 @@ class MemoryStore:
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
             rows = conn.execute(
-                "SELECT * FROM memories ORDER BY timestamp DESC LIMIT ?", (limit,)
+                "SELECT * FROM memories ORDER BY timestamp DESC LIMIT ?",
+                (limit,),
             ).fetchall()
             return [dict(row) for row in rows]
 

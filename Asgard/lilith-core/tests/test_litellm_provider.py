@@ -95,7 +95,8 @@ async def test_fallback_to_local(tmp_path):
         )
 
     called_model = mock_litellm.acompletion.call_args.kwargs.get(
-        "model", mock_litellm.acompletion.call_args[1].get("model")
+        "model",
+        mock_litellm.acompletion.call_args[1].get("model"),
     )
     expected = f"openai/{config.get('lm_studio_url')}"
     assert called_model == expected

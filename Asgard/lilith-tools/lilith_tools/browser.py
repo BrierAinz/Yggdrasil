@@ -36,7 +36,10 @@ class BrowserTool(BaseTool):
     }
 
     def execute(
-        self, url: str = "", max_chars: int = 3000, use_playwright: bool = True
+        self,
+        url: str = "",
+        max_chars: int = 3000,
+        use_playwright: bool = True,
     ) -> ToolResult:
         """Navega a una URL y extrae texto legible."""
         if not url:

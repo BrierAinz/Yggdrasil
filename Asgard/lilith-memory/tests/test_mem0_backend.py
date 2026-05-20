@@ -73,12 +73,13 @@ def test_add_and_search_mock(tmp_path: Path):
                 "memory": "Hello world",
                 "metadata": {"source": "test"},
                 "score": 0.95,
-            }
-        ]
+            },
+        ],
     }
 
     with patch.dict(
-        "sys.modules", {"mem0": mock_mem_module, "mem0.Memory": mock_mem_module.Memory}
+        "sys.modules",
+        {"mem0": mock_mem_module, "mem0.Memory": mock_mem_module.Memory},
     ):
         # We must also patch the already-imported reference inside mem0_backend
         from lilith_memory.backends.mem0_backend import Mem0Backend

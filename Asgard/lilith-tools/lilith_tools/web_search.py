@@ -39,7 +39,8 @@ class WebSearchTool(BaseTool):
 
             results = []
             for m in re.finditer(
-                r'<a rel="nofollow" class="result__a" href="([^"]+)">([^<]+)</a>', html
+                r'<a rel="nofollow" class="result__a" href="([^"]+)">([^<]+)</a>',
+                html,
             ):
                 if len(results) >= max_results:
                     break

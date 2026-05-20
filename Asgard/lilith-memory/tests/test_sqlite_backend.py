@@ -36,7 +36,7 @@ def test_crud_operations_match_original(tmp_path: Path):
 
     # ---- add ----
     entry_id = loop.run_until_complete(
-        adapter.add("hello from adapter", metadata={"origin": "test"})
+        adapter.add("hello from adapter", metadata={"origin": "test"}),
     )
     assert entry_id  # should return a non-empty string id
 

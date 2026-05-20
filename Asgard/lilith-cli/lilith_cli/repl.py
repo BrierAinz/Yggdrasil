@@ -241,7 +241,7 @@ def _list_saved_conversations() -> list[dict[str, Any]]:
                     "message_count": len(messages),
                     "usage": data.get("usage", {}),
                     "preview": preview,
-                }
+                },
             )
         except Exception:
             continue
@@ -333,7 +333,7 @@ async def run_repl(session: AgentSession) -> None:
         if s["total"] > 0:
             parts.append(("", "  "))
             parts.append(
-                ("class:usage", f"Tokens: {s['prompt']}↑ {s['completion']}↓ {s['total']}Σ")
+                ("class:usage", f"Tokens: {s['prompt']}↑ {s['completion']}↓ {s['total']}Σ"),
             )
             parts.append(("", " "))
             parts.append(("class:usage", f"Turn: {s['turns']}"))
@@ -451,7 +451,9 @@ async def run_repl(session: AgentSession) -> None:
 
 
 async def _process_with_streaming(
-    session: AgentSession, text: str, stats: dict | None = None
+    session: AgentSession,
+    text: str,
+    stats: dict | None = None,
 ) -> None:
     """Process a user message with streaming output rendering.
 

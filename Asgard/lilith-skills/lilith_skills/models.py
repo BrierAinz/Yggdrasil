@@ -83,7 +83,8 @@ class SkillManifest(BaseModel):
     schema_version: str = Field(default="yggdrasil-skills-v1", alias="schema")
     source: str = Field(default="hermes-agent", description="Export source")
     categories: dict[str, list[Skill]] = Field(
-        default_factory=dict, description="Skills organized by category"
+        default_factory=dict,
+        description="Skills organized by category",
     )
     total_skills: int = Field(default=0)
     total_files: int = Field(default=0)

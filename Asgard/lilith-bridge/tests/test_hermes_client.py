@@ -66,7 +66,10 @@ class TestHermesClientClose:
         mock_response.raise_for_status = MagicMock()
 
         with patch.object(
-            httpx.AsyncClient, "get", new_callable=AsyncMock, return_value=mock_response
+            httpx.AsyncClient,
+            "get",
+            new_callable=AsyncMock,
+            return_value=mock_response,
         ):
             # Trigger client creation via health()
             await client.health()
@@ -127,7 +130,10 @@ class TestHermesClientHealth:
         mock_response.raise_for_status = MagicMock()
 
         with patch.object(
-            httpx.AsyncClient, "get", new_callable=AsyncMock, return_value=mock_response
+            httpx.AsyncClient,
+            "get",
+            new_callable=AsyncMock,
+            return_value=mock_response,
         ):
             result = await client.health()
             assert result["connected"] is True
@@ -166,7 +172,10 @@ class TestHermesClientChat:
         mock_response.raise_for_status = MagicMock()
 
         with patch.object(
-            httpx.AsyncClient, "post", new_callable=AsyncMock, return_value=mock_response
+            httpx.AsyncClient,
+            "post",
+            new_callable=AsyncMock,
+            return_value=mock_response,
         ):
             result = await client.chat([{"role": "user", "content": "hi"}])
             assert result["choices"][0]["message"]["content"] == "Hello!"
@@ -180,7 +189,10 @@ class TestHermesClientChat:
         mock_response.raise_for_status = MagicMock()
 
         with patch.object(
-            httpx.AsyncClient, "post", new_callable=AsyncMock, return_value=mock_response
+            httpx.AsyncClient,
+            "post",
+            new_callable=AsyncMock,
+            return_value=mock_response,
         ):
             result = await client.chat(
                 [{"role": "user", "content": "test"}],
@@ -201,7 +213,10 @@ class TestHermesClientChat:
         tools = [{"type": "function", "function": {"name": "search"}}]
 
         with patch.object(
-            httpx.AsyncClient, "post", new_callable=AsyncMock, return_value=mock_response
+            httpx.AsyncClient,
+            "post",
+            new_callable=AsyncMock,
+            return_value=mock_response,
         ):
             result = await client.chat(
                 [{"role": "user", "content": "search"}],
@@ -216,7 +231,10 @@ class TestHermesClientChat:
         mock_response.raise_for_status = MagicMock()
 
         with patch.object(
-            httpx.AsyncClient, "post", new_callable=AsyncMock, return_value=mock_response
+            httpx.AsyncClient,
+            "post",
+            new_callable=AsyncMock,
+            return_value=mock_response,
         ):
             result = await client.chat(
                 [{"role": "user", "content": "stream me"}],
@@ -240,7 +258,10 @@ class TestHermesClientChat:
 
         with (
             patch.object(
-                httpx.AsyncClient, "post", new_callable=AsyncMock, return_value=mock_response
+                httpx.AsyncClient,
+                "post",
+                new_callable=AsyncMock,
+                return_value=mock_response,
             ),
             pytest.raises(httpx.HTTPStatusError),
         ):
@@ -264,7 +285,10 @@ class TestHermesClientChatSimple:
         mock_response.raise_for_status = MagicMock()
 
         with patch.object(
-            httpx.AsyncClient, "post", new_callable=AsyncMock, return_value=mock_response
+            httpx.AsyncClient,
+            "post",
+            new_callable=AsyncMock,
+            return_value=mock_response,
         ):
             result = await client.chat_simple(
                 "Tell me about Yggdrasil",
@@ -283,7 +307,10 @@ class TestHermesClientChatSimple:
         mock_response.raise_for_status = MagicMock()
 
         with patch.object(
-            httpx.AsyncClient, "post", new_callable=AsyncMock, return_value=mock_response
+            httpx.AsyncClient,
+            "post",
+            new_callable=AsyncMock,
+            return_value=mock_response,
         ):
             result = await client.chat_simple("hi")
             assert result == "Hello back"
@@ -297,7 +324,10 @@ class TestHermesClientChatSimple:
         mock_response.raise_for_status = MagicMock()
 
         with patch.object(
-            httpx.AsyncClient, "post", new_callable=AsyncMock, return_value=mock_response
+            httpx.AsyncClient,
+            "post",
+            new_callable=AsyncMock,
+            return_value=mock_response,
         ):
             result = await client.chat_simple("hi")
             assert result == ""
@@ -321,7 +351,10 @@ class TestHermesClientListModels:
         mock_response.raise_for_status = MagicMock()
 
         with patch.object(
-            httpx.AsyncClient, "get", new_callable=AsyncMock, return_value=mock_response
+            httpx.AsyncClient,
+            "get",
+            new_callable=AsyncMock,
+            return_value=mock_response,
         ):
             result = await client.list_models()
             assert len(result) == 2
@@ -355,7 +388,10 @@ class TestHermesClientExecuteTool:
         mock_response.raise_for_status = MagicMock()
 
         with patch.object(
-            httpx.AsyncClient, "post", new_callable=AsyncMock, return_value=mock_response
+            httpx.AsyncClient,
+            "post",
+            new_callable=AsyncMock,
+            return_value=mock_response,
         ):
             result = await client.execute_tool("web_search", {"query": "Yggdrasil"})
             assert result["choices"][0]["message"]["content"] == "tool result"

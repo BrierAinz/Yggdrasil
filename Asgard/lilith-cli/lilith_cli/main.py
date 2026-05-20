@@ -97,7 +97,8 @@ def _apply_overrides(
 def chat(
     model: Annotated[str | None, Parameter(name=["--model", "-m"], help="Override model")] = None,
     provider: Annotated[
-        str | None, Parameter(name=["--provider", "-p"], help="Override provider")
+        str | None,
+        Parameter(name=["--provider", "-p"], help="Override provider"),
     ] = None,
     local: Annotated[bool, Parameter(name="--local", help="Use local LM Studio")] = False,
     no_tools: Annotated[bool, Parameter(name="--no-tools", help="Disable tools")] = False,
@@ -125,7 +126,8 @@ def prompt(
     text: Annotated[str, Parameter(help="Prompt para enviar al agente")],
     model: Annotated[str | None, Parameter(name=["--model", "-m"], help="Override model")] = None,
     provider: Annotated[
-        str | None, Parameter(name=["--provider", "-p"], help="Override provider")
+        str | None,
+        Parameter(name=["--provider", "-p"], help="Override provider"),
     ] = None,
     local: Annotated[bool, Parameter(name="--local", help="Use local LM Studio")] = False,
     no_tools: Annotated[bool, Parameter(name="--no-tools", help="Disable tools")] = False,
@@ -171,10 +173,12 @@ def config(
     _show: Annotated[bool, Parameter(name="--show", help="Mostrar configuración")] = True,
     edit: Annotated[bool, Parameter(name="--edit", help="Abrir configuración en editor")] = False,
     reset: Annotated[
-        bool, Parameter(name="--reset", help="Restablecer configuración por defecto")
+        bool,
+        Parameter(name="--reset", help="Restablecer configuración por defecto"),
     ] = False,
     config_path: Annotated[
-        str | None, Parameter(name="--path", help="Ruta del archivo de config")
+        str | None,
+        Parameter(name="--path", help="Ruta del archivo de config"),
     ] = None,
 ) -> None:
     """Mostrar o editar la configuración de Yggdrasil."""

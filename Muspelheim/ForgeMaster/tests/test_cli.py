@@ -100,7 +100,7 @@ class TestListCommand:
                     "architecture": "llama",
                     "quantization": "Q4_K_M",
                     "scanned_at": None,
-                }
+                },
             ]
             mock_catalog.return_value = mock_cat
             result = runner.invoke(app, ["list"])
@@ -193,7 +193,7 @@ class TestGPUCommand:
                     utilization_pct=30,
                     driver_version="535.104.05",
                     gpu_type="nvidia",
-                )
+                ),
             ]
             monitor_instance.get_gpu_processes.return_value = []
             mock_monitor.return_value = monitor_instance

@@ -125,7 +125,9 @@ class LilithEngine:
             agents = self._swarm.list_agents()
             if agents:
                 logger.info(
-                    "Swarm initialized with %d agents: %s", len(agents), [a["name"] for a in agents]
+                    "Swarm initialized with %d agents: %s",
+                    len(agents),
+                    [a["name"] for a in agents],
                 )
                 return True
             logger.warning("Swarm initialized but no agents registered — will use LLM fallback")
@@ -187,7 +189,9 @@ class LilithEngine:
         return self._normalize_result(result, elapsed_ms)
 
     async def process_stream(
-        self, message: str, context: dict[str, Any] | None = None
+        self,
+        message: str,
+        context: dict[str, Any] | None = None,
     ) -> AsyncGenerator[dict[str, Any], None]:
         """
         Procesa un mensaje en modo streaming, yieldando fragmentos.
@@ -285,7 +289,9 @@ class LilithEngine:
             return self._process_llm_fallback(message, context)
 
     async def _process_swarm_stream(
-        self, message: str, context: dict[str, Any]
+        self,
+        message: str,
+        context: dict[str, Any],
     ) -> AsyncGenerator[dict[str, Any], None]:
         """Streaming vía swarm — por ahora delega al async y yieldea el resultado completo."""
         try:
@@ -348,7 +354,9 @@ class LilithEngine:
         }
 
     async def _process_llm_stream(
-        self, message: str, context: dict[str, Any]
+        self,
+        message: str,
+        context: dict[str, Any],
     ) -> AsyncGenerator[dict[str, Any], None]:
         """Fallback streaming vía LLM directo."""
         result = self._process_llm_fallback(message, context)
@@ -409,7 +417,7 @@ class LilithEngine:
                         {
                             "role": "system",
                             "content": f"Contexto relevante de memoria:\n{memory_context}",
-                        }
+                        },
                     )
             except Exception as exc:
                 logger.debug("Memory lookup failed (non-fatal): %s", exc)
@@ -421,7 +429,7 @@ class LilithEngine:
                 {
                     "role": "system",
                     "content": f"Contexto adicional:\n{context_str}",
-                }
+                },
             )
 
         messages.append({"role": "user", "content": message})

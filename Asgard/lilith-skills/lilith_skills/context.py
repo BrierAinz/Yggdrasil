@@ -57,7 +57,7 @@ class SkillContext:
         if not skills_dir.is_dir():
             raise FileNotFoundError(
                 f"Skills directory not found at {skills_dir}. "
-                f"Set repo_root to the Yggdrasil monorepo root."
+                f"Set repo_root to the Yggdrasil monorepo root.",
             )
 
         self.registry = SkillRegistry(skills_dir)

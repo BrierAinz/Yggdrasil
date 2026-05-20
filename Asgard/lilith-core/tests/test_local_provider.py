@@ -40,7 +40,7 @@ def _sample_completion() -> dict:
                 "index": 0,
                 "message": {"role": "assistant", "content": "hi there"},
                 "finish_reason": "stop",
-            }
+            },
         ],
         "usage": {
             "prompt_tokens": 8,

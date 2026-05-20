@@ -185,7 +185,7 @@ class AgentSession:
                     "name": name,
                     "description": description,
                     "parameters": params,
-                }
+                },
             )
 
         self._tools_cache = tools
@@ -467,7 +467,7 @@ class AgentSession:
                                     id=f"{tc.id}_{i}" if tc.id else f"repair_{i}",
                                     name=name,
                                     arguments=call_args,
-                                )
+                                ),
                             )
                         continue
                 repaired_tool_calls.append(tc)
@@ -586,7 +586,7 @@ class AgentSession:
                                     id=f"{tc_id}_{i}" if tc_id else f"repair_{i}",
                                     name=name,
                                     arguments=call_args,
-                                )
+                                ),
                             )
                         continue
 

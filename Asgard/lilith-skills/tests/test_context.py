@@ -58,7 +58,7 @@ def mock_registry():
         return_value=[
             skills["mlops/lora-training-pipeline"],
             skills["creative/comfyui"],
-        ]
+        ],
     )
     registry.get = MagicMock(side_effect=skills.get)
     registry.stats = MagicMock(
@@ -69,10 +69,10 @@ def mock_registry():
                 "creative": 1,
                 "software-development": 1,
             },
-        }
+        },
     )
     registry.by_category = MagicMock(
-        side_effect=lambda cat: [s for s in skills.values() if s.category == cat]
+        side_effect=lambda cat: [s for s in skills.values() if s.category == cat],
     )
     return registry, skills
 

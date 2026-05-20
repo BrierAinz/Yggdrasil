@@ -26,7 +26,7 @@ def skills_dir(tmp_path: Path) -> Path:
         "version: 2.1.0\n"
         "---\n\n"
         "# LoRA Training Pipeline\n\n"
-        "Steps to train a LoRA model.\n"
+        "Steps to train a LoRA model.\n",
     )
 
     # Add references subdir for linked_files testing
@@ -46,7 +46,7 @@ def skills_dir(tmp_path: Path) -> Path:
         "tags: [comfyui, batch, image-generation]\n"
         "---\n\n"
         "# ComfyUI Batch Generate\n\n"
-        "Batch generation with IPAdapter.\n"
+        "Batch generation with IPAdapter.\n",
     )
 
     creative = tmp_path / "creative"
@@ -61,7 +61,7 @@ def skills_dir(tmp_path: Path) -> Path:
         "tags: [blender, 3d, mcp]\n"
         "---\n\n"
         "# Blender MCP\n\n"
-        "Connect to Blender via MCP bridge.\n"
+        "Connect to Blender via MCP bridge.\n",
     )
 
     return tmp_path

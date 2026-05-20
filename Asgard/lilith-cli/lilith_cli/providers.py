@@ -337,7 +337,7 @@ class LLMProviderWrapper:
                     id=tc_raw.get("id", ""),
                     name=func.get("name", ""),
                     arguments=args,
-                )
+                ),
             )
 
         usage = data.get("usage", {})
@@ -417,6 +417,6 @@ def lilith_tools_to_openai(
                         "required": required,
                     },
                 },
-            }
+            },
         )
     return openai_tools

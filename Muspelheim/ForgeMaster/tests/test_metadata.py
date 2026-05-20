@@ -221,8 +221,8 @@ class TestReadHfConfig:
                 {
                     "model_type": "gpt2",
                     "max_position_embeddings": 1024,
-                }
-            )
+                },
+            ),
         )
         result = read_hf_config(config_file)
         assert result["architecture"] == "gpt2"
