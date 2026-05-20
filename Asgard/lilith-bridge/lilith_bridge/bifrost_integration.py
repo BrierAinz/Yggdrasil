@@ -227,6 +227,7 @@ def create_bridge_router(
         Optional pre-initialised MemoryStore. If None, lazy-loads.
     skills_ctx:
         Optional pre-initialised SkillContext. If None, lazy-loads.
+
     """
     global _bridge_config
     _bridge_config = config or _get_bridge_config()

@@ -240,7 +240,6 @@ class TestBridgeApp:
     @pytest.fixture
     def app_client(self):
         """Create a test client with no auth token."""
-
         from lilith_bridge.app import create_app
 
         config = BridgeConfig(auth_token=None)  # No auth for testing

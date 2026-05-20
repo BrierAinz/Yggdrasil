@@ -38,6 +38,7 @@ class HermesClient:
         Request timeout in seconds (default: 120 — Hermes can be slow).
     max_retries:
         Maximum number of retry attempts for transient failures.
+
     """
 
     def __init__(
@@ -117,6 +118,7 @@ class HermesClient:
             Maximum tokens to generate.
         stream:
             If True, returns the raw response for SSE streaming.
+
         """
         client = await self._get_client()
         payload: dict[str, Any] = {
@@ -189,6 +191,7 @@ class HermesClient:
             Optional system context to prepend.
         model:
             Model to use.
+
         """
         messages: list[dict[str, Any]] = []
         if context:
@@ -263,6 +266,7 @@ class HermesMCPClient:
     server_command:
         Command to start the Hermes MCP stdio server.
         E.g. ``["hermes", "mcp", "serve"]``
+
     """
 
     def __init__(
