@@ -14,7 +14,7 @@ from .base import LLMProvider
 
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncIterator
+    from collections.abc import AsyncGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -95,12 +95,12 @@ class LiteLLMProvider(LLMProvider):
 
         raise LLMError(f"LiteLLM failed after {_MAX_RETRIES} retries: {last_exc}")
 
-    async def stream(
+    async def stream(  # type: ignore[override]
         self,
         messages: list[dict[str, Any]],
         model: str | None = None,
         **kwargs: Any,
-    ) -> AsyncIterator[dict[str, Any]]:
+    ) -> AsyncGenerator[dict[str, Any], None]:
         """Stream chunks via ``litellm.acompletion(stream=True)``."""
         resolved = self._resolve_model(model)
         try:

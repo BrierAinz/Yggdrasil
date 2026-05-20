@@ -10,7 +10,6 @@ Asgard es el núcleo tecnológico de Yggdrasil: el reino donde habita la intelig
 
 ```
 Asgard/
-├── Hermes-Lilith/                  # Monolito legado v4.0 (nombre de directorio legado; el agente es Lilith)
 ├── Lilith/                         # Núcleo refactorizado v5
 ├── lilith-api/                     # API REST v2.2.0
 ├── lilith-bridge/                  # Gateway Hermes↔Yggdrasil v1.0.0
@@ -20,7 +19,7 @@ Asgard/
 ├── lilith-orchestrator/            # Orquestador de tareas v2.0.0
 ├── lilith-skills/                  # Definiciones de skills v1.0.0
 ├── lilith-tools/                   # Utilidades v2.0.0
-└── Lilith_Launcher.bat            # Script de inicio legado
+└── Hermes-Lilith/                  # Monolito legado v4.0 (nombre de dir = legado git; ver REGLAS.md)
 ```
 
 ---
@@ -29,7 +28,7 @@ Asgard/
 
 | Proyecto | Versión | Estado | Notas |
 |---|---|---|---|
-| Hermes-Lilith | v4.0 | 🏛️ LEGADO | Monolito ancestral, 838 pruebas. Nombre de dir = legado git |
+| Hermes-Lilith | v4.0 | 🏛️ LEGADO | Monolito ancestral (dir nombre legado git); mover a Helheim pendiente |
 | Lilith | v5 | ⚡ ACTIVO | Núcleo refactorizado de la inteligencia |
 | lilith-api | v2.2.0 | ⚡ ACTIVO | API REST para invocaciones externas |
 | lilith-bridge | v1.0.0 | 🌱 ESTABLE | Gateway bidireccional Hermes↔Yggdrasil |
@@ -51,4 +50,4 @@ Asgard/
 
 ---
 
-*Última actualización: 2026-05-18*
+*Última actualización: 2026-05-20*

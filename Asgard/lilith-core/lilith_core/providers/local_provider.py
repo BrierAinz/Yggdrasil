@@ -14,7 +14,7 @@ from .base import LLMProvider
 
 
 if TYPE_CHECKING:
-    from collections.abc import AsyncIterator
+    from collections.abc import AsyncGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -86,12 +86,12 @@ class LocalProvider(LLMProvider):
         except (KeyError, IndexError) as exc:
             raise LLMError(f"Unexpected response shape from local server: {exc}") from exc
 
-    async def stream(
+    async def stream(  # type: ignore[override]
         self,
         messages: list[dict[str, Any]],
         model: str | None = None,
         **kwargs: Any,
-    ) -> AsyncIterator[dict[str, Any]]:
+    ) -> AsyncGenerator[dict[str, Any], None]:
         """Stream SSE chunks from ``/chat/completions``."""
         url = f"{self.base_url}/chat/completions"
         payload: dict[str, Any] = {

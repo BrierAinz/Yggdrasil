@@ -1,5 +1,4 @@
-"""
-Alfheim Dashboard - FastAPI application with HTMX + Alpine.js + Jinja2.
+"""Alfheim Dashboard — FastAPI application with HTMX + Alpine.js + Jinja2.
 
 This is a frontend dashboard that currently serves mock data.
 Real backend integration is pending — API route stubs raise
@@ -278,6 +277,7 @@ def create_app() -> FastAPI:
 
     Returns:
         Configured FastAPI application instance.
+
     """
     app = FastAPI(
         title="Alfheim Dashboard",
@@ -310,6 +310,7 @@ def create_app() -> FastAPI:
 
         Returns:
             HTMLResponse with rendered dashboard template.
+
         """
         template = jinja_env.get_template("index.html")
         html = template.render()
@@ -323,6 +324,7 @@ def create_app() -> FastAPI:
 
         Returns:
             Dict with realm statuses, file counts, and active realm count.
+
         """
         raise NotImplementedError("Backend integration pending")
 
@@ -332,6 +334,7 @@ def create_app() -> FastAPI:
 
         Returns:
             Dict with agent statuses and aggregated performance metrics.
+
         """
         raise NotImplementedError("Backend integration pending")
 
@@ -341,6 +344,7 @@ def create_app() -> FastAPI:
 
         Returns:
             Dict with semantic, episodic, and muninn memory stats.
+
         """
         raise NotImplementedError("Backend integration pending")
 
@@ -350,6 +354,7 @@ def create_app() -> FastAPI:
 
         Returns:
             Dict with task list and status counts.
+
         """
         raise NotImplementedError("Backend integration pending")
 
@@ -359,6 +364,7 @@ def create_app() -> FastAPI:
 
         Returns:
             Dict with log entries, count, and timestamp.
+
         """
         raise NotImplementedError("Backend integration pending")
 
