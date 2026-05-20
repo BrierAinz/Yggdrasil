@@ -141,11 +141,12 @@ async def test_stream_mock(tmp_path):
     mock_client.stream = MagicMock(return_value=mock_stream_ctx)
 
     with patch("lilith_core.providers.local_provider.httpx.AsyncClient", return_value=mock_client):
-        chunks = []
-        async for chunk in provider.stream(
-            messages=[{"role": "user", "content": "stream me"}],
-        ):
-            chunks.append(chunk)
+        chunks = [
+            chunk
+            async for chunk in provider.stream(
+                messages=[{"role": "user", "content": "stream me"}],
+            )
+        ]
 
     assert len(chunks) == 2
     assert chunks[0]["content"] == "hel"

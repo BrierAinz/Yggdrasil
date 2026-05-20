@@ -176,12 +176,13 @@ async def test_stream_mock(tmp_path):
         # litellm.acompletion(stream=True) returns an async generator when awaited
         mock_litellm.acompletion = AsyncMock(return_value=_fake_stream())
 
-        chunks = []
-        async for chunk in provider.stream(
-            messages=[{"role": "user", "content": "stream me"}],
-            model="gpt-4",
-        ):
-            chunks.append(chunk)
+        chunks = [
+            chunk
+            async for chunk in provider.stream(
+                messages=[{"role": "user", "content": "stream me"}],
+                model="gpt-4",
+            )
+        ]
 
     assert len(chunks) == 2
     assert chunks[0]["content"] == "hel"

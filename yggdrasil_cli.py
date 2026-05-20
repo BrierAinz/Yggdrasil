@@ -326,9 +326,7 @@ def launch():
 
     while True:
         # Gather statuses
-        statuses = []
-        for key in SERVICES:
-            statuses.append(get_service_status(key))
+        statuses = [get_service_status(key) for key in SERVICES]
 
         # Build menu table
         table = Table(
@@ -1006,12 +1004,16 @@ def update():
                     timeout=120,
                     cwd=str(YGGDRASIL_ROOT),
                 )
-                if "stash" in desc and "pop" in desc and result.returncode != 0:
+                if (
+                    "stash" in desc
+                    and "pop" in desc
+                    and result.returncode != 0
+                    and ("No stash entries" in result.stderr or "does not exist" in result.stderr)
+                ):
                     # No stash to pop is fine
-                    if "No stash entries" in result.stderr or "does not exist" in result.stderr:
-                        progress.update(task, completed=True)
-                        results.append((desc, "OK (no stash)", None))
-                        continue
+                    progress.update(task, completed=True)
+                    results.append((desc, "OK (no stash)", None))
+                    continue
                 if result.returncode != 0:
                     progress.update(task, completed=True)
                     results.append((desc, "FAIL", result.stderr[:200]))
