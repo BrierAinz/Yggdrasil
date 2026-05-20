@@ -36,4 +36,4 @@ Svartalfheim/
 
 ---
 
-*Última actualización: 2026-05-18*
+*Última actualización: 2026-05-19*

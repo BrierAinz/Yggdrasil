@@ -172,3 +172,5 @@ python -m Bots_Lilith_v5.telegram.bot
 ---
 
 *Bifrost arde con la luz de los Nueve Mundos.*
+
+*Última actualización: 2026-05-19*
