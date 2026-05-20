@@ -1,6 +1,4 @@
-"""
-Tests for gateway.run — Configuration defaults and main() existence.
-"""
+"""Tests for gateway.run — Configuration defaults and main() existence."""
 
 import importlib
 import os

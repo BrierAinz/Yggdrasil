@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 # ---------------------------------------------------------------------------
 
 
-@pytest.fixture()
+@pytest.fixture
 def temp_yggdrasil(tmp_path: Path) -> Path:
     """Create a temporary Yggdrasil directory tree with all 9 realms.
 
@@ -90,7 +90,7 @@ def temp_yggdrasil(tmp_path: Path) -> Path:
 # ---------------------------------------------------------------------------
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_gpu() -> MagicMock:
     """Mock nvidia-smi subprocess calls to return controlled GPU data.
 
@@ -112,7 +112,7 @@ def mock_gpu() -> MagicMock:
 # ---------------------------------------------------------------------------
 
 
-@pytest.fixture()
+@pytest.fixture
 def scanner(temp_yggdrasil: Path) -> RealmScanner:
     """Return a RealmScanner initialized with the temp Yggdrasil root."""
     return RealmScanner(base_path=temp_yggdrasil)

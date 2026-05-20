@@ -244,7 +244,7 @@ class RealmDetailView(Static):
         health_icon = _HEALTH_ICON.get(status.health, "?")
         header = Text.from_markup(
             f"[bold {color}]{escape(status.name)}[/]  {health_icon}  "
-            f"[dim]{escape(status.description)}[/]"
+            f"[dim]{escape(status.description)}[/]",
         )
 
         # Common info table (projects, git, tests, last commit)

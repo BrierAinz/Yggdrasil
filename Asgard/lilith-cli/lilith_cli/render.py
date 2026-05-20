@@ -46,6 +46,7 @@ class CLITheme:
         thinking_label: Label for thinking/reasoning panels.
         spinner_label: Label for the pre-stream spinner.
         pt_style: prompt_toolkit style dict (for the input prompt).
+
     """
 
     def __init__(

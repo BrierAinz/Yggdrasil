@@ -63,7 +63,7 @@ class SystemHealthPanel(Static):
                     "No health data available",
                     title="System Health",
                     border_style="dim",
-                )
+                ),
             )
             return
 

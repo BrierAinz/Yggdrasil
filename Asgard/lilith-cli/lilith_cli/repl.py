@@ -263,7 +263,6 @@ def _load_conversation(filepath: Path) -> dict[str, Any] | None:
 
 async def run_repl(session: AgentSession) -> None:
     """Launch the interactive REPL loop."""
-
     # Ensure directories exist.
     _HISTORY_FILE.parent.mkdir(parents=True, exist_ok=True)
 

@@ -54,6 +54,7 @@ def _format_size(size_bytes: int) -> str:
 
     Returns:
         Formatted size string (e.g. '2.3 GiB', '512 MiB').
+
     """
     for unit in ("B", "KiB", "MiB", "GiB", "TiB"):
         if abs(size_bytes) < 1024.0:
@@ -70,6 +71,7 @@ def _realm_info(realm: str) -> dict[str, str | int]:
 
     Returns:
         Dictionary with keys: name, status, size (bytes), files.
+
     """
     realm_path = YGGDRASIL_ROOT / realm
     if not realm_path.is_dir():
@@ -120,6 +122,7 @@ class RealmStatusView(Static):
         Args:
             id: Optional widget ID.
             classes: Optional CSS classes.
+
         """
         super().__init__(id=id, classes=classes or "realm-view")
         self._last_refresh: datetime | None = None

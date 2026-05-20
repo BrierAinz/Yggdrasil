@@ -108,7 +108,7 @@ class BrowserTool(BaseTool):
         text = re.sub(r"<[^>]+>", " ", html)
         text = re.sub(r"\s+", " ", text).strip()
         title = ""
-        tm = re.search(r"<title>([^<]+)</title>", html, re.I)
+        tm = re.search(r"<title>([^<]+)</title>", html, re.IGNORECASE)
         if tm:
             title = tm.group(1).strip()
         return {

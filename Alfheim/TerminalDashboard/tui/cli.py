@@ -32,7 +32,7 @@ def _version_callback(value: bool) -> None:
     """
     if value:
         _console.print(f"[bold #c8a23e]☵ Yggdrasil Dashboard[/]  [dim]v{__version__}[/]")
-        raise typer.Exit()
+        raise typer.Exit
 
 
 @app.command()

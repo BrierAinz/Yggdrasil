@@ -45,6 +45,7 @@ class Skill(BaseModel):
 
         Returns:
             Formatted string suitable for LLM context injection.
+
         """
         parts = [f"# Skill: {self.qualified_name}"]
         if self.description:

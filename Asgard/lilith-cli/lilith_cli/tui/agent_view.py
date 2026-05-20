@@ -66,6 +66,7 @@ class AgentMonitorView(Static):
         Args:
             id: Optional widget ID.
             classes: Optional CSS classes.
+
         """
         super().__init__(id=id, classes=classes or "agent-view")
         self._last_refresh: datetime | None = None

@@ -1,5 +1,4 @@
-"""
-Lilith Gateway
+"""Lilith Gateway
 ==============
 Servidor FastAPI que expone LilithOrchestrator via REST.
 Conecta el Bot Telegram (y futuros clients) con el motor de Hermes-Lilith.

@@ -78,6 +78,7 @@ class AgentSession:
         The loaded :class:`YggdrasilConfig`.
     provider:
         The LLM provider wrapper.  If ``None`` one is created from *config*.
+
     """
 
     def __init__(
@@ -306,6 +307,7 @@ class AgentSession:
             A compressed summary of the conversation so far.
         keep_recent:
             Number of recent user+assistant *pairs* to keep (default 2).
+
         """
         # Calculate how many messages to keep from the end.
         # Each "pair" is typically 2 messages (user + assistant),

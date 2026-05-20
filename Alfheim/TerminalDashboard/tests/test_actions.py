@@ -98,7 +98,10 @@ class TestQuickActions:
 
         mock_monitor = MagicMock()
         mock_monitor.get_health.return_value = SystemHealth(
-            cpu_pct=45.0, ram_pct=60.0, disk_pct=70.0, python_process_count=3
+            cpu_pct=45.0,
+            ram_pct=60.0,
+            disk_pct=70.0,
+            python_process_count=3,
         )
 
         qa = QuickActions(project_path="/tmp")
@@ -134,7 +137,9 @@ class TestQuickActions:
         """Test that execute() properly delegates to handler methods."""
         qa = QuickActions(project_path="/tmp")
         with patch.object(
-            qa, "_action_tests", return_value=ActionResult(True, "tests", "OK")
+            qa,
+            "_action_tests",
+            return_value=ActionResult(True, "tests", "OK"),
         ) as mock:
             result = qa.execute("t")
             mock.assert_called_once()

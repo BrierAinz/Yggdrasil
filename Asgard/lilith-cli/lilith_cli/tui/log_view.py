@@ -30,6 +30,7 @@ class LogViewer(RichLog):
         Args:
             id: Optional widget ID.
             classes: Optional CSS classes.
+
         """
         super().__init__(
             id=id,
@@ -45,6 +46,7 @@ class LogViewer(RichLog):
 
         Returns:
             Timestamp string in HH:MM:SS format.
+
         """
         return datetime.now().strftime("%H:%M:%S")
 
@@ -53,6 +55,7 @@ class LogViewer(RichLog):
 
         Args:
             message: The info message to log.
+
         """
         ts = self._timestamp()
         self.write(
@@ -64,6 +67,7 @@ class LogViewer(RichLog):
 
         Args:
             message: The warning message to log.
+
         """
         ts = self._timestamp()
         self.write(
@@ -77,6 +81,7 @@ class LogViewer(RichLog):
 
         Args:
             message: The error message to log.
+
         """
         ts = self._timestamp()
         self.write(

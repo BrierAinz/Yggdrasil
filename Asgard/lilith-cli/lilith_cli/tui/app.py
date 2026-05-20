@@ -47,6 +47,7 @@ class YggdrasilDashboard(App[None]):
 
         Yields:
             Widgets in order: Header, TabbedContainer (with 3 tabs), Footer.
+
         """
         yield Header(show_clock=True)
 
@@ -66,6 +67,7 @@ class YggdrasilDashboard(App[None]):
         Args:
             tab_id: The ID of the tab to switch to
                 ('realms', 'agents', or 'logs').
+
         """
         tabbed = self.query_one(TabbedContent)
         tabbed.active = tab_id

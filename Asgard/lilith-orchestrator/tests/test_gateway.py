@@ -1,5 +1,4 @@
-"""
-Tests for gateway.gateway — FastAPI app creation, endpoints, JSON helpers,
+"""Tests for gateway.gateway — FastAPI app creation, endpoints, JSON helpers,
 CORS middleware.
 """
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import sqlite3
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 
 if TYPE_CHECKING:
@@ -57,7 +57,7 @@ class MemoryStore:
     # Context manager support
     # ------------------------------------------------------------------
 
-    def __enter__(self) -> MemoryStore:
+    def __enter__(self) -> Self:
         """Enter the context manager, opening a long-lived connection."""
         self._conn = sqlite3.connect(self.db_path)
         self._conn.execute("PRAGMA journal_mode=WAL")
@@ -206,6 +206,6 @@ class MemoryStore:
 
         """
         with sqlite3.connect(self.db_path) as conn:
-            conn.execute("DELETE FROM memories")
+            cursor = conn.execute("DELETE FROM memories")
             conn.commit()
-            return conn.total_changes
+            return cursor.rowcount

@@ -51,6 +51,7 @@ class SkillLoader:
         Args:
             skills_root: Path to the skills directory
                 (e.g., /mnt/d/Proyectos/Yggdrasil/Svartalfheim/Docs/skills/)
+
         """
         self.root = Path(skills_root).resolve()
         if not self.root.is_dir():
@@ -61,6 +62,7 @@ class SkillLoader:
 
         Returns:
             List of Skill objects, one per valid SKILL.md found.
+
         """
         skills: list[Skill] = []
 
@@ -141,6 +143,7 @@ class SkillLoader:
 
         Returns:
             Parsed Skill object, or None if parsing fails.
+
         """
         try:
             content = path.read_text(encoding="utf-8", errors="replace")
@@ -184,6 +187,7 @@ class SkillLoader:
 
         Returns:
             Dict of frontmatter fields, or None if no frontmatter found.
+
         """
         if not content.startswith("---"):
             return None
@@ -227,7 +231,7 @@ class SkillLoader:
                 else:
                     result[key] = value
 
-        return result if result else None
+        return result or None
 
     @staticmethod
     def _count_files(directory: Path) -> int:

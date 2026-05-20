@@ -62,7 +62,9 @@ class TestDashboardUpdater:
     """Tests for the DashboardUpdater class."""
 
     def _make_updater(
-        self, realms: dict | None = None, health: SystemHealth | None = None
+        self,
+        realms: dict | None = None,
+        health: SystemHealth | None = None,
     ) -> DashboardUpdater:
         """Create an updater with mocked scanner and monitor."""
         scanner = MagicMock(spec=RealmScanner)
@@ -70,7 +72,10 @@ class TestDashboardUpdater:
             realm_objs = {}
             for name, data in realms.items():
                 realm_objs[name] = RealmStatus(
-                    name=name, path="/tmp", health=HealthStatus.HEALTHY, **data
+                    name=name,
+                    path="/tmp",
+                    health=HealthStatus.HEALTHY,
+                    **data,
                 )
             scanner.scan_all.return_value = realm_objs
         else:

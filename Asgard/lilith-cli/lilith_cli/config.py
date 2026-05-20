@@ -176,6 +176,7 @@ def load_config(config_path: Path | str | None = None) -> YggdrasilConfig:
     config_path:
         Explicit path to a YAML file.  Falls back to
         ``~/.yggdrasil/config.yaml``.
+
     """
     path = Path(config_path) if config_path else CONFIG_FILE
 

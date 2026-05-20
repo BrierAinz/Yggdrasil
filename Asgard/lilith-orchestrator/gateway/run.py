@@ -1,5 +1,4 @@
-"""
-Lilith Gateway Runner
+"""Lilith Gateway Runner
 =====================
 Entry point for starting the gateway server with production-ready defaults.
 Supports uvloop for improved async performance on Unix systems.

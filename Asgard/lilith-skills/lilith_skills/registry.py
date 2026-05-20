@@ -52,6 +52,7 @@ class SkillRegistry:
         Args:
             skills_root: Path to the skills directory
                 (e.g., .../Svartalfheim/Docs/skills/)
+
         """
         self.root = Path(skills_root).resolve()
         self.loader = SkillLoader(self.root)
@@ -77,6 +78,7 @@ class SkillRegistry:
 
         Raises:
             FileNotFoundError: If skills directory doesn't exist.
+
         """
         repo = Path(repo_root).resolve()
         skills_dir = repo / _DEFAULT_SKILLS_REL
@@ -121,6 +123,7 @@ class SkillRegistry:
 
         Returns:
             The Skill if found, None otherwise.
+
         """
         # Try qualified name first
         if qualified_name in self._by_qualified:
@@ -140,6 +143,7 @@ class SkillRegistry:
 
         Returns:
             List of skills in that category.
+
         """
         return self._by_category.get(category, [])
 
@@ -151,6 +155,7 @@ class SkillRegistry:
 
         Returns:
             List of skills matching the tag.
+
         """
         tag_lower = tag.lower()
         return [s for s in self._skills if tag_lower in [t.lower() for t in s.tags]]
@@ -164,6 +169,7 @@ class SkillRegistry:
 
         Returns:
             Ranked list of matching skills.
+
         """
         query_lower = query.lower()
         scored: list[tuple[int, Skill]] = []

@@ -50,6 +50,7 @@ class SkillContext:
                        /mnt/d/Proyectos/Yggdrasil.
             max_skills: Maximum number of skills to include in context.
             max_chars_per_skill: Maximum characters per skill in context.
+
         """
         root = Path(repo_root) if repo_root else _YGGDRASIL_ROOT
         skills_dir = root / _SKILLS_REL
@@ -73,6 +74,7 @@ class SkillContext:
 
         Returns:
             Formatted string with skill descriptions and content.
+
         """
         results = self.registry.search(query, limit=self.max_skills)
         if not results:
@@ -106,6 +108,7 @@ class SkillContext:
 
         Returns:
             Formatted string with full skill content.
+
         """
         parts = ["# Loaded Skills\n"]
 
@@ -127,6 +130,7 @@ class SkillContext:
 
         Returns:
             Skill object or None.
+
         """
         return self.registry.get(qualified_name)
 
@@ -135,6 +139,7 @@ class SkillContext:
 
         Returns:
             Human-readable list of all skills grouped by category.
+
         """
         stats = self.registry.stats()
         lines = [

@@ -1,5 +1,4 @@
-"""
-Test configuration for lilith-orchestrator.
+"""Test configuration for lilith-orchestrator.
 
 The gateway module has heavy dependencies on the Lilith monolith
 (Lilith.Core, Lilith.memory, etc.) that are not available in a
@@ -106,7 +105,7 @@ _install_lilith_stubs()
 from gateway.gateway import app
 
 
-@pytest.fixture()
+@pytest.fixture
 def client() -> TestClient:
     """Return a Fresh FastAPI TestClient for the Lilith gateway."""
     return TestClient(app)

@@ -257,7 +257,7 @@ class HealthMonitor:
                         fan_speed_pct=safe_float(parts[6]),
                         power_draw_w=safe_float(parts[7]),
                         power_limit_w=safe_float(parts[8]),
-                    )
+                    ),
                 )
             return gpus
 
@@ -275,7 +275,7 @@ class HealthMonitor:
         """
         procs: list[dict[str, Any]] = []
         for proc in psutil.process_iter(
-            ["pid", "name", "cmdline", "cpu_percent", "memory_percent"]
+            ["pid", "name", "cmdline", "cpu_percent", "memory_percent"],
         ):
             try:
                 info = proc.info
@@ -296,7 +296,7 @@ class HealthMonitor:
                             "command": cmd_str,
                             "cpu_pct": info.get("cpu_percent", 0.0) or 0.0,
                             "mem_pct": round(info.get("memory_percent", 0.0) or 0.0, 1),
-                        }
+                        },
                     )
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 continue

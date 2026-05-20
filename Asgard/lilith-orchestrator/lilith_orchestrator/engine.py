@@ -1,5 +1,4 @@
-"""
-LilithEngine — Motor de orquestación multi-agente de Lilith
+"""LilithEngine — Motor de orquestación multi-agente de Lilith
 
 Este módulo es el punto de entrada principal de lilith-orchestrator.
 LilithEngine conecta la configuración de Lilith con el sistema swarm
@@ -59,8 +58,7 @@ class EngineUsage:
 
 
 class LilithEngine:
-    """
-    Motor central de orquestación de Lilith.
+    """Motor central de orquestación de Lilith.
 
     Conecta la configuración de Lilith (LilithConfig) y el almacén de
     memoria (MemoryStore opcional) con el sistema swarm para producir
@@ -78,14 +76,14 @@ class LilithEngine:
     """
 
     def __init__(self, config: Any, memory: Any = None) -> None:
-        """
-        Inicializa LilithEngine.
+        """Inicializa LilithEngine.
 
         Args:
             config: Instancia de LilithConfig con la configuración del modelo.
                      Se accede a ``config.model``, ``config.base_url``,
                      ``config.api_key``, etc.
             memory: Instancia opcional de MemoryStore para consulta de contexto.
+
         """
         self.config = config
         self.memory = memory
@@ -104,11 +102,11 @@ class LilithEngine:
     # ── Inicialización lazy ───────────────────────────────────────────────
 
     def _init_swarm(self) -> bool:
-        """
-        Intenta inicializar el sistema swarm.
+        """Intenta inicializar el sistema swarm.
 
         Returns:
             True si el swarm se inicializó con al menos un agente, False si no.
+
         """
         if self._swarm is not None:
             # Ya inicializado — verificar que tenga agentes
@@ -154,8 +152,7 @@ class LilithEngine:
     # ── Procesamiento principal ───────────────────────────────────────────
 
     def process(self, message: str, context: dict[str, Any] | None = None) -> dict[str, Any]:
-        """
-        Procesa un mensaje del usuario y retorna la respuesta.
+        """Procesa un mensaje del usuario y retorna la respuesta.
 
         Este método se puede llamar desde código síncrono. Internamente,
         crea o reutiliza un event loop para correr el procesamiento async.
@@ -169,6 +166,7 @@ class LilithEngine:
                 - response: str — Texto de respuesta.
                 - usage: dict — Métricas de uso.
                 - tool_call: dict | None — Tool call detectado, si lo hay.
+
         """
         start = time.time()
         self._request_count += 1
@@ -193,8 +191,7 @@ class LilithEngine:
         message: str,
         context: dict[str, Any] | None = None,
     ) -> AsyncGenerator[dict[str, Any], None]:
-        """
-        Procesa un mensaje en modo streaming, yieldando fragmentos.
+        """Procesa un mensaje en modo streaming, yieldando fragmentos.
 
         Este es un async generator — se usa con ``async for``:
             async for chunk in engine.process_stream(message):
@@ -210,6 +207,7 @@ class LilithEngine:
                 - usage: dict | None — Métricas (solo en el último chunk).
                 - tool_call: dict | None — Tool call (solo si se detecta).
                 - done: bool — True en el último fragmento.
+
         """
         self._request_count += 1
         start = time.time()
@@ -236,8 +234,7 @@ class LilithEngine:
     # ── Procesamiento swarm ────────────────────────────────────────────────
 
     def _process_swarm_sync(self, message: str, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Ejecuta el procesamiento víaCoordinator (swarm multi-agente) de forma síncrona.
+        """Ejecuta el procesamiento víaCoordinator (swarm multi-agente) de forma síncrona.
 
         Internamente corre el event loop para ejecutar la coroutine del Coordinator.
         """
@@ -324,8 +321,7 @@ class LilithEngine:
     # ── Fallback: llamada LLM directa ──────────────────────────────────────
 
     def _process_llm_fallback(self, message: str, context: dict[str, Any]) -> dict[str, Any]:
-        """
-        Fallback cuando el swarm no está disponible.
+        """Fallback cuando el swarm no está disponible.
 
         Usa la configuración del engine para hacer una llamada directa al LLM.
         """
@@ -370,8 +366,7 @@ class LilithEngine:
         }
 
     def _get_llm_client(self) -> Any:
-        """
-        Obtiene un cliente LLM a partir de la configuración.
+        """Obtiene un cliente LLM a partir de la configuración.
 
         Intenta importar y configurar el cliente HTTP para llamadas API
         usando los parámetros de LilithConfig.
