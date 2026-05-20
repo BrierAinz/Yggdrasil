@@ -34,6 +34,7 @@ class ArxivSearchTool:
     ARXIV_API = "http://export.arxiv.org/api/query"
 
     def __init__(self):
+        """Inicializar ArxivSearchTool con cliente HTTP asíncrono lazy."""
         self._client: httpx.AsyncClient | None = None
 
     async def _get_client(self) -> httpx.AsyncClient:
@@ -141,6 +142,7 @@ class ArxivSearchTool:
         return results
 
     async def close(self):
+        """Cerrar el cliente HTTP de ArXiv."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
 
@@ -156,6 +158,7 @@ class WebSearchTool:
     """
 
     def __init__(self, base_url: str = "http://localhost:8888"):
+        """Inicializar WebSearchTool con URL de SearXNG."""
         self._base_url = base_url.rstrip("/")
         self._client: httpx.AsyncClient | None = None
 
@@ -237,6 +240,7 @@ class WebSearchTool:
         ]
 
     async def close(self):
+        """Cerrar el cliente HTTP de SearXNG."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()
 

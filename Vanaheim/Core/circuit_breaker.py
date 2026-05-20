@@ -17,6 +17,12 @@ class CircuitBreaker:
     """
 
     def __init__(self, failure_threshold: int = 3, recovery_timeout: int = 30):
+        """Inicializar el Circuit Breaker con umbrales de tolerancia.
+
+        Args:
+            failure_threshold: Fallos consecutivos antes de abrir el circuito.
+            recovery_timeout: Segundos antes de intentar medio-abrir el circuito.
+        """
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
         self.failures = 0

@@ -19,6 +19,11 @@ class AdanAgent(VanirAgent):
     """Adán - Artesano del código del Panteón."""
 
     def __init__(self, config: AgentConfig):
+        """Inicializar Adán con memoria Muninn y Ollama local.
+
+        Args:
+            config: Configuración del agente (modelo, temperatura, timeout, base_url)
+        """
         super().__init__(config)
         self._persona_loader = get_persona_loader()
         self._muninn = get_muninn_client()
@@ -26,10 +31,12 @@ class AdanAgent(VanirAgent):
 
     @property
     def agent_id(self) -> str:
+        """Identificador único de Adán en el Panteón."""
         return "adan"
 
     @property
     def capabilities(self) -> AgentCapabilities:
+        """Capacidades de generación de código y refactoring."""
         return AgentCapabilities(
             can_stream=True,
             supports_tools=True,

@@ -16,6 +16,11 @@ class VanirAgent(ABC):
     """
 
     def __init__(self, config: AgentConfig):
+        """Inicializar el agente con configuración del Panteón.
+
+        Args:
+            config: Configuración del agente (modelo, proveedor, temperatura, etc.)
+        """
         self.config = config
         self.state = AgentState.IDLE
         self._current_task: str | None = None

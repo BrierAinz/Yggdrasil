@@ -22,6 +22,11 @@ class OdinAgent(VanirAgent):
     KIMI_API_URL = "https://api.moonshot.cn/v1/chat/completions"
 
     def __init__(self, config: AgentConfig):
+        """Inicializar Odín con memoria Muninn y Kimi API.
+
+        Args:
+            config: Configuración del agente (modelo, temperatura, timeout)
+        """
         super().__init__(config)
         self._persona_loader = get_persona_loader()
         self._muninn = get_muninn_client()
@@ -30,10 +35,12 @@ class OdinAgent(VanirAgent):
 
     @property
     def agent_id(self) -> str:
+        """Identificador único de Odín en el Panteón."""
         return "odin"
 
     @property
     def capabilities(self) -> AgentCapabilities:
+        """Capacidades de análisis profundo y creatividad (262k ctx)."""
         return AgentCapabilities(
             can_stream=True,
             supports_tools=False,

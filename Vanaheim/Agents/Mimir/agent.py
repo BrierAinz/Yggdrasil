@@ -61,6 +61,11 @@ class MimirAgent(VanirAgent):
     """
 
     def __init__(self, config: AgentConfig):
+        """Inicializar Mimir con herramientas de investigación y configuración de profundidad.
+
+        Args:
+            config: Configuración del agente (modelo, temperatura, timeout, depth_configs)
+        """
         super().__init__(config)
         self._searxng_url: str = "http://localhost:8888"
         self._output_dir: Path = Path("Svartalfheim/Knowledge")
@@ -81,10 +86,12 @@ class MimirAgent(VanirAgent):
 
     @property
     def agent_id(self) -> str:
+        """Identificador único de Mimir en el Panteón."""
         return "mimir"
 
     @property
     def capabilities(self) -> AgentCapabilities:
+        """Capacidades de investigación profunda, búsqueda web y arXiv."""
         return AgentCapabilities(
             can_stream=True,
             supports_tools=True,

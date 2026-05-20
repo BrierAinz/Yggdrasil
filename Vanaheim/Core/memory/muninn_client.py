@@ -15,6 +15,11 @@ class MuninnClient:
     """Cliente HTTP para comunicarse con MuninnDB en Asgard."""
 
     def __init__(self, base_url: str | None = None):
+        """Inicializar MuninnClient con URL del servidor.
+
+        Args:
+            base_url: URL base del API de Lilith/MuninnDB (default: env MUNINN_URL o localhost:8000)
+        """
         self.base_url = base_url or os.getenv("MUNINN_URL", "http://localhost:8000")
         self.timeout = 30.0
 

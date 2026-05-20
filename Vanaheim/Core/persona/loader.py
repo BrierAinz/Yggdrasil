@@ -11,6 +11,11 @@ class PersonaLoader:
     """Cargador de personalidades de agentes."""
 
     def __init__(self, base_path: str | None = None):
+        """Inicializar PersonaLoader con ruta a archivo de personalidades.
+
+        Args:
+            base_path: Ruta al archivo personas.json (auto-detectado si None)
+        """
         self.base_path = base_path or self._find_personas_path()
         self._cache: dict[str, dict] = {}
 

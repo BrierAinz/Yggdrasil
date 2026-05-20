@@ -22,6 +22,11 @@ class EvaAgent(VanirAgent):
     GROK_API_URL = "https://api.x.ai/v1/chat/completions"
 
     def __init__(self, config: AgentConfig):
+        """Inicializar Eva con memoria Muninn y Grok/xAI.
+
+        Args:
+            config: Configuración del agente (modelo, temperatura, timeout)
+        """
         super().__init__(config)
         self._persona_loader = get_persona_loader()
         self._muninn = get_muninn_client()
@@ -29,10 +34,12 @@ class EvaAgent(VanirAgent):
 
     @property
     def agent_id(self) -> str:
+        """Identificador único de Eva en el Panteón."""
         return "eva"
 
     @property
     def capabilities(self) -> AgentCapabilities:
+        """Capacidades de análisis y documentación de contexto largo."""
         return AgentCapabilities(
             can_stream=True,
             supports_tools=False,

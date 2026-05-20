@@ -22,6 +22,11 @@ class ShalltearAgent(VanirAgent):
     VENICE_API_URL = "https://api.venice.ai/api/v1/chat/completions"
 
     def __init__(self, config: AgentConfig):
+        """Inicializar Shalltear con memoria Muninn y Venice AI.
+
+        Args:
+            config: Configuración del agente (modelo, temperatura, timeout)
+        """
         super().__init__(config)
         self._persona_loader = get_persona_loader()
         self._muninn = get_muninn_client()
@@ -29,10 +34,12 @@ class ShalltearAgent(VanirAgent):
 
     @property
     def agent_id(self) -> str:
+        """Identificador único de Shalltear en el Panteón."""
         return "shalltear"
 
     @property
     def capabilities(self) -> AgentCapabilities:
+        """Capacidades de clasificación y triaje."""
         return AgentCapabilities(
             can_stream=True,
             supports_tools=False,
