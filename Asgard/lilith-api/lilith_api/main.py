@@ -1,13 +1,20 @@
-"""Lilith API – FastAPI application with lazy init, DI, and orjson."""
+"""Lilith API — FastAPI application with lazy init, DI, and orjson."""
 
 from __future__ import annotations
 
 import threading
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from fastapi import Depends, FastAPI, Query
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
+
+
+if TYPE_CHECKING:
+    from lilith_core.config import Config
+    from lilith_memory.store import MemoryStore
+    from lilith_orchestrator.engine import LilithEngine
+    from lilith_tools.registry import ToolRegistry
 
 
 # ---------------------------------------------------------------------------
@@ -68,12 +75,12 @@ class _LazyState:
 
     def __init__(self) -> None:
         """Initialise all lazy singleton slots to None."""
-        self.config: Any | None = None
-        self.memory: Any | None = None
-        self.engine: Any | None = None
-        self.tools: Any | None = None
+        self.config: Config | None = None
+        self.memory: MemoryStore | None = None
+        self.engine: LilithEngine | None = None
+        self.tools: type[ToolRegistry] | None = None
 
-    def _ensure_config(self) -> Any:
+    def _ensure_config(self) -> Config:
         """Lazily create and cache the Config singleton."""
         if self.config is None:
             from lilith_core.config import Config
@@ -81,7 +88,7 @@ class _LazyState:
             self.config = Config()
         return self.config
 
-    def _ensure_memory(self) -> Any:
+    def _ensure_memory(self) -> MemoryStore:
         """Lazily create and cache the MemoryStore singleton."""
         if self.memory is None:
             from lilith_memory.store import MemoryStore
@@ -90,7 +97,7 @@ class _LazyState:
             self.memory = MemoryStore(cfg.root / "memory.db")
         return self.memory
 
-    def _ensure_engine(self) -> Any:
+    def _ensure_engine(self) -> LilithEngine:
         """Lazily create and cache the LilithEngine singleton."""
         if self.engine is None:
             from lilith_orchestrator.engine import LilithEngine
@@ -100,7 +107,7 @@ class _LazyState:
             self.engine = LilithEngine(cfg, mem)
         return self.engine
 
-    def _ensure_tools(self) -> Any:
+    def _ensure_tools(self) -> type[ToolRegistry]:
         """Lazily load and cache the ToolRegistry class reference."""
         if self.tools is None:
             from lilith_tools.registry import ToolRegistry
@@ -115,25 +122,25 @@ _state = _LazyState()
 # ---------------------------------------------------------------------------
 # FastAPI dependency injection helpers
 # ---------------------------------------------------------------------------
-def get_memory() -> Any:
+def get_memory() -> MemoryStore:
     """Return the lazily-created MemoryStore singleton."""
     with _lock:
         return _state._ensure_memory()
 
 
-def get_engine() -> Any:
+def get_engine() -> LilithEngine:
     """Return the lazily-created LilithEngine singleton."""
     with _lock:
         return _state._ensure_engine()
 
 
-def get_config() -> Any:
+def get_config() -> Config:
     """Return the lazily-created Config singleton."""
     with _lock:
         return _state._ensure_config()
 
 
-def get_tools() -> Any:
+def get_tools() -> type[ToolRegistry]:
     """Return the lazily-created ToolRegistry class reference."""
     with _lock:
         return _state._ensure_tools()
@@ -177,7 +184,7 @@ class MemoryStoreRequest(BaseModel):
 @app.post("/chat", response_model=ChatResponse)
 async def chat(
     req: ChatRequest,
-    engine: Any = Depends(get_engine),
+    engine: LilithEngine = Depends(get_engine),
 ) -> ChatResponse:
     """Process a chat message through the Lilith engine and return the response."""
     result = engine.process(req.message)
@@ -194,7 +201,7 @@ async def chat(
 @app.post("/tools/execute")
 async def execute_tool(
     req: ToolCallRequest,
-    engine: Any = Depends(get_engine),
+    engine: LilithEngine = Depends(get_engine),
 ) -> dict[str, Any]:
     """Execute a named tool with the given parameters."""
     return engine.execute_tool(req.tool, req.params)
@@ -202,7 +209,7 @@ async def execute_tool(
 
 @app.get("/tools")
 async def list_tools(
-    tools: Any = Depends(get_tools),
+    tools: type[ToolRegistry] = Depends(get_tools),
 ) -> dict[str, str]:
     """List all registered tools (name → description)."""
     return tools.list_tools()
@@ -220,7 +227,7 @@ async def health() -> dict[str, str]:
 
 @app.get("/status")
 async def status(
-    memory: Any = Depends(get_memory),
+    memory: MemoryStore = Depends(get_memory),
 ) -> dict[str, Any]:
     """Detailed status endpoint with memory and tool counts."""
     conf = get_config()
@@ -237,7 +244,7 @@ async def status(
 async def memory_recall(
     query: str = Query(...),
     k: int = 5,
-    memory: Any = Depends(get_memory),
+    memory: MemoryStore = Depends(get_memory),
 ) -> list[dict[str, Any]]:
     """Search stored memories by semantic similarity to *query*."""
     return memory.search(query, k=k)
@@ -246,7 +253,7 @@ async def memory_recall(
 @app.post("/memory")
 async def memory_store(
     req: MemoryStoreRequest,
-    memory: Any = Depends(get_memory),
+    memory: MemoryStore = Depends(get_memory),
 ) -> dict[str, str]:
     """Store a new memory entry with optional metadata."""
     memory.store(req.text, req.metadata)
