@@ -241,6 +241,7 @@ class HealthMonitor:
                     continue
 
                 def safe_float(val: str) -> float:
+                    """Convert string to float, returning 0.0 on failure."""
                     try:
                         return float(val)
                     except (ValueError, TypeError):
