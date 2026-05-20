@@ -6,7 +6,7 @@ Provides a RichLog-based log viewer with color-coded log levels
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from rich.text import Text
 from textual.widgets import RichLog
@@ -48,7 +48,7 @@ class LogViewer(RichLog):
             Timestamp string in HH:MM:SS format.
 
         """
-        return datetime.now().strftime("%H:%M:%S")
+        return datetime.now(tz=UTC).strftime("%H:%M:%S")
 
     def info(self, message: str) -> None:
         """Log an informational message.

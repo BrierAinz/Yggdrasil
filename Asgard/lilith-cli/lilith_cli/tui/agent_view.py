@@ -6,7 +6,7 @@ Will be connected to the lilith-api backend in the future.
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import ClassVar
 
 from rich.table import Table
@@ -121,7 +121,7 @@ class AgentMonitorView(Static):
                 agent["last_activity"],
             )
 
-        self._last_refresh = datetime.now()
+        self._last_refresh = datetime.now(tz=UTC)
         table.footer = (
             f"[dim]Last refreshed: "
             f"{self._last_refresh.strftime('%H:%M:%S')} — Placeholder data[/dim]"

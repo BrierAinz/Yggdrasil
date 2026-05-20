@@ -645,6 +645,7 @@ class ResumeCommand(BaseCommand):
 # ── Registry ────────────────────────────────────────────────────────
 
 # We need a late import for render in ConfigCommand's Panel.
+
 from rich.panel import Panel
 from rich.syntax import Syntax
 
@@ -941,10 +942,10 @@ class ExportCommand(BaseCommand):
             render_error("No hay mensajes para exportar.")
             return
 
-        from datetime import datetime
+        from datetime import UTC, datetime
 
         metadata = {
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "timestamp": datetime.now(tz=UTC).strftime("%Y-%m-%d %H:%M:%S"),
             "model": self.session.config.model,
             "provider": self.session.config.provider,
             "usage": self.session.total_usage,
@@ -965,7 +966,7 @@ class ExportCommand(BaseCommand):
                 custom_name += f".{fmt_ext}"
             filepath = exports_dir / custom_name
         else:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            timestamp = datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S")
             filepath = exports_dir / f"export_{timestamp}.{fmt_ext}"
 
         # Write file.

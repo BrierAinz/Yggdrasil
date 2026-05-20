@@ -197,7 +197,7 @@ def config(
             load_config(str(path))  # bootstrap
         editor = "nano" if _is_wsl() else ("notepad" if platform.system() == "Windows" else "vi")
         try:
-            subprocess.run([editor, str(path)])
+            subprocess.run([editor, str(path)], check=False)
         except FileNotFoundError:
             console.print(f"[error]Editor '{editor}' no encontrado. Edita manualmente: {path}[/]")
         return

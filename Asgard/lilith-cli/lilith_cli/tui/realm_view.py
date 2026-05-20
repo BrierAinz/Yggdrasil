@@ -8,7 +8,7 @@ Auto-refreshes every 30 seconds.
 from __future__ import annotations
 
 import os
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import ClassVar
 
@@ -173,7 +173,7 @@ class RealmStatusView(Static):
                 file_count,
             )
 
-        self._last_refresh = datetime.now()
+        self._last_refresh = datetime.now(tz=UTC)
         refresh_note = f"Last refreshed: {self._last_refresh.strftime('%H:%M:%S')}"
         table.footer = refresh_note
 
