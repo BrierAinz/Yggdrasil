@@ -4,8 +4,10 @@ import subprocess
 import tempfile
 
 from .base import BaseTool, ToolResult
+from .registry import ToolRegistry
 
 
+@ToolRegistry.register
 class CodingTool(BaseTool):
     """Sandboxed Python code execution tool.
 

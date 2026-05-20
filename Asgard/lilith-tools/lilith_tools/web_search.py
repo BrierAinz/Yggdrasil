@@ -5,8 +5,10 @@ import urllib.parse
 import urllib.request
 
 from .base import BaseTool, ToolResult
+from .registry import ToolRegistry
 
 
+@ToolRegistry.register
 class WebSearchTool(BaseTool):
     """Web search tool using DuckDuckGo HTML (no API key required).
 

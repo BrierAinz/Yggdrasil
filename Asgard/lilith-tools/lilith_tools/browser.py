@@ -5,8 +5,10 @@ import urllib.request
 from typing import Any
 
 from .base import BaseTool, ToolResult
+from .registry import ToolRegistry
 
 
+@ToolRegistry.register
 class BrowserTool(BaseTool):
     """Web browser tool using Playwright with automatic fallback to requests+regex.
 

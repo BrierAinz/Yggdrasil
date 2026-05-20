@@ -10,11 +10,6 @@ from .registry import ToolRegistry
 from .web_search import WebSearchTool
 
 
-# Auto-register tools that don't use @ToolRegistry.register decorator
-WebSearchTool()
-BrowserTool()
-CodingTool()
-
 __all__ = [
     "BaseTool",
     "BrowserTool",
