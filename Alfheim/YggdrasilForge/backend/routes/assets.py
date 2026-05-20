@@ -17,6 +17,7 @@ from backend.models import (
     TextureApplyRequest,
 )
 
+
 router = APIRouter()
 logger = logging.getLogger("forge.assets")
 
