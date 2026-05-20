@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 from typing import TYPE_CHECKING
 from unittest.mock import MagicMock, patch
 
@@ -56,7 +57,8 @@ def test_mem0_backend_init(tmp_path: Path):
         assert backend is not None
 
 
-def test_add_and_search_mock(tmp_path: Path):
+@pytest.mark.asyncio
+async def test_add_and_search_mock(tmp_path: Path):
     """Test add and search with a mocked mem0.Memory instance."""
     mock_mem_module = MagicMock()
     mock_instance = MagicMock()
@@ -87,17 +89,13 @@ def test_add_and_search_mock(tmp_path: Path):
         backend = Mem0Backend(db_path=tmp_path / "mock.db")
 
         # add
-        import asyncio
-
-        loop = asyncio.new_event_loop()
-        entry_id = loop.run_until_complete(backend.add("Hello world", metadata={"source": "test"}))
+        entry_id = await backend.add("Hello world", metadata={"source": "test"})
         assert entry_id == "mem-001"
 
         # search
-        results = loop.run_until_complete(backend.search("Hello", limit=5))
+        results = await backend.search("Hello", limit=5)
         assert len(results) == 1
         assert results[0]["content"] == "Hello world"
-        loop.close()
 
 
 def test_fallback_to_sqlite(tmp_path: Path):
@@ -105,8 +103,6 @@ def test_fallback_to_sqlite(tmp_path: Path):
     # Remove mem0 from importable modules to trigger the ImportError path
     with patch.dict("sys.modules", {"mem0": None}):
         # Need a fresh import to hit the constructor guard
-        import importlib
-
         import lilith_memory.backends.mem0_backend as mod
 
         importlib.reload(mod)
