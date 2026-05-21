@@ -10,6 +10,7 @@ from tui.widgets.sidebar import REALM_ICONS
 
 
 def _health_label(health: HealthStatus) -> str:
+    """Return a Rich-formatted label for the given health status."""
     c = {
         HealthStatus.HEALTHY: "green",
         HealthStatus.DEGRADED: "yellow",
@@ -26,6 +27,7 @@ def _health_label(health: HealthStatus) -> str:
 
 
 def _git_label(gs: GitStatus) -> str:
+    """Return a Rich-formatted label for the given git status."""
     c = {GitStatus.CLEAN: "green", GitStatus.DIRTY: "yellow", GitStatus.NO_REPO: "red"}
     labels = {
         GitStatus.CLEAN: "CLEAN",
@@ -38,6 +40,7 @@ def _git_label(gs: GitStatus) -> str:
 
 
 def _test_label(ts: ProjTestStatus) -> str:
+    """Return a Rich-formatted label for the given test status."""
     c = {
         ProjTestStatus.PASS: "green",
         ProjTestStatus.FAIL: "red",

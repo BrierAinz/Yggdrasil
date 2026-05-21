@@ -154,6 +154,7 @@ def _validate_hermes_response(result: dict[str, Any]) -> dict[str, Any]:
 
 
 def _get_bridge_config() -> BridgeConfig:
+    """Lazy-load and cache the bridge configuration singleton."""
     global _bridge_config
     if _bridge_config is None:
         _bridge_config = load_bridge_config()
@@ -161,6 +162,7 @@ def _get_bridge_config() -> BridgeConfig:
 
 
 def _get_hermes_client(config: BridgeConfig = Depends(_get_bridge_config)) -> HermesClient:
+    """Lazy-load and cache the Hermes API client singleton."""
     global _hermes_client
     if _hermes_client is None:
         _hermes_client = HermesClient(
