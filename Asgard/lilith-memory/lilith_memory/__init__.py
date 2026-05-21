@@ -18,7 +18,7 @@ __all__ = [
     "MemoryConsolidator",
     "MemoryStore",
     "PreferenceStore",
-    "SemanticMemory",
     "SQLiteBackend",
+    "SemanticMemory",
     "WorkingMemory",
 ]
