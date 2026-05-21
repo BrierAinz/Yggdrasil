@@ -17,7 +17,11 @@ from __future__ import annotations
 import json
 import struct
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 # ─── GGUF constants ──────────────────────────────────────────────────────────
@@ -57,37 +61,37 @@ def _read_gguf_string(data: bytes, offset: int) -> tuple[str, int]:
     return value, offset
 
 
+# Struct format and size lookup for GGUF numeric types.
+# Maps type_id → (struct_format, byte_size).
+_GGUF_NUMERIC: dict[int, tuple[str, int]] = {
+    GGUF_TYPE_UINT8: ("<B", 1),
+    GGUF_TYPE_INT8: ("<b", 1),  # NOTE: size 1 (struct size, not format width)
+    GGUF_TYPE_UINT16: ("<H", 2),
+    GGUF_TYPE_INT16: ("<h", 2),
+    GGUF_TYPE_UINT32: ("<I", 4),
+    GGUF_TYPE_INT32: ("<i", 4),
+    GGUF_TYPE_FLOAT32: ("<f", 4),
+    GGUF_TYPE_UINT64: ("<Q", 8),
+    GGUF_TYPE_INT64: ("<q", 8),
+    GGUF_TYPE_FLOAT64: ("<d", 8),
+}
+
+
 def _read_gguf_value(data: bytes, offset: int, vtype: int) -> tuple[Any, int]:
     """Read a single GGUF metadata value of *vtype* from *data* at *offset*.
 
     Returns (value, new_offset).
     """
-    if vtype == GGUF_TYPE_UINT8:
-        return struct.unpack_from("<B", data, offset)[0], offset + 1
-    if vtype == GGUF_TYPE_INT8:
-        return struct.unpack_from("<b", data, offset)[0], offset + 1
-    if vtype == GGUF_TYPE_UINT16:
-        return struct.unpack_from("<H", data, offset)[0], offset + 2
-    if vtype == GGUF_TYPE_INT16:
-        return struct.unpack_from("<h", data, offset)[0], offset + 2
-    if vtype == GGUF_TYPE_UINT32:
-        return struct.unpack_from("<I", data, offset)[0], offset + 4
-    if vtype == GGUF_TYPE_INT32:
-        return struct.unpack_from("<i", data, offset)[0], offset + 4
-    if vtype == GGUF_TYPE_FLOAT32:
-        return struct.unpack_from("<f", data, offset)[0], offset + 4
+    # Bool: uint8 but inverted semantics
     if vtype == GGUF_TYPE_BOOL:
         return struct.unpack_from("<B", data, offset)[0] != 0, offset + 1
+
+    # String: variable-length (uint64 length prefix + bytes)
     if vtype == GGUF_TYPE_STRING:
         return _read_gguf_string(data, offset)
-    if vtype == GGUF_TYPE_UINT64:
-        return struct.unpack_from("<Q", data, offset)[0], offset + 8
-    if vtype == GGUF_TYPE_INT64:
-        return struct.unpack_from("<q", data, offset)[0], offset + 8
-    if vtype == GGUF_TYPE_FLOAT64:
-        return struct.unpack_from("<d", data, offset)[0], offset + 8
+
+    # Array: uint32 elem_type + uint64 count + count values
     if vtype == GGUF_TYPE_ARRAY:
-        # array: uint32 elem_type, uint64 count, then count values
         elem_type = struct.unpack_from("<I", data, offset)[0]
         offset += 4
         count = struct.unpack_from("<Q", data, offset)[0]
@@ -97,8 +101,34 @@ def _read_gguf_value(data: bytes, offset: int, vtype: int) -> tuple[Any, int]:
             item, offset = _read_gguf_value(data, offset, elem_type)
             items.append(item)
         return items, offset
+
+    # Numeric types: dispatch through lookup table
+    entry = _GGUF_NUMERIC.get(vtype)
+    if entry is not None:
+        fmt, size = entry
+        return struct.unpack_from(fmt, data, offset)[0], offset + size
+
     # Unknown type — skip nothing, return None
     return None, offset
+
+
+def _extract_gguf_keys(raw_kv: dict[str, Any], result: dict[str, Any]) -> None:
+    """Populate *result* with well-known keys from parsed GGUF KV pairs."""
+    arch = raw_kv.get(GGUF_KEYS_ARCH)
+    if arch:
+        result["architecture"] = arch
+        ctx_key = GGUF_KEYS_CONTEXT.format(arch=arch)
+        param_key = GGUF_KEYS_PARAM_COUNT.format(arch=arch)
+        if ctx_key in raw_kv:
+            result["context_length"] = int(raw_kv[ctx_key])
+        if param_key in raw_kv:
+            result["parameter_count"] = int(raw_kv[param_key])
+
+    # Also check generic keys
+    if result["context_length"] is None and "general.context_length" in raw_kv:
+        result["context_length"] = int(raw_kv["general.context_length"])
+    if result["parameter_count"] is None and "general.parameter_count" in raw_kv:
+        result["parameter_count"] = int(raw_kv["general.parameter_count"])
 
 
 def read_gguf_metadata(path: str | Path) -> dict[str, Any]:
@@ -139,9 +169,7 @@ def read_gguf_metadata(path: str | Path) -> dict[str, Any]:
     if version < 2:
         return result
 
-    _tensor_count = struct.unpack_from("<Q", data, 8)[0]
     metadata_kv_count = struct.unpack_from("<Q", data, 16)[0]
-
     offset = 24  # After header
 
     # Read all KV pairs
@@ -156,23 +184,7 @@ def read_gguf_metadata(path: str | Path) -> dict[str, Any]:
         except (struct.error, IndexError):
             break
 
-    # Extract well-known keys
-    arch = raw_kv.get(GGUF_KEYS_ARCH)
-    if arch:
-        result["architecture"] = arch
-        # Architecture-specific keys
-        ctx_key = GGUF_KEYS_CONTEXT.format(arch=arch)
-        param_key = GGUF_KEYS_PARAM_COUNT.format(arch=arch)
-        if ctx_key in raw_kv:
-            result["context_length"] = int(raw_kv[ctx_key])
-        if param_key in raw_kv:
-            result["parameter_count"] = int(raw_kv[param_key])
-
-    # Also check generic keys
-    if result["context_length"] is None and "general.context_length" in raw_kv:
-        result["context_length"] = int(raw_kv["general.context_length"])
-    if result["parameter_count"] is None and "general.parameter_count" in raw_kv:
-        result["parameter_count"] = int(raw_kv["general.parameter_count"])
+    _extract_gguf_keys(raw_kv, result)
 
     # Store all raw KV for power users
     result["metadata"] = raw_kv
@@ -287,11 +299,28 @@ def read_hf_config(path: str | Path) -> dict[str, Any]:
     return result
 
 
+def _unknown_result(path: str | Path, error: str = "") -> dict[str, Any]:
+    """Build an unknown-format result dict."""
+    result: dict[str, Any] = {"format": "unknown", "path": str(path)}
+    if error:
+        result["error"] = error
+    return result
+
+
+# Dispatch table: file extension → reader function
+_READERS: dict[str, Callable[[Path], dict[str, Any]]] = {
+    ".gguf": read_gguf_metadata,
+    ".safetensors": read_safetensors_metadata,
+    ".bin": read_gguf_metadata,  # .bin may be GGUF; fallback checked below
+}
+
+
 def get_model_metadata(path: str | Path) -> dict[str, Any]:
     """Auto-detect file type and read metadata.
 
     Dispatches to the appropriate reader based on file extension or
     directory contents:
+
       - ``.gguf``              → :func:`read_gguf_metadata`
       - ``.safetensors``       → :func:`read_safetensors_metadata`
       - Directory with
@@ -309,24 +338,18 @@ def get_model_metadata(path: str | Path) -> dict[str, Any]:
     if path.is_dir():
         if (path / "config.json").is_file():
             return read_hf_config(path)
-        # Check for safetensors inside
         st_files = list(path.glob("*.safetensors"))
         if st_files:
             return read_safetensors_metadata(st_files[0])
-        return {"format": "unknown", "error": "No recognized model files in directory"}
+        return _unknown_result(path, error="No recognized model files in directory")
 
     suffix = path.suffix.lower()
+    reader = _READERS.get(suffix)
+    if reader is None:
+        return _unknown_result(path)
 
-    if suffix == ".gguf":
-        return read_gguf_metadata(path)
-    if suffix == ".safetensors":
-        return read_safetensors_metadata(path)
-
-    # For .bin files, try GGUF first, then fall back
-    if suffix == ".bin":
-        meta = read_gguf_metadata(path)
-        if meta.get("architecture") is not None:
-            return meta
-        return {"format": "unknown", "path": str(path)}
-
-    return {"format": "unknown", "path": str(path)}
+    result = reader(path)
+    # For .bin files, GGUF may not parse — fall back to unknown
+    if suffix == ".bin" and result.get("architecture") is None:
+        return _unknown_result(path)
+    return result

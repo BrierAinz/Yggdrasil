@@ -23,22 +23,22 @@ if TYPE_CHECKING:
 _PREFERENCE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (
         re.compile(
-            r"(?i)i\s+(?:really\s+|definitely\s+)?(?:like|love|enjoy|prefer)\s+(.+?)(?:\.|$)",
+            r"i\s+(?:really\s+|definitely\s+)?(?:like|love|enjoy|prefer)\s+(.+?)(?:\.|$)",
             re.IGNORECASE,
         ),
         "positive",
     ),
     (
         re.compile(
-            r"(?i)i\s+(?:really\s+|definitely\s+)?(?:hate|dislike|don'?t\s+like|don'?t\s+enjoy)\s+(.+?)(?:\.|$)",
+            r"i\s+(?:really\s+|definitely\s+)?(?:hate|dislike|don'?\s*t\s+like|don'?\s*t\s+enjoy)\s+(.+?)(?:\.|$)",
             re.IGNORECASE,
         ),
         "negative",
     ),
-    (re.compile(r"(?i)my\s+favorite\s+\w+\s+is\s+(.+?)(?:\.|$)", re.IGNORECASE), "positive"),
+    (re.compile(r"my\s+favorite\s+\w+\s+is\s+(.+?)(?:\.|$)", re.IGNORECASE), "positive"),
     (
         re.compile(
-            r"(?i)i\s+(?:prefer|rather)\s+(.+?)(?:\s+over|than|\s+to)\s+(.+?)(?:\.|$)",
+            r"i\s+(?:prefer|rather)\s+(.+?)(?:\s+over|than|\s+to)\s+(.+?)(?:\.|$)",
             re.IGNORECASE,
         ),
         "positive",
@@ -47,18 +47,18 @@ _PREFERENCE_PATTERNS: list[tuple[re.Pattern[str], str]] = [
 
 # Identity patterns: "My name is X", "I am X", "Call me X"
 _IDENTITY_PATTERNS: list[re.Pattern[str]] = [
-    re.compile(r"(?i)my\s+name\s+is\s+(.+?)(?:\.|$)", re.IGNORECASE),
-    re.compile(r"(?i)i\s+am\s+(.+?)(?:\.|$)", re.IGNORECASE),
-    re.compile(r"(?i)call\s+me\s+(.+?)(?:\.|$)", re.IGNORECASE),
+    re.compile(r"my\s+name\s+is\s+(.+?)(?:\.|$)", re.IGNORECASE),
+    re.compile(r"i\s+am\s+(.+?)(?:\.|$)", re.IGNORECASE),
+    re.compile(r"call\s+me\s+(.+?)(?:\.|$)", re.IGNORECASE),
 ]
 
 # Procedure patterns: "To do X, you need to Y", "How to X: Y"
 _PROCEDURE_PATTERNS: list[re.Pattern[str]] = [
     re.compile(
-        r"(?i)(?:to|in\s+order\s+to)\s+(.+?)\s*,?\s+(?:you\s+)?(?:need\s+to|must|should|have\s+to)\s+(.+?)(?:\.|$)",
+        r"(?:to|in\s+order\s+to)\s+(.+?)\s*,?\s+(?:you\s+)?(?:need\s+to|must|should|have\s+to)\s+(.+?)(?:\.|$)",
         re.IGNORECASE,
     ),
-    re.compile(r"(?i)how\s+to\s+(.+?)\s*[:\-]\s*(.+?)(?:\.|$)", re.IGNORECASE),
+    re.compile(r"how\s+to\s+(.+?)\s*[:\-]\s*(.+?)(?:\.|$)", re.IGNORECASE),
 ]
 
 
