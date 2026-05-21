@@ -36,10 +36,12 @@ class Message(dict):
 
     @staticmethod
     def user(text: str) -> dict[str, Any]:
+        """Create a user-role message dict."""
         return {"role": "user", "content": text}
 
     @staticmethod
     def assistant(text: str, tool_calls: list[ToolCall] | None = None) -> dict[str, Any]:
+        """Create an assistant-role message dict, optionally with tool calls."""
         msg: dict[str, Any] = {"role": "assistant", "content": text}
         if tool_calls:
             msg["tool_calls"] = [
@@ -59,10 +61,12 @@ class Message(dict):
 
     @staticmethod
     def tool_result(tc: ToolResult) -> dict[str, Any]:
+        """Create a tool-result message dict from a ToolResult."""
         return tc.to_openai_message()
 
     @staticmethod
     def system(text: str) -> dict[str, Any]:
+        """Create a system-role message dict."""
         return {"role": "system", "content": text}
 
 
