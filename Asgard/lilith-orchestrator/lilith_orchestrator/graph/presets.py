@@ -18,13 +18,7 @@ def conversation_preset() -> ConversationGraph:
     Returns:
         A :class:`ConversationGraph` ready to ``.build()``.
     """
-    graph = ConversationGraph()
-    # The default graph already includes all nodes; add persona between
-    # memory and output by adding a custom edge.
-    # Default build adds: router → agents → tool → memory → output
-    # We add persona after memory by adjusting edges at build-time.
-    # The build() method creates the standard flow; customisations go here.
-    return graph
+    return ConversationGraph()
 
 
 def research_preset() -> ConversationGraph:
@@ -59,9 +53,7 @@ def code_preset() -> ConversationGraph:
     Returns:
         A :class:`ConversationGraph` configured for code tasks.
     """
-    graph = ConversationGraph()
-    # Default graph already routes code intent → odin → tool → memory → output
-    return graph
+    return ConversationGraph()
 
 
 def creative_preset() -> ConversationGraph:
@@ -90,6 +82,4 @@ def debug_preset() -> ConversationGraph:
     Returns:
         A :class:`ConversationGraph` configured for debugging tasks.
     """
-    graph = ConversationGraph()
-    # Default graph routes debug → adan → tool → memory → output
-    return graph
+    return ConversationGraph()
