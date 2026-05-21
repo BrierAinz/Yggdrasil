@@ -12,7 +12,7 @@
 
 ```
 Vanaheim/
-├── Agents/                          # Agentes del Panteon
+├── Agents/                          # Agentes del Panteon (6 activos)
 │   ├── Base/                        # Clase base VanirAgent
 │   │   ├── vanir_agent.py           # ABC con execute/stream/is_available/health
 │   │   └── __init__.py
@@ -27,6 +27,14 @@ Vanaheim/
 │   │   └── __init__.py
 │   ├── Shalltear/                   # Clasificacion, triaje, parsing NL (Venice)
 │   │   ├── agent.py
+│   │   └── __init__.py
+│   ├── Mimir/                       # Investigacion profunda (SearXNG + arXiv, Grok)
+│   │   ├── agent.py                 # MimirAgent — multi-phase autonomous research
+│   │   ├── research_tools.py        # ArxivSearchTool, WebSearchTool, SourceAnalyzer
+│   │   ├── config.json              # grok-4-fast-reasoning, temp 0.3
+│   │   ├── tests/
+│   │   │   ├── __init__.py
+│   │   │   └── test_mimir.py       # 24 tests (8 classes)
 │   │   └── __init__.py
 │   ├── __init__.py
 │   ├── base_agent.py                # [LEGACY] Base agent v1 (pre-remaster)
@@ -102,6 +110,7 @@ Vanaheim/
 | **Adan** | qwen2.5-coder:7b | Ollama (local) | Codigo, tests, refactoring | 32k |
 | **Eva** | grok-4-fast-reasoning | xAI/Grok | Analisis, documentacion, research | 128k |
 | **Odin** | kimi-for-coding | Kimi | Investigacion profunda, analisis masivo | 262k |
+| **Mimir** | grok-4-fast-reasoning | xAI/Grok | Investigacion multi-fase, SearXNG + arXiv | 128k |
 
 ---
 
@@ -173,4 +182,4 @@ python -m Bots_Lilith_v5.telegram.bot
 
 *Bifrost arde con la luz de los Nueve Mundos.*
 
-*Última actualización: 2026-05-19*
+*Última actualización: 2026-05-20*
