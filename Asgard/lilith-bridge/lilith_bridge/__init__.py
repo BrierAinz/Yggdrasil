@@ -7,6 +7,7 @@ Provides two integration modes:
 
 from .bifrost_integration import create_bridge_router, create_standalone_app
 from .config import BridgeConfig, load_bridge_config
+from .hermes_client import HermesClient, HermesMCPClient
 from .models import (
     BridgeChatRequest,
     BridgeChatResponse,
@@ -33,6 +34,8 @@ __all__ = [
     "BridgeSkillSearch",
     "HermesChatRequest",
     "HermesChatResponse",
+    "HermesClient",
+    "HermesMCPClient",
     "HermesToolExecute",
     "HermesToolResult",
     "create_bridge_router",
