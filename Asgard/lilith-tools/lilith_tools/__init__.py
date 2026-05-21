@@ -26,3 +26,41 @@ __all__ = [
     "filesystem",
     "system",
 ]
+
+# Optional router subpackage — only available when extra deps are installed
+try:
+    from .router import (  # noqa: F401
+        ChainExecutor,
+        ChainResult,
+        ChainStep,
+        FallbackChain,
+        MatchResult,
+        RecoveryManager,
+        RetryPolicy,
+        SmartToolRouter,
+        ToolAnalytics,
+        ToolChain,
+        ToolMatcher,
+        ToolStats,
+        ToolUsage,
+    )
+
+    __all__.extend(
+        [
+            "ChainExecutor",
+            "ChainResult",
+            "ChainStep",
+            "FallbackChain",
+            "MatchResult",
+            "RecoveryManager",
+            "RetryPolicy",
+            "SmartToolRouter",
+            "ToolAnalytics",
+            "ToolChain",
+            "ToolMatcher",
+            "ToolStats",
+            "ToolUsage",
+        ]
+    )
+except ImportError:
+    pass
