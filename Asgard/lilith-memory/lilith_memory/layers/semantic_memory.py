@@ -133,7 +133,9 @@ class SemanticMemory:
                 conn.execute(
                     """
                     INSERT INTO semantic_memories
-                        (id, content, fact_type, source, confidence, metadata, timestamp, access_count)
+                        (id, content, fact_type, source,
+                         confidence, metadata, timestamp,
+                         access_count)
                     VALUES (?, ?, ?, ?, ?, ?, ?, 0)
                     """,
                     (

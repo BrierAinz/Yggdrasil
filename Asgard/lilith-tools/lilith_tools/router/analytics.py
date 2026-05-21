@@ -205,7 +205,8 @@ class ToolAnalytics:
                 )
             if stat.avg_duration_ms > 5000:
                 suggestions.append(
-                    f"Slow ({stat.avg_duration_ms:.0f} ms avg) — consider caching or async execution"
+                    f"Slow ({stat.avg_duration_ms:.0f} ms avg) "
+                    "— consider caching or async execution"
                 )
             if stat.error_count > 5:
                 suggestions.append(f"High error count ({stat.error_count}) — review error patterns")

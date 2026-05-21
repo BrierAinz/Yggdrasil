@@ -62,6 +62,7 @@
 | # | Plan | Proyecto | Realm | Estado | Descripción |
 |---|------|----------|-------|--------|-------------|
 | 21 | [Yggdrasil Growth v5](plan-21-yggdrasil-growth-v5.md) | Growth | Cross-realm | 🔄 Active | WS Bridge, agente Mimir, build system |
+| 24 | [Intelligence Evolution](plan-24-intelligence-evolution.md) | Evo | Cross-realm | 📋 Plan | Evolución de inteligencia del ecosistema (agents + core) |
 | — | Alfheim Dashboard | Dashboard | Alfheim | ✅ v1.0.0 | HTMX + Alpine.js dashboard |
 
 ---
