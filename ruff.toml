@@ -92,8 +92,8 @@ force-single-line = false
 lines-after-imports = 2
 
 [lint.per-file-ignores]
-"tests/**" = ["F401", "PTH"]
-"*_test.py" = ["F401", "PTH"]
+"**/tests/**" = ["F401", "PTH", "ARG002", "PLR2004"]
+"*_test.py" = ["F401", "PTH", "ARG002", "PLR2004"]
 "conftest.py" = ["F401", "PTH"]
 # Path is used at runtime (not just type annotations) in MemoryStore
 "Asgard/lilith-memory/lilith_memory/store.py" = ["TC003"]
