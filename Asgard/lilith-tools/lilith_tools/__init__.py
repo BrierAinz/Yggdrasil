@@ -6,7 +6,9 @@ from . import filesystem, system
 from .base import BaseTool, ToolResult
 from .browser import BrowserTool
 from .coding import CodingTool
+from .filesystem import DirectoryListTool, FileReadTool
 from .registry import ToolRegistry
+from .system import SystemInfoTool, SystemTimeTool
 from .web_search import WebSearchTool
 
 
@@ -14,6 +16,10 @@ __all__ = [
     "BaseTool",
     "BrowserTool",
     "CodingTool",
+    "DirectoryListTool",
+    "FileReadTool",
+    "SystemInfoTool",
+    "SystemTimeTool",
     "ToolRegistry",
     "ToolResult",
     "WebSearchTool",
