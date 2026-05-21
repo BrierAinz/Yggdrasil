@@ -4,7 +4,6 @@
   "description": "Yggdrasil — The World Tree. A 9-realm Nordic ecosystem for AI-assisted creative development.",
   "version": "0.1.0",
   "workspaces": [
-    "packages/*",
     "Alfheim/YggdrasilStudio/frontend",
     "Alfheim/YggdrasilForge/frontend",
     "Alfheim/dashboard"
