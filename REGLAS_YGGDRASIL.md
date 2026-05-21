@@ -1,7 +1,7 @@
 # 📜 Reglas de Yggdrasil - El Árbol del Mundo
 
-> **Versión:** 3.1
-> **Fecha:** 2026-05-03 (Refinamiento post-limpieza)
+> **Versión:** 4.0
+> **Fecha:** 2026-05-21 (Refactoring Fases 1-4)
 > **Aplicable a:** Todo el ecosistema Yggdrasil
 
 ---
@@ -19,28 +19,28 @@ Idea → Muspelheim → [Reino Destino] → Helheim (si muere)
 
 ### 3. Límite de Proyectos Activos
 - **Muspelheim**: Máximo 4 proyectos simultáneos
+- **Asgard**: Paquetes modulares workspace (lilith-*, bifrost, vanaheim-framework)
 - **Jotunheim**: Máximo 2 gigantes activos
 - Cualquier otro reino: Sin límite estricto, pero mantener organizado
+
+### 4. Legado Marcado, No Eliminado
+Todo código legacy debe llevar un `LEGACY.md` o `LEGACY_DIRS.md` que explique qué lo reemplaza. La eliminación física a Helheim requiere migración git (commit de movimiento).
 
 ---
 
 ## 📋 Reglas por Reino
 
-| Reino | Regla Principal | Trigger de Salida |
-|-------|-----------------|-------------------|
-| **Asgard** | Tecnología core (Lilith v5, Swarm, API, Memory, CLI, Gateway) | N/A (permanente) |
-| **Alfheim** | Prototipos UI y experimentos visuales (TUI Dashboard, HTMX) | Migrar cuando esté listo |
-| **Midgard** | Apps personales terminadas | N/A (destino final) |
-| **Svartalfheim** | Documentación, planes, conocimiento | N/A (permanente) |
-| **Vanaheim** | Agentes IA, framework, bots | Migrar cuando esté estable |
-| **Jotunheim** | Proyectos >1 mes de duración | Completar o a Helheim |
-| **Muspelheim** | Máx 4 proyectos, sprint mode (Eir, ForgeMaster, AutoSub ✓) | Completar/migrar en 2 semanas |
-| **Niflheim** | Recursos, modelos, datasets, assets | N/A (recursos) |
-| **Helheim** | Read-only, no desarrollo | N/A (cementerio) |
-
-> **Nota:** Asgard es el reino de la **tecnología core** — no solo dashboards. Contiene Lilith v5 (el agente IA central, refactorizado en paquetes modulares), la arquitectura dual del Swarm (v4 legacy en `Hermes-Lilith/Lilith/Swarm/` + v5 refactored en `Lilith/src/core/agents/swarm/`), los paquetes modulares (lilith-core, lilith-memory, lilith-tools, etc.), el gateway, y los dashboards.
-
-> **Nota:** `Asgard/Hermes-Lilith/` es el monolito legado v4. NO se renombra ni se modifica — sirve como referencia. El desarrollo activo está en `Asgard/Lilith/`.
+| Reino | Propósito | Paquetes/Proyectos Activos | Legado |
+|-------|-----------|---------------------------|--------|
+| **Asgard** | Tecnología core (Lilith modular) | lilith-core v2.0, lilith-memory v2.0, lilith-tools v2.0, lilith-orchestrator v2.0, lilith-api v2.2, lilith-cli v3.0, lilith-skills v1.0, lilith-bridge v1.0 | ⚠️ `Lilith/` monolito v5.0 (LEGACY.md) |
+| **Alfheim** | Prototipos UI | TerminalDashboard, dashboard (HTMX), YggdrasilForge, YggdrasilStudio | VSCode_Extension_Lilith |
+| **Midgard** | Apps personales | Mínimo (10 .py) | — |
+| **Svartalfheim** | Documentación, planes | Docs/, plans/ | — |
+| **Vanaheim** | Agentes IA, framework | vanaheim-framework v1.0, bifrost v2.0, gamemaster-mcp-server v0.1 | ⚠️ Agents/, Core/, Config/, Bots_Lilith_v5/, Council/ (LEGACY_DIRS.md) |
+| **Jotunheim** | Proyectos >1 mes | `.gitkeep` (vacío, aguarda) | — |
+| **Muspelheim** | WIP, sprint mode | ForgeMaster v1.0.0 (238 tests), AutoSub v0.1, AI-Influencer (Fase 0) | ⚠️ kohya_ss eliminado (6.9 GB) |
+| **Niflheim** | Assets, modelos, datasets | Modelos (4 GB), Datasets (341 MB) | gitignored |
+| **Helheim** | Cementerio read-only | Graveyard.md, epitafios | Archivos legacy archivados |
 
 ---
 
@@ -66,7 +66,14 @@ Idea → Muspelheim → [Reino Destino] → Helheim (si muere)
 2. **Copiar** a destino (no mover, preservar historial)
 3. **Actualizar README** en destino
 4. **Añadir enlace** en origen: `Migrated to ../X/project`
-5. **Archivar** origen si es necesario
+5. **Archivar** origen si es necesario (añadir LEGACY.md)
+
+### Proceso para Código Legacy
+
+1. **Marcar** con `LEGACY.md` o `LEGACY_DIRS.md` indicando qué paquete lo reemplaza
+2. **Añadir a .gitignore** patrones de runtime data (Data/, cache, logs)
+3. **Registrar** en `Helheim/Graveyard.md` con fecha, causa, y tamaño
+4. **No eliminar** sin migración git — preservar historial
 
 ---
 
@@ -130,12 +137,39 @@ proyecto/
 └── docs/                  # Documentación adicional (opcional)
 ```
 
+### Raíz del monorepo:
+```
+Yggdrasil/
+├── pyproject.toml         # Workspace root (uv workspace)
+├── ruff.toml              # Linter/formatter config
+├── pytest.ini             # Test runner config
+├── package.json            # Node workspaces (Alfheim frontends)
+├── yggdrasil_cli.py       # Ecosystem CLI
+├── health_check.py        # Health check script
+├── scripts/               # Utility scripts + bats/
+│   ├── bats/              # Windows .bat launchers
+│   ├── setup_yggdrasil.py # Setup script
+│   ├── clean.py           # Cache cleaner
+│   └── bump-version.py    # Version bumper
+├── Asgard/                # Core (lilith-* packages)
+├── Alfheim/               # UI prototypes
+├── Vanaheim/              # Agents/framework
+├── Muspelheim/            # WIP/sprints
+├── Niflheim/              # Assets (gitignored)
+├── Svartalfheim/          # Docs/plans
+├── Midgard/               # Personal apps
+├── Helheim/               # Archive/cemetery
+└── Jotunheim/             # Mega projects (awaiting)
+```
+
 ### Prohibido:
-- Archivos sueltos en raíz del reino (scripts de un solo uso van a Svartalfheim/Scripts/)
+- Archivos sueltos en raíz del reino (scripts van a `scripts/`)
 - `temp/`, `tmp/`, `borrar/` permanentes
 - Duplicados entre reinos
 - Binarios grandes sin `.gitignore`
 - Tokens, claves API, contraseñas en código (usar `.env` + `.gitignore`)
+- Clones de repos externos con su propio `.git` (usar submódulos o clonar fuera)
+- `.venv/` dentro de paquetes workspace (usar el .venv raíz del monorepo)
 
 ---
 
@@ -146,11 +180,13 @@ proyecto/
 - Archivos >100MB sin LFS
 - Malware, exploits, contenido ilegal
 - Datos personales de terceros
+- Clones de repos externos dentro del árbol (usar git submodules o referenciar externamente)
 
 ### Requiere aprobación:
 - Modificar estructura de reinos
 - Eliminar proyecto de Helheim
 - Migrar proyecto completado
+- Mover código legacy a Helheim (requiere preserving git history)
 
 ---
 
@@ -160,12 +196,14 @@ proyecto/
 - Revisar Muspelheim: ¿proyectos estancados?
 - Limpiar Niflheim: ¿assets obsoletos?
 - Verificar Helheim: ¿algo para resucitar?
+- Ejecutar `scripts/clean.py` para purgar caches
 
 ### Trimestral
 - Revisar todos los READMEs y REGLAS
 - Actualizar reglas si es necesario
 - Backup de Svartalfheim (Knowledge Base)
 - Verificar que la estructura real coincide con la documentada
+- Auditar `LEGACY.md` marcadores — ¿migrar código muerto a Helheim?
 
 ---
 
@@ -197,16 +235,28 @@ proyecto/
 | Duplicar entre reinos | Eliminación del duplicado |
 | Token expuesto | 1 mes de purgatorio en Helheim |
 | README desactualizado >1 mes | Reescritura obligatoria |
+| Clon de repo externo en el árbol | Exilio a fuera del monorepo |
+| `.venv/` en sub-paquete | Ejecutar `scripts/clean.py` |
 
 ---
 
 **Yggdrasil crece con orden o no crece.** 🌳
 
-*Ultima actualizacion: 2026-05-03*
+*Ultima actualizacion: 2026-05-21*
 
 ---
 
 ## Historial de Cambios
+
+### v4.0 - 2026-05-21 (Refactoring Fases 1-4)
+- **Fase 1 Cleanup:** kohya_ss eliminado (6.9 GB, 10,827 .py), caches purgadas (~280 MB), node_modules raíz eliminado (135 MB), .venvs redundantes eliminados (~500 MB), .egg-info limpiado
+- **Fase 2 Audit:** Asgard/Lilith monolito marcado LEGACY (477 .py, 83 MB), 8 lilith-* paquetes verificados activos, LEGACY.md creado con tabla de migración, .gitignore actualizado
+- **Fase 3 Consolidation:** Vanaheim legacy dirs marcados con LEGACY_DIRS.md, scripts/.bat movidos a scripts/bats/, package.json workspace arreglado (packages/* → rutas reales), Helheim Graveyard actualizado con kohya_ss y Lilith monolito
+- **Fase 4 Docs:** READMEs actualizados (Asgard, Muspelheim, Vanaheim), REGLAS_YGGDRASIL.md v4.0, CI verificado (.github/workflows/ci.yml)
+- **Nueva regla:** Clones de repos externos prohibidos dentro del árbol (usar submodules)
+- **Nueva regla:** `.venv/` en sub-paquetes workspace prohibido (usar el .venv raíz)
+- **Nueva regla:** LEGACY.md obligatorio para código muerto antes de archivar a Helheim
+- **Estructura raíz:** .bat files movidos a scripts/bats/, setup.sh movido a scripts/
 
 ### v3.1 - 2026-05-03 (Refinamiento post-limpieza)
 - **CI corregido:** ForgeMaster path de Niflheim a Muspelheim
@@ -218,26 +268,16 @@ proyecto/
 - **README reescrito:** Refleja estado actual del ecosistema (v5, dual Swarm, realm table)
 - **CHANGELOG completado:** Entrada Unreleased con todos los fixes recientes
 
----
-
-## Historial de Cambios
-
 ### v3.0 - 2026-05-02 (Organización profesional)
-- **Asgard redefinido:** De "Dashboards/scripts solo" a "Tecnología core" — refleja su rol real
-- **Nomenclatura actualizada:** PascalCase para proyectos, snake_case para módulos Python (refleja uso real)
-- **Archivos sueltos:** Prohibidos en raíz de reino, scripts van a Svartalfheim/Scripts/
-- **Ruta de migración Asgard:** Agregado Muspelheim → Asgard para componentes core
-- **Ruta de migración Niflheim:** Agregado Niflheim → Muspelheim para herramientas en desarrollo
-- **ForgeMaster:** Migrado de Niflheim a Muspelheim (proyecto en desarrollo activo, no es recurso)
+- **Asgard redefinido:** De "Dashboards/scripts solo" a "Tecnología core"
+- **Nomenclatura actualizada:** PascalCase para proyectos, snake_case para módulos Python
+- **Archivos sueltos:** Prohibidos en raíz de reino
+- **ForgeMaster:** Migrado de Niflheim a Muspelheim
 - **Estructura mínima:** Actualizada para incluir pyproject.toml y tests/
-- **Sanciones:** Agregada sanción por README desactualizado
 
 ### v2.0 - 2026-04-29 (Remasterizacion completa)
-- **Limpieza masiva:** Eliminados 60,000+ archivos basura (node_modules, pycache, map, tmp)
-- **Cuarentena:** Basura regenerable movida a Helheim/Quarantine_2026-04-29/
-- **Legacy archivado:** Codigo muerto de Lilith en Helheim/Archives_Lilith_Legacy_2026-04-29/
+- **Limpieza masiva:** Eliminados 60,000+ archivos basura
+- **Cuarentena:** Basura regenerable movida a Helheim
+- **Legacy archivado:** Codigo muerto de Lilith en Helheim
 - **Consolidacion Vanaheim:** Todos los bots/IA en un solo lugar
-- **Activacion Alfheim:** Semilla de UI electronica + orquestador visual
-- **Activacion Niflheim:** Assets/Resources centralizados
-- **Documentacion Svartalfheim:** Guias tecnicas + README maestros
 - **Salud:** De 62,272 archivos a ~1,500 activos (~97% reduccion)

@@ -168,7 +168,7 @@ class SkillLoader:
             tags = [str(t) for t in tags]
 
         return Skill(
-            name=frontmatter.get("name", path.parent.name),
+            name=str(frontmatter.get("name", path.parent.name)),
             category=category,
             description=str(frontmatter.get("description", "")),
             trigger=str(frontmatter.get("trigger", "")),
@@ -179,7 +179,7 @@ class SkillLoader:
         )
 
     @staticmethod
-    def _parse_frontmatter(content: str) -> dict | None:
+    def _parse_frontmatter(content: str) -> dict[str, str | list[str]] | None:
         """Parse YAML frontmatter from a skill markdown file.
 
         Args:
@@ -197,7 +197,7 @@ class SkillLoader:
             return None
 
         yaml_text = content[3:end].strip()
-        result: dict = {}
+        result: dict[str, str | list[str]] = {}
 
         for raw_line in yaml_text.split("\n"):
             line = raw_line.strip()
@@ -206,30 +206,29 @@ class SkillLoader:
 
             # Handle key: value
             if ":" in line:
-                key, _, value = line.partition(":")
+                key, _, raw_value = line.partition(":")
                 key = key.strip()
-                value = value.strip()
+                value: str | list[str] = raw_value.strip()
 
                 # Remove quotes
-                if (value.startswith('"') and value.endswith('"')) or (
-                    value.startswith("'") and value.endswith("'")
+                if isinstance(value, str) and (
+                    (value.startswith('"') and value.endswith('"'))
+                    or (value.startswith("'") and value.endswith("'"))
                 ):
                     value = value[1:-1]
 
                 # Handle > folded block (just take first line)
-                if value.startswith(">"):
+                if isinstance(value, str) and value.startswith(">"):
                     value = value[1:].strip()
 
                 # Handle list values [tag1, tag2]
-                if value.startswith("[") and value.endswith("]"):
+                if isinstance(value, str) and value.startswith("[") and value.endswith("]"):
                     value = [v.strip().strip("'\"") for v in value[1:-1].split(",")]
-                    result[key] = value
                 # Handle comma-separated values (YAML bare list)
-                elif "," in value and key in ("tags", "categories"):
+                elif isinstance(value, str) and "," in value and key in ("tags", "categories"):
                     value = [v.strip().strip("'\"") for v in value.split(",")]
-                    result[key] = value
-                else:
-                    result[key] = value
+
+                result[key] = value
 
         return result or None
 

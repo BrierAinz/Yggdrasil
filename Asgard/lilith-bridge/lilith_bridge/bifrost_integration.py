@@ -478,6 +478,7 @@ def create_standalone_app(config: BridgeConfig | None = None) -> FastAPI:
 
         # Force lazy-init of all Lilith components.
         with _lilith_state_lock:
+            assert _lilith_state is not None  # initialised at module level
             _lilith_state.ensure_memory(cfg)
             _lilith_state.ensure_engine(cfg)
             _lilith_state.ensure_skills(cfg)

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import sqlite3
 from pathlib import Path
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Literal, Self
 
 
 if TYPE_CHECKING:
@@ -68,7 +68,7 @@ class MemoryStore:
         exc_type: type[BaseException] | None,
         exc_val: BaseException | None,
         exc_tb: TracebackType | None,
-    ) -> bool:
+    ) -> Literal[False]:
         """Exit the context manager, closing the long-lived connection."""
         if self._conn is not None:
             self._conn.close()
