@@ -5,6 +5,8 @@ Escanea el ecosistema de 9 reinos y reporta estado, basura y metricas.
 Uso: python health_check.py
 """
 
+from __future__ import annotations
+
 import os
 import sys
 from collections import defaultdict
@@ -27,6 +29,7 @@ REALMS = [
 
 
 def scan_realm(name: str) -> dict:
+    """Scan a Yggdrasil realm directory and return filesystem stats."""
     path = BASE / name
     if not path.exists():
         return {
@@ -93,7 +96,7 @@ def scan_realm(name: str) -> dict:
                 try:
                     with fpath.open(encoding="utf-8", errors="ignore") as fh:
                         stats["py_lines"] += sum(1 for _ in fh)
-                except:
+                except (OSError, UnicodeDecodeError):
                     pass
             elif f.endswith(".js") or f.endswith(".ts"):
                 stats["js_files"] += 1
@@ -106,6 +109,7 @@ def scan_realm(name: str) -> dict:
 
 
 def fmt_size(n: int) -> str:
+    """Format a byte count as a human-readable size string."""
     if n >= 1024**3:
         return f"{n / 1024**3:.1f} GB"
     elif n >= 1024**2:
@@ -115,7 +119,8 @@ def fmt_size(n: int) -> str:
     return f"{n} B"
 
 
-def main():
+def main() -> int:
+    """Run the health check and print realm stats to stdout."""
     print("=" * 70)
     print(f"YGGDRASIL HEALTH CHECK - {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     print("=" * 70)

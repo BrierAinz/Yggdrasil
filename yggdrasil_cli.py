@@ -580,7 +580,7 @@ def _count_files(path: Path, pattern: str = "") -> int:
         cmd += ["-name", pattern]
     try:
         out = subprocess.run(cmd, capture_output=True, text=True, timeout=10).stdout
-        return len([l for l in out.splitlines() if l.strip()])
+        return len([line for line in out.splitlines() if line.strip()])
     except Exception:
         return 0
 
