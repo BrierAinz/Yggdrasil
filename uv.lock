@@ -2215,7 +2215,7 @@ requires-dist = [
     { name = "lilith-memory", editable = "Asgard/lilith-memory" },
     { name = "lilith-orchestrator", editable = "Asgard/lilith-orchestrator" },
     { name = "lilith-tools", editable = "Asgard/lilith-tools" },
-    { name = "litellm", specifier = ">=1.0.0" },
+    { name = "litellm", specifier = ">=1.83.7" },
     { name = "prompt-toolkit", specifier = ">=3.0" },
     { name = "pydantic", specifier = ">=2.0" },
     { name = "pyyaml", specifier = ">=6.0" },
@@ -5610,7 +5610,7 @@ wheels = [
 
 [[package]]
 name = "yggdrasil"
-version = "5.0.0"
+version = "5.1.0"
 source = { virtual = "." }
 
 [package.optional-dependencies]

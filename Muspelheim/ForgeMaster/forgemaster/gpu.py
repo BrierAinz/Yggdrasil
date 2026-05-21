@@ -362,6 +362,65 @@ class GPUMonitor:
     # AMD backend (rocm-smi)
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _run_rocm_smi(*args: str) -> subprocess.CompletedProcess[str] | None:
+        """Run a rocm-smi subcommand, returning None on failure."""
+        try:
+            return subprocess.run(
+                ["rocm-smi", *args],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                check=False,
+            )
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            return None
+
+    @staticmethod
+    def _parse_amd_names(output: str) -> list[str]:
+        """Extract GPU names from rocm-smi --showproductname output."""
+        names: list[str] = []
+        for line in output.strip().splitlines():
+            match = re.search(r"(?:GPU\[\d+\]|card\d+)\s*:\s*(.+)", line)
+            if match:
+                names.append(match.group(1).strip())
+        return names
+
+    @staticmethod
+    def _parse_amd_vram(output: str) -> tuple[list[int], list[int]]:
+        """Extract (totals, useds) VRAM lists from rocm-smi --showmeminfo vram output."""
+        totals: list[int] = []
+        useds: list[int] = []
+        for line in output.strip().splitlines():
+            stripped = line.strip()
+            total_m = re.search(r"Total VRAM.*?:\s*(\d+)\s*(?:MB|MIB)", stripped, re.IGNORECASE)
+            if total_m:
+                totals.append(int(total_m.group(1)))
+            used_m = re.search(r"Used VRAM.*?:\s*(\d+)\s*(?:MB|MIB)", stripped, re.IGNORECASE)
+            if used_m:
+                useds.append(int(used_m.group(1)))
+        return totals, useds
+
+    @staticmethod
+    def _parse_amd_utilization(output: str) -> list[int]:
+        """Extract GPU utilization percentages from rocm-smi --showgpuuse output."""
+        pcts: list[int] = []
+        for line in output.strip().splitlines():
+            match = re.search(r"(?:GPU\[\d+\]|card\d+).*?(\d+)%", line)
+            if match:
+                pcts.append(int(match.group(1)))
+        return pcts
+
+    @staticmethod
+    def _parse_amd_temps(output: str) -> list[int]:
+        """Extract temperatures from rocm-smi --showtemp output."""
+        temps: list[int] = []
+        for line in output.strip().splitlines():
+            match = re.search(r"(\d+)\s*°?[cC]", line)
+            if match:
+                temps.append(int(match.group(1)))
+        return temps
+
     def _get_amd_gpu_info(self) -> list[GPUInfo]:
         r"""Query AMD GPU information via rocm-smi.
 
@@ -375,109 +434,74 @@ class GPUMonitor:
         if not self._check_amd():
             return []
 
-        gpus: list[GPUInfo] = []
-        try:
-            # Get GPU names
-            name_result = subprocess.run(
-                ["rocm-smi", "--showproductname"],
-                capture_output=True,
-                text=True,
-                timeout=10,
-                check=False,
-            )
-            # Get VRAM info
-            vram_result = subprocess.run(
-                ["rocm-smi", "--showmeminfo", "vram"],
-                capture_output=True,
-                text=True,
-                timeout=10,
-                check=False,
-            )
-            # Get utilization
-            util_result = subprocess.run(
-                ["rocm-smi", "--showgpuuse"],
-                capture_output=True,
-                text=True,
-                timeout=10,
-                check=False,
-            )
-            # Get temperature
-            temp_result = subprocess.run(
-                ["rocm-smi", "--showtemp"],
-                capture_output=True,
-                text=True,
-                timeout=10,
-                check=False,
-            )
-        except (subprocess.TimeoutExpired, FileNotFoundError):
+        # Collect raw output from all rocm-smi subcommands
+        name_result = self._run_rocm_smi("--showproductname")
+        vram_result = self._run_rocm_smi("--showmeminfo", "vram")
+        util_result = self._run_rocm_smi("--showgpuuse")
+        temp_result = self._run_rocm_smi("--showtemp")
+
+        if not any(
+            r and r.returncode == 0 for r in (name_result, vram_result, util_result, temp_result)
+        ):
             return []
 
-        # Parse GPU names from --showproductname
-        gpu_names: list[str] = []
-        if name_result.returncode == 0:
-            for line in name_result.stdout.strip().splitlines():
-                # Lines like: "GPU[0]		: AMD Radeon RX 7900 XTX"
-                # or: "card0: AMD Radeon RX 7900 XTX"
-                match = re.search(r"(?:GPU\[\d+\]|card\d+)\s*:\s*(.+)", line)
-                if match:
-                    gpu_names.append(match.group(1).strip())
-
-        # Parse VRAM from --showmeminfo vram
-        vram_totals: list[int] = []
-        vram_useds: list[int] = []
-        if vram_result.returncode == 0:
-            for raw_line in vram_result.stdout.strip().splitlines():
-                line = raw_line.strip()
-                # Lines like: "Total VRAM (GPU0): 20480 MB"
-                total_match = re.search(r"Total VRAM.*?:\s*(\d+)\s*(?:MB|MIB)", line, re.IGNORECASE)
-                if total_match:
-                    vram_totals.append(int(total_match.group(1)))
-                used_match = re.search(r"Used VRAM.*?:\s*(\d+)\s*(?:MB|MIB)", line, re.IGNORECASE)
-                if used_match:
-                    vram_useds.append(int(used_match.group(1)))
-
-        # Parse utilization
-        util_pcts: list[int] = []
-        if util_result.returncode == 0:
-            for line in util_result.stdout.strip().splitlines():
-                match = re.search(r"(?:GPU\[\d+\]|card\d+).*?(\d+)%", line)
-                if match:
-                    util_pcts.append(int(match.group(1)))
-
-        # Parse temperature
-        temps: list[int] = []
-        if temp_result.returncode == 0:
-            for line in temp_result.stdout.strip().splitlines():
-                match = re.search(r"(\d+)\s*°?[cC]", line)
-                if match:
-                    temps.append(int(match.group(1)))
+        # Parse each subcommand's output
+        gpu_names = (
+            self._parse_amd_names(name_result.stdout)
+            if name_result and name_result.returncode == 0
+            else []
+        )
+        vram_totals, vram_useds = (
+            self._parse_amd_vram(vram_result.stdout)
+            if vram_result and vram_result.returncode == 0
+            else ([], [])
+        )
+        util_pcts = (
+            self._parse_amd_utilization(util_result.stdout)
+            if util_result and util_result.returncode == 0
+            else []
+        )
+        temps = (
+            self._parse_amd_temps(temp_result.stdout)
+            if temp_result and temp_result.returncode == 0
+            else []
+        )
 
         # Assemble GPUInfo objects
-        gpu_count = max(len(gpu_names), len(vram_totals), 1)
-        for i in range(gpu_count):
-            vram_total = vram_totals[i] if i < len(vram_totals) else 0
-            vram_used = vram_useds[i] if i < len(vram_useds) else 0
-            gpu = GPUInfo(
-                name=gpu_names[i] if i < len(gpu_names) else f"AMD GPU {i}",
-                vram_total_mb=vram_total,
-                vram_used_mb=vram_used,
-                vram_free_mb=vram_total - vram_used,
-                temperature=temps[i] if i < len(temps) else 0,
-                utilization_pct=util_pcts[i] if i < len(util_pcts) else 0,
-                driver_version="",
-                gpu_type="amd",
-            )
-            gpus.append(gpu)
+        gpus = self._assemble_amd_gpus(gpu_names, vram_totals, vram_useds, util_pcts, temps)
 
         # If we could detect AMD but parsing failed, return at least a placeholder
         if not gpus:
+            gpus.append(GPUInfo(name="AMD GPU (details unavailable)", gpu_type="amd"))
+
+        return gpus
+
+    @staticmethod
+    def _assemble_amd_gpus(
+        names: list[str],
+        vram_totals: list[int],
+        vram_useds: list[int],
+        util_pcts: list[int],
+        temps: list[int],
+    ) -> list[GPUInfo]:
+        """Build GPUInfo list from parsed AMD telemetry data."""
+        gpus: list[GPUInfo] = []
+        gpu_count = max(len(names), len(vram_totals), 1)
+        for i in range(gpu_count):
+            vram_total = vram_totals[i] if i < len(vram_totals) else 0
+            vram_used = vram_useds[i] if i < len(vram_useds) else 0
             gpus.append(
                 GPUInfo(
-                    name="AMD GPU (details unavailable)",
+                    name=names[i] if i < len(names) else f"AMD GPU {i}",
+                    vram_total_mb=vram_total,
+                    vram_used_mb=vram_used,
+                    vram_free_mb=vram_total - vram_used,
+                    temperature=temps[i] if i < len(temps) else 0,
+                    utilization_pct=util_pcts[i] if i < len(util_pcts) else 0,
+                    driver_version="",
                     gpu_type="amd",
                 ),
             )
-
         return gpus
 
     # ------------------------------------------------------------------

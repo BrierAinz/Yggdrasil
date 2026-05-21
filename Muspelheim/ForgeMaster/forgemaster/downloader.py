@@ -101,6 +101,19 @@ class DownloadProgress:
 # ---------------------------------------------------------------------------
 
 
+@dataclass
+class _DownloadContext:
+    """Bundle of parameters shared between _download_with_retries and _stream_download."""
+
+    url: str
+    local_path: Path
+    tmp_path: Path
+    resume_from: int
+    headers: dict[str, str]
+    config: DownloadConfig
+    progress_callback: Callable[[DownloadProgress], None] | None = field(default=None)
+
+
 class DownloadError(Exception):
     """Raised when a model download fails."""
 
@@ -223,13 +236,15 @@ class ModelDownloader:
             headers["Range"] = f"bytes={resume_from}-"
 
         return self._download_with_retries(
-            url=url,
-            local_path=local_path,
-            tmp_path=tmp_path,
-            resume_from=resume_from,
-            headers=headers,
-            config=config,
-            progress_callback=progress_callback,
+            _DownloadContext(
+                url=url,
+                local_path=local_path,
+                tmp_path=tmp_path,
+                resume_from=resume_from,
+                headers=headers,
+                config=config,
+                progress_callback=progress_callback,
+            ),
         )
 
     def download_model(
@@ -307,103 +322,75 @@ class ModelDownloader:
             return 0
         return tmp_path.stat().st_size
 
-    def _download_with_retries(
-        self,
-        *,
-        url: str,
-        local_path: Path,
-        tmp_path: Path,
-        resume_from: int,
-        headers: dict[str, str],
-        config: DownloadConfig,
-        progress_callback: Callable[[DownloadProgress], None] | None,
-    ) -> Path:
+    def _download_with_retries(self, ctx: _DownloadContext) -> Path:
         """Download a file with exponential-backoff retries and resume support."""
         last_error: Exception | None = None
 
         for attempt in range(self._max_retries):
             if self._cancelled:
                 self._emit(
-                    progress_callback,
+                    ctx.progress_callback,
                     DownloadProgress(
-                        model_id=config.model_id,
+                        model_id=ctx.config.model_id,
                         status=DownloadStatus.CANCELLED,
                     ),
                 )
                 raise DownloadError("Download cancelled")
 
             try:
-                return self._stream_download(
-                    url=url,
-                    local_path=local_path,
-                    tmp_path=tmp_path,
-                    resume_from=resume_from,
-                    headers=headers,
-                    config=config,
-                    progress_callback=progress_callback,
-                )
+                return self._stream_download(ctx)
             except (httpx.HTTPError, httpx.StreamError) as exc:
                 last_error = exc
                 logger.warning("Download attempt %d failed: %s", attempt + 1, exc)
                 time.sleep(self._retry_delay * (attempt + 1))
 
         self._emit(
-            progress_callback,
+            ctx.progress_callback,
             DownloadProgress(
-                model_id=config.model_id,
+                model_id=ctx.config.model_id,
                 status=DownloadStatus.FAILED,
                 error=str(last_error),
             ),
         )
         raise DownloadError(f"Download failed after {self._max_retries} attempts: {last_error}")
 
-    def _stream_download(
-        self,
-        *,
-        url: str,
-        local_path: Path,
-        tmp_path: Path,
-        resume_from: int,
-        headers: dict[str, str],
-        config: DownloadConfig,
-        progress_callback: Callable[[DownloadProgress], None] | None,
-    ) -> Path:
+    def _stream_download(self, ctx: _DownloadContext) -> Path:
         """Stream-download a file over HTTP with live progress tracking."""
         self._emit(
-            progress_callback,
+            ctx.progress_callback,
             DownloadProgress(
-                model_id=config.model_id,
+                model_id=ctx.config.model_id,
                 status=DownloadStatus.PENDING,
-                downloaded_bytes=resume_from,
+                downloaded_bytes=ctx.resume_from,
             ),
         )
 
-        with self._client.stream("GET", url, headers=headers) as response:
+        with self._client.stream("GET", ctx.url, headers=ctx.headers) as response:
             if response.status_code == 404:
-                raise ModelNotFoundError(f"File not found: {url}")
+                raise ModelNotFoundError(f"File not found: {ctx.url}")
             if response.status_code not in (200, 206):
-                raise DownloadError(f"HTTP {response.status_code} for {url}")
+                raise DownloadError(f"HTTP {response.status_code} for {ctx.url}")
 
             # Determine total size from content-length (adjusted for range).
             content_length = int(response.headers.get("content-length", 0))
             total = (
-                resume_from + content_length
-                if resume_from and response.status_code == 206
+                ctx.resume_from + content_length
+                if ctx.resume_from and response.status_code == 206
                 else content_length
             )
 
-            mode = "ab" if resume_from > 0 and response.status_code == 206 else "wb"
-            downloaded = resume_from
+            mode = "ab" if ctx.resume_from > 0 and response.status_code == 206 else "wb"
+            downloaded = ctx.resume_from
             start_time = time.monotonic()
             last_emit = 0.0
 
-            with tmp_path.open(mode) as f:
+            with ctx.tmp_path.open(mode) as f:
                 for chunk in response.iter_bytes(chunk_size=CHUNK_SIZE):
                     if self._cancelled:
                         self._emit(
-                            progress_callback,
+                            ctx.progress_callback,
                             DownloadProgress(
-                                model_id=config.model_id,
+                                model_id=ctx.config.model_id,
                                 status=DownloadStatus.CANCELLED,
                                 downloaded_bytes=downloaded,
                                 total_bytes=total or None,
@@ -418,12 +405,12 @@ class ModelDownloader:
                     now = time.monotonic()
                     if now - last_emit >= 0.25 or (total and downloaded >= total):
                         elapsed = max(now - start_time, 1e-9)
-                        speed = (downloaded - resume_from) / (elapsed * 1024 * 1024)
+                        speed = (downloaded - ctx.resume_from) / (elapsed * 1024 * 1024)
                         pct = (downloaded / total * 100) if total else 0.0
                         self._emit(
-                            progress_callback,
+                            ctx.progress_callback,
                             DownloadProgress(
-                                model_id=config.model_id,
+                                model_id=ctx.config.model_id,
                                 status=DownloadStatus.DOWNLOADING,
                                 progress_pct=pct,
                                 speed_mb=speed,
@@ -436,9 +423,9 @@ class ModelDownloader:
                     # Check cancellation after each chunk (callback may have set it).
                     if self._cancelled:
                         self._emit(
-                            progress_callback,
+                            ctx.progress_callback,
                             DownloadProgress(
-                                model_id=config.model_id,
+                                model_id=ctx.config.model_id,
                                 status=DownloadStatus.CANCELLED,
                                 downloaded_bytes=downloaded,
                                 total_bytes=total or None,
@@ -447,20 +434,20 @@ class ModelDownloader:
                         raise DownloadError("Download cancelled")
 
         # Download complete — move .part file to final location.
-        tmp_path.replace(local_path)
-        logger.info("Downloaded %s -> %s", url, local_path)
+        ctx.tmp_path.replace(ctx.local_path)
+        logger.info("Downloaded %s -> %s", ctx.url, ctx.local_path)
 
         self._emit(
-            progress_callback,
+            ctx.progress_callback,
             DownloadProgress(
-                model_id=config.model_id,
+                model_id=ctx.config.model_id,
                 status=DownloadStatus.COMPLETED,
                 progress_pct=100.0,
                 downloaded_bytes=downloaded,
                 total_bytes=total or downloaded,
             ),
         )
-        return local_path
+        return ctx.local_path
 
     # -- static helpers -----------------------------------------------------
 
