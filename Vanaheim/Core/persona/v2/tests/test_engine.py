@@ -13,10 +13,10 @@ _CORE_DIR = str(Path(__file__).resolve().parent.parent.parent)
 if _CORE_DIR not in sys.path:
     sys.path.insert(0, _CORE_DIR)
 
-from persona.v2.engine import PersonaEngine
-from persona.v2.models import PersonaContext, PersonaIdentity, PersonaTemplate
-from persona.v2.switcher import PersonaSwitcher
-from persona.v2.templates import BUILTIN_TEMPLATES, PersonaTemplateLoader
+from persona.v2.engine import PersonaEngine  # noqa: E402
+from persona.v2.models import PersonaContext, PersonaIdentity, PersonaTemplate  # noqa: E402
+from persona.v2.switcher import PersonaSwitcher  # noqa: E402
+from persona.v2.templates import BUILTIN_TEMPLATES, PersonaTemplateLoader  # noqa: E402
 
 
 # ---------------------------------------------------------------------------

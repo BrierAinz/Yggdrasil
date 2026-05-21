@@ -82,8 +82,14 @@ class OdinAgent(VanirAgent):
         base_prompt = self._persona_loader.get_system_prompt("odin")
 
         modifiers = {
-            "creative": "\n\nModo: Creativo. Explora ideas audaces, genera contenido original, piensa fuera de lo convencional.",
-            "analysis": "\n\nModo: Análisis profundo. Examina todos los aspectos, identifica patrones, proporciona insights detallados.",
+            "creative": (
+                "\n\nModo: Creativo. Explora ideas audaces, "
+                "genera contenido original, piensa fuera de lo convencional."
+            ),
+            "analysis": (
+                "\n\nModo: Análisis profundo. Examina todos los aspectos, "
+                "identifica patrones, proporciona insights detallados."
+            ),
             "default": "\n\nModo: Balanceado. Adapta el estilo según el contexto de la tarea.",
         }
 
@@ -225,22 +231,22 @@ class OdinAgent(VanirAgent):
                     },
                 ) as resp,
             ):
-                    resp.raise_for_status()
-                    async for line in resp.aiter_lines():
-                        if line.startswith("data: "):
-                            data_str = line[6:]
-                            if data_str == "[DONE]":
-                                break
-                            import json
+                resp.raise_for_status()
+                async for line in resp.aiter_lines():
+                    if line.startswith("data: "):
+                        data_str = line[6:]
+                        if data_str == "[DONE]":
+                            break
+                        import json
 
-                            try:
-                                data = json.loads(data_str)
-                                delta = data["choices"][0].get("delta", {})
-                                content = delta.get("content", "")
-                                if content:
-                                    yield content
-                            except (json.JSONDecodeError, KeyError):
-                                continue
+                        try:
+                            data = json.loads(data_str)
+                            delta = data["choices"][0].get("delta", {})
+                            content = delta.get("content", "")
+                            if content:
+                                yield content
+                        except (json.JSONDecodeError, KeyError):
+                            continue
 
         except Exception as e:
             yield f"[Error: {e!s}]"

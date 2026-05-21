@@ -150,20 +150,20 @@ class AdanAgent(VanirAgent):
                     },
                 ) as resp,
             ):
-                    resp.raise_for_status()
-                    async for line in resp.aiter_lines():
-                        if line:
-                            import json
+                resp.raise_for_status()
+                async for line in resp.aiter_lines():
+                    if line:
+                        import json
 
-                            try:
-                                data = json.loads(line)
-                                chunk = data.get("response", "")
-                                if chunk:
-                                    yield chunk
-                                if data.get("done"):
-                                    break
-                            except json.JSONDecodeError:
-                                continue
+                        try:
+                            data = json.loads(line)
+                            chunk = data.get("response", "")
+                            if chunk:
+                                yield chunk
+                            if data.get("done"):
+                                break
+                        except json.JSONDecodeError:
+                            continue
 
             # Guardar memoria al finalizar
             self._muninn.write_memory_sync(
