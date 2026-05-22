@@ -65,6 +65,40 @@ class GitActivity:
         }
 
 
+def _run_git(directory: Path, *args: str) -> str | None:
+    """Run a git command in a directory, returning stdout or None on failure."""
+    try:
+        result = subprocess.run(
+            ["git", *args],
+            cwd=str(directory),
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+    except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
+        pass
+    return None
+
+
+def _parse_log_lines(output: str) -> list[GitLogEntry]:
+    """Parse ``git log --oneline`` output into GitLogEntry objects."""
+    entries: list[GitLogEntry] = []
+    for line in output.splitlines():
+        if not line:
+            continue
+        parts = line.split(" ", 1)
+        entries.append(
+            GitLogEntry(
+                hash=parts[0] if len(parts) >= 1 else "",
+                message=parts[1] if len(parts) >= 2 else "",
+            )
+        )
+    return entries
+
+
 def get_git_activity(directory: Path, max_commits: int = 10) -> GitActivity:
     """Get git activity for a directory.
 
@@ -84,73 +118,26 @@ def get_git_activity(directory: Path, max_commits: int = 10) -> GitActivity:
     activity = GitActivity(path=directory)
 
     # Check if it's a git repo
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", "--is-inside-work-tree"],
-            cwd=str(directory),
-            capture_output=True,
-            text=True,
-            timeout=5,
-            check=False,
-        )
-        if result.returncode != 0:
-            return activity
-    except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
+    is_repo = _run_git(directory, "rev-parse", "--is-inside-work-tree")
+    if is_repo is None:
         return activity
 
     activity.is_git_repo = True
 
     # Get branch
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", "--abbrev-ref", "HEAD"],
-            cwd=str(directory),
-            capture_output=True,
-            text=True,
-            timeout=5,
-            check=False,
-        )
-        if result.returncode == 0:
-            activity.branch = result.stdout.strip()
-    except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
-        pass
+    branch = _run_git(directory, "rev-parse", "--abbrev-ref", "HEAD")
+    if branch is not None:
+        activity.branch = branch
 
     # Get recent commits
-    try:
-        result = subprocess.run(
-            ["git", "log", "--oneline", f"-{max_commits}"],
-            cwd=str(directory),
-            capture_output=True,
-            text=True,
-            timeout=5,
-            check=False,
-        )
-        if result.returncode == 0:
-            for line in result.stdout.strip().splitlines():
-                if line:
-                    parts = line.split(" ", 1)
-                    entry = GitLogEntry(
-                        hash=parts[0] if len(parts) >= 1 else "",
-                        message=parts[1] if len(parts) >= 2 else "",
-                    )
-                    activity.recent_commits.append(entry)
-    except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
-        pass
+    log_output = _run_git(directory, "log", "--oneline", f"-{max_commits}")
+    if log_output is not None:
+        activity.recent_commits = _parse_log_lines(log_output)
 
     # Get status
-    try:
-        result = subprocess.run(
-            ["git", "status", "--short"],
-            cwd=str(directory),
-            capture_output=True,
-            text=True,
-            timeout=5,
-            check=False,
-        )
-        if result.returncode == 0:
-            activity.status_lines = [line for line in result.stdout.strip().splitlines() if line]
-    except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
-        pass
+    status_output = _run_git(directory, "status", "--short")
+    if status_output is not None:
+        activity.status_lines = [line for line in status_output.splitlines() if line]
 
     return activity
 

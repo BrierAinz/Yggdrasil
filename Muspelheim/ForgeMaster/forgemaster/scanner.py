@@ -181,55 +181,58 @@ class ModelScanner:
             source=metadata.get("source"),
         )
 
+    def _read_json_config(self, config_path: Path, metadata: dict) -> None:
+        """Read a JSON config file and update metadata with recognized keys."""
+        if not config_path.is_file():
+            return
+        try:
+            with config_path.open() as f:
+                config = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            return
+        key_map = {
+            "model_type": "architecture",
+            "max_position_embeddings": "context_length",
+            "name_or_path": "source",
+        }
+        for json_key, meta_key in key_map.items():
+            if json_key in config and json_key != "model_type":
+                metadata[meta_key] = config[json_key]
+            elif json_key == "model_type" and json_key in config:
+                metadata.setdefault("architecture", config[json_key])
+
+    def _read_yaml_metadata(self, dir_path: Path, metadata: dict) -> None:
+        """Read metadata.yaml or models.yaml and fill missing keys."""
+        yaml_keys = [
+            "name",
+            "architecture",
+            "parameters",
+            "context_length",
+            "quantization",
+            "vram_required_gb",
+            "download_date",
+            "source",
+        ]
+        for yaml_name in ["metadata.yaml", "models.yaml"]:
+            yaml_path = dir_path / yaml_name
+            if not yaml_path.is_file():
+                continue
+            try:
+                with yaml_path.open() as f:
+                    ydata = yaml.safe_load(f) or {}
+                for key in yaml_keys:
+                    if key in ydata and key not in metadata:
+                        metadata[key] = ydata[key]
+            except (yaml.YAMLError, OSError):
+                pass
+
     def _read_hf_metadata(self, dir_path: Path) -> dict:
         """Read HuggingFace-style config.json and metadata from a directory."""
         metadata: dict = {}
-        config_path = dir_path / "config.json"
-        if config_path.is_file():
-            try:
-                with config_path.open() as f:
-                    config = json.load(f)
-                if "model_type" in config:
-                    metadata["architecture"] = config["model_type"]
-                if "max_position_embeddings" in config:
-                    metadata["context_length"] = config["max_position_embeddings"]
-                if "name_or_path" in config:
-                    metadata["source"] = config["name_or_path"]
-            except (json.JSONDecodeError, OSError):
-                pass
 
-        # Try reading tokenizer_config.json for additional info
-        tokenizer_config = dir_path / "tokenizer_config.json"
-        if tokenizer_config.is_file():
-            try:
-                with tokenizer_config.open() as f:
-                    config = json.load(f)
-                if "model_type" in config and not metadata.get("architecture"):
-                    metadata["architecture"] = config["model_type"]
-            except (json.JSONDecodeError, OSError):
-                pass
-
-        # Try models.yaml or metadata.yaml
-        for yaml_name in ["metadata.yaml", "models.yaml"]:
-            yaml_path = dir_path / yaml_name
-            if yaml_path.is_file():
-                try:
-                    with yaml_path.open() as f:
-                        ydata = yaml.safe_load(f) or {}
-                    for key in [
-                        "name",
-                        "architecture",
-                        "parameters",
-                        "context_length",
-                        "quantization",
-                        "vram_required_gb",
-                        "download_date",
-                        "source",
-                    ]:
-                        if key in ydata and key not in metadata:
-                            metadata[key] = ydata[key]
-                except (yaml.YAMLError, OSError):
-                    pass
+        self._read_json_config(dir_path / "config.json", metadata)
+        self._read_json_config(dir_path / "tokenizer_config.json", metadata)
+        self._read_yaml_metadata(dir_path, metadata)
 
         # Derive name from directory
         metadata.setdefault("name", dir_path.name)

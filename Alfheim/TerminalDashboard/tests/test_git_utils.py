@@ -253,7 +253,7 @@ class TestGetRealmGitActivities:
         (realm_dir / "provider-openai").mkdir()
 
         # Realm root is not a repo, but projects are
-        def mock_activity(path: Path, max_commits: int = 10) -> GitActivity:
+        def mock_activity(path: Path, _max_commits: int = 10) -> GitActivity:
             if path == realm_dir:
                 return GitActivity(path=path, is_git_repo=False)
             return GitActivity(path=path, is_git_repo=True, branch="dev")
