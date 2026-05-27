@@ -1,0 +1,39 @@
+{
+  "name": "Yggdrasil",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "postCreateCommand": "pip install -e Asgard/lilith-core -e Asgard/lilith-memory -e Asgard/lilith-tools -e Asgard/lilith-orchestrator -e Asgard/lilith-api -e Asgard/lilith-cli -e Vanaheim/vanaheim-framework && pre-commit install || true",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "ms-python.debugpy",
+        "tamasfe.even-better-toml",
+        "redhat.vscode-yaml"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "python.formatting.provider": "none",
+        "[python]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        },
+        "editor.formatOnSave": true,
+        "files.autoSave": "afterDelay"
+      }
+    }
+  },
+  "remoteEnv": {
+    "PYTHONPATH": "/workspaces/Yggdrasil:${containerEnv:PYTHONPATH}"
+  }
+}

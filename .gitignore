@@ -1,0 +1,116 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+.env.*
+!.env.example
+.venv/
+env/
+venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+website-v2/build/
+website-v2/.docusaurus/
+npm-debug.log
+yarn-error.log
+.pnpm-debug.log
+.next/
+dist/
+build/
+*.map
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Secrets & certificates
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+secrets/
+.secrets/
+
+# Python caches
+ruff_cache/
+.mypy_cache/
+.pytype/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Yggdrasil specific
+Helheim/Quarantine_*/
+Helheim/Archives_*/
+Helheim/*.tar.gz
+*.log
+logs/
+tmp/
+temp/
+
+# ML Models & Datasets
+Niflheim/Datasets/
+Niflheim/Models/
+*.safetensors
+*.pth
+*.pt
+*.bin
+*.onnx
+*.ckpt
+
+# Generated outputs (images, archives)
+Muspelheim/AI-Influencer/outputs/**/*.png
+Muspelheim/AI-Influencer/outputs/**/*.jpg
+Muspelheim/AI-Influencer/outputs/**/*.webp
+
+# Binaries & archives
+Asgard/*.tar.gz
+Asgard/*.exe
+*.exe
+
+# Databases
+*.sqlite3
+*.db
+*.sqlite
+*.db-journal
+**/chroma.sqlite3
+**/chroma/*.sqlite3
+
+# Tool caches (do not track skill caches)
+.minimax/
+.claude/
+.hermes/
+
+# VS Code extension build artifacts
+Alfheim/VSCode_Extension_Lilith/out/
+*.vsix
+
+# Vanaheim runtime/registry
+Vanaheim/bot_registry.json
+
+# State files
+.yggdrasil_state.json
+
+# Embedded subprojects — ignore build/output dirs, keep YggdrasilForge source tracked
+Alfheim/YggdrasilStudio/
+Alfheim/YggdrasilForge/node_modules/
+Alfheim/YggdrasilForge/dist/
+Alfheim/YggdrasilForge/build/
+Alfheim/YggdrasilForge/.vite/
+Alfheim/YggdrasilForge/backend/__pycache__/
+Alfheim/YggdrasilForge/frontend/node_modules/
+Alfheim/YggdrasilForge/frontend/dist/

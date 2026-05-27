@@ -1,0 +1,116 @@
+# Ruff configuration for Yggdrasil
+# https://docs.astral.sh/ruff/configuration/
+
+target-version = "py311"
+line-length = 100
+indent-width = 4
+
+# Top-level exclude — these directories are completely skipped
+extend-exclude = [
+    "Helheim",
+    "Niflheim",
+    "Muspelheim/AI-Influencer",
+    "Muspelheim/AutoMode",
+    "Muspelheim/Docs",
+    "Asgard/Lilith",
+    "Vanaheim/Agents",
+    "Vanaheim/Bots_Lilith_v5",
+    "Vanaheim/Config",
+    "Vanaheim/Core",
+    "Vanaheim/Council",
+    "Vanaheim/bifrost",
+    "Vanaheim/gamemaster-mcp-server",
+    "Svartalfheim",
+    "Midgard",
+    "Jotunheim",
+    "Alfheim/YggdrasilStudio",
+    "Alfheim/YggdrasilForge",
+    ".git",
+    "__pycache__",
+    "*.egg-info",
+    "node_modules",
+    ".venv",
+    "venv",
+    "website-v2",
+]
+
+[lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # Pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "RUF",  # Ruff-specific rules
+    "C4",   # flake8-comprehensions
+    "ERA",  # eradicate (commented-out code)
+    "PTH",  # flake8-use-pathlib
+    "PL",   # pylint
+    "TRY",  # tryceratops
+]
+
+ignore = [
+    "E501",    # line too long (handled by formatter)
+    "PLR0913", # too many arguments
+    "PLR2004", # magic value comparison
+    "TRY003",  # avoid specifying exception messages
+    "B905",    # zip() without strict (py39 compat)
+    "PLC0415", # import not at top-level (legitimate in tests & lazy imports)
+    "RUF001",  # ambiguous unicode char in string (Norse dashes are intentional)
+    "RUF002",  # ambiguous unicode char in docstring (Norse theme is intentional)
+    "RUF003",  # ambiguous unicode char in comment (Norse theme is intentional)
+    "RUF012",  # mutable class attr default (dataclass pattern)
+    "PLW1510", # subprocess run without check (intentional in health monitors & CLI)
+    "PLW0603", # global statement in function (singleton pattern)
+    "PLR0912", # too many branches (CLI commands are naturally branching)
+    "PLR0915", # too many statements (CLI commands are naturally long)
+    "PLR0911", # too many return statements
+    "TRY300",  # consider moving to else block (readability preference)
+    "TRY401",  # redundant exception object in logging.exception
+    "B008",    # function call in argument defaults (FastAPI Depends pattern)
+    "B017",    # assert blind Exception (test pattern)
+    "E741",    # ambiguous variable name (l is fine in context)
+    "E722",    # bare except (common in CLI error handling)
+    "E402",    # module level import not at top (legacy code with sys.path hacks)
+    "SIM105",  # try-except-pass -> contextlib.suppress (sometimes less readable)
+    "SIM108",  # ternary operator (sometimes if/else is clearer)
+    "SIM102",  # nested if -> single if (sometimes nesting is clearer)
+    "RUF034",  # useless if-else (false positives on intentional fallbacks)
+    "ANN401",  # Any type in dynamic APIs (LLM providers, tool kwargs, config)
+]
+
+fixable = ["ALL"]
+unfixable = []
+
+[lint.isort]
+known-first-party = ["lilith_core", "lilith_cli", "lilith_api", "lilith_memory", "lilith_tools", "lilith_orchestrator", "forgemaster", "autosub", "alfheim_dashboard", "terminaldashboard", "vanaheim"]
+force-single-line = false
+lines-after-imports = 2
+
+[lint.per-file-ignores]
+"**/tests/**" = ["F401", "PTH", "ARG002", "PLR2004"]
+"*_test.py" = ["F401", "PTH", "ARG002", "PLR2004"]
+"conftest.py" = ["F401", "PTH"]
+# Path is used at runtime (not just type annotations) in MemoryStore
+"Asgard/lilith-memory/lilith_memory/store.py" = ["TC003"]
+# FastAPI route handlers commonly raise HTTPException inside except blocks (B904)
+# and abstract raises to inner functions within try blocks (TRY301)
+"Alfheim/YggdrasilStudio/backend/routes/**" = ["B904", "TRY301"]
+"Alfheim/YggdrasilStudio/backend/routes/ws_routes.py" = ["B904", "TRY301"]
+"Alfheim/YggdrasilStudio/backend/main.py" = ["B904"]
+"Alfheim/YggdrasilStudio/backend/comfyui_client.py" = ["B904"]
+"Alfheim/YggdrasilForge/backend/routes/**" = ["B904", "TRY301"]
+"Alfheim/YggdrasilForge/backend/blender_client.py" = ["B904"]
+"Alfheim/YggdrasilForge/backend/routes/blender.py" = ["TC001"]
+
+# Svartalfheim skill scripts: section-separator comments are not dead code
+"Svartalfheim/Docs/skills/**/*.py" = ["ERA001", "N806"]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"

@@ -1,0 +1,148 @@
+{
+  "name": "Yggdrasil Architecture Manifest",
+  "version": "3.0.0",
+  "timestamp": 1779829096.1090996,
+  "modules": [
+    {
+      "name": "lilith-core",
+      "version": "2.1.0",
+      "path": "Asgard/lilith-core"
+    },
+    {
+      "name": "lilith-api",
+      "version": "1.0.0",
+      "path": "Asgard/lilith-api"
+    },
+    {
+      "name": "lilith-cli",
+      "version": "3.0.0",
+      "path": "Asgard/lilith-cli"
+    },
+    {
+      "name": "lilith-bridge",
+      "version": "1.0.0",
+      "path": "Asgard/lilith-bridge"
+    },
+    {
+      "name": "lilith-orchestrator",
+      "version": "1.0.0",
+      "path": "Asgard/lilith-orchestrator"
+    },
+    {
+      "name": "lilith-memory",
+      "version": "1.0.0",
+      "path": "Asgard/lilith-memory"
+    },
+    {
+      "name": "lilith-skills",
+      "version": "1.0.0",
+      "path": "Asgard/lilith-skills"
+    },
+    {
+      "name": "lilith-tools",
+      "version": "1.0.0",
+      "path": "Asgard/lilith-tools"
+    }
+  ],
+  "agents": [
+    {
+      "name": "Lilith CLI",
+      "version": "3.0.0",
+      "path": "lilith_cli.py",
+      "permissions": [
+        "read_files",
+        "run_commands",
+        "access_web"
+      ]
+    }
+  ],
+  "services": [
+    {
+      "name": "API Gateway",
+      "port": 8000,
+      "path": "Asgard/lilith-orchestrator/gateway"
+    },
+    {
+      "name": "Model Orchestrator",
+      "port": 8001,
+      "path": "Asgard/lilith-orchestrator"
+    },
+    {
+      "name": "Memory Service",
+      "port": 8002,
+      "path": "Asgard/lilith-memory"
+    }
+  ],
+  "permissions": {
+    "Lilith CLI": {
+      "read_files": {
+        "allowed": false,
+        "description": "Acceso a archivos locales para lectura",
+        "scope": "Limited to Yggdrasil project files"
+      },
+      "run_commands": {
+        "allowed": false,
+        "description": "Ejecución de comandos del sistema",
+        "scope": "Limited to project-related commands"
+      },
+      "access_web": {
+        "allowed": false,
+        "description": "Conexión a servicios web",
+        "scope": "API calls only"
+      },
+      "manage_content": {
+        "allowed": false,
+        "description": "Gestión de contenido en plataformas",
+        "scope": "Social media and business websites"
+      },
+      "computer_vision": {
+        "allowed": false,
+        "description": "Visión por computadora para lectura de imágenes",
+        "scope": "Text extraction and object detection"
+      }
+    }
+  },
+  "communication_channels": [
+    {
+      "name": "API Gateway API",
+      "type": "REST API",
+      "port": 8000,
+      "path": "Asgard/lilith-orchestrator/gateway"
+    },
+    {
+      "name": "Model Orchestrator API",
+      "type": "REST API",
+      "port": 8001,
+      "path": "Asgard/lilith-orchestrator"
+    },
+    {
+      "name": "Memory Service API",
+      "type": "REST API",
+      "port": 8002,
+      "path": "Asgard/lilith-memory"
+    }
+  ],
+  "data_transmission": {
+    "compression": {
+      "enabled": true,
+      "algorithm": "gzip",
+      "level": 5
+    },
+    "caching": {
+      "enabled": true,
+      "ttl": 300,
+      "max_size": "100MB"
+    },
+    "batching": {
+      "enabled": true,
+      "size": 10,
+      "timeout": 5
+    }
+  },
+  "compatibility": {
+    "python_version": "3.12.3 (main, Mar 23 2026, 19:04:32) [GCC 13.3.0]",
+    "platform": "linux",
+    "modules_compatible": true,
+    "agents_integrated": true
+  }
+}

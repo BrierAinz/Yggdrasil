@@ -1,0 +1,33 @@
+{
+  "name": "yggdrasil",
+  "private": true,
+  "description": "Yggdrasil — The World Tree. A 9-realm Nordic ecosystem for AI-assisted creative development.",
+  "version": "0.1.0",
+  "workspaces": [
+    "Alfheim/YggdrasilStudio/frontend",
+    "Alfheim/YggdrasilForge/frontend",
+    "Alfheim/dashboard"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "dev:studio": "turbo dev --filter=@yggdrasil/studio-ui",
+    "dev:forge": "turbo dev --filter=@yggdrasil/forge-ui",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "test": "turbo test",
+    "clean": "turbo clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.0",
+    "typescript": "^5.7.0",
+    "tailwindcss": "^3.4.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.4.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

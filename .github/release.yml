@@ -1,0 +1,35 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+      - dependencies
+    authors:
+      - dependabot[bot]
+      - github-actions[bot]
+  categories:
+    - title: "🚀 Features"
+      labels:
+        - enhancement
+        - feature
+    - title: "🐛 Bug Fixes"
+      labels:
+        - bug
+        - fix
+    - title: "📚 Documentation"
+      labels:
+        - documentation
+    - title: "🌐 Realms"
+      labels:
+        - realm-migration
+        - realm-astral
+    - title: "🤖 Hermes-Lilith"
+      labels:
+        - lilith
+        - agent
+        - memory
+    - title: "🔧 Dependencies"
+      labels:
+        - dependencies
+    - title: "🧹 Other Changes"
+      labels:
+        - "*"
