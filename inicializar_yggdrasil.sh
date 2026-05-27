@@ -12,7 +12,7 @@ if ! command -v uv &> /dev/null; then
 fi
 
 # Verificar el directorio de Yggdrasil
-YGGDRASIL_DIR="/mnt/d/Proyectos/Yggdrasil"
+YGGDRASIL_DIR="/home/brierainz/Proyectos/Yggdrasil"
 if [ ! -d "$YGGDRASIL_DIR" ]; then
     echo "❌ Error: Directorio de Yggdrasil no encontrado en $YGGDRASIL_DIR"
     exit 1

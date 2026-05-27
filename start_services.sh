@@ -31,7 +31,7 @@ echo "📦 Iniciando servicios en segundo plano..."
 
 # Iniciar API Gateway
 echo "🚀 API Gateway (port 8000)..."
-cd /mnt/d/Proyectos/Yggdrasil/Asgard/lilith-api && uv run python run.py > /mnt/d/Proyectos/Yggdrasil/api_gateway.log 2>&1 &
+cd /home/brierainz/Proyectos/Yggdrasil/Asgard/lilith-api && uv run python run.py > /home/brierainz/Proyectos/Yggdrasil/api_gateway.log 2>&1 &
 API_PID=$!
 echo "   PID: $API_PID"
 echo "   Log: api_gateway.log"
@@ -41,19 +41,19 @@ sleep 2
 
 # Iniciar Model Orchestrator
 echo "🚀 Model Orchestrator (port 8001)..."
-cd /mnt/d/Proyectos/Yggdrasil/Asgard/lilith-orchestrator && uv run python -m lilith_orchestrator > /mnt/d/Proyectos/Yggdrasil/model_orchestrator.log 2>&1 &
+cd /home/brierainz/Proyectos/Yggdrasil/Asgard/lilith-orchestrator && uv run python -m lilith_orchestrator > /home/brierainz/Proyectos/Yggdrasil/model_orchestrator.log 2>&1 &
 ORCHESTRATOR_PID=$!
 echo "   PID: $ORCHESTRATOR_PID"
 echo "   Log: model_orchestrator.log"
 
 # Iniciar Memory Service
 echo "🚀 Memory Service (port 8002)..."
-cd /mnt/d/Proyectos/Yggdrasil/Asgard/lilith-memory && uv run python -m lilith_memory > /mnt/d/Proyectos/Yggdrasil/memory_service.log 2>&1 &
+cd /home/brierainz/Proyectos/Yggdrasil/Asgard/lilith-memory && uv run python -m lilith_memory > /home/brierainz/Proyectos/Yggdrasil/memory_service.log 2>&1 &
 MEMORY_PID=$!
 echo "   PID: $MEMORY_PID"
 echo "   Log: memory_service.log"
 
-cd /mnt/d/Proyectos/Yggdrasil
+cd /home/brierainz/Proyectos/Yggdrasil
 
 echo
 echo "=============================================="

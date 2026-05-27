@@ -1,0 +1,14 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lilith-bridge"
+version = "1.0.0"
+description = "Bridge between Lilith and external services (Telegram, Discord)"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = ["lilith-core", "lilith-api"]
+
+[project.urls]
+Repository = "https://github.com/BrierAinz/Yggdrasil"
