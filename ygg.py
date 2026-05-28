@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Yggdrasil CLI - A beautiful, Hermes-style command-line interface for Yggdrasil
+BrierStudios Nordic - Yggdrasil CLI
+The World Tree command-line interface
 """
 
 import logging
@@ -20,50 +21,64 @@ from rich.theme import Theme
 
 # ── Configuration ──────────────────────────────────────────────
 logger = logging.getLogger(__name__)
-console = Console()
 YGGDRASIL_ROOT = Path(__file__).parent.resolve()
 
-# ── Theme & Style ──────────────────────────────────────────────
-yggdrasil_theme = Theme(
+# ── Nordic Frost Theme ────────────────────────────────────────
+nordic_theme = Theme(
     {
-        "realm": "gold1",
-        "error": "red",
-        "success": "green",
-        "warning": "yellow",
-        "info": "cyan",
-        "primary": "blue",
-        "secondary": "magenta",
-        "muted": "dim",
+        "realm": "bold #c9a55a",
+        "frost": "#7eb8c4",
+        "amethyst": "#8b6cc7",
+        "snow": "#c8d0e0",
+        "ember": "#c94f4f",
+        "pine": "#5b8a72",
+        "gold": "#c9a55a",
+        "steel": "#3d4162",
+        "error": "bold #c94f4f",
+        "success": "bold #5b8a72",
+        "warning": "bold #c9a55a",
+        "info": "#7eb8c4",
+        "primary": "#7eb8c4",
+        "secondary": "#8b6cc7",
+        "muted": "#3d4162",
     }
 )
-console = Console(theme=yggdrasil_theme)
+console = Console(theme=nordic_theme)
 
-# ── ASCII Art Banner ────────────────────────────────────────────
-YGGDRASIL_BANNER = """╭─────────────────────────────────────────────────────────────────╮
-│                 🌲 YGGDRASIL ECOSYSTEM 🌲                      │
-│                                                                 │
-│  The World Tree connecting the Nine Realms of AI and Software   │
-│                                                                 │
-│  [bold gold1]◈[/] [magenta]Asgard[/]    → [bold gold1]◈[/] [cyan]Vanaheim[/]   → [bold gold1]◈[/] [green]Alfheim[/]    → [bold gold1]◈[/] [red]Muspelheim[/] │
-│  [bold gold1]◈[/] [blue]Svartalfheim[/] → [bold gold1]◈[/] [orange]Jotunheim[/]  → [bold gold1]◈[/] [cyan]Niflheim[/]   → [bold gold1]◈[/] [white]Midgard[/]   │
-│                                                                 │
-│  [bold green]✓[/] Services Active   [bold blue]✓[/] Agents Connected   [bold yellow]✓[/] System Healthy │
-╰─────────────────────────────────────────────────────────────────╯"""
+# ── ASCII Art Banner ──────────────────────────────────────────
+YGGDRASIL_BANNER = """[bold #7eb8c4]
+          ╦ ╦ ╔═╗ ╔═╗ ╔╗╗ ╔═╗ ╦   ╔═╗
+          ╚╦╝ ║╣  ║ ╦ ║║║ ║╣  ║   ╚═╗
+           ╩  ╚═╝ ╚═╝ ╝╚╝ ╚═╝ ╩═╝ ╚═╝[/bold #7eb8c4]
+[dim #3d4162]          ───────────────────────────────[/dim #3d4162]
+[bold #c9a55a]          ᛒᚱᛁᛖᚱᛊᛏᚢᛞᛁᛟᛊ[/bold #c9a55a]  [dim #3d4162]|[/dim #3d4162]  [#c8d0e0]Nine Realms[/#c8d0e0]
 
-# ── Global State ────────────────────────────────────────────────
+[bold #c9a55a]◈[/bold #c9a55a] [#8b6cc7]Asgard[/#8b6cc7]    [dim]──[/dim]  [bold #c9a55a]◈[/bold #c9a55a] [#7eb8c4]Vanaheim[/#7eb8c4]  [dim]──[/dim]  [bold #c9a55a]◈[/bold #c9a55a] [#5b8a72]Alfheim[/#5b8a72]   [dim]──[/dim]  [bold #c9a55a]◈[/bold #c9a55a] [#c94f4f]Muspelheim[/#c94f4f]
+[bold #c9a55a]◈[/bold #c9a55a] [#7eb8c4]Svartalf[/#7eb8c4]  [dim]──[/dim]  [bold #c9a55a]◈[/bold #c9a55a] [#c9a55a]Jotunheim[/#c9a55a] [dim]──[/dim]  [bold #c9a55a]◈[/bold #c9a55a] [#8b6cc7]Niflheim[/#8b6cc7]  [dim]──[/dim]  [bold #c9a55a]◈[/bold #c9a55a] [#c8d0e0]Midgard[/#c8d0e0]
+
+[dim #3d4162]  ᚨ[/dim #3d4162] [#5b8a72]Systems Active[/#5b8a72]  [dim #3d4162]ᚦ[/dim #3d4162] [#7eb8c4]Agents Ready[/#7eb8c4]  [dim #3d4162]ᚱ[/dim #3d4162] [#c9a55a]Tree Healthy[/#c9a55a]"""
+
+# ── Global State ──────────────────────────────────────────────
 app = App(
     name="ygg",
-    version="3.0.0",
-    help="Yggdrasil CLI - Hermes-style interface for your AI ecosystem",
+    version="5.1.0",
+    help="BrierStudios Nordic - Yggdrasil CLI",
 )
 
-# ── Helper Functions ────────────────────────────────────────────
+# ── Helper Functions ──────────────────────────────────────────
 def print_banner():
-    """Print ASCII art banner"""
+    """Print Nordic banner"""
     console.print()
-    console.print(Panel.fit(Text(YGGDRASIL_BANNER, style="gold1")))
-    console.print(Rule(style="dim"))
-    console.print(Text(f"[bold green]Version[/] {app.version} · [cyan]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}[/]", style="dim"))
+    console.print(Panel.fit(
+        YGGDRASIL_BANNER,
+        border_style="#1a1d35",
+        title="[bold #7eb8c4]ᛒ[/bold #7eb8c4] YGGDRASIL",
+        title_align="left",
+        subtitle=f"[dim #3d4162]v{app.version}[/dim #3d4162]",
+    ))
+    console.print(Rule(style="#1a1d35"))
+    now = datetime.now()
+    console.print(f"  [#7eb8c4]{now.strftime('%H:%M')}[/#7eb8c4]  [dim #3d4162]{now.strftime('%A, %d %B %Y')}[/dim #3d4162]")
     console.print()
 
 def validate_path(path: str):
@@ -73,21 +88,12 @@ def validate_path(path: str):
         raise cyclopts.ValidationError(f"Path '{path}' does not exist")
     return p
 
-def format_duration(seconds: float):
-    """Format duration for display"""
-    if seconds < 60:
-        return f"{seconds:.1f}s"
-    elif seconds < 3600:
-        return f"{seconds/60:.1f}m"
-    else:
-        return f"{seconds/3600:.1f}h"
-
-# ── Core Commands ──────────────────────────────────────────────
+# ── Core Commands ─────────────────────────────────────────────
 @app.command
 def help():
     """Show help information"""
     print_banner()
-    console.print(Text("Available commands:", style="bold gold1"))
+    console.print("  [bold #c9a55a]Commands:[/bold #c9a55a]")
     console.print()
     console.print(app.help())
 
@@ -95,130 +101,118 @@ def help():
 def status():
     """Show Yggdrasil status and health"""
     print_banner()
-    console.print(Text("Checking Yggdrasil status...", style="cyan"))
+    console.print("  [#7eb8c4]Scanning the Nine Realms...[/#7eb8c4]")
 
-    # Run health check
     try:
         from yggdrasil_cli import health_check
         health_check()
     except ImportError:
-        console.print(Text("Running basic status check...", style="warning"))
+        console.print("  [warning]Basic scan...[/warning]")
         console.print()
 
-        # Basic directory check
         root_dir = Path.cwd()
         config_file = root_dir / ".env"
 
-        table = Table(show_header=True, header_style="bold blue")
-        table.add_column("Component", style="bold")
-        table.add_column("Status", style="bold")
-        table.add_column("Details")
+        table = Table(show_header=True, header_style="bold #7eb8c4", border_style="#1a1d35")
+        table.add_column("  Realm", style="bold")
+        table.add_column("  Status", style="bold")
+        table.add_column("  Path")
 
-        # Check directories
-        realms = ["Asgard", "Vanaheim", "Alfheim", "Svartalfheim", "Muspelheim",
-                 "Helheim", "Niflheim", "Jotunheim", "Midgard"]
+        realms = {
+            "Asgard": "#8b6cc7", "Vanaheim": "#7eb8c4", "Alfheim": "#5b8a72",
+            "Muspelheim": "#c94f4f", "Niflheim": "#8b6cc7", "Svartalfheim": "#7eb8c4",
+            "Midgard": "#c8d0e0", "Helheim": "#3d4162", "Jotunheim": "#c9a55a",
+        }
 
-        for realm in realms:
+        for realm, color in realms.items():
             realm_dir = root_dir / realm
             exists = realm_dir.exists()
-            status = "[bold green]✓[/]" if exists else "[bold red]✗[/]"
-            details = str(realm_dir) if exists else "Directory not found"
-            table.add_row(realm, status, details)
+            status_icon = "[bold #5b8a72]✓[/bold #5b8a72]" if exists else "[bold #c94f4f]✗[/bold #c94f4f]"
+            details = str(realm_dir) if exists else "[dim]Not found[/dim]"
+            table.add_row(f"[{color}]{realm}[/{color}]", status_icon, details)
 
-        table.add_row("Config",
-                     "[bold green]✓[/]" if config_file.exists() else "[bold red]✗[/]",
-                     str(config_file) if config_file.exists() else "Config file not found")
+        table.add_row(
+            "  Config",
+            "[bold #5b8a72]✓[/bold #5b8a72]" if config_file.exists() else "[bold #c94f4f]✗[/bold #c94f4f]",
+            str(config_file) if config_file.exists() else "[dim]Not found[/dim]"
+        )
 
         console.print(table)
         console.print()
 
-        if config_file.exists():
-            console.print(Text("Configuration found:", style="bold"))
-            with open(config_file) as f:
-                console.print(f.read())
-
 @app.command
 def chat():
-    """Start interactive chat with Yggdrasil (like Hermes)"""
+    """Start interactive chat with Yggdrasil"""
     print_banner()
-    console.print(Text("Starting Yggdrasil Chat...", style="cyan"))
-
-    # Start Yggdrasil chat
+    console.print("  [#7eb8c4]Initializing Yggdrasil connection...[/#7eb8c4]")
     try:
         from yggdrasil_cli import chat as start_chat
         start_chat()
     except ImportError:
-        console.print(Text("Chat functionality not available", style="warning"))
+        console.print("  [warning]Chat module not available[/warning]")
 
 @app.command
 def run(command: str, description: str = None):
     """
-    Run custom commands (like Hermes)
-    
+    Run custom commands
+
     Args:
         command: Command to execute
         description: Description of what the command does
     """
     print_banner()
     if description:
-        console.print(Text(f"Running: {description}", style="bold"))
-
-    console.print(Text(f"Executing: {command}", style="cyan"))
+        console.print(f"  [bold #c8d0e0]{description}[/bold #c8d0e0]")
+    console.print(f"  [#7eb8c4]ᚨ {command}[/#7eb8c4]")
 
     try:
         import subprocess
-        result = subprocess.run(
-            command,
-            shell=True,
-            capture_output=True,
-            text=True,
-            cwd=str(YGGDRASIL_ROOT)
-        )
+        result = subprocess.run(command, shell=True, capture_output=True, text=True, cwd=str(YGGDRASIL_ROOT))
 
         if result.stdout:
-            console.print(Text("Output:", style="bold"))
+            console.print("  [bold #c8d0e0]Output:[/bold #c8d0e0]")
             console.print(result.stdout)
-
         if result.stderr:
-            console.print(Text("Error:", style="bold red"))
+            console.print("  [bold #c94f4f]Error:[/bold #c94f4f]")
             console.print(result.stderr)
 
-        console.print(Text(f"Command executed with code: {result.returncode}", style="bold"))
-
+        code_color = "#5b8a72" if result.returncode == 0 else "#c94f4f"
+        console.print(f"  [bold {code_color}]Exit: {result.returncode}[/bold {code_color}]")
     except Exception as e:
-        console.print(Text(f"Error: {e}", style="red"))
+        console.print(f"  [#c94f4f]Error: {e}[/#c94f4f]")
 
-# ── File System Commands ────────────────────────────────────────
+# ── File System Commands ──────────────────────────────────────
 @app.command
 def ls(directory: str = "."):
     """List files in a directory"""
     print_banner()
     try:
         p = validate_path(directory)
-
         if not p.is_dir():
             raise cyclopts.ValidationError(f"'{directory}' is not a directory")
 
-        console.print(Text(f"Directory listing for '{p}':", style="bold"))
+        console.print(f"  [bold #c8d0e0]{p}:[/bold #c8d0e0]")
         console.print()
 
-        table = Table(show_header=True, header_style="bold blue")
-        table.add_column("Name", style="bold")
-        table.add_column("Type", style="bold")
-        table.add_column("Size")
-        table.add_column("Modified")
+        table = Table(show_header=True, header_style="bold #7eb8c4", border_style="#1a1d35")
+        table.add_column("  Name", style="bold")
+        table.add_column("  Type")
+        table.add_column("  Size")
+        table.add_column("  Modified")
 
-        for item in p.iterdir():
-            item_type = "📄 File" if item.is_file() else "📁 Directory"
-            item_size = item.stat().st_size if item.is_file() else "—"
-            item_mtime = datetime.fromtimestamp(item.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
-
-            table.add_row(str(item.name), item_type, str(item_size), item_mtime)
+        for item in sorted(p.iterdir()):
+            if item.is_file():
+                item_type = "[#7eb8c4]file[/#7eb8c4]"
+                size = f"{item.stat().st_size:,}"
+            else:
+                item_type = "[#c9a55a]dir[/#c9a55a]"
+                size = "—"
+            mtime = datetime.fromtimestamp(item.stat().st_mtime).strftime("%Y-%m-%d %H:%M")
+            table.add_row(f"  {item.name}", item_type, size, mtime)
 
         console.print(table)
-
     except Exception as e:
-        console.print(Text(f"Error: {e}", style="red"))
+        console.print(f"  [#c94f4f]Error: {e}[/#c94f4f]")
 
 @app.command
 def cd(directory: str):
@@ -226,15 +220,12 @@ def cd(directory: str):
     print_banner()
     try:
         p = validate_path(directory)
-
         if not p.is_dir():
             raise cyclopts.ValidationError(f"'{directory}' is not a directory")
-
         os.chdir(str(p))
-        console.print(Text(f"Changed to: {p}", style="green"))
-
+        console.print(f"  [#5b8a72]→ {p}[/#5b8a72]")
     except Exception as e:
-        console.print(Text(f"Error: {e}", style="red"))
+        console.print(f"  [#c94f4f]Error: {e}[/#c94f4f]")
 
 @app.command
 def cat(file: str):
@@ -242,166 +233,87 @@ def cat(file: str):
     print_banner()
     try:
         p = validate_path(file)
-
         if not p.is_file():
             raise cyclopts.ValidationError(f"'{file}' is not a file")
-
-        console.print(Text(f"Contents of '{p}':", style="bold"))
-        console.print()
+        console.print(f"  [bold #c8d0e0]{p.name}:[/bold #c8d0e0]")
+        console.print(Rule(style="#1a1d35"))
         console.print(p.read_text())
-
     except Exception as e:
-        console.print(Text(f"Error: {e}", style="red"))
+        console.print(f"  [#c94f4f]Error: {e}[/#c94f4f]")
 
-# ── Service Management ──────────────────────────────────────────
+# ── Service Management ────────────────────────────────────────
 @app.command
 def start(service: str = "all"):
-    """
-    Start Yggdrasil services
-    
-    Args:
-        service: Service to start (default: all)
-    """
+    """Start Yggdrasil services"""
     print_banner()
-    console.print(Text(f"Starting service: {service}", style="cyan"))
-
-    services = {
-        "api": "API server",
-        "dashboard": "Web dashboard",
-        "agent": "Lilith Agent",
-        "all": "All services"
-    }
-
-    if service not in services:
-        console.print(Text(f"Unknown service: {service}", style="red"))
-        return
-
+    console.print(f"  [#7eb8c4]Starting: {service}[/#7eb8c4]")
     try:
         import subprocess
-
         if service == "all":
-            console.print(Text("Starting all services...", style="cyan"))
-            # Start all services
-            commands = [
-                "uv run poe dashboard &",
-                "uv run poe api &",
-                "uv run poe agent &"
-            ]
-
-            for cmd in commands:
+            for cmd in ["uv run poe dashboard", "uv run poe api", "uv run poe agent"]:
                 subprocess.run(cmd, shell=True, cwd=str(YGGDRASIL_ROOT))
-
-            console.print(Text("All services started", style="green"))
-
-        elif service == "api":
-            subprocess.run("uv run poe api &", shell=True, cwd=str(YGGDRASIL_ROOT))
-            console.print(Text("API server started", style="green"))
-
-        elif service == "dashboard":
-            subprocess.run("uv run poe dashboard &", shell=True, cwd=str(YGGDRASIL_ROOT))
-            console.print(Text("Web dashboard started", style="green"))
-
-        elif service == "agent":
-            subprocess.run("uv run poe agent &", shell=True, cwd=str(YGGDRASIL_ROOT))
-            console.print(Text("Lilith Agent started", style="green"))
-
+            console.print("  [#5b8a72]All services started[/#5b8a72]")
+        else:
+            subprocess.run(f"uv run poe {service}", shell=True, cwd=str(YGGDRASIL_ROOT))
+            console.print(f"  [#5b8a72]{service} started[/#5b8a72]")
     except Exception as e:
-        console.print(Text(f"Error: {e}", style="red"))
+        console.print(f"  [#c94f4f]Error: {e}[/#c94f4f]")
 
 @app.command
 def stop(service: str = "all"):
-    """
-    Stop Yggdrasil services
-    
-    Args:
-        service: Service to stop (default: all)
-    """
+    """Stop Yggdrasil services"""
     print_banner()
-    console.print(Text(f"Stopping service: {service}", style="cyan"))
-
+    console.print(f"  [#c9a55a]Stopping: {service}[/#c9a55a]")
     try:
         import subprocess
-
         if service == "all":
-            console.print(Text("Stopping all services...", style="cyan"))
-
-            # Find and kill all running processes
-            processes = [
-                "uvicorn",
-                "python -m uvicorn",
-                "poe",
-                "dashboard"
-            ]
-
-            for proc in processes:
+            for proc in ["uvicorn", "python -m uvicorn", "poe", "dashboard"]:
                 subprocess.run(f"pkill -f '{proc}'", shell=True)
-
-            console.print(Text("All services stopped", style="green"))
-
+            console.print("  [#5b8a72]All services stopped[/#5b8a72]")
         else:
             subprocess.run(f"pkill -f '{service}'", shell=True)
-            console.print(Text(f"{service} stopped", style="green"))
-
+            console.print(f"  [#5b8a72]{service} stopped[/#5b8a72]")
     except Exception as e:
-        console.print(Text(f"Error: {e}", style="red"))
+        console.print(f"  [#c94f4f]Error: {e}[/#c94f4f]")
 
-# ── Log Management ─────────────────────────────────────────────
+# ── Log Management ────────────────────────────────────────────
 @app.command
 def logs(service: str = "all", lines: int = 50):
-    """
-    Show log files
-    
-    Args:
-        service: Service to show logs for (default: all)
-        lines: Number of lines to show (default: 50)
-    """
+    """Show log files"""
     print_banner()
-
     log_dir = YGGDRASIL_ROOT / "logs"
-
     if not log_dir.exists():
-        console.print(Text("Log directory not found", style="warning"))
+        console.print("  [warning]No logs directory[/warning]")
         return
 
-    services = {
-        "api": "api.log",
-        "dashboard": "dashboard.log",
-        "agent": "agent.log"
-    }
-
+    services = {"api": "api.log", "dashboard": "dashboard.log", "agent": "agent.log"}
     if service == "all":
-        console.print(Text("Showing all logs:", style="bold"))
         for name, filename in services.items():
             log_file = log_dir / filename
             if log_file.exists():
                 console.print()
-                console.print(Text(f"--- {name} logs ---\n", style="bold"))
+                console.print(f"  [bold #7eb8c4]── {name} ──[/bold #7eb8c4]")
                 with open(log_file) as f:
-                    lines_content = f.readlines()[-lines:]
-                    console.print("".join(lines_content))
+                    console.print("".join(f.readlines()[-lines:]))
     else:
         if service not in services:
-            console.print(Text(f"Unknown service: {service}", style="red"))
+            console.print(f"  [#c94f4f]Unknown: {service}[/#c94f4f]")
             return
-
         log_file = log_dir / services[service]
         if log_file.exists():
-            console.print(Text(f"--- {service} logs ({lines} lines) ---", style="bold"))
+            console.print(f"  [bold #7eb8c4]── {service} ({lines} lines) ──[/bold #7eb8c4]")
             with open(log_file) as f:
-                lines_content = f.readlines()[-lines:]
-                console.print("".join(lines_content))
-        else:
-            console.print(Text(f"Log file for {service} not found", style="warning"))
+                console.print("".join(f.readlines()[-lines:]))
 
-# ── Main Entry Point ───────────────────────────────────────────
+# ── Main Entry Point ──────────────────────────────────────────
 if __name__ == "__main__":
     try:
         app()
     except KeyboardInterrupt:
         console.print()
-        console.print(Text("Yggdrasil CLI stopped by user", style="yellow"))
+        console.print("  [#c9a55a]ᛟ Interrupted[/#c9a55a]")
     except Exception as e:
-        console.print(Text(f"Error: {e}", style="red"))
+        console.print(f"  [#c94f4f]Error: {e}[/#c94f4f]")
         if os.getenv("DEBUG"):
             import traceback
             console.print(traceback.format_exc())

@@ -1,25 +1,73 @@
-# 🪦 Yggdrasil - El Árbol del Mundo
+# ᛒ YGGDRASIL
 
-Ecosistema de código modulares basados en la mitología nórdica.
+> **BrierStudios** — The World Tree
 
-## 📁 Estructura de reinos
+```
+          ╦ ╦ ╔═╗ ╔═╗ ╔╗╗ ╔═╗ ╦   ╔═╗
+          ╚╦╝ ║╣  ║ ╦ ║║║ ║╣  ║   ╚═╗
+           ╩  ╚═╝ ╚═╝ ╝╚╝ ╚═╝ ╩═╝ ╚═╝
+```
 
-- **Asgard**: Core del sistema, herramientas y bibliotecas base
-- **Alfheim**: Interfaces de usuario, dashboards y frontend
-- **Vanaheim**: Agentes y servicios de IA
-- **Muspelheim**: Proyectos en desarrollo y WIP
-- **Niflheim**: Almacenamiento de modelos y datos
-- **Helheim**: Archivos legacy y archivado
-- **Jotunheim**: Proyectos de gran escala
-- **Svartalfheim**: Documentación y recursos
-- **Midgard**: Proyectos personales y usuarios
+Ecosistema de software organizado bajo la mitologia nordica.
 
-## 🚀 Cómo empezar
+## Nine Realms
 
-1. Instala el CLI de Yggdrasil: `uv pip install -e Asgard/lilith-cli`
-2. Ejecuta el CLI: `yggdrasil`
-3. O lanza el dashboard TUI: `yggdrasil-tui`
+| Realm | Proposito | Estado |
+|-------|-----------|--------|
+| **Asgard** | Core — lilith-core, memory, tools, orchestrator, api, cli, skills, bridge | Activo |
+| **Vanaheim** | Agentes IA — vanaheim-framework, bifrost | Activo |
+| **Alfheim** | UI — dashboards, frontends | Prototipos |
+| **Svartalfheim** | Documentacion, planes, conocimiento | Activo |
+| **Muspelheim** | Desarrollo activo — ForgeMaster, AutoSub, AI-Influencer | WIP |
+| **Niflheim** | Assets, modelos, datasets | Gitignored |
+| **Helheim** | Cementerio — proyectos archivados | Read-only |
+| **Jotunheim** | Proyectos masivos (>1 mes) | Esperando |
+| **Midgard** | Apps personales | Activo |
 
-## 📚 Documentación
+## Quick Start
 
-Consulta la documentación en [docs.brierstudios.com](https://docs.brierstudios.com)
+```bash
+# Install
+cd Yggdrasil
+python -m venv .venv
+source .venv/bin/activate
+pip install -e Asgard/lilith-core -e Asgard/lilith-memory
+
+# Run CLI
+python ygg.py status
+python ygg.py chat
+
+# Or use alias
+ygg status
+```
+
+## Tech Stack
+
+- **Python** 3.11+
+- **FastAPI** + WebSocket (port 8000)
+- **SQLite** memory store
+- **Rich** + **Cyclopts** CLI
+- **PipeWire** audio routing
+
+## LLM Providers
+
+| Provider | Model | Base URL |
+|----------|-------|----------|
+| MiMo | MiMo-V2.5-Pro | token-plan-sgp.xiaomimimo.com |
+| BytePlus | dola-seed-2.0-pro | ark.ap-southeast.bytepluses.com |
+| Alibaba | qwen3.7-max | maas.aliyuncs.com |
+| LM Studio | local-model | localhost:1234 |
+
+## Module Dependency
+
+```
+lilith-core → lilith-memory → lilith-tools → lilith-orchestrator → lilith-api → lilith-cli
+```
+
+## Reglas
+
+Consulta [REGLAS_YGGDRASIL.md](REGLAS_YGGDRASIL.md) para las reglas del ecosistema.
+
+---
+
+**BrierStudios** — ᛒᚱᛁᛖᚱᛊᛏᚢᛞᛁᛟᛊ
