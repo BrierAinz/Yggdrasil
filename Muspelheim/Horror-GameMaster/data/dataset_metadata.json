@@ -1,33 +1,31 @@
 {
   "name": "Horror GameMaster Training Dataset",
-  "version": "2.0",
-  "total_entries": 1000,
-  "avg_output_chars": 962,
+  "version": "3.0",
+  "total_entries": 2049,
+  "avg_output_chars": 873,
   "fear_type_distribution": {
-    "psychological": 174,
-    "paranoia": 142,
-    "darkness": 170,
-    "isolation": 130,
-    "body_horror": 154,
-    "jumpscare": 101,
-    "loss_of_control": 116,
+    "psychological": 510,
+    "paranoia": 298,
+    "darkness": 275,
+    "isolation": 285,
+    "body_horror": 176,
+    "jumpscare": 256,
+    "loss_of_control": 236,
     "false_security": 13
   },
-  "sources": {
-    "manual_writing": 159,
-    "deepseek_v4_flash_api": 841
-  },
-  "generation_model": "deepseek-v4-flash-260425 (BytePlus Ark)",
+  "generation_models": [
+    "seed-2-0-mini",
+    "seed-2-0-lite",
+    "seed-2-0-pro",
+    "seed-2-0-code-preview",
+    "seed-1-8",
+    "deepseek-v3-2",
+    "deepseek-v4-flash"
+  ],
+  "platform": "BytePlus Ark",
   "format": "JSONL with instruction/input/output/fear_type",
   "language": "English",
   "target_model": "Qwen2.5-7B-Instruct (Unsloth fine-tuning)",
-  "quality_rules": [
-    "No filler entries",
-    "Second-person narration",
-    "Sensory detail required",
-    "No AI-breaking character",
-    "Each output ends with hook/choice"
-  ],
   "created": "2026-05-27",
-  "updated": "2026-05-27"
+  "updated": "2026-05-28"
 }
