@@ -76,16 +76,16 @@
 ## FASE 4 — Frontend (Semana 4)
 
 ### 4.1 Terminal UI
-- [ ] Crear interfaz de terminal con Rich
-- [ ] Implementar "typing effect" para narrativa
-- [ ] Crear sistema de elecciones con timer
+- [x] Crear interfaz de terminal con Rich
+- [x] Implementar "typing effect" para narrativa
+- [x] Crear sistema de elecciones con timer
 - [ ] Implementar efectos de sonido (opcional)
 
 ### 4.2 Web UI (Opcional)
-- [ ] Crear interfaz web con FastAPI + HTMX
-- [ ] Implementar "atmospheric effects" (CSS animations)
+- [x] Crear interfaz web con FastAPI + HTMX
+- [x] Implementar "atmospheric effects" (CSS animations)
 - [ ] Crear sistema de "ambient sound"
-- [ ] Implementar "dark mode" optimizado para terror
+- [x] Implementar "dark mode" optimizado para terror
 
 ---
 
