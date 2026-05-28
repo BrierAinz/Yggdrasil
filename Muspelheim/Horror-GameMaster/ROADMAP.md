@@ -54,22 +54,22 @@
 ## FASE 3 — Integración LLM (Semana 3)
 
 ### 3.1 LLM Engine v2
-- [ ] Integrar modelo fine-tuned de terror
-- [ ] Implementar streaming de respuestas
-- [ ] Crear system prompts especializados por tipo de miedo
-- [ ] Implementar "narrator voice" consistente
+- [x] Integrar modelo fine-tuned de terror
+- [x] Implementar streaming de respuestas
+- [x] Crear system prompts especializados por tipo de miedo
+- [x] Implementar "narrator voice" consistente
 
 ### 3.2 Context Manager
-- [ ] Mantener contexto de la sesión actual
-- [ ] Implementar "foreshadowing" (anticipación de eventos)
-- [ ] Crear "callback system" (referenciar eventos pasados)
-- [ ] Implementar "red thread" (hilos narrativos conectados)
+- [x] Mantener contexto de la sesión actual
+- [x] Implementar "foreshadowing" (anticipación de eventos)
+- [x] Crear "callback system" (referenciar eventos pasados)
+- [x] Implementar "red thread" (hilos narrativos conectados)
 
 ### 3.3 NPC Intelligence
-- [ ] Crear comportamientos complejos para NPCs
-- [ ] Implementar "trust system" (el jugador desconfía de NPCs)
-- [ ] Crear NPCs que "aprenden" del jugador
-- [ ] Implementar "doppelganger mechanic"
+- [x] Crear comportamientos complejos para NPCs
+- [x] Implementar "trust system" (el jugador desconfía de NPCs)
+- [x] Crear NPCs que "aprenden" del jugador
+- [x] Implementar "doppelganger mechanic"
 
 ---
 
