@@ -92,26 +92,26 @@
 ## FASE 5 — Testing y Polish (Semana 5)
 
 ### 5.1 Testing
-- [ ] Crear tests unitarios para cada componente
-- [ ] Implementar integration tests
+- [x] Crear tests unitarios para cada componente
+- [x] Implementar integration tests
 - [ ] Crear "stress tests" (sesiones largas)
 - [ ] Testear con usuarios reales
 
 ### 5.2 Polish
-- [ ] Optimizar rendimiento del LLM
-- [ ] Mejorar calidad de la narrativa
-- [ ] Crear "content warnings" apropiados
-- [ ] Documentar API y uso
+- [x] Optimizar rendimiento del LLM
+- [x] Mejorar calidad de la narrativa
+- [x] Crear "content warnings" apropiados
+- [x] Documentar API y uso
 
 ---
 
 ## FASE 6 — Deploy y Distribución (Semana 6)
 
 ### 6.1 Packaging
-- [ ] Crear paquete pip instalable
-- [ ] Crear Docker container
-- [ ] Documentar instalación
-- [ ] Crear ejemplo de uso
+- [x] Crear paquete pip instalable
+- [x] Crear Docker container
+- [x] Documentar instalación
+- [x] Crear ejemplo de uso
 
 ### 6.2 Distribución
 - [ ] Publicar en GitHub

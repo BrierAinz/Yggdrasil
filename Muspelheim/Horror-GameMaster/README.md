@@ -1,75 +1,95 @@
-# Horror GameMaster — Procedural Terror Engine
+# Horror GameMaster
 
-> **Estado:** Fase 0 — Concepto
-> **Realm:** Muspelheim (WIP)
-> **Creado:** 2026-05-27
+> BrierStudios — Procedural Terror Engine
 
-## Concepto
+A text-based horror game engine that adapts to player fears, generates procedural horror narratives, and creates personalized terror experiences using LLM integration.
 
-Un LLM fine-tuned/embedded que actúa como **GameMaster de terror**.
+## Features
 
-### La Idea
+- **Fear Adaptation** — Tracks 7 fear dimensions and adapts gameplay
+- **Procedural Generation** — 22 scene templates, 12 event types, entity spawning
+- **Tension Management** — Dynamic tension curve with cooldown and escalation
+- **NPC Intelligence** — Trust system, learning NPCs, doppelganger mechanic
+- **Context Memory** — Foreshadowing, callbacks, narrative threads
+- **Multi-Provider LLM** — Ollama, OpenAI-compatible, BytePlus Ark
+- **1,000+ Training Entries** — JSONL dataset for fine-tuning
 
-1. **Prólogo** — Captura la personalidad del jugador mediante sus decisiones
-2. **Análisis de patrones** — El LLM identifica miedos, comportamientos, y debilidades
-3. **Generación procedural** — El juego se modifica en tiempo real para causar:
-   - Incomodidad
-   - Miedo
-   - Misterio
-   - Tensión psicológica
+## Quick Start
 
-### Arquitectura
-
-```
-┌─────────────────────────────────────────────┐
-│              HORROR GAMEMASTER               │
-├─────────────────────────────────────────────┤
-│                                             │
-│  ┌──────────┐    ┌──────────┐    ┌────────┐│
-│  │ Player   │───▶│ Pattern  │───▶│ LLM    ││
-│  │ Actions  │    │ Analyzer │    │ Engine ││
-│  └──────────┘    └──────────┘    └────────┘│
-│       │                            │        │
-│       │              ┌─────────────┘        │
-│       ▼              ▼                      │
-│  ┌──────────────────────────┐               │
-│  │   Procedural Generator   │               │
-│  │  ┌────────┐ ┌────────┐  │               │
-│  │  │Events  │ │Scenes  │  │               │
-│  │  └────────┘ └────────┘  │               │
-│  │  ┌────────┐ ┌────────┐  │               │
-│  │  │NPCs    │ │Items   │  │               │
-│  │  └────────┘ └────────┘  │               │
-│  └──────────────────────────┘               │
-│                                             │
-└─────────────────────────────────────────────┘
+### Terminal UI (Rich)
+```bash
+pip install pydantic numpy rich requests
+python -m src.terminal_ui
 ```
 
-### Componentes
+### Web UI (FastAPI + HTMX)
+```bash
+pip install pydantic numpy rich requests fastapi uvicorn
+python -m src.web_ui --port 8080
+```
 
-| Componente | Descripción | Estado |
-|-----------|-------------|--------|
-| Pattern Analyzer | Analiza acciones del jugador para detectar miedos | Pendiente |
-| LLM Engine | Modelo fine-tuned para narrativa de terror | Pendiente |
-| Procedural Generator | Genera eventos, escenas, NPCs basados en patrones | Pendiente |
-| Personality Profiler | Crea perfil psicológico del jugador | Pendiente |
-| Tension Manager | Controla ritmo y intensidad del terror | Pendiente |
+### Simple UI (no dependencies)
+```bash
+python -m src.terminal_ui --simple
+```
 
-### Stack
+### Docker
+```bash
+docker build -t horror-gamemaster .
+docker run -p 8080:8080 horror-gamemaster
+```
 
-- **LLM:** Modelo local (Ollama/LM Studio) fine-tuned con dataset de terror
-- **Embeddings:** nomic-embed-text para memoria semántica
-- **Framework:** Python + FastAPI
-- **Frontend:** Terminal-based o Web (por definir)
+## Architecture
 
-### Dataset Necesario
+```
+src/
+├── gamemaster.py          # Main orchestrator
+├── llm_engine.py          # Multi-provider LLM integration
+├── context_manager.py     # Foreshadowing, callbacks, threads
+├── npc_intelligence.py    # NPCs, trust, doppelganger
+├── pattern_analyzer.py    # Behavior analysis, fear fingerprinting
+├── procedural_generator.py # Scenes, events, entities
+├── tension_manager.py     # Tension curve, pacing, escalation
+├── terminal_ui.py         # Rich terminal interface
+├── web_ui.py              # FastAPI + HTMX web interface
+└── memory/
+    ├── player_memory.py   # Fear profiles, SQLite persistence
+    └── embeddings.py      # Semantic embeddings pipeline
+```
 
-- Narrativa de terror psicológico
-- Patrones de miedo comunes
-- Escenarios procedurales
-- Dialogos de NPCs de terror
-- Eventos trigger por patrón de jugador
+## Fear Types
 
----
+| Type | Description |
+|------|-------------|
+| psychological | Reality breakdown, memory manipulation |
+| darkness | What lurks unseen, light failure |
+| isolation | Absolute aloneness, communication failure |
+| body_horror | Wrongness of flesh, transformation |
+| paranoia | Trust erosion, surveillance |
+| loss_of_control | Agency removal, predetermination |
+| jumpscare | Earned sudden scares |
+| false_security | False safety that betrays |
 
-**BrierStudios** — ᛒᚱᛁᛖᚱᛊᛏᚢᛞᛁᛟᛊ
+## Fine-Tuning
+
+The dataset is at `data/dataset_final.jsonl` (1,000+ entries).
+
+Recommended: Qwen2.5-7B-Instruct + Unsloth
+
+```bash
+python scripts/generate_dataset.py --total 2000  # Expand dataset
+```
+
+## Testing
+
+```bash
+PYTHONPATH=src python -m pytest tests/ -v
+```
+
+## License
+
+BrierStudios — Private Project
+
+## Runes
+
+ᛒᚱᛁᛖᚱᛊᛏᚢᛞᛁᛟᛊ
