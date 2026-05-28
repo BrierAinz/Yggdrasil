@@ -1,0 +1,18 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "horror-gamemaster"
+version = "0.1.0"
+description = "BrierStudios — Procedural Horror GameMaster Engine"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+    "requests",
+    "numpy",
+    "rich",
+]
+
+[project.urls]
+Repository = "https://github.com/BrierAinz/Yggdrasil"
