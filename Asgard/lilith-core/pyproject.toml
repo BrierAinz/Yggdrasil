@@ -8,7 +8,7 @@ version = "2.1.0"
 description = "Base types, configuration, and logging for Lilith"
 requires-python = ">=3.11"
 license = "MIT"
-dependencies = ["pyyaml", "python-dotenv"]
+dependencies = ["pyyaml", "python-dotenv", "requests"]
 
 [project.urls]
 Repository = "https://github.com/BrierAinz/Yggdrasil"
