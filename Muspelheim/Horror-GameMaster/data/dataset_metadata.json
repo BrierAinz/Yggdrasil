@@ -1,0 +1,29 @@
+{
+  "name": "Horror GameMaster Training Dataset",
+  "version": "1.0",
+  "total_entries": 23,
+  "fear_type_distribution": {
+    "psychological": 6,
+    "paranoia": 4,
+    "darkness": 3,
+    "isolation": 3,
+    "body_horror": 2,
+    "jumpscare": 2,
+    "loss_of_control": 2,
+    "false_security": 1
+  },
+  "sources_inspiration": [
+    "Lovecraft (cosmic horror, psychological)",
+    "Shirley Jackson (Haunting of Hill House, domestic horror)",
+    "Silent Hill (atmospheric, psychological, body horror)",
+    "PT/Lisa (loop horror, domestic dread)",
+    "SCP Foundation (procedural, containment horror)",
+    "Thomas Ligotti (anti-natalist horror, corporate dread)",
+    "Junji Ito (body horror, cosmic wrongness)",
+    "Darkwood (isolation, darkness, survival)"
+  ],
+  "format": "JSONL with instruction/input/output/fear_type",
+  "language": "English",
+  "target_model": "7B parameter LLM (dolphin-mistral or qwen2.5-coder)",
+  "created": "2026-05-27"
+}

@@ -8,24 +8,24 @@
 ## FASE 1 — Fundamentos (Semana 1)
 
 ### 1.1 Dataset de Terror
-- [ ] Recopilar narrativa de terror psicológico (novelas, creepypastas, guiones)
-- [ ] Clasificar por tipo de miedo (darkness, isolation, psychological, etc.)
-- [ ] Crear dataset de escenarios procedurales
-- [ ] Crear dataset de diálogos de NPCs de terror
-- [ ] Formatear para fine-tuning (JSON/JSONL)
+- [x] Recopilar narrativa de terror psicológico (novelas, creepypastas, guiones)
+- [x] Clasificar por tipo de miedo (darkness, isolation, psychological, etc.)
+- [x] Crear dataset de escenarios procedurales
+- [x] Crear dataset de diálogos de NPCs de terror
+- [x] Formatear para fine-tuning (JSON/JSONL)
 
 ### 1.2 Fine-tuning del LLM
-- [ ] Seleccionar modelo base (dolphin-mistral, qwen2.5-coder, etc.)
-- [ ] Preparar dataset en formato Ollama/LM Studio
+- [x] Seleccionar modelo base (dolphin-mistral, qwen2.5-coder, etc.)
+- [x] Preparar dataset en formato Ollama/LM Studio
 - [ ] Fine-tune con Unsloth o LM Studio
 - [ ] Evaluar calidad de generación de terror
-- [ ] Crear Modelfile para Ollama
+- [x] Crear Modelfile para Ollama
 
 ### 1.3 Embeddings y Memoria
-- [ ] Configurar nomic-embed-text para embeddings
-- [ ] Crear vector store para patrones del jugador
-- [ ] Implementar persistencia de perfil entre sesiones
-- [ ] Crear sistema de "memoria de miedo" (qué asustó al jugador antes)
+- [x] Configurar nomic-embed-text para embeddings
+- [x] Crear vector store para patrones del jugador
+- [x] Implementar persistencia de perfil entre sesiones
+- [x] Crear sistema de "memoria de miedo" (qué asustó al jugador antes)
 
 ---
 
