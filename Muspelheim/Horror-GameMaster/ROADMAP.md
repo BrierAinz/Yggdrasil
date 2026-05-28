@@ -32,22 +32,22 @@
 ## FASE 2 — Motor de Terror (Semana 2)
 
 ### 2.1 Pattern Analyzer v2
-- [ ] Mejorar detección de patrones (más de 10 acciones)
-- [ ] Agregar análisis de tiempo entre acciones
-- [ ] Crear "fingerprint" psicológico del jugador
-- [ ] Implementar detección de "habituación" (cuando el jugador se acostumbra)
+- [x] Mejorar detección de patrones (más de 10 acciones)
+- [x] Agregar análisis de tiempo entre acciones
+- [x] Crear "fingerprint" psicológico del jugador
+- [x] Implementar detección de "habituación" (cuando el jugador se acostumbra)
 
 ### 2.2 Procedural Generator v2
-- [ ] Agregar 20+ templates de escenas
-- [ ] Implementar "chain events" (eventos encadenados)
-- [ ] Crear sistema de "red herrings" (pistas falsas)
-- [ ] Implementar "safe rooms" que luego dejan de ser seguras
+- [x] Agregar 20+ templates de escenas
+- [x] Implementar "chain events" (eventos encadenados)
+- [x] Crear sistema de "red herrings" (pistas falsas)
+- [x] Implementar "safe rooms" que luego dejan de ser seguras
 
 ### 2.3 Tension Manager
-- [ ] Crear curva de tensión dinámica
-- [ ] Implementar "cooldown" después de sustos
-- [ ] Crear "false security" (sensación de seguridad falsa)
-- [ ] Implementar "escalation ladder" (escalada gradual)
+- [x] Crear curva de tensión dinámica
+- [x] Implementar "cooldown" después de sustos
+- [x] Crear "false security" (sensación de seguridad falsa)
+- [x] Implementar "escalation ladder" (escalada gradual)
 
 ---
 
