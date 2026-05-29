@@ -12,7 +12,7 @@
 - [x] Fix duplicate display in -m mode
 - [x] Fix tool_calls missing `type` field (DeepSeek streaming)
 - [x] Fix 400 error retry without tools
-- [ ] Fix: sometimes tool results are not shown (empty response after tool)
+- [x] Fix: sometimes tool results are not shown (empty response after tool)
 - [ ] Fix: context management sometimes removes too many messages
 - [ ] Fix: error when API key is invalid (better error message)
 - [ ] Fix: undo doesn't work for multi_edit

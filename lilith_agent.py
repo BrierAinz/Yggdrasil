@@ -1829,6 +1829,9 @@ class LilithAgent:
         self.memory.store(self.session_id, "user", user_input)
         self._manage_context()
 
+        # Track if we just processed tools (for empty response fallback)
+        just_processed_tools = False
+
         for _ in range(15):
             try:
                 # Use non-streaming (more reliable, no duplicate display)
@@ -1848,9 +1851,12 @@ class LilithAgent:
 
                 # Tool calls
                 if msg.get("tool_calls"):
+                    just_processed_tools = True
                     clean = {"role": "assistant"}
                     if msg.get("content"):
                         clean["content"] = msg["content"]
+                        # Display any text that accompanies tool calls
+                        C.print(Markdown(msg["content"]))
                     clean["tool_calls"] = msg["tool_calls"]
                     # Ensure type field
                     for tc in clean["tool_calls"]:
@@ -1873,6 +1879,14 @@ class LilithAgent:
                             f"\n  [muted]💡 {self.tool_count} tools used. Consider saving a skill.[/muted]"
                         )
                     return content
+
+                # Empty content after tool calls — API returned no text
+                if just_processed_tools:
+                    just_processed_tools = False
+                    # Append the empty assistant message so API has consistent history
+                    self.messages.append({"role": "assistant", "content": ""})
+                    # Don't loop silently; let the next iteration try to get a response
+                    continue
 
             except requests.exceptions.HTTPError as e:
                 error_body = ""
