@@ -1318,8 +1318,11 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
                 if edit["old_string"] not in content:
                     results.append(f"SKIP {edit['path']}: text not found")
                     continue
+                # Undo backup
+                backup_name = f"{edit['path'].replace('/', '_')}.{int(time.time())}"
+                (UNDO_DIR / backup_name).write_text(content)
                 p.write_text(content.replace(edit["old_string"], edit["new_string"], 1))
-                results.append(f"OK {edit['path']}")
+                results.append(f"OK {edit['path']} (undo available)")
             return "\n".join(results)
 
         # Git workflow

@@ -15,7 +15,7 @@
 - [x] Fix: sometimes tool results are not shown (empty response after tool)
 - [x] Fix: context management sometimes removes too many messages
 - [x] Fix: error when API key is invalid (better error message)
-- [ ] Fix: undo doesn't work for multi_edit
+- [x] Fix: undo doesn't work for multi_edit
 
 ### 1.2 Reliability
 - [ ] Add retry with exponential backoff for transient API errors
