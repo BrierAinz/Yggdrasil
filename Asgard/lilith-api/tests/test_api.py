@@ -186,9 +186,9 @@ class TestChat:
 class TestTools:
     """Tests for GET /tools and POST /tools/execute."""
 
-    def test_list_tools(self, client):
+    def test_list_tools(self, isolated_client):
         """GET /tools should return a dict of tool names and descriptions."""
-        response = client.get("/tools")
+        response = isolated_client.get("/tools")
         assert response.status_code == 200
         assert "system_info" in response.json()
 

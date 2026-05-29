@@ -228,13 +228,13 @@ async def health() -> dict[str, str]:
 @app.get("/status")
 async def status(
     memory: MemoryStore = Depends(get_memory),
+    config: Config = Depends(get_config),
+    tools: type[ToolRegistry] = Depends(get_tools),
 ) -> dict[str, Any]:
     """Detailed status endpoint with memory and tool counts."""
-    conf = get_config()
-    tools = get_tools()
     return {
         "version": "2.2.0",
-        "model": conf.get("model", "auto"),
+        "model": config.get("model", "auto"),
         "tools_available": len(tools.list_tools()),
         "memory_entries": memory.count_entries(),
     }

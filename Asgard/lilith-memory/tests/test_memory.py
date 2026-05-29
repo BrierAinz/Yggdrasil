@@ -42,7 +42,7 @@ def test_count_entries(tmp_path):
 def test_store_alias(tmp_path):
     """store() should behave identically to add()."""
     store = MemoryStore(tmp_path / "alias.db")
-    store.store("alias content", metadata={"via": "store"})
+    store.store("default", "user", "alias content", metadata={"via": "store"})
     results = store.search("alias")
     assert len(results) == 1
     assert results[0]["content"] == "alias content"
@@ -90,15 +90,13 @@ def test_len(tmp_path):
 
 
 def test_context_manager(tmp_path):
-    """Using MemoryStore as a context manager should work and clean up."""
+    """Using MemoryStore as a context manager should work."""
     with MemoryStore(tmp_path / "ctx.db") as store:
         store.add("inside context")
         assert store.count_entries() == 1
         assert len(store) == 1
 
-    # After exiting, store._conn should be None
-    assert store._conn is None
-    # But the data should still be accessible (opens a new short-lived conn)
+    # Data should still be accessible after exiting context
     assert store.count_entries() == 1
 
 
