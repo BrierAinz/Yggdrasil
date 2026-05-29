@@ -57,6 +57,7 @@ ignore = [
     "E501",    # line too long (handled by formatter)
     "PLR0913", # too many arguments
     "PLR2004", # magic value comparison
+    "TRY002",  # create your own exception (generic Exception is fine in agents)
     "TRY003",  # avoid specifying exception messages
     "B905",    # zip() without strict (py39 compat)
     "PLC0415", # import not at top-level (legitimate in tests & lazy imports)

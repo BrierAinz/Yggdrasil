@@ -20,7 +20,7 @@ const config = {
     locales: ['en', 'es'],
     localeConfigs: {
       en: { htmlLang: 'en-US' },
-      es: { htmlLang: 'es-ES' },
+      es: { htmlLang: 'es-ES', label: 'Español' },
     },
   },
 

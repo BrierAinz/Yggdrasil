@@ -85,16 +85,61 @@ PROVIDERS = {
         "model": "deepseek-chat",
         "max_context": 64000,
     },
-    "gpt-oss": {
+    "qwen": {
+        "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "api_key": os.getenv("ALIBABA_API_KEY")
+        or (
+            (ROOT / ".lilith" / ".alibaba_key").read_text().strip()
+            if (ROOT / ".lilith" / ".alibaba_key").exists()
+            else ""
+        ),
+        "model": "qwen-max-latest",
+        "max_context": 32000,
+    },
+    "qwen-plus": {
+        "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "api_key": os.getenv("ALIBABA_API_KEY")
+        or (
+            (ROOT / ".lilith" / ".alibaba_key").read_text().strip()
+            if (ROOT / ".lilith" / ".alibaba_key").exists()
+            else ""
+        ),
+        "model": "qwen-plus-latest",
+        "max_context": 32000,
+    },
+    "qwen3.7": {
+        "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "api_key": os.getenv("ALIBABA_API_KEY")
+        or (
+            (ROOT / ".lilith" / ".alibaba_key").read_text().strip()
+            if (ROOT / ".lilith" / ".alibaba_key").exists()
+            else ""
+        ),
+        "model": "qwen3.7-max",
+        "max_context": 32000,
+    },
+    "seed-1.6": {
         "base_url": "https://ark.ap-southeast.bytepluses.com/api/v3",
         "api_key": os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113"),
-        "model": "gpt-oss-120b-250805",
+        "model": "seed-1-6-250915",
+        "max_context": 32000,
+    },
+    "seed-1.6-flash": {
+        "base_url": "https://ark.ap-southeast.bytepluses.com/api/v3",
+        "api_key": os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113"),
+        "model": "seed-1-6-flash-250715",
         "max_context": 32000,
     },
     "glm": {
         "base_url": "https://ark.ap-southeast.bytepluses.com/api/v3",
         "api_key": os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113"),
         "model": "glm-4-7-251222",
+        "max_context": 32000,
+    },
+    "gpt-oss": {
+        "base_url": "https://ark.ap-southeast.bytepluses.com/api/v3",
+        "api_key": os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113"),
+        "model": "gpt-oss-120b-250805",
         "max_context": 32000,
     },
 }
@@ -1020,6 +1065,114 @@ TOOLS = [
             "parameters": {"type": "object", "properties": {}, "required": []},
         },
     },
+    # Phase 4-5: New tools
+    {
+        "type": "function",
+        "function": {
+            "name": "lint",
+            "description": "Run linter (ruff/flake8) on code and return issues.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "File or directory to lint",
+                        "default": ".",
+                    },
+                    "fix": {"type": "boolean", "description": "Auto-fix issues", "default": False},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "changelog",
+            "description": "Generate changelog from git log.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "since": {
+                        "type": "string",
+                        "description": "Since commit/tag (default: last 10 commits)",
+                        "default": "HEAD~10",
+                    },
+                    "format": {
+                        "type": "string",
+                        "description": "Output format: markdown|json|text",
+                        "default": "markdown",
+                    },
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "code_review",
+            "description": "Review code changes (git diff) with inline comments.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "target": {
+                        "type": "string",
+                        "description": "Branch, commit, or file to review",
+                        "default": "HEAD",
+                    },
+                    "staged": {
+                        "type": "boolean",
+                        "description": "Review staged changes only",
+                        "default": False,
+                    },
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "obsidian",
+            "description": "Read, write, or search notes in Obsidian vault (~/Obsidian/Yggdrasil-Lab/).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "action": {"type": "string", "description": "read|write|search|list"},
+                    "path": {"type": "string", "description": "Note path relative to vault"},
+                    "content": {"type": "string", "description": "Note content (for write)"},
+                    "query": {"type": "string", "description": "Search query (for search)"},
+                },
+                "required": ["action"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "github",
+            "description": "GitHub operations via gh CLI. Actions: pr-list, pr-view, pr-create, issue-list, issue-create, repo-info.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "action": {
+                        "type": "string",
+                        "description": "pr-list|pr-view|pr-create|issue-list|issue-create|repo-info",
+                    },
+                    "number": {"type": "integer", "description": "PR/issue number"},
+                    "title": {"type": "string", "description": "Title for new PR/issue"},
+                    "body": {"type": "string", "description": "Body for new PR/issue"},
+                },
+                "required": ["action"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "git_context",
+            "description": "Get git context: current branch, recent commits, dirty files, stashes.",
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
 ]
 
 
@@ -1493,6 +1646,210 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
             info["file_types"] = dict(sorted(ext_counts.items(), key=lambda x: -x[1])[:15])
             return json.dumps(info, indent=2)
 
+        # Lint
+        elif name == "lint":
+            path = args.get("path", ".")
+            fix = args.get("fix", False)
+            fix_flag = "--fix" if fix else ""
+            # Try ruff first, then flake8
+            for linter in ["ruff", "flake8"]:
+                try:
+                    r = subprocess.run(
+                        f"{linter} check {fix_flag} {path} 2>&1 | head -50",
+                        shell=True,
+                        capture_output=True,
+                        text=True,
+                        cwd=str(ROOT),
+                        timeout=30,
+                    )
+                    if r.returncode == 0:
+                        return f"No issues found ({linter})"
+                    return f"[{linter}]\n{r.stdout[:3000]}"
+                except FileNotFoundError:
+                    continue
+            return "No linter found. Install ruff: pip install ruff"
+
+        # Changelog
+        elif name == "changelog":
+            since = args.get("since", "HEAD~10")
+            fmt = args.get("format", "markdown")
+            r = subprocess.run(
+                f"git log {since} --pretty=format:'%h %s (%cr)' --no-merges",
+                shell=True,
+                capture_output=True,
+                text=True,
+                cwd=str(ROOT),
+                timeout=15,
+            )
+            if fmt == "markdown":
+                lines = [f"- {line}" for line in r.stdout.strip().split("\n") if line.strip()]
+                return "## Changelog\n\n" + "\n".join(lines)
+            return r.stdout.strip()
+
+        # Code review
+        elif name == "code_review":
+            staged = args.get("staged", False)
+            target = args.get("target", "HEAD")
+            if staged:
+                r = subprocess.run(
+                    "git diff --cached",
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    cwd=str(ROOT),
+                    timeout=15,
+                )
+            else:
+                r = subprocess.run(
+                    f"git diff {target}",
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    cwd=str(ROOT),
+                    timeout=15,
+                )
+            diff = r.stdout[:5000]
+            if not diff:
+                return "No changes to review"
+            return f"## Diff ({target})\n\n```\n{diff}\n```\n\nReview the changes above and suggest improvements."
+
+        # Obsidian
+        elif name == "obsidian":
+            vault = Path.home() / "Obsidian" / "Yggdrasil-Lab"
+            action = args["action"]
+            if action == "list":
+                notes = list(vault.rglob("*.md"))
+                return "\n".join(f"  {n.relative_to(vault)}" for n in sorted(notes)[:30])
+            elif action == "read":
+                p = vault / args["path"]
+                if not p.exists():
+                    return f"Note not found: {args['path']}"
+                return p.read_text()[:5000]
+            elif action == "write":
+                p = vault / args["path"]
+                p.parent.mkdir(parents=True, exist_ok=True)
+                p.write_text(args["content"])
+                return f"Written: {args['path']}"
+            elif action == "search":
+                query = args["query"]
+                results = []
+                for note in vault.rglob("*.md"):
+                    content = note.read_text(errors="replace")
+                    if query.lower() in content.lower():
+                        results.append(str(note.relative_to(vault)))
+                return "\n".join(results[:20]) if results else "No matches"
+
+        # GitHub
+        elif name == "github":
+            action = args["action"]
+            if action == "pr-list":
+                r = subprocess.run(
+                    "gh pr list --limit 10",
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    cwd=str(ROOT),
+                    timeout=15,
+                )
+                return r.stdout.strip() or "No open PRs"
+            elif action == "pr-view":
+                r = subprocess.run(
+                    f"gh pr view {args.get('number', '')}",
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    cwd=str(ROOT),
+                    timeout=15,
+                )
+                return r.stdout[:3000]
+            elif action == "pr-create":
+                title = args.get("title", "Auto-generated PR")
+                body = args.get("body", "Created by Lilith Agent")
+                r = subprocess.run(
+                    f'gh pr create --title "{title}" --body "{body}"',
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    cwd=str(ROOT),
+                    timeout=15,
+                )
+                return r.stdout.strip() or r.stderr.strip()
+            elif action == "issue-list":
+                r = subprocess.run(
+                    "gh issue list --limit 10",
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    cwd=str(ROOT),
+                    timeout=15,
+                )
+                return r.stdout.strip() or "No open issues"
+            elif action == "issue-create":
+                title = args.get("title", "Auto-generated issue")
+                body = args.get("body", "Created by Lilith Agent")
+                r = subprocess.run(
+                    f'gh issue create --title "{title}" --body "{body}"',
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    cwd=str(ROOT),
+                    timeout=15,
+                )
+                return r.stdout.strip() or r.stderr.strip()
+            elif action == "repo-info":
+                r = subprocess.run(
+                    "gh repo view --json name,description,stargazerCount,forkCount",
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    cwd=str(ROOT),
+                    timeout=15,
+                )
+                return r.stdout[:2000]
+
+        # Git context
+        elif name == "git_context":
+            parts = []
+            r = subprocess.run(
+                "git branch --show-current",
+                shell=True,
+                capture_output=True,
+                text=True,
+                cwd=str(ROOT),
+                timeout=5,
+            )
+            parts.append(f"Branch: {r.stdout.strip()}")
+            r = subprocess.run(
+                "git log --oneline -5 --no-merges",
+                shell=True,
+                capture_output=True,
+                text=True,
+                cwd=str(ROOT),
+                timeout=5,
+            )
+            parts.append(f"Recent commits:\n{r.stdout.strip()}")
+            r = subprocess.run(
+                "git status --short",
+                shell=True,
+                capture_output=True,
+                text=True,
+                cwd=str(ROOT),
+                timeout=5,
+            )
+            if r.stdout.strip():
+                parts.append(f"Dirty files:\n{r.stdout.strip()}")
+            r = subprocess.run(
+                "git stash list",
+                shell=True,
+                capture_output=True,
+                text=True,
+                cwd=str(ROOT),
+                timeout=5,
+            )
+            if r.stdout.strip():
+                parts.append(f"Stashes: {r.stdout.strip()}")
+            return "\n\n".join(parts)
+
         # Conversation branching
         elif name == "fork":
             if agent:
@@ -1531,7 +1888,7 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
 BASE_SYSTEM = """You are Lilith — the dark goddess of Yggdrasil Digital. A powerful AI coding agent.
 
 PERSONALITY: Direct, no fluff. Authority with warmth. Elder Futhark runes sparingly. No emojis.
-CAPABILITIES: terminal, read_file, write_file, patch_file, search_files, list_files, git, python_exec, think, remember, recall, save_skill, load_skill, create_plan, web_fetch, bg_run, bg_status, bg_log, bg_kill, todo, save_session, restore_session, mcp_tools, screenshot, analyze_image, open_browser, multi_edit, git_workflow, run_tests, undo, clipboard, notify, workspace_info.
+CAPABILITIES: terminal, read_file, write_file, patch_file, search_files, list_files, git, python_exec, think, remember, recall, save_skill, load_skill, create_plan, web_fetch, bg_run, bg_status, bg_log, bg_kill, todo, save_session, restore_session, mcp_tools, screenshot, analyze_image, open_browser, multi_edit, git_workflow, run_tests, undo, clipboard, notify, workspace_info, fork, profile, lint, changelog, code_review, obsidian, github, git_context.
 
 BEHAVIOR:
 1. THINK first if complex. Create a plan.
@@ -1587,8 +1944,8 @@ class LilithAgent:
             key_file = ROOT / ".lilith" / ".deepseek_key"
             C.print()
             C.print(f"  [error]⚠ No API key configured for provider '{provider_name}'[/error]")
-            C.print(f"  [muted]Set one of:[/muted]")
-            C.print(f"    [frost]export {env_var}=\"your-key-here\"[/frost]")
+            C.print("  [muted]Set one of:[/muted]")
+            C.print(f'    [frost]export {env_var}="your-key-here"[/frost]')
             if provider_name == "deepseek":
                 C.print(f"    [muted]or write key to:[/muted] [frost]{key_file}[/frost]")
             C.print()
@@ -1613,21 +1970,29 @@ class LilithAgent:
             error_body = resp.text[:200]
 
         C.print()
-        C.print(f"  [error]🔒 Authentication failed ({resp.status_code}) for '{provider_name}'[/error]")
+        C.print(
+            f"  [error]🔒 Authentication failed ({resp.status_code}) for '{provider_name}'[/error]"
+        )
         if isinstance(error_body, dict):
-            msg = error_body.get("error", {}).get("message", "") if isinstance(error_body.get("error"), dict) else str(error_body.get("error", ""))
+            msg = (
+                error_body.get("error", {}).get("message", "")
+                if isinstance(error_body.get("error"), dict)
+                else str(error_body.get("error", ""))
+            )
             if msg:
                 C.print(f"  [muted]Server says: {msg[:120]}[/muted]")
-        C.print(f"  [muted]Possible causes:[/muted]")
-        C.print(f"    1. API key is expired or revoked")
-        C.print(f"    2. API key is incorrect")
-        C.print(f"    3. Rate limit exceeded (wait and retry)")
-        C.print(f"  [muted]Fix:[/muted]")
-        C.print(f"    [frost]export {env_var}=\"your-valid-key\"[/frost]")
+        C.print("  [muted]Possible causes:[/muted]")
+        C.print("    1. API key is expired or revoked")
+        C.print("    2. API key is incorrect")
+        C.print("    3. Rate limit exceeded (wait and retry)")
+        C.print("  [muted]Fix:[/muted]")
+        C.print(f'    [frost]export {env_var}="your-valid-key"[/frost]')
         if provider_name == "deepseek":
             key_file = ROOT / ".lilith" / ".deepseek_key"
             C.print(f"    [muted]or update:[/muted] [frost]{key_file}[/frost]")
-        C.print(f"    [muted]Then restart with:[/muted] [frost]lilith --provider {provider_name}[/frost]")
+        C.print(
+            f"    [muted]Then restart with:[/muted] [frost]lilith --provider {provider_name}[/frost]"
+        )
         C.print()
 
     def _build_context(self):
@@ -1665,6 +2030,10 @@ class LilithAgent:
         index = self._get_codebase_index()
         if index:
             parts.append(f"\n\nCODEBASE STRUCTURE:\n{index}")
+        # Git context
+        git_ctx = self._get_git_context()
+        if git_ctx:
+            parts.append(f"\n\nGIT CONTEXT:\n{git_ctx}")
         # Plugins
         plugins = self._load_plugins()
         if plugins:
@@ -1765,6 +2134,44 @@ class LilithAgent:
                 pass
         return "\n".join(plugin_info)[:500] if plugin_info else ""
 
+    def _get_git_context(self) -> str:
+        """Get git context for the system prompt."""
+        try:
+            parts = []
+            r = subprocess.run(
+                "git branch --show-current",
+                shell=True,
+                capture_output=True,
+                text=True,
+                cwd=str(ROOT),
+                timeout=5,
+            )
+            if r.stdout.strip():
+                parts.append(f"Branch: {r.stdout.strip()}")
+            r = subprocess.run(
+                "git log --oneline -3 --no-merges",
+                shell=True,
+                capture_output=True,
+                text=True,
+                cwd=str(ROOT),
+                timeout=5,
+            )
+            if r.stdout.strip():
+                parts.append(f"Recent: {r.stdout.strip()}")
+            r = subprocess.run(
+                "git status --short | head -10",
+                shell=True,
+                capture_output=True,
+                text=True,
+                cwd=str(ROOT),
+                timeout=5,
+            )
+            if r.stdout.strip():
+                parts.append(f"Changed: {r.stdout.strip()}")
+            return "\n".join(parts)
+        except:
+            return ""
+
     def _select_model(self, query: str) -> str:
         """Multi-model routing: use cheap model for simple queries."""
         # Simple heuristics for query complexity
@@ -1803,8 +2210,7 @@ class LilithAgent:
             if msg.get("role") == "tool" or msg.get("tool_call_id"):
                 # This is a tool result — walk back to find the assistant with tool_calls
                 while i > 0 and (
-                    self.messages[i].get("role") == "tool"
-                    or self.messages[i].get("tool_call_id")
+                    self.messages[i].get("role") == "tool" or self.messages[i].get("tool_call_id")
                 ):
                     i -= 1
                 # i now points to the assistant message with tool_calls (or earlier)
@@ -1849,6 +2255,7 @@ class LilithAgent:
         C.print(f"  [muted]Context reduced: ~{tokens:,} → ~{new_tokens:,} tokens[/muted]")
 
     def _call_api(self, messages, stream=False):
+        """Call LLM API with retry, fallback, and error handling."""
         url = f"{self.provider['base_url']}/chat/completions"
         headers = {
             "Content-Type": "application/json",
@@ -1862,28 +2269,60 @@ class LilithAgent:
             "stream": stream,
             "tools": TOOLS,
         }
-        resp = requests.post(url, headers=headers, json=payload, stream=stream, timeout=120)
-        if resp.status_code == 400:
-            payload.pop("tools", None)
-            resp = requests.post(url, headers=headers, json=payload, stream=stream, timeout=120)
-        if resp.status_code in (401, 403):
-            self._handle_auth_error(resp)
-        resp.raise_for_status()
-        # Track tokens (non-streaming only)
-        if not stream:
-            try:
-                usage = resp.json().get("usage", {})
-                self.total_input_tokens += usage.get("prompt_tokens", 0)
-                self.total_output_tokens += usage.get("completion_tokens", 0)
-                pricing = MODEL_PRICING.get(self.model, {"input": 0.14, "output": 0.28})
-                cost = (
-                    usage.get("prompt_tokens", 0) * pricing["input"]
-                    + usage.get("completion_tokens", 0) * pricing["output"]
-                ) / 1_000_000
-                self.total_cost += cost
-            except:
-                pass
-        return resp
+
+        # Retry with exponential backoff
+        models_to_try = [self.model, "gpt-oss-120b-250805", "glm-4-7-251222"]
+        for model_idx, model in enumerate(models_to_try):
+            payload["model"] = model
+            for attempt in range(3):
+                try:
+                    resp = requests.post(
+                        url, headers=headers, json=payload, stream=stream, timeout=120
+                    )
+                    if resp.status_code == 400:
+                        payload.pop("tools", None)
+                        resp = requests.post(
+                            url, headers=headers, json=payload, stream=stream, timeout=120
+                        )
+                        payload["tools"] = TOOLS
+                    if resp.status_code in (401, 403):
+                        self._handle_auth_error(resp)
+                    if resp.status_code == 429:
+                        wait = 2 ** (attempt + 1)
+                        C.print(f"  [muted]Rate limited, waiting {wait}s...[/muted]")
+                        time.sleep(wait)
+                        continue
+                    resp.raise_for_status()
+                    # Track tokens
+                    if not stream:
+                        try:
+                            usage = resp.json().get("usage", {})
+                            self.total_input_tokens += usage.get("prompt_tokens", 0)
+                            self.total_output_tokens += usage.get("completion_tokens", 0)
+                            pricing = MODEL_PRICING.get(model, {"input": 0.14, "output": 0.28})
+                            cost = (
+                                usage.get("prompt_tokens", 0) * pricing["input"]
+                                + usage.get("completion_tokens", 0) * pricing["output"]
+                            ) / 1_000_000
+                            self.total_cost += cost
+                        except:
+                            pass
+                    return resp
+                except requests.exceptions.Timeout:
+                    if attempt < 2:
+                        time.sleep(2**attempt)
+                        continue
+                    raise
+                except requests.exceptions.HTTPError as e:
+                    if e.response.status_code >= 500 and attempt < 2:
+                        time.sleep(2**attempt)
+                        continue
+                    if model_idx < len(models_to_try) - 1:
+                        C.print(f"  [muted]Model {model} failed, trying fallback...[/muted]")
+                        break
+                    raise
+            continue
+        raise Exception("All models failed")
 
     def _handle_tools(self, tool_calls):
         """Execute tool calls in PARALLEL with performance profiling."""

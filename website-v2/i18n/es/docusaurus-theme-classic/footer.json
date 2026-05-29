@@ -1,0 +1,46 @@
+{
+  "link.title.Docs": {
+    "message": "Documentación",
+    "description": "Footer links column title"
+  },
+  "link.title.Agents": {
+    "message": "Agentes",
+    "description": "Footer links column title"
+  },
+  "link.title.More": {
+    "message": "Más",
+    "description": "Footer links column title"
+  },
+  "link.item.label.Overview": {
+    "message": "Resumen",
+    "description": "Footer link to /docs/intro"
+  },
+  "link.item.label.Architecture": {
+    "message": "Arquitectura",
+    "description": "Footer link to /docs/architecture"
+  },
+  "link.item.label.Setup": {
+    "message": "Instalación",
+    "description": "Footer link to /docs/setup"
+  },
+  "link.item.label.Lilith": {
+    "message": "Lilith",
+    "description": "Footer link to /docs/lilith"
+  },
+  "link.item.label.Changelog": {
+    "message": "Registro de cambios",
+    "description": "Footer link to /docs/changelog"
+  },
+  "link.item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Footer link"
+  },
+  "link.item.label.BrierStudios": {
+    "message": "BrierStudios",
+    "description": "Footer link"
+  },
+  "copyright": {
+    "message": "Copyright © 2026 BrierStudios. Construido con Docusaurus.",
+    "description": "Footer copyright"
+  }
+}

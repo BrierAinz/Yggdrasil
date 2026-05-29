@@ -1,0 +1,10 @@
+{
+  "version.label": {
+    "message": "Siguiente",
+    "description": "The label for version current"
+  },
+  "sidebar.docsSidebar.category.The Nine Realms": {
+    "message": "Los Nueve Reinos",
+    "description": "Sidebar category label"
+  }
+}
