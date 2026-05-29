@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Balance dataset — target underrepresented fear types.
+Balance dataset v2 — target underrepresented fear types.
 Focus on false_security (13 -> ~250) and body_horror (176 -> ~250).
-Uses ALL available BytePlus models + MiMo rotation.
+Only uses VERIFIED working models + MiMo.
 """
 
 from openai import OpenAI
@@ -18,46 +18,37 @@ providers = {
     "byteplus": OpenAI(
         api_key="ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113",
         base_url="https://ark.ap-southeast.bytepluses.com/api/v3",
-        timeout=90.0,
+        timeout=60.0,
     ),
     "mimo": OpenAI(
         api_key="tp-siky3g42t4i563ttw3o6nqkm67fevv2jzp8b5ahh3gqejv8w",
         base_url="https://token-plan-sgp.xiaomimimo.com/v1",
-        timeout=90.0,
+        timeout=60.0,
     ),
 }
 
-# (provider, model_id, display_name, tokens_remaining)
-# Ordered by tokens remaining — use fullest first to avoid suspension
+# ONLY VERIFIED WORKING MODELS (tested 2026-05-29)
 MODELS = [
-    # === 500K tokens each (full) ===
-    ("byteplus", "deepseek-v3-1-250821",       "ds3.1",       500000),
-    ("byteplus", "kimi-k2-250905",             "kimi-k2",     500000),
+    ("byteplus", "glm-4-7-251222",             "glm4.7",      494397),
+    ("byteplus", "gpt-oss-120b-250805",        "gpt-oss",     498304),
+    ("byteplus", "seed-2-0-lite-260428",       "s20-lite",    372063),
+    ("byteplus", "seed-1-8-251228",            "s1.8",        359485),
+    ("byteplus", "seed-2-0-mini-260428",       "s20-mini",    279933),
+    ("byteplus", "deepseek-v3-2-251201",       "ds3.2",       235546),
+    ("byteplus", "seed-2-0-code-preview-260328","s20-code",   140534),
     ("byteplus", "seed-1-6-250915",            "s1.6",        500000),
     ("byteplus", "seed-1-6-flash-250715",      "s1.6-flash",  500000),
-    ("byteplus", "skylark-lite-250215",        "sky-lite",    500000),
-    ("byteplus", "skylark-pro-250215",         "sky-pro",     500000),
-    ("byteplus", "deepseek-v3",                "ds3",         500000),
-    ("byteplus", "deepseek-r1-250528",         "r1",          500000),
-    ("byteplus", "deepseek-r1-distill-qwen-32b-250120", "r1-distill", 500000),
-    # === Partially used ===
-    ("byteplus", "glm-4-7-251222",            "glm4.7",      494397),
-    ("byteplus", "gpt-oss-120b-250805",       "gpt-oss",     498304),
-    ("byteplus", "seed-2-0-lite-260428",      "s20-lite",    372063),
-    ("byteplus", "seed-1-8-251228",           "s1.8",        359485),
-    ("byteplus", "seed-2-0-mini-260428",      "s20-mini",    279933),
-    ("byteplus", "deepseek-v3-2-251201",      "ds3.2",       235546),
-    ("byteplus", "seed-2-0-code-preview-260328", "s20-code", 140534),
-    # === MiMo (unlimited) ===
-    ("mimo",     "MiMo-V2.5",                "mimo",        999999),
-    ("mimo",     "MiMo-V2.5-Pro",            "mimo-pro",    999999),
+    # MiMo DISABLED — hangs on API calls
+    # ("mimo",     "MiMo-V2.5",                 "mimo",        999999),
+    # ("mimo",     "MiMo-V2.5-Pro",             "mimo-pro",    999999),
 ]
 
 exhausted = set()
 
 # --- Load existing for dedup ---
 seen = set()
-for fname in ["dataset_unified.jsonl", "dataset_generated_v3.jsonl", "dataset_balanced.jsonl"]:
+for fname in ["dataset_unified.jsonl", "dataset_generated_v3.jsonl", "dataset_balanced.jsonl",
+              "dataset_environmental.jsonl"]:
     fpath = f"{BASE}/{fname}"
     if os.path.exists(fpath):
         with open(fpath) as f:
@@ -73,33 +64,40 @@ print(f"Models available: {len(MODELS)}", flush=True)
 
 # --- Targeted content for BALANCING ---
 
-# We need ~175 false_security + ~75 body_horror entries
-# Also some environmental_storytelling variety
-
 BALANCE_TARGETS = {
     "false_security": {
-        "weight": 10,  # heavily weighted
+        "weight": 10,
         "scenarios": [
             "a hospital where everything seems normal but isn't",
             "a friendly neighbor's house that's too perfect",
-            "a safe room that the player trusts",
+            "a safe room that the player trusts completely",
             "a rescue team arriving to save the player",
             "a well-lit corridor that feels secure",
             "a phone call from a loved one",
             "a church or sanctuary",
             "a police station",
-            "a school during daytime",
-            "a shopping mall with other people around",
+            "a school during daytime with people around",
+            "a shopping mall with other shoppers",
             "a campfire with friendly strangers",
-            "a doctor's office",
-            "a therapist's session",
+            "a doctor's office during a checkup",
+            "a therapist's comfortable session room",
             "a warm kitchen with food cooking",
             "an elevator with other passengers",
-            "a bus during rush hour",
+            "a bus during rush hour with commuters",
             "a hotel room with good reviews",
             "a museum with security guards",
-            "a playground with children laughing",
-            "a garden in full bloom",
+            "a playground with children laughing nearby",
+            "a garden in full bloom on a sunny day",
+            "a library with a helpful librarian",
+            "a restaurant with other diners",
+            "a train car with sleeping passengers",
+            "a friend's living room during a visit",
+            "a workplace break room with coworkers",
+            "a gym with other people exercising",
+            "a spa with relaxing music",
+            "a grocery store during business hours",
+            "a waiting room with magazines",
+            "a parking lot with other cars and lights",
         ],
         "prompt_templates": [
             lambda sc: (
@@ -129,26 +127,40 @@ BALANCE_TARGETS = {
                 'JSON: instruction, input, output (150-250 words), fear_type="false_security". '
                 'ONLY valid JSON lines.'
             ),
+            lambda sc: (
+                f'Generate 5 FALSE SECURITY entries about ROUTINE hiding horror. Setting: {sc}. '
+                'The scene is mundane, everyday, boring even. Nothing is wrong. '
+                'But the player notices that this exact scene — same sounds, same smells, same '
+                'arrangement — has happened before. Deja vu. Or is the environment on a loop? '
+                'The horror is in repetition that the player can\'t prove. '
+                'JSON: instruction, input, output (150-250 words), fear_type="false_security". '
+                'ONLY valid JSON lines.'
+            ),
         ],
     },
     "body_horror": {
         "weight": 4,
         "scenarios": [
             "a hospital with experimental procedures",
-            "a laboratory with specimens",
-            "a bathroom with mirrors",
+            "a laboratory with specimens in jars",
+            "a bathroom with mirrors that reflect wrong",
             "a tattoo parlor after hours",
-            "a prosthetics workshop",
-            "a veterinary clinic",
-            "a beauty salon with strange treatments",
+            "a prosthetics workshop with spare parts",
+            "a veterinary clinic with unusual patients",
+            "a beauty salon offering strange treatments",
             "a gym with modified equipment",
-            "a pool with strange water",
-            "a sauna that's too hot",
-            "a dental office",
-            "a pharmacy with unknown medications",
-            "a meat processing plant",
-            "a tannery",
-            "a wax museum",
+            "a pool with water that's slightly too thick",
+            "a sauna where the steam has texture",
+            "a dental office with tools that move",
+            "a pharmacy with unlabeled medications",
+            "a meat processing plant with familiar shapes",
+            "a tannery with hides that look like faces",
+            "a wax museum where figures blink",
+            "a morgue with one too many drawers",
+            "a maternity ward at 3am",
+            "a dermatology clinic with growth samples",
+            "a blood bank with warm bags",
+            "a physical therapy room with stretchy skin models",
         ],
         "prompt_templates": [
             lambda sc: (
@@ -166,6 +178,15 @@ BALANCE_TARGETS = {
                 'a mark that appeared, a sensation that won\'t stop, a limb that '
                 'responds differently than expected. Not painful. Just WRONG. '
                 'The horror is in realizing the body is changing and you can\'t stop it. '
+                'JSON: instruction, input, output (150-250 words), fear_type="body_horror". '
+                'ONLY valid JSON lines.'
+            ),
+            lambda sc: (
+                f'Generate 5 BODY HORROR entries about MIMICRY. Setting: {sc}. '
+                'Something is imitating human body parts imperfectly. '
+                'A hand that has too many joints. A face whose proportions are slightly off. '
+                'Skin with the wrong texture. Not monstrous — just NOT QUITE RIGHT. '
+                'Uncanny valley territory. '
                 'JSON: instruction, input, output (150-250 words), fear_type="body_horror". '
                 'ONLY valid JSON lines.'
             ),
@@ -192,7 +213,7 @@ print("", flush=True)
 
 outf = open(OUTFILE, "a")
 
-MAX_BATCHES = 300  # safety limit
+MAX_BATCHES = 300
 
 while len(exhausted) < len(MODELS) and batch_num < MAX_BATCHES:
     available = [(p, m, n, t) for p, m, n, t in MODELS if f"{p}:{m}" not in exhausted]
@@ -203,7 +224,6 @@ while len(exhausted) < len(MODELS) and batch_num < MAX_BATCHES:
     provider_name, model, short, tokens = available[batch_num % len(available)]
     client = providers[provider_name]
 
-    # Pick fear type from weighted pool
     ft = random.choice(generation_pool)
     config = BALANCE_TARGETS[ft]
     scenario = random.choice(config["scenarios"])
@@ -222,7 +242,6 @@ while len(exhausted) < len(MODELS) and batch_num < MAX_BATCHES:
         )
 
         content = (resp.choices[0].message.content or "").strip()
-        # Strip markdown fences
         if content.startswith("```"):
             content = "\n".join(content.split("\n")[1:])
         if content.endswith("```"):
@@ -237,11 +256,7 @@ while len(exhausted) < len(MODELS) and batch_num < MAX_BATCHES:
             try:
                 obj = json.loads(line)
                 if all(k in obj for k in ["instruction", "input", "output"]):
-                    # Normalize fear_type
-                    if "fear_type" not in obj:
-                        obj["fear_type"] = ft
-                    # Force correct fear_type for this batch
-                    obj["fear_type"] = ft
+                    obj["fear_type"] = ft  # force correct type
                     key = obj["output"][:100]
                     if len(obj["output"]) > 80 and key not in seen:
                         seen.add(key)
@@ -256,7 +271,6 @@ while len(exhausted) < len(MODELS) and batch_num < MAX_BATCHES:
         total_calls += 1
         errors_by_model.pop(f"{provider_name}:{model}", None)
 
-        # Progress: show running totals
         progress = " | ".join(f"{k}:{v}" for k, v in generated_per_type.items())
         print(
             f"#{total_calls:3d} {short:12s} {ft:18s} "
@@ -272,7 +286,7 @@ while len(exhausted) < len(MODELS) and batch_num < MAX_BATCHES:
         errors_by_model[key] = errors_by_model.get(key, 0) + 1
 
         if any(x in err for x in ["429", "SetLimitExceeded", "insufficient", "quota", "suspended"]):
-            print(f"  {short}: EXHAUSTED ({err[:60]})", flush=True)
+            print(f"  {short}: EXHAUSTED", flush=True)
             exhausted.add(key)
         elif errors_by_model[key] >= 3:
             print(f"  {short}: 3 errors, skipping", flush=True)

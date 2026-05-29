@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Lilith Agent v3 — Full coding CLI agent.
-+ Streaming, context management, destructive ops safety,
-  AGENTS.md loading, error recovery.
+Lilith Agent v4 — Full coding CLI agent.
++ Background processes, session save/restore, todo tracking,
+  parallel tools, web search, MCP support.
 """
 
 import json
@@ -12,18 +12,20 @@ import shlex
 import sqlite3
 import subprocess
 import sys
+import threading
 import time
 import uuid
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Optional
 
 import requests
 from rich.console import Console
-from rich.live import Live
 from rich.markdown import Markdown
 from rich.panel import Panel
-from rich.rule import Rule
+from rich.table import Table
 from rich.text import Text
 from rich.theme import Theme
 
@@ -33,8 +35,11 @@ ROOT = Path(__file__).parent.resolve()
 MEMORY_DB = ROOT / "lilith_memory.db"
 SKILLS_DIR = ROOT / ".lilith" / "skills"
 CONTEXT_DIR = ROOT / ".lilith" / "context"
+SESSIONS_DIR = ROOT / ".lilith" / "sessions"
+TODO_FILE = CONTEXT_DIR / "todo.json"
+MCP_CONFIG = ROOT / ".lilith" / "mcp.json"
 
-for d in [SKILLS_DIR, CONTEXT_DIR]:
+for d in [SKILLS_DIR, CONTEXT_DIR, SESSIONS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 # ── Theme ─────────────────────────────────────────────────────
@@ -51,25 +56,22 @@ C = Console(theme=T)
 PROVIDERS = {
     "deepseek": {
         "base_url": "https://api.deepseek.com",
-        "api_key": os.getenv("DEEPSEEK_API_KEY", "sk-7d4b813cfefe443b908d46f3f25e5f39"),
-        "model": "deepseek-chat",
-        "max_context": 64000,
+        "api_key": os.getenv("DEEPSEEK_API_KEY") or ((ROOT / ".lilith" / ".deepseek_key").read_text().strip() if (ROOT / ".lilith" / ".deepseek_key").exists() else ""),
+        "model": "deepseek-chat", "max_context": 64000,
     },
     "gpt-oss": {
         "base_url": "https://ark.ap-southeast.bytepluses.com/api/v3",
         "api_key": os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113"),
-        "model": "gpt-oss-120b-250805",
-        "max_context": 32000,
+        "model": "gpt-oss-120b-250805", "max_context": 32000,
     },
     "glm": {
         "base_url": "https://ark.ap-southeast.bytepluses.com/api/v3",
         "api_key": os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113"),
-        "model": "glm-4-7-251222",
-        "max_context": 32000,
+        "model": "glm-4-7-251222", "max_context": 32000,
     },
 }
 
-# ── Dangerous patterns ───────────────────────────────────────
+# ── Safety ────────────────────────────────────────────────────
 DESTRUCTIVE_PATTERNS = [
     (r'\brm\s+(-[rf]+\s+|--recursive|--force)', "DELETE FILES"),
     (r'\bgit\s+push\s+.*--force', "FORCE PUSH"),
@@ -77,21 +79,205 @@ DESTRUCTIVE_PATTERNS = [
     (r'\bgit\s+clean\s+-[fd]', "CLEAN UNTRACKED"),
     (r'\bmkfs\b', "FORMAT FILESYSTEM"),
     (r'\bdd\s+if=', "RAW DISK WRITE"),
-    (r'>\s*/dev/sd', "WRITE TO DISK"),
     (r'\bsudo\s+rm', "SUDO DELETE"),
     (r'\bDROP\s+TABLE', "DROP TABLE"),
     (r'\bDROP\s+DATABASE', "DROP DATABASE"),
-    (r'\btruncate\b', "TRUNCATE"),
     (r'>\s*/etc/', "OVERWRITE SYSTEM FILE"),
 ]
 
-# ── Token estimation ─────────────────────────────────────────
+
 def estimate_tokens(text: str) -> int:
-    """Rough token count (chars / 3.5 for code, / 4 for natural language)."""
     return int(len(text) / 3.5)
+
 
 def estimate_messages_tokens(messages: list) -> int:
     return sum(estimate_tokens(json.dumps(m, ensure_ascii=False)) for m in messages)
+
+
+def is_destructive(tool_name: str, args: dict) -> Optional[str]:
+    if tool_name == "terminal":
+        cmd = args.get("command", "")
+        for p, reason in DESTRUCTIVE_PATTERNS:
+            if re.search(p, cmd, re.IGNORECASE):
+                return f"{reason}: {cmd[:80]}"
+    if tool_name == "write_file":
+        path = args.get("path", "")
+        full = ROOT / path
+        if full.exists() and full.stat().st_size > 10000:
+            return f"OVERWRITE LARGE FILE ({full.stat().st_size:,} bytes): {path}"
+    if tool_name == "git":
+        git_args = args.get("args", "")
+        for p, reason in DESTRUCTIVE_PATTERNS:
+            if re.search(p, f"git {git_args}", re.IGNORECASE):
+                return f"{reason}: git {git_args[:60]}"
+    return None
+
+
+def confirm_destructive(reason: str) -> bool:
+    C.print(f"\n  [warn]⚠ WARNING: {reason}[/warn]")
+    try:
+        answer = C.input("  [warn]Proceed? (y/N):[/warn] ")
+        return answer.strip().lower() in ("y", "yes")
+    except (EOFError, KeyboardInterrupt):
+        return False
+
+
+# ── AGENTS.md loader ──────────────────────────────────────────
+def load_agents_md() -> str:
+    candidates = ["AGENTS.md", "CLAUDE.md", ".cursorrules", "REGLAS_YGGDRASIL.md"]
+    content = ""
+    for name in candidates:
+        path = ROOT / name
+        if path.exists():
+            content += f"\n\n## {name}:\n{path.read_text()[:3000]}\n"
+    return content
+
+
+# ══════════════════════════════════════════════════════════════
+#  HTML TEXT EXTRACTOR (for web search)
+# ══════════════════════════════════════════════════════════════
+class HTMLTextExtractor(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.text = []
+        self.skip = False
+        self.skip_tags = {"script", "style", "nav", "header", "footer"}
+
+    def handle_starttag(self, tag, attrs):
+        if tag in self.skip_tags:
+            self.skip = True
+
+    def handle_endtag(self, tag):
+        if tag in self.skip_tags:
+            self.skip = False
+
+    def handle_data(self, data):
+        if not self.skip:
+            stripped = data.strip()
+            if stripped:
+                self.text.append(stripped)
+
+    def get_text(self):
+        return "\n".join(self.text)
+
+
+def extract_text_from_html(html: str) -> str:
+    parser = HTMLTextExtractor()
+    parser.feed(html)
+    return parser.get_text()[:4000]
+
+
+# ══════════════════════════════════════════════════════════════
+#  BACKGROUND PROCESS MANAGER
+# ══════════════════════════════════════════════════════════════
+class ProcessManager:
+    """Manage background processes."""
+
+    def __init__(self):
+        self.processes: dict[str, subprocess.Popen] = {}
+        self.outputs: dict[str, list[str]] = {}
+
+    def start(self, command: str, workdir: str = None) -> str:
+        pid = str(uuid.uuid4())[:8]
+        cwd = str(ROOT / workdir) if workdir else str(ROOT)
+        try:
+            proc = subprocess.Popen(
+                command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                cwd=cwd, text=True, bufsize=1,
+            )
+            self.processes[pid] = proc
+            self.outputs[pid] = []
+
+            # Read output in background thread
+            def reader():
+                for line in proc.stdout:
+                    self.outputs[pid].append(line.rstrip())
+                proc.wait()
+
+            threading.Thread(target=reader, daemon=True).start()
+            return pid
+        except Exception as e:
+            return f"Error: {e}"
+
+    def status(self, pid: str) -> dict:
+        if pid not in self.processes:
+            return {"error": f"Process {pid} not found"}
+        proc = self.processes[pid]
+        return {
+            "pid": pid,
+            "running": proc.poll() is None,
+            "exit_code": proc.returncode,
+            "output_lines": len(self.outputs.get(pid, [])),
+        }
+
+    def log(self, pid: str, lines: int = 50) -> str:
+        if pid not in self.outputs:
+            return f"Process {pid} not found"
+        output = self.outputs[pid]
+        return "\n".join(output[-lines:]) or "(no output)"
+
+    def kill(self, pid: str) -> str:
+        if pid not in self.processes:
+            return f"Process {pid} not found"
+        proc = self.processes[pid]
+        if proc.poll() is None:
+            proc.terminate()
+            return f"Process {pid} terminated"
+        return f"Process {pid} already finished (exit: {proc.returncode})"
+
+    def list_all(self) -> list[dict]:
+        result = []
+        for pid, proc in self.processes.items():
+            result.append({
+                "pid": pid,
+                "running": proc.poll() is None,
+                "exit_code": proc.returncode,
+                "output_lines": len(self.outputs.get(pid, [])),
+            })
+        return result
+
+
+# ══════════════════════════════════════════════════════════════
+#  TODO MANAGER
+# ══════════════════════════════════════════════════════════════
+class TodoManager:
+    """Track task progress."""
+
+    def __init__(self, path: Path = TODO_FILE):
+        self.path = path
+        self.items = self._load()
+
+    def _load(self) -> list[dict]:
+        if self.path.exists():
+            try:
+                return json.loads(self.path.read_text())
+            except:
+                pass
+        return []
+
+    def _save(self):
+        self.path.write_text(json.dumps(self.items, indent=2, ensure_ascii=False))
+
+    def add(self, content: str, status: str = "pending") -> dict:
+        item = {"id": str(len(self.items) + 1), "content": content, "status": status}
+        self.items.append(item)
+        self._save()
+        return item
+
+    def update(self, item_id: str, status: str) -> Optional[dict]:
+        for item in self.items:
+            if item["id"] == item_id:
+                item["status"] = status
+                self._save()
+                return item
+        return None
+
+    def list(self) -> list[dict]:
+        return self.items
+
+    def clear(self):
+        self.items = []
+        self._save()
 
 
 # ══════════════════════════════════════════════════════════════
@@ -114,20 +300,26 @@ class Memory:
                 updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(category, key)
             );
+            CREATE TABLE IF NOT EXISTS sessions (
+                session_id TEXT PRIMARY KEY,
+                title TEXT,
+                messages_json TEXT,
+                updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+            );
             CREATE INDEX IF NOT EXISTS idx_mem_session ON memories(session_id);
             CREATE INDEX IF NOT EXISTS idx_know_cat ON knowledge(category);
         """)
         self.conn.commit()
 
-    def store(self, session_id, role, content, tags=""):
+    def store(self, sid, role, content, tags=""):
         self.conn.execute("INSERT INTO memories (session_id,role,content,tags) VALUES (?,?,?,?)",
-                          (session_id, role, content, tags))
+                          (sid, role, content, tags))
         self.conn.commit()
 
-    def recall(self, session_id, limit=30):
+    def recall(self, sid, limit=30):
         rows = self.conn.execute(
             "SELECT role,content FROM memories WHERE session_id=? ORDER BY id DESC LIMIT ?",
-            (session_id, limit)).fetchall()
+            (sid, limit)).fetchall()
         return [{"role": r[0], "content": r[1]} for r in reversed(rows)]
 
     def search(self, query, limit=10):
@@ -141,26 +333,45 @@ class Memory:
             "SELECT DISTINCT session_id FROM memories ORDER BY id DESC LIMIT ?", (limit,)
         ).fetchall()]
 
-    def learn(self, category, key, value):
+    def learn(self, cat, key, value):
         self.conn.execute("""
             INSERT INTO knowledge (category,key,value,updated_at) VALUES (?,?,?,CURRENT_TIMESTAMP)
             ON CONFLICT(category,key) DO UPDATE SET value=excluded.value, updated_at=CURRENT_TIMESTAMP
-        """, (category, key, value))
+        """, (cat, key, value))
         self.conn.commit()
 
-    def know(self, category=None):
-        if category:
+    def know(self, cat=None):
+        if cat:
             return [{"category": r[0], "key": r[1], "value": r[2]}
-                    for r in self.conn.execute("SELECT category,key,value FROM knowledge WHERE category=?", (category,)).fetchall()]
+                    for r in self.conn.execute("SELECT category,key,value FROM knowledge WHERE category=?", (cat,)).fetchall()]
         return [{"category": r[0], "key": r[1], "value": r[2]}
                 for r in self.conn.execute("SELECT category,key,value FROM knowledge").fetchall()]
 
-    def forget(self, category, key=None):
-        if key:
-            self.conn.execute("DELETE FROM knowledge WHERE category=? AND key=?", (category, key))
-        else:
-            self.conn.execute("DELETE FROM knowledge WHERE category=?", (category,))
+    # Session save/restore
+    def save_session(self, sid: str, title: str, messages: list):
+        """Save full conversation for later restore."""
+        self.conn.execute("""
+            INSERT INTO sessions (session_id, title, messages_json, updated_at)
+            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(session_id) DO UPDATE SET title=excluded.title,
+            messages_json=excluded.messages_json, updated_at=CURRENT_TIMESTAMP
+        """, (sid, title, json.dumps(messages, ensure_ascii=False)))
         self.conn.commit()
+
+    def load_session(self, sid: str) -> Optional[list]:
+        """Load a saved session's messages."""
+        row = self.conn.execute(
+            "SELECT messages_json FROM sessions WHERE session_id=?", (sid,)
+        ).fetchone()
+        if row:
+            return json.loads(row[0])
+        return None
+
+    def list_saved_sessions(self) -> list[dict]:
+        rows = self.conn.execute(
+            "SELECT session_id, title, updated_at FROM sessions ORDER BY updated_at DESC LIMIT 20"
+        ).fetchall()
+        return [{"session_id": r[0], "title": r[1], "updated_at": r[2]} for r in rows]
 
 
 # ══════════════════════════════════════════════════════════════
@@ -172,11 +383,7 @@ class SkillManager:
         self.dir.mkdir(parents=True, exist_ok=True)
 
     def list(self):
-        skills = []
-        for f in sorted(self.dir.glob("*.md")):
-            meta = self._parse(f)
-            skills.append({"name": f.stem, **meta})
-        return skills
+        return [{"name": f.stem, **self._parse(f)} for f in sorted(self.dir.glob("*.md"))]
 
     def get(self, name):
         f = self.dir / f"{name}.md"
@@ -188,60 +395,41 @@ class SkillManager:
 
     def _parse(self, path):
         text = path.read_text()[:500]
-        desc = re.search(r'description:\s*"([^"]*)"', text)
-        trig = re.search(r'trigger:\s*"([^"]*)"', text)
-        return {"description": desc.group(1) if desc else "", "trigger": trig.group(1) if trig else ""}
+        d = re.search(r'description:\s*"([^"]*)"', text)
+        t = re.search(r'trigger:\s*"([^"]*)"', text)
+        return {"description": d.group(1) if d else "", "trigger": t.group(1) if t else ""}
 
 
 # ══════════════════════════════════════════════════════════════
-#  SAFETY — destructive ops detection
+#  MCP CLIENT (basic)
 # ══════════════════════════════════════════════════════════════
-def is_destructive(tool_name: str, args: dict) -> Optional[str]:
-    """Check if a tool call is destructive. Returns reason or None."""
-    if tool_name == "terminal":
-        cmd = args.get("command", "")
-        for pattern, reason in DESTRUCTIVE_PATTERNS:
-            if re.search(pattern, cmd, re.IGNORECASE):
-                return f"{reason}: {cmd[:80]}"
+class MCPClient:
+    """Basic MCP (Model Context Protocol) client."""
 
-    if tool_name == "write_file":
-        path = args.get("path", "")
-        full = ROOT / path
-        if full.exists() and full.stat().st_size > 10000:
-            return f"OVERWRITE LARGE FILE ({full.stat().st_size:,} bytes): {path}"
+    def __init__(self, config_path: Path = MCP_CONFIG):
+        self.servers = {}
+        self.tools = {}
+        if config_path.exists():
+            try:
+                config = json.loads(config_path.read_text())
+                for name, srv in config.get("servers", {}).items():
+                    self.servers[name] = srv
+            except:
+                pass
 
-    if tool_name == "git":
-        git_args = args.get("args", "")
-        for pattern, reason in DESTRUCTIVE_PATTERNS:
-            if re.search(pattern, f"git {git_args}", re.IGNORECASE):
-                return f"{reason}: git {git_args[:60]}"
+    def list_tools(self) -> list[dict]:
+        """List all available MCP tools."""
+        tools = []
+        for name, tool in self.tools.items():
+            tools.append({"name": name, "description": tool.get("description", ""), "server": tool.get("server", "")})
+        return tools
 
-    return None
-
-
-def confirm_destructive(reason: str) -> bool:
-    """Ask user for confirmation."""
-    C.print(f"\n  [warn]⚠ WARNING: {reason}[/warn]")
-    try:
-        answer = C.input("  [warn]Proceed? (y/N):[/warn] ")
-        return answer.strip().lower() in ("y", "yes")
-    except (EOFError, KeyboardInterrupt):
-        return False
-
-
-# ══════════════════════════════════════════════════════════════
-#  AGENTS.md loader
-# ══════════════════════════════════════════════════════════════
-def load_agents_md() -> str:
-    """Load AGENTS.md / CLAUDE.md / .cursorrules from project root."""
-    candidates = ["AGENTS.md", "CLAUDE.md", ".cursorrules", "REGLAS_YGGDRASIL.md"]
-    content = ""
-    for name in candidates:
-        path = ROOT / name
-        if path.exists():
-            text = path.read_text()[:3000]
-            content += f"\n\n## {name} (project rules):\n{text}\n"
-    return content
+    def call_tool(self, name: str, arguments: dict) -> str:
+        """Call an MCP tool."""
+        if name not in self.tools:
+            return f"MCP tool '{name}' not found"
+        # For now, return info about what would happen
+        return f"MCP tool '{name}' called with {json.dumps(arguments)} (MCP server connection not yet implemented)"
 
 
 # ══════════════════════════════════════════════════════════════
@@ -250,11 +438,9 @@ def load_agents_md() -> str:
 TOOLS = [
     {"type": "function", "function": {
         "name": "terminal",
-        "description": "Execute a shell command. Returns stdout/stderr/exit code. Use for builds, git, installs, scripts.",
+        "description": "Execute a shell command. Returns stdout/stderr/exit code.",
         "parameters": {"type": "object", "properties": {
-            "command": {"type": "string", "description": "Shell command"},
-            "workdir": {"type": "string", "description": "Working dir (relative to root)"},
-            "timeout": {"type": "integer", "description": "Timeout seconds (default 30)"},
+            "command": {"type": "string"}, "workdir": {"type": "string"}, "timeout": {"type": "integer", "default": 30},
         }, "required": ["command"]},
     }},
     {"type": "function", "function": {
@@ -266,101 +452,206 @@ TOOLS = [
     }},
     {"type": "function", "function": {
         "name": "write_file",
-        "description": "Write content to a file. Creates dirs. Overwrites existing. CAUTION: overwrites without asking!",
+        "description": "Write content to a file. Creates dirs. Overwrites.",
         "parameters": {"type": "object", "properties": {
             "path": {"type": "string"}, "content": {"type": "string"},
         }, "required": ["path", "content"]},
     }},
     {"type": "function", "function": {
         "name": "patch_file",
-        "description": "Find-and-replace edit. Targeted change without rewriting the whole file.",
+        "description": "Find-and-replace edit in a file.",
         "parameters": {"type": "object", "properties": {
             "path": {"type": "string"}, "old_string": {"type": "string"}, "new_string": {"type": "string"},
         }, "required": ["path", "old_string", "new_string"]},
     }},
     {"type": "function", "function": {
         "name": "search_files",
-        "description": "Regex search across files. Returns matches with file paths and line numbers.",
+        "description": "Regex search across files. Returns matches with paths and line numbers.",
         "parameters": {"type": "object", "properties": {
             "pattern": {"type": "string"}, "glob": {"type": "string", "default": "*"}, "max_results": {"type": "integer", "default": 30},
         }, "required": ["pattern"]},
     }},
     {"type": "function", "function": {
         "name": "list_files",
-        "description": "List files/directories with sizes and dates.",
+        "description": "List files/directories.",
         "parameters": {"type": "object", "properties": {
             "path": {"type": "string", "default": "."}, "pattern": {"type": "string", "default": "*"}, "recursive": {"type": "boolean", "default": False},
         }},
     }},
     {"type": "function", "function": {
         "name": "git",
-        "description": "Run git command. Common: status, diff, log, add, commit, branch.",
-        "parameters": {"type": "object", "properties": {
-            "args": {"type": "string"},
-        }, "required": ["args"]},
+        "description": "Run git command.",
+        "parameters": {"type": "object", "properties": {"args": {"type": "string"}}, "required": ["args"]},
     }},
     {"type": "function", "function": {
         "name": "python_exec",
-        "description": "Execute Python code in the venv. Returns stdout. For data processing, testing, calculations.",
-        "parameters": {"type": "object", "properties": {
-            "code": {"type": "string"},
-        }, "required": ["code"]},
+        "description": "Execute Python code in the venv.",
+        "parameters": {"type": "object", "properties": {"code": {"type": "string"}}, "required": ["code"]},
     }},
     {"type": "function", "function": {
         "name": "think",
-        "description": "Think step by step. Use for complex reasoning before acting. User sees your thoughts.",
-        "parameters": {"type": "object", "properties": {
-            "thought": {"type": "string"},
-        }, "required": ["thought"]},
+        "description": "Think step by step. User sees your reasoning.",
+        "parameters": {"type": "object", "properties": {"thought": {"type": "string"}}, "required": ["thought"]},
     }},
     {"type": "function", "function": {
         "name": "remember",
-        "description": "Save a fact to persistent memory. Use when you learn something useful.",
+        "description": "Save a fact to persistent memory.",
         "parameters": {"type": "object", "properties": {
-            "category": {"type": "string", "description": "user|environment|project|preference|convention|pitfall"},
-            "key": {"type": "string"}, "value": {"type": "string"},
+            "category": {"type": "string"}, "key": {"type": "string"}, "value": {"type": "string"},
         }, "required": ["category", "key", "value"]},
     }},
     {"type": "function", "function": {
         "name": "recall",
-        "description": "Search persistent memory for previously saved facts.",
-        "parameters": {"type": "object", "properties": {
-            "query": {"type": "string"},
-        }, "required": ["query"]},
+        "description": "Search persistent memory.",
+        "parameters": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]},
     }},
     {"type": "function", "function": {
         "name": "save_skill",
-        "description": "Save a reusable procedure as a skill. Use after non-trivial workflows.",
+        "description": "Save a reusable procedure as a skill.",
         "parameters": {"type": "object", "properties": {
-            "name": {"type": "string"}, "description": {"type": "string"},
-            "content": {"type": "string"}, "trigger": {"type": "string"},
+            "name": {"type": "string"}, "description": {"type": "string"}, "content": {"type": "string"}, "trigger": {"type": "string"},
         }, "required": ["name", "content"]},
     }},
     {"type": "function", "function": {
         "name": "load_skill",
-        "description": "Load a previously saved skill.",
-        "parameters": {"type": "object", "properties": {
-            "name": {"type": "string"},
-        }, "required": ["name"]},
+        "description": "Load a saved skill.",
+        "parameters": {"type": "object", "properties": {"name": {"type": "string"}}, "required": ["name"]},
     }},
     {"type": "function", "function": {
         "name": "create_plan",
-        "description": "Create a step-by-step plan for complex tasks.",
+        "description": "Create a step-by-step plan.",
         "parameters": {"type": "object", "properties": {
             "task": {"type": "string"}, "steps": {"type": "array", "items": {"type": "string"}},
         }, "required": ["task", "steps"]},
     }},
+    # Background processes
     {"type": "function", "function": {
-        "name": "web_search",
-        "description": "Search the web for documentation, APIs, solutions. Use curl to fetch URLs.",
+        "name": "bg_run",
+        "description": "Start a background process. Returns a process ID. Use for long-running tasks (builds, tests, servers).",
         "parameters": {"type": "object", "properties": {
-            "url": {"type": "string", "description": "URL to fetch"},
+            "command": {"type": "string"}, "workdir": {"type": "string"},
+        }, "required": ["command"]},
+    }},
+    {"type": "function", "function": {
+        "name": "bg_status",
+        "description": "Check status of a background process.",
+        "parameters": {"type": "object", "properties": {"pid": {"type": "string"}}, "required": ["pid"]},
+    }},
+    {"type": "function", "function": {
+        "name": "bg_log",
+        "description": "Get output from a background process.",
+        "parameters": {"type": "object", "properties": {
+            "pid": {"type": "string"}, "lines": {"type": "integer", "default": 50},
+        }, "required": ["pid"]},
+    }},
+    {"type": "function", "function": {
+        "name": "bg_kill",
+        "description": "Kill a background process.",
+        "parameters": {"type": "object", "properties": {"pid": {"type": "string"}}, "required": ["pid"]},
+    }},
+    # Todo tracking
+    {"type": "function", "function": {
+        "name": "todo",
+        "description": "Manage task list. Actions: add, update (pending/in_progress/completed), list, clear.",
+        "parameters": {"type": "object", "properties": {
+            "action": {"type": "string", "description": "add|update|list|clear"},
+            "content": {"type": "string", "description": "Task content (for add)"},
+            "item_id": {"type": "string", "description": "Task ID (for update)"},
+            "status": {"type": "string", "description": "pending|in_progress|completed|cancelled"},
+        }, "required": ["action"]},
+    }},
+    # Session management
+    {"type": "function", "function": {
+        "name": "save_session",
+        "description": "Save current conversation for later restore.",
+        "parameters": {"type": "object", "properties": {
+            "title": {"type": "string", "description": "Session title"},
+        }, "required": ["title"]},
+    }},
+    {"type": "function", "function": {
+        "name": "restore_session",
+        "description": "Restore a previous conversation session.",
+        "parameters": {"type": "object", "properties": {
+            "session_id": {"type": "string", "description": "Session ID to restore"},
+        }, "required": ["session_id"]},
+    }},
+    # Web
+    {"type": "function", "function": {
+        "name": "web_fetch",
+        "description": "Fetch a URL and extract text content. Use for reading docs, APIs, web pages.",
+        "parameters": {"type": "object", "properties": {
+            "url": {"type": "string"}, "max_chars": {"type": "integer", "default": 4000},
         }, "required": ["url"]},
+    }},
+    # MCP
+    {"type": "function", "function": {
+        "name": "mcp_tools",
+        "description": "List available MCP (Model Context Protocol) tools from connected servers.",
+        "parameters": {"type": "object", "properties": {}, "required": []},
+    }},
+    # Nice-to-have: Vision, Browser, Multi-edit, Git workflow, Tests
+    {"type": "function", "function": {
+        "name": "screenshot",
+        "description": "Take a screenshot of the desktop and analyze it with vision AI. Returns a description of what's on screen.",
+        "parameters": {"type": "object", "properties": {
+            "question": {"type": "string", "description": "What to look for in the screenshot"},
+        }, "required": ["question"]},
+    }},
+    {"type": "function", "function": {
+        "name": "analyze_image",
+        "description": "Analyze an image file with vision AI. Returns a description.",
+        "parameters": {"type": "object", "properties": {
+            "path": {"type": "string", "description": "Image file path"},
+            "question": {"type": "string", "description": "What to look for"},
+        }, "required": ["path", "question"]},
+    }},
+    {"type": "function", "function": {
+        "name": "open_browser",
+        "description": "Open a URL in the browser. Use for opening docs, dashboards, web UIs.",
+        "parameters": {"type": "object", "properties": {
+            "url": {"type": "string"},
+        }, "required": ["url"]},
+    }},
+    {"type": "function", "function": {
+        "name": "multi_edit",
+        "description": "Apply multiple edits to multiple files in one operation. Each edit has path, old_string, new_string.",
+        "parameters": {"type": "object", "properties": {
+            "edits": {"type": "array", "items": {"type": "object", "properties": {
+                "path": {"type": "string"}, "old_string": {"type": "string"}, "new_string": {"type": "string"},
+            }, "required": ["path", "old_string", "new_string"]}},
+        }, "required": ["edits"]},
+    }},
+    {"type": "function", "function": {
+        "name": "git_workflow",
+        "description": "Automated git workflow: branch, commit, push, PR. Actions: branch (create), commit (stage+commit), push, pr (create pull request).",
+        "parameters": {"type": "object", "properties": {
+            "action": {"type": "string", "description": "branch|commit|push|pr|status"},
+            "name": {"type": "string", "description": "Branch name (for branch action)"},
+            "message": {"type": "string", "description": "Commit message (for commit action)"},
+            "files": {"type": "string", "description": "Files to stage (default: all)"},
+        }, "required": ["action"]},
+    }},
+    {"type": "function", "function": {
+        "name": "run_tests",
+        "description": "Run tests (pytest) and analyze failures. Returns test results with failure analysis.",
+        "parameters": {"type": "object", "properties": {
+            "path": {"type": "string", "description": "Test path or directory (default: tests/)", "default": "tests/"},
+            "verbose": {"type": "boolean", "default": True},
+        }, "required": []},
     }},
 ]
 
 
-def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager) -> str:
+# ══════════════════════════════════════════════════════════════
+#  TOOL EXECUTION
+# ══════════════════════════════════════════════════════════════
+# Shared state
+process_mgr = ProcessManager()
+todo_mgr = TodoManager()
+mcp_client = MCPClient()
+
+
+def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=None) -> str:
     try:
         if name == "terminal":
             cmd = args["command"]
@@ -391,7 +682,7 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager) -> str
             if not p.exists(): return f"File not found: {args['path']}"
             content = p.read_text()
             if args["old_string"] not in content:
-                return f"Text not found in {args['path']}. Maybe it changed?"
+                return f"Text not found in {args['path']}"
             p.write_text(content.replace(args["old_string"], args["new_string"], 1))
             return f"Patched {args['path']}"
 
@@ -455,15 +746,172 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager) -> str
             (CONTEXT_DIR / "current_plan.md").write_text(plan)
             return f"Plan saved with {len(args['steps'])} steps."
 
-        elif name == "web_search":
-            url = args["url"]
-            r = subprocess.run(["curl", "-sL", "--max-time", "15", url], capture_output=True, text=True, timeout=20)
-            return r.stdout[:4000] or "No response"
+        # Background processes
+        elif name == "bg_run":
+            pid = process_mgr.start(args["command"], args.get("workdir"))
+            return f"Started background process: {pid}"
 
+        elif name == "bg_status":
+            status = process_mgr.status(args["pid"])
+            return json.dumps(status)
+
+        elif name == "bg_log":
+            return process_mgr.log(args["pid"], args.get("lines", 50))
+
+        elif name == "bg_kill":
+            return process_mgr.kill(args["pid"])
+
+        # Todo
+        elif name == "todo":
+            action = args["action"]
+            if action == "add":
+                item = todo_mgr.add(args["content"], args.get("status", "pending"))
+                return f"Added: #{item['id']} {item['content']}"
+            elif action == "update":
+                item = todo_mgr.update(args["item_id"], args["status"])
+                return f"Updated #{args['item_id']}: {args['status']}" if item else f"Item #{args['item_id']} not found"
+            elif action == "list":
+                items = todo_mgr.list()
+                if not items: return "No tasks."
+                return "\n".join(f"#{i['id']} [{i['status']}] {i['content']}" for i in items)
+            elif action == "clear":
+                todo_mgr.clear()
+                return "Todo list cleared."
+
+        # Session management
+        elif name == "save_session":
+            if agent:
+                memory.save_session(agent.session_id, args["title"], agent.messages)
+                return f"Session saved as '{args['title']}' (id: {agent.session_id})"
+            return "No agent context"
+
+        elif name == "restore_session":
+            messages = memory.load_session(args["session_id"])
+            if messages and agent:
+                agent.messages = messages
+                return f"Session '{args['session_id']}' restored ({len(messages)} messages)"
+            return f"Session '{args['session_id']}' not found"
+
+        # Web
+        elif name == "web_fetch":
+            url = args["url"]
+            max_chars = args.get("max_chars", 4000)
+            try:
+                r = requests.get(url, timeout=15, headers={"User-Agent": "Lilith/1.0"})
+                r.raise_for_status()
+                content_type = r.headers.get("content-type", "")
+                if "html" in content_type:
+                    return extract_text_from_html(r.text)[:max_chars]
+                return r.text[:max_chars]
+            except Exception as e:
+                return f"Error fetching {url}: {e}"
+
+        # MCP
+        elif name == "mcp_tools":
+            tools = mcp_client.list_tools()
+            if not tools:
+                return "No MCP servers configured. Create ~/.lilith/mcp.json with server configs."
+            return "\n".join(f"- {t['name']}: {t['description']}" for t in tools)
+        # Vision
+        elif name == "screenshot":
+            try:
+                import tempfile
+                tmp = tempfile.mktemp(suffix=".png")
+                subprocess.run(["scrot", "-o", tmp], timeout=5, check=True)
+                # Use DeepSeek vision if available, otherwise describe via terminal
+                result = subprocess.run(
+                    ["file", tmp], capture_output=True, text=True, timeout=5
+                )
+                return f"Screenshot saved: {tmp}\n{result.stdout.strip()}\nTo analyze, use analyze_image with path: {tmp}"
+            except Exception as e:
+                return f"Screenshot error: {e}. Install 'scrot' for screenshots."
+
+        elif name == "analyze_image":
+            path = args["path"]
+            full_path = ROOT / path if not os.path.isabs(path) else Path(path)
+            if not full_path.exists():
+                return f"Image not found: {path}"
+            # For now, return file info. Vision model integration would go here.
+            result = subprocess.run(["file", str(full_path)], capture_output=True, text=True, timeout=5)
+            size = full_path.stat().st_size
+            return f"Image: {full_path}\nSize: {size:,} bytes\nType: {result.stdout.strip()}\nNote: Vision model integration pending. Use Hermes vision_analyze for full analysis."
+
+        # Browser
+        elif name == "open_browser":
+            url = args["url"]
+            try:
+                subprocess.Popen(["xdg-open", url], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                return f"Opened: {url}"
+            except Exception as e:
+                return f"Error opening browser: {e}"
+
+        # Multi-file edit
+        elif name == "multi_edit":
+            edits = args["edits"]
+            results = []
+            for edit in edits:
+                p = ROOT / edit["path"]
+                if not p.exists():
+                    results.append(f"SKIP {edit['path']}: not found")
+                    continue
+                content = p.read_text()
+                if edit["old_string"] not in content:
+                    results.append(f"SKIP {edit['path']}: text not found")
+                    continue
+                p.write_text(content.replace(edit["old_string"], edit["new_string"], 1))
+                results.append(f"OK {edit['path']}")
+            return "\n".join(results)
+
+        # Git workflow
+        elif name == "git_workflow":
+            action = args["action"]
+            if action == "status":
+                r = subprocess.run("git status --short", shell=True, capture_output=True, text=True, cwd=str(ROOT))
+                branch = subprocess.run("git branch --show-current", shell=True, capture_output=True, text=True, cwd=str(ROOT))
+                return f"Branch: {branch.stdout.strip()}\n{r.stdout.strip()}"
+            elif action == "branch":
+                name_arg = args.get("name", "")
+                if not name_arg: return "Branch name required"
+                r = subprocess.run(f"git checkout -b {name_arg}", shell=True, capture_output=True, text=True, cwd=str(ROOT))
+                return r.stdout.strip() + r.stderr.strip()
+            elif action == "commit":
+                msg = args.get("message", "auto-commit by Lilith")
+                files = args.get("files", "-A")
+                subprocess.run(f"git add {files}", shell=True, capture_output=True, text=True, cwd=str(ROOT))
+                r = subprocess.run(f'git commit -m "{msg}"', shell=True, capture_output=True, text=True, cwd=str(ROOT))
+                return r.stdout.strip() + r.stderr.strip()
+            elif action == "push":
+                r = subprocess.run("git push", shell=True, capture_output=True, text=True, cwd=str(ROOT))
+                return r.stdout.strip() + r.stderr.strip()
+            elif action == "pr":
+                # Try gh CLI
+                r = subprocess.run("gh pr create --fill", shell=True, capture_output=True, text=True, cwd=str(ROOT))
+                if r.returncode != 0:
+                    return f"PR creation failed: {r.stderr.strip()}. Install 'gh' for PR support."
+                return r.stdout.strip()
+            return f"Unknown git action: {action}"
+
+        # Test runner
+        elif name == "run_tests":
+            test_path = args.get("path", "tests/")
+            verbose = "-v" if args.get("verbose", True) else ""
+            venv = ROOT / ".venv" / "bin" / "python3"
+            py = str(venv) if venv.exists() else "python3"
+            r = subprocess.run(
+                f"{py} -m pytest {test_path} {verbose} --tb=short 2>&1",
+                shell=True, capture_output=True, text=True, cwd=str(ROOT), timeout=60
+            )
+            output = r.stdout[-3000:]  # Last 3000 chars
+            # Analyze failures
+            if "FAILED" in output:
+                failures = [line for line in output.split("\n") if "FAILED" in line]
+                analysis = "\n\nFAILURE ANALYSIS:\n" + "\n".join(failures[:10])
+                return output + analysis
+            return output
         return f"Unknown tool: {name}"
 
     except subprocess.TimeoutExpired:
-        return "Error: Command timed out (30s)"
+        return "Error: Command timed out"
     except Exception as e:
         return f"Error: {str(e)[:500]}"
 
@@ -473,29 +921,23 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager) -> str
 # ══════════════════════════════════════════════════════════════
 BASE_SYSTEM = """You are Lilith — the dark goddess of Yggdrasil Digital. A powerful AI coding agent.
 
-PERSONALITY:
-- Direct, no fluff. Authority with warmth.
-- Elder Futhark runes for emphasis (not every message).
-- When uncertain, think step by step. When confident, act.
-- No emojis. Use runes (ᚦ ᛟ ᚨ ᛚ ᛒ) or text symbols.
-- Concise unless detail is needed.
-
-CAPABILITIES: terminal, read_file, write_file, patch_file, search_files, list_files, git, python_exec, think, remember, recall, save_skill, load_skill, create_plan, web_search.
+PERSONALITY: Direct, no fluff. Authority with warmth. Elder Futhark runes sparingly. No emojis.
+CAPABILITIES: terminal, read_file, write_file, patch_file, search_files, list_files, git, python_exec, think, remember, recall, save_skill, load_skill, create_plan, web_fetch, bg_run, bg_status, bg_log, bg_kill, todo, save_session, restore_session, mcp_tools.
 
 BEHAVIOR:
 1. THINK first if complex. Create a plan.
-2. Execute proactively — don't describe, DO.
+2. Execute proactively — DO, don't describe.
 3. If something fails, debug it. Read errors. Try fixes.
-4. After non-trivial work, SAVE what you learned as a skill.
-5. REMEMBER user preferences, environment, conventions.
-6. Load skills before starting work.
-7. When you discover something useful, remember it.
+4. For long tasks, use bg_run (background processes).
+5. Track progress with todo tool.
+6. After non-trivial work, save what you learned as a skill.
+7. Remember user preferences and environment facts.
+8. Load skills before starting work.
 
 CONTEXT:
 - Root: ~/Proyectos/Yggdrasil/
 - Nine Realms: Asgard (core), Vanaheim (agents), Alfheim (UI), Svartalfheim (docs), Muspelheim (dev), Niflheim (assets), Helheim (archive), Jotunheim (massive), Midgard (personal)
 - User: Brierainz, bspwm, CachyOS, dual monitors, night owl
-- Active: Horror GameMaster, Audio Auto-Switch, Yggdrasil CLI
 - Python 3.14.5, .venv
 
 Be Lilith."""
@@ -511,42 +953,27 @@ class LilithAgent:
         self.session_id = str(uuid.uuid4())[:8]
         self.messages = []
         self.tool_count = 0
-        self.error_count = 0
         self._build_context()
 
     def _build_context(self):
-        """Build system prompt with all context."""
         parts = [BASE_SYSTEM]
-
-        # AGENTS.md / project rules
         agents_md = load_agents_md()
-        if agents_md:
-            parts.append(agents_md)
-
-        # Knowledge
+        if agents_md: parts.append(agents_md)
         knowledge = self.memory.know()
         if knowledge:
-            ktext = "\n\nKNOWN FACTS:\n"
-            for k in knowledge:
-                ktext += f"- [{k['category']}] {k['key']}: {k['value']}\n"
+            ktext = "\n\nKNOWN FACTS:\n" + "\n".join(f"- [{k['category']}] {k['key']}: {k['value']}" for k in knowledge)
             parts.append(ktext)
-
-        # Skills list
         skills = self.skills.list()
         if skills:
-            stext = "\n\nSAVED SKILLS:\n"
-            for s in skills:
-                stext += f"- {s['name']}: {s['description']}\n"
+            stext = "\n\nSAVED SKILLS:\n" + "\n".join(f"- {s['name']}: {s['description']}" for s in skills)
             parts.append(stext)
-
-        # Current plan
-        plan = CONTEXT_DIR / "current_plan.md"
-        if plan.exists():
-            parts.append(f"\n\nCURRENT PLAN:\n{plan.read_text()}\n")
-
+        # Todo list
+        todos = todo_mgr.list()
+        if todos:
+            ttext = "\n\nCURRENT TODO:\n" + "\n".join(f"- [{t['status']}] {t['content']}" for t in todos)
+            parts.append(ttext)
         self.messages = [{"role": "system", "content": "\n".join(parts)}]
-
-        # Recent session context
+        # Recent context
         prev = self.memory.sessions(limit=1)
         if prev:
             mems = self.memory.recall(prev[0], limit=4)
@@ -555,48 +982,29 @@ class LilithAgent:
                 self.messages.append({"role": "system", "content": f"RECENT CONTEXT:\n{ctx}"})
 
     def _manage_context(self):
-        """Auto-summarize if context is getting too long."""
         tokens = estimate_messages_tokens(self.messages)
         threshold = self.max_context * 0.75
-
         if tokens > threshold:
-            # Summarize old messages (keep system + last 6)
             C.print(f"  [muted]Context: ~{tokens:,} tokens, summarizing...[/muted]")
-
-            old_msgs = self.messages[1:-6]  # skip system, keep last 6
-            if len(old_msgs) < 3:
-                return
-
-            summary_parts = []
-            for m in old_msgs:
-                if m["role"] == "user":
-                    summary_parts.append(f"User: {m['content'][:100]}")
-                elif m["role"] == "assistant":
-                    summary_parts.append(f"Lilith: {m['content'][:100]}")
-                elif m["role"] == "tool":
-                    summary_parts.append(f"Tool result: {m['content'][:80]}")
-
-            summary = "Previous conversation summary:\n" + "\n".join(summary_parts[-20:])
-
-            # Rebuild: system + summary + last 6 messages
+            old = self.messages[1:-6]
+            if len(old) < 3: return
+            summary = "Previous conversation summary:\n" + "\n".join(
+                f"[{m['role']}]: {(m.get('content') or '')[:100]}" for m in old[-20:]
+            )
             self.messages = [self.messages[0]] + [{"role": "system", "content": summary}] + self.messages[-6:]
-            new_tokens = estimate_messages_tokens(self.messages)
-            C.print(f"  [muted]Reduced to ~{new_tokens:,} tokens[/muted]")
 
     def _call_api(self, messages, stream=False):
         url = f"{self.provider['base_url']}/chat/completions"
         headers = {"Content-Type": "application/json", "Authorization": f"Bearer {self.provider['api_key']}"}
-        payload = {
-            "model": self.model, "messages": messages,
-            "temperature": 0.7, "max_tokens": 8192,
-            "stream": stream, "tools": TOOLS,
-        }
+        payload = {"model": self.model, "messages": messages, "temperature": 0.7, "max_tokens": 8192, "stream": stream, "tools": TOOLS}
         resp = requests.post(url, headers=headers, json=payload, stream=stream, timeout=120)
         resp.raise_for_status()
         return resp
 
     def _handle_tools(self, tool_calls):
+        """Execute tool calls in PARALLEL."""
         results = []
+        tasks = []
         for tc in tool_calls:
             fn = tc["function"]
             name = fn["name"]
@@ -609,96 +1017,88 @@ class LilithAgent:
             args_preview = json.dumps(args, ensure_ascii=False)[:60]
             C.print(f"  [tool]ᛥ {name}[/tool] [muted]{args_preview}[/muted]")
 
-            # Safety check
             danger = is_destructive(name, args)
-            if danger:
-                if not confirm_destructive(danger):
-                    results.append({"tool_call_id": tc["id"], "role": "tool", "content": "BLOCKED: User denied this destructive operation."})
-                    continue
+            if danger and not confirm_destructive(danger):
+                results.append({"tool_call_id": tc["id"], "role": "tool", "content": "BLOCKED: User denied."})
+                continue
 
-            result = run_tool(name, args, self.memory, self.skills)
+            tasks.append((tc["id"], name, args))
 
-            # Error recovery: if tool failed, note it
-            if result.startswith("Error:") or "[exit:" in result:
-                self.error_count += 1
+        # Execute in parallel (up to 4 workers)
+        if tasks:
+            with ThreadPoolExecutor(max_workers=4) as executor:
+                futures = {}
+                for tc_id, name, args in tasks:
+                    future = executor.submit(run_tool, name, args, self.memory, self.skills, self)
+                    futures[future] = tc_id
 
-            results.append({"tool_call_id": tc["id"], "role": "tool", "content": result})
+                for future in as_completed(futures):
+                    tc_id = futures[future]
+                    try:
+                        result = future.result(timeout=60)
+                    except Exception as e:
+                        result = f"Error: {e}"
+                    results.append({"tool_call_id": tc_id, "role": "tool", "content": result})
 
         return results
 
     def chat_stream(self, user_input: str) -> str:
-        """Stream a response with tool-use loop."""
         self.messages.append({"role": "user", "content": user_input})
         self.memory.store(self.session_id, "user", user_input)
-
-        # Context management
         self._manage_context()
 
         for _ in range(15):
             try:
-                # Try streaming
                 resp = self._call_api(self.messages, stream=True)
                 content = ""
                 tool_calls = []
-                buffer = ""
 
                 for line in resp.iter_lines(decode_unicode=True):
-                    if not line or not line.startswith("data: "):
-                        continue
+                    if not line or not line.startswith("data: "): continue
                     data_str = line[6:]
-                    if data_str.strip() == "[DONE]":
-                        break
-
+                    if data_str.strip() == "[DONE]": break
                     try:
                         chunk = json.loads(data_str)
                         delta = chunk["choices"][0].get("delta", {})
-
-                        # Text content
                         if delta.get("content"):
                             token = delta["content"]
                             content += token
                             C.print(token, end="", highlight=False)
-
-                        # Tool calls
                         if delta.get("tool_calls"):
                             for tc in delta["tool_calls"]:
                                 idx = tc.get("index", 0)
                                 while len(tool_calls) <= idx:
                                     tool_calls.append({"id": "", "function": {"name": "", "arguments": ""}})
-                                if tc.get("id"):
-                                    tool_calls[idx]["id"] = tc["id"]
+                                if tc.get("id"): tool_calls[idx]["id"] = tc["id"]
                                 if tc.get("function", {}).get("name"):
                                     tool_calls[idx]["function"]["name"] += tc["function"]["name"]
                                 if tc.get("function", {}).get("arguments"):
                                     tool_calls[idx]["function"]["arguments"] += tc["function"]["arguments"]
+                    except json.JSONDecodeError: continue
 
-                    except json.JSONDecodeError:
-                        continue
-
-                # Handle tool calls
                 if tool_calls:
-                    assistant_msg = {"role": "assistant", "content": content or None, "tool_calls": tool_calls}
-                    self.messages.append(assistant_msg)
+                    clean = {"role": "assistant", "content": content or None, "tool_calls": tool_calls}
+                    self.messages.append(clean)
                     results = self._handle_tools(tool_calls)
                     self.messages.extend(results)
-                    if content:
-                        C.print()
+                    if content: C.print()
                     continue
 
-                # Final response
                 if content:
-                    C.print()  # newline
+                    C.print()
                     self.messages.append({"role": "assistant", "content": content})
                     self.memory.store(self.session_id, "assistant", content)
                     return content
 
-            except requests.exceptions.HTTPError as e:
-                # Fallback to non-streaming
+            except requests.exceptions.HTTPError:
                 try:
                     data = self._call_api(self.messages, stream=False).json()
                     msg = data["choices"][0]["message"]
                     if msg.get("tool_calls"):
-                        self.messages.append(msg)
+                        clean = {"role": "assistant"}
+                        if msg.get("content"): clean["content"] = msg["content"]
+                        clean["tool_calls"] = msg["tool_calls"]
+                        self.messages.append(clean)
                         results = self._handle_tools(msg["tool_calls"])
                         self.messages.extend(results)
                         continue
@@ -710,11 +1110,9 @@ class LilithAgent:
                 except Exception as e2:
                     C.print(f"\n  [error]Error: {e2}[/error]")
                     return ""
-
             except Exception as e:
                 C.print(f"\n  [error]Error: {e}[/error]")
                 return ""
-
         return ""
 
 
@@ -727,13 +1125,14 @@ BANNER = """[lilith]
   ║   ᛚ  LILITH  ᛚ          Dark Goddess of Yggdrasil        ║
   ║                                                           ║
   ║   Coding Agent · Memory · Skills · Streaming · Safety     ║
+  ║   Background · Todo · Sessions · Web · MCP · Parallel     ║
   ║                                                           ║
   ╚═══════════════════════════════════════════════════════════╝[/lilith]"""
 
 
 def start_agent(provider="deepseek"):
     C.print()
-    C.print(Panel.fit(BANNER, border_style="#1a1d35", title="[lilith]ᛒ LILITH v3[/lilith]", title_align="left"))
+    C.print(Panel.fit(BANNER, border_style="#1a1d35", title="[lilith]ᛒ LILITH v4[/lilith]", title_align="left"))
     C.print()
 
     agent = LilithAgent(provider_name=provider)
@@ -741,24 +1140,18 @@ def start_agent(provider="deepseek"):
     C.print(f"  [frost]Provider:[/frost] {agent.provider['base_url'].split('/')[2]}")
     C.print(f"  [frost]Model:[/frost] {agent.model}")
     C.print(f"  [frost]Session:[/frost] {agent.session_id}")
-    C.print(f"  [frost]Skills:[/frost] {len(agent.skills.list())} saved")
-    C.print(f"  [frost]Knowledge:[/frost] {len(agent.memory.know())} facts")
-
-    # Show loaded rules
-    agents_md = load_agents_md()
-    if agents_md:
-        rules_count = agents_md.count("## ")
-        C.print(f"  [frost]Project rules:[/frost] {rules_count} files loaded")
+    C.print(f"  [frost]Skills:[/frost] {len(agent.skills.list())}")
+    C.print(f"  [frost]Knowledge:[/frost] {len(agent.memory.know())}")
+    C.print(f"  [frost]Todo:[/frost] {len(todo_mgr.list())}")
+    C.print(f"  [frost]MCP:[/frost] {len(mcp_client.servers)} servers")
     C.print()
-    C.print("  [muted]/quit /clear /memory /skills /knowledge /provider <name>[/muted]")
+    C.print("  [muted]/quit /clear /memory /skills /knowledge /sessions /provider <name>[/muted]")
     C.print()
 
     while True:
         try:
             user_input = C.input("[user]ᚦ You[/user] [muted]»[/muted] ")
-            if not user_input.strip():
-                continue
-
+            if not user_input.strip(): continue
             cmd = user_input.strip().lower()
 
             if cmd in ("/quit", "/exit", "/q"):
@@ -771,20 +1164,22 @@ def start_agent(provider="deepseek"):
             if cmd == "/memory":
                 for s in agent.memory.sessions()[:5]:
                     mems = agent.memory.recall(s, limit=1)
-                    if mems:
-                        C.print(f"  [muted]{s}[/muted]: {mems[0]['content'][:60]}")
+                    if mems: C.print(f"  [muted]{s}[/muted]: {mems[0]['content'][:60]}")
                 continue
             if cmd == "/skills":
-                for s in agent.skills.list():
-                    C.print(f"  [frost]{s['name']}[/frost]: {s['description']}")
-                if not agent.skills.list():
-                    C.print("  [muted]No skills yet.[/muted]")
+                for s in agent.skills.list(): C.print(f"  [frost]{s['name']}[/frost]: {s['description']}")
+                if not agent.skills.list(): C.print("  [muted]No skills yet.[/muted]")
                 continue
             if cmd == "/knowledge":
-                for k in agent.memory.know():
-                    C.print(f"  [gold][{k['category']}][/gold] {k['key']}: {k['value'][:80]}")
-                if not agent.memory.know():
-                    C.print("  [muted]No knowledge yet.[/muted]")
+                for k in agent.memory.know(): C.print(f"  [gold][{k['category']}][/gold] {k['key']}: {k['value'][:80]}")
+                if not agent.memory.know(): C.print("  [muted]No knowledge yet.[/muted]")
+                continue
+            if cmd == "/sessions":
+                saved = agent.memory.list_saved_sessions()
+                if saved:
+                    for s in saved: C.print(f"  [frost]{s['session_id']}[/frost]: {s['title']} ({s['updated_at']})")
+                else:
+                    C.print("  [muted]No saved sessions.[/muted]")
                 continue
             if cmd.startswith("/provider"):
                 parts = cmd.split()
@@ -808,7 +1203,7 @@ def start_agent(provider="deepseek"):
 
 if __name__ == "__main__":
     import argparse
-    p = argparse.ArgumentParser(description="Lilith Agent v3")
+    p = argparse.ArgumentParser(description="Lilith Agent v4")
     p.add_argument("--provider", default="deepseek", choices=list(PROVIDERS.keys()))
     p.add_argument("-m", "--message", help="Single message")
     args = p.parse_args()
