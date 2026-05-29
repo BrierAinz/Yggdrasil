@@ -84,6 +84,7 @@ T = Theme(
 )
 C = Console(theme=T)
 
+
 # ── Providers ─────────────────────────────────────────────────
 def _alibaba_key():
     return os.getenv("ALIBABA_API_KEY") or (
@@ -185,24 +186,32 @@ PROVIDERS = {
 # ── Error Hierarchy ──────────────────────────────────────────
 class LilithError(Exception):
     """Base exception for Lilith Agent."""
+
     pass
+
 
 class ToolError(LilithError):
     """Tool execution error."""
+
     def __init__(self, tool_name: str, message: str):
         self.tool_name = tool_name
         super().__init__(f"[{tool_name}] {message}")
 
+
 class APIError(LilithError):
     """API communication error."""
+
     def __init__(self, provider: str, status_code: int, message: str):
         self.provider = provider
         self.status_code = status_code
         super().__init__(f"[{provider}] {status_code}: {message}")
 
+
 class ConfigError(LilithError):
     """Configuration error."""
+
     pass
+
 
 # ── Safety ────────────────────────────────────────────────────
 DESTRUCTIVE_PATTERNS = [
@@ -1235,8 +1244,16 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "prompt": {"type": "string", "description": "Image description"},
-                    "model": {"type": "string", "description": "seedream-4-5|seedream-4-0|seedream-3-0", "default": "seedream-4-5-251128"},
-                    "size": {"type": "string", "description": "Image size: 1024x1024, 1024x768, 768x1024", "default": "1024x1024"},
+                    "model": {
+                        "type": "string",
+                        "description": "seedream-4-5|seedream-4-0|seedream-3-0",
+                        "default": "seedream-4-5-251128",
+                    },
+                    "size": {
+                        "type": "string",
+                        "description": "Image size: 1024x1024, 1024x768, 768x1024",
+                        "default": "1024x1024",
+                    },
                 },
                 "required": ["prompt"],
             },
@@ -1267,7 +1284,10 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "prompt": {"type": "string", "description": "Video description"},
-                    "image_path": {"type": "string", "description": "Source image for image-to-video (optional)"},
+                    "image_path": {
+                        "type": "string",
+                        "description": "Source image for image-to-video (optional)",
+                    },
                     "model": {"type": "string", "default": "seedance-1-0-pro-fast-251015"},
                     "duration": {"type": "string", "default": "5s"},
                 },
@@ -1299,14 +1319,18 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "text": {"type": "string", "description": "Text to speak"},
-                    "voice": {"type": "string", "description": "Voice: longxiaochun (male), longxiaoxia (female)", "default": "longxiaochun"},
+                    "voice": {
+                        "type": "string",
+                        "description": "Voice: longxiaochun (male), longxiaoxia (female)",
+                        "default": "longxiaochun",
+                    },
                     "model": {"type": "string", "default": "cosyvoice-v3-plus"},
                 },
                 "required": ["text"],
             },
         },
     },
-        # ── AST-aware editing ──
+    # ── AST-aware editing ──
     {
         "type": "function",
         "function": {
@@ -1316,9 +1340,18 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "path": {"type": "string", "description": "Python file path"},
-                    "action": {"type": "string", "description": "rename|remove|add_import|add_decorator|extract_function"},
-                    "target": {"type": "string", "description": "Function/class/import name to edit"},
-                    "value": {"type": "string", "description": "New value (for rename, add_import, add_decorator)"},
+                    "action": {
+                        "type": "string",
+                        "description": "rename|remove|add_import|add_decorator|extract_function",
+                    },
+                    "target": {
+                        "type": "string",
+                        "description": "Function/class/import name to edit",
+                    },
+                    "value": {
+                        "type": "string",
+                        "description": "New value (for rename, add_import, add_decorator)",
+                    },
                     "new_name": {"type": "string", "description": "New name (for rename action)"},
                 },
                 "required": ["path", "action", "target"],
@@ -1339,7 +1372,7 @@ TOOLS = [
             },
         },
     },
-        # ── Multi-user & Collaboration ──
+    # ── Multi-user & Collaboration ──
     {
         "type": "function",
         "function": {
@@ -1348,7 +1381,10 @@ TOOLS = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "path": {"type": "string", "description": "Export file path (default: .lilith/exports/session_<id>.json)"},
+                    "path": {
+                        "type": "string",
+                        "description": "Export file path (default: .lilith/exports/session_<id>.json)",
+                    },
                 },
             },
         },
@@ -1403,7 +1439,11 @@ TOOLS = [
                 "type": "object",
                 "properties": {
                     "task": {"type": "string", "description": "Task for the pair agent to work on"},
-                    "provider": {"type": "string", "description": "Provider for pair agent (default: qwen-max)", "default": "qwen-max"},
+                    "provider": {
+                        "type": "string",
+                        "description": "Provider for pair agent (default: qwen-max)",
+                        "default": "qwen-max",
+                    },
                 },
                 "required": ["task"],
             },
@@ -1433,8 +1473,16 @@ TOOLS = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "path": {"type": "string", "description": "File or directory to check", "default": "."},
-                    "checker": {"type": "string", "description": "mypy|pyright", "default": "pyright"},
+                    "path": {
+                        "type": "string",
+                        "description": "File or directory to check",
+                        "default": ".",
+                    },
+                    "checker": {
+                        "type": "string",
+                        "description": "mypy|pyright",
+                        "default": "pyright",
+                    },
                 },
             },
         },
@@ -2170,13 +2218,16 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
             try:
                 resp = requests.post(
                     "https://ark.ap-southeast.bytepluses.com/api/v3/images/generations",
-                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {bp_key}"},
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {bp_key}",
+                    },
                     json={"model": model, "prompt": prompt, "size": size, "n": 1},
                     timeout=60,
                 )
                 if resp.status_code == 200:
                     data = resp.json()
-                    if "data" in data and data["data"]:
+                    if data.get("data"):
                         url = data["data"][0].get("url", "")
                         return f"Image generated: {url}"
                     return f"Generated: {json.dumps(data)[:500]}"
@@ -2194,16 +2245,20 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
             bp_key = os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113")
             try:
                 import base64
+
                 img_b64 = base64.b64encode(full_path.read_bytes()).decode()
                 resp = requests.post(
                     "https://ark.ap-southeast.bytepluses.com/api/v3/images/edits",
-                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {bp_key}"},
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {bp_key}",
+                    },
                     json={"model": model, "prompt": prompt, "image": img_b64},
                     timeout=60,
                 )
                 if resp.status_code == 200:
                     data = resp.json()
-                    if "data" in data and data["data"]:
+                    if data.get("data"):
                         url = data["data"][0].get("url", "")
                         return f"Edited image: {url}"
                     return f"Edited: {json.dumps(data)[:500]}"
@@ -2221,10 +2276,14 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
                     img_path = ROOT / args["image_path"]
                     if img_path.exists():
                         import base64
+
                         payload["image"] = base64.b64encode(img_path.read_bytes()).decode()
                 resp = requests.post(
                     "https://ark.ap-southeast.bytepluses.com/api/v3/videos/generations",
-                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {bp_key}"},
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {bp_key}",
+                    },
                     json=payload,
                     timeout=120,
                 )
@@ -2241,13 +2300,16 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
             try:
                 resp = requests.post(
                     "https://ark.ap-southeast.bytepluses.com/api/v3/embeddings",
-                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {bp_key}"},
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {bp_key}",
+                    },
                     json={"model": model, "input": text},
                     timeout=15,
                 )
                 if resp.status_code == 200:
                     data = resp.json()
-                    if "data" in data and data["data"]:
+                    if data.get("data"):
                         vec = data["data"][0].get("embedding", [])
                         return f"Embedding ({len(vec)} dims): [{vec[0]:.4f}, {vec[1]:.4f}, ... {vec[-1]:.4f}]"
                     return f"Embedding: {json.dumps(data)[:300]}"
@@ -2266,7 +2328,10 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
             try:
                 resp = requests.post(
                     "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/audio/speech",
-                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {alibaba_key}"},
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {alibaba_key}",
+                    },
                     json={"model": model, "input": {"text": text}, "voice": voice},
                     timeout=30,
                 )
@@ -2286,6 +2351,7 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
                 return f"File not found: {args['path']}"
             try:
                 import ast
+
                 source = path.read_text()
                 tree = ast.parse(source)
                 action = args["action"]
@@ -2355,7 +2421,7 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
                     lines = source.split("\n")
                     for i, line in enumerate(lines):
                         if f"def {target}" in line:
-                            indent = line[:len(line) - len(line.lstrip())]
+                            indent = line[: len(line) - len(line.lstrip())]
                             lines.insert(i, f"{indent}@{value}")
                             break
                     path.write_text("\n".join(lines))
@@ -2374,6 +2440,7 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
                 return f"File not found: {args['path']}"
             try:
                 import ast
+
                 source = path.read_text()
                 tree = ast.parse(source)
 
@@ -2385,10 +2452,16 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
                 for node in ast.walk(tree):
                     if isinstance(node, ast.FunctionDef):
                         functions.append(f"  def {node.name}(line {node.lineno})")
-                        complexity += sum(1 for _ in ast.walk(node) if isinstance(_, (ast.If, ast.For, ast.While, ast.Try)))
+                        complexity += sum(
+                            1
+                            for _ in ast.walk(node)
+                            if isinstance(_, (ast.If, ast.For, ast.While, ast.Try))
+                        )
                     elif isinstance(node, ast.ClassDef):
                         methods = [n.name for n in node.body if isinstance(n, ast.FunctionDef)]
-                        classes.append(f"  class {node.name}(line {node.lineno}): {', '.join(methods[:5])}")
+                        classes.append(
+                            f"  class {node.name}(line {node.lineno}): {', '.join(methods[:5])}"
+                        )
                     elif isinstance(node, ast.Import):
                         for alias in node.names:
                             imports.append(f"  import {alias.name}")
@@ -2401,11 +2474,11 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
                 result = [
                     f"File: {args['path']} ({len(lines)} lines)",
                     f"Functions ({len(functions)}):",
-                ] + functions[:20] + [
+                    *functions[:20],
                     f"Classes ({len(classes)}):",
-                ] + classes[:10] + [
+                    *classes[:10],
                     f"Imports ({len(imports)}):",
-                ] + imports[:15] + [
+                    *imports[:15],
                     f"Complexity score: {complexity}",
                 ]
                 return "\n".join(result)
@@ -2491,7 +2564,10 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
             try:
                 pair_agent = LilithAgent(provider_name=provider)
                 pair_agent.messages = [
-                    {"role": "system", "content": "You are a code reviewer and pair programmer. Review code, suggest improvements, catch bugs, and help with implementation. Be concise and direct."},
+                    {
+                        "role": "system",
+                        "content": "You are a code reviewer and pair programmer. Review code, suggest improvements, catch bugs, and help with implementation. Be concise and direct.",
+                    },
                     {"role": "user", "content": task},
                 ]
                 # Get the pair agent's response
@@ -2514,7 +2590,9 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
                     "messages": agent.messages[-20:],  # Last 20 messages
                     "knowledge": agent.memory.know(),
                 }
-                (share_dir / "session.json").write_text(json.dumps(session_data, indent=2, ensure_ascii=False))
+                (share_dir / "session.json").write_text(
+                    json.dumps(session_data, indent=2, ensure_ascii=False)
+                )
                 # Export skills
                 skills = agent.skills.list()
                 skills_data = []
@@ -2522,7 +2600,9 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
                     content = agent.skills.get(s["name"])
                     if content:
                         skills_data.append({"name": s["name"], "content": content})
-                (share_dir / "skills.json").write_text(json.dumps(skills_data, indent=2, ensure_ascii=False))
+                (share_dir / "skills.json").write_text(
+                    json.dumps(skills_data, indent=2, ensure_ascii=False)
+                )
                 return f"Shared with {name} at {share_dir}: {len(session_data['messages'])} messages, {len(session_data['knowledge'])} facts, {len(skills_data)} skills"
             return "No agent context"
 
@@ -2531,9 +2611,23 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
             path = args.get("path", ".")
             checker = args.get("checker", "pyright")
             if checker == "pyright":
-                r = subprocess.run(f"pyright {path} 2>&1 | head -30", shell=True, capture_output=True, text=True, cwd=str(ROOT), timeout=30)
+                r = subprocess.run(
+                    f"pyright {path} 2>&1 | head -30",
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    cwd=str(ROOT),
+                    timeout=30,
+                )
             else:
-                r = subprocess.run(f"python3 -m mypy {path} --ignore-missing-imports 2>&1 | head -30", shell=True, capture_output=True, text=True, cwd=str(ROOT), timeout=30)
+                r = subprocess.run(
+                    f"python3 -m mypy {path} --ignore-missing-imports 2>&1 | head -30",
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    cwd=str(ROOT),
+                    timeout=30,
+                )
             return r.stdout[:3000] or "No type errors found"
 
         # Model stats
@@ -2541,7 +2635,9 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
             if not agent or not agent.model_stats:
                 return "No model stats yet."
             lines = ["Model Performance:"]
-            for model, stats in sorted(agent.model_stats.items(), key=lambda x: -(x[1]["success"] + x[1]["fail"])):
+            for model, stats in sorted(
+                agent.model_stats.items(), key=lambda x: -(x[1]["success"] + x[1]["fail"])
+            ):
                 total = stats["success"] + stats["fail"]
                 rate = stats["success"] / total * 100 if total > 0 else 0
                 lines.append(f"  {model}: {rate:.0f}% success ({stats['success']}/{total})")
@@ -2565,7 +2661,14 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
         # Deploy check
         elif name == "deploy_check":
             checks = []
-            for f, desc in [("Dockerfile", "Docker"), (".github/workflows", "CI/CD"), ("tests/", "Tests"), ("README.md", "Docs"), ("pyproject.toml", "Package config"), ("LICENSE", "License")]:
+            for f, desc in [
+                ("Dockerfile", "Docker"),
+                (".github/workflows", "CI/CD"),
+                ("tests/", "Tests"),
+                ("README.md", "Docs"),
+                ("pyproject.toml", "Package config"),
+                ("LICENSE", "License"),
+            ]:
                 exists = (ROOT / f).exists()
                 checks.append(f"  {'✓' if exists else '✗'} {desc}: {f}")
             return "Deployment Readiness:\n" + "\n".join(checks)
@@ -2576,13 +2679,25 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
             path = args.get("path", ".")
             issues = []
             # Check for hardcoded secrets
-            cmd1 = "grep -rn --include='*.py' --include='*.env' -iE 'api_key|secret|password' " + path + " 2>/dev/null | grep -v '.venv/' | head -10"
-            r1 = subprocess.run(cmd1, shell=True, capture_output=True, text=True, cwd=str(ROOT), timeout=15)
+            cmd1 = (
+                "grep -rn --include='*.py' --include='*.env' -iE 'api_key|secret|password' "
+                + path
+                + " 2>/dev/null | grep -v '.venv/' | head -10"
+            )
+            r1 = subprocess.run(
+                cmd1, shell=True, capture_output=True, text=True, cwd=str(ROOT), timeout=15
+            )
             if r1.stdout.strip():
                 issues.append("Potential secrets:\n" + r1.stdout[:1000])
             # Check for dangerous patterns
-            cmd2 = "grep -rn --include='*.py' -E 'eval\\(|exec\\(' " + path + " 2>/dev/null | grep -v '.venv/' | head -10"
-            r2 = subprocess.run(cmd2, shell=True, capture_output=True, text=True, cwd=str(ROOT), timeout=15)
+            cmd2 = (
+                "grep -rn --include='*.py' -E 'eval\\(|exec\\(' "
+                + path
+                + " 2>/dev/null | grep -v '.venv/' | head -10"
+            )
+            r2 = subprocess.run(
+                cmd2, shell=True, capture_output=True, text=True, cwd=str(ROOT), timeout=15
+            )
             if r2.stdout.strip():
                 issues.append("Dangerous patterns:\n" + r2.stdout[:1000])
             return "\n\n".join(issues) if issues else "No security issues found"
@@ -2941,7 +3056,6 @@ class LilithAgent:
             # Default
             return self.model
 
-
     def _track_model(self, model: str, success: bool):
         """Track model success/failure rates."""
         if model not in self.model_stats:
@@ -2991,7 +3105,7 @@ class LilithAgent:
                 if in_deps:
                     if "]" in line:
                         break
-                    dep = line.strip().strip('",\'').strip()
+                    dep = line.strip().strip("\",'").strip()
                     if dep and not dep.startswith("#"):
                         deps.append(dep)
             if deps:
@@ -3225,8 +3339,12 @@ class LilithAgent:
 
                 # Track tokens (from API usage or estimate)
                 usage = data.get("usage", {})
-                input_tok = usage.get("prompt_tokens", 0) or estimate_tokens(json.dumps(self.messages[-1]))
-                output_tok = usage.get("completion_tokens", 0) or estimate_tokens(msg.get("content", "") or "")
+                input_tok = usage.get("prompt_tokens", 0) or estimate_tokens(
+                    json.dumps(self.messages[-1])
+                )
+                output_tok = usage.get("completion_tokens", 0) or estimate_tokens(
+                    msg.get("content", "") or ""
+                )
                 self.total_input_tokens += input_tok
                 self.total_output_tokens += output_tok
                 pricing = MODEL_PRICING.get(self.model, {"input": 0.14, "output": 0.28})
@@ -3423,7 +3541,6 @@ def start_agent(provider="deepseek"):
             break
         except EOFError:
             break
-
 
 
 def main():

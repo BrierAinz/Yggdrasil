@@ -327,15 +327,12 @@
     "description": "The title of the tag list page"
   },
   "homepage.cta.explore": {
-    "message": "ᚨ Explora los Reinos",
-    "description": "Homepage CTA button"
+    "message": "ᚨ Explora los Reinos"
   },
   "homepage.cta.start": {
-    "message": "ᛏ Comenzar",
-    "description": "Homepage CTA button"
+    "message": "ᛏ Comenzar"
   },
   "homepage.realms.title": {
-    "message": "᛭ Los Nueve Reinos",
-    "description": "Homepage realms section title"
+    "message": "᛭ Los Nueve Reinos"
   }
 }

@@ -130,10 +130,10 @@
 - [x] Changelog generation
 
 ### 5.3 Collaboration
-- [ ] Multi-user support (shared sessions)
+- [x] Multi-user support (shared sessions)
 - [x] Code review mode (review PRs)
-- [ ] Pair programming mode (two agents)
-- [ ] Knowledge sharing between instances
+- [x] Pair programming mode (two agents)
+- [x] Knowledge sharing between instances
 
 ---
 
@@ -151,7 +151,7 @@
 - [x] Architecture documentation
 - [x] API documentation
 - [x] Contributing guide
-- [ ] Video tutorial
+- [x] Video tutorial
 
 ### 6.3 Testing
 - [x] Unit tests for all tools

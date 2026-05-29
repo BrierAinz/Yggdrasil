@@ -3,7 +3,7 @@
 # Tool definitions are imported from lilith_agent.py for now
 # This module provides the registry pattern for future modularization
 
-from typing import Any, Callable
+from collections.abc import Callable
 
 
 class ToolRegistry:

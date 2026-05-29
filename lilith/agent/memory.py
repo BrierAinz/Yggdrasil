@@ -2,9 +2,7 @@
 
 import json
 import sqlite3
-from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 
 class Memory:
@@ -89,7 +87,7 @@ class Memory:
         )
         self.conn.commit()
 
-    def know(self, category: Optional[str] = None) -> list[dict]:
+    def know(self, category: str | None = None) -> list[dict]:
         if category:
             rows = self.conn.execute(
                 "SELECT category, key, value FROM knowledge WHERE category=?", (category,)
@@ -98,7 +96,7 @@ class Memory:
             rows = self.conn.execute("SELECT category, key, value FROM knowledge").fetchall()
         return [{"category": r[0], "key": r[1], "value": r[2]} for r in rows]
 
-    def forget(self, category: str, key: Optional[str] = None):
+    def forget(self, category: str, key: str | None = None):
         if key:
             self.conn.execute("DELETE FROM knowledge WHERE category=? AND key=?", (category, key))
         else:
@@ -120,7 +118,7 @@ class Memory:
         )
         self.conn.commit()
 
-    def load_session(self, session_id: str) -> Optional[list]:
+    def load_session(self, session_id: str) -> list | None:
         row = self.conn.execute(
             "SELECT messages_json FROM sessions WHERE session_id=?", (session_id,)
         ).fetchone()

@@ -2,7 +2,6 @@
 
 import re
 from pathlib import Path
-from typing import Optional
 
 
 class SkillManager:
@@ -15,7 +14,7 @@ class SkillManager:
     def list(self) -> list[dict]:
         return [{"name": f.stem, **self._parse(f)} for f in sorted(self.dir.glob("*.md"))]
 
-    def get(self, name: str) -> Optional[str]:
+    def get(self, name: str) -> str | None:
         f = self.dir / f"{name}.md"
         return f.read_text() if f.exists() else None
 

@@ -9,23 +9,25 @@ from rich.theme import Theme
 
 
 # ── Nordic Frost Theme ────────────────────────────────────────
-NORDIC_THEME = Theme({
-    "frost": "#7eb8c4",
-    "amethyst": "#8b6cc7",
-    "snow": "#c8d0e0",
-    "ember": "#c94f4f",
-    "pine": "#5b8a72",
-    "gold": "#c9a55a",
-    "steel": "#3d4162",
-    "lilith": "bold #8b6cc7",
-    "user": "bold #7eb8c4",
-    "tool": "#c9a55a",
-    "muted": "#3d4162",
-    "think": "italic #5b8a72",
-    "error": "bold #c94f4f",
-    "ok": "bold #5b8a72",
-    "warn": "bold #c9a55a",
-})
+NORDIC_THEME = Theme(
+    {
+        "frost": "#7eb8c4",
+        "amethyst": "#8b6cc7",
+        "snow": "#c8d0e0",
+        "ember": "#c94f4f",
+        "pine": "#5b8a72",
+        "gold": "#c9a55a",
+        "steel": "#3d4162",
+        "lilith": "bold #8b6cc7",
+        "user": "bold #7eb8c4",
+        "tool": "#c9a55a",
+        "muted": "#3d4162",
+        "think": "italic #5b8a72",
+        "error": "bold #c94f4f",
+        "ok": "bold #5b8a72",
+        "warn": "bold #c9a55a",
+    }
+)
 
 console = Console(theme=NORDIC_THEME)
 
@@ -57,8 +59,9 @@ def print_banner(version: str = "4.0.0"):
     console.print()
 
 
-def print_status_table(provider: str, model: str, session_id: str,
-                        tools: int, skills: int, knowledge: int):
+def print_status_table(
+    provider: str, model: str, session_id: str, tools: int, skills: int, knowledge: int
+):
     """Print startup status table."""
     status = Table(show_header=False, box=None, padding=(0, 2), border_style="#1a1d35")
     status.add_column(style="gold", width=12)
@@ -80,7 +83,7 @@ def print_tool_call(name: str, args_preview: str):
 
 def print_thinking(thought: str):
     """Print thinking output."""
-    console.print(f"\n  [think]💭 Thinking:[/think]")
+    console.print("\n  [think]💭 Thinking:[/think]")
     for line in thought.split("\n"):
         console.print(f"  [think]  {line}[/think]")
 
