@@ -12,6 +12,7 @@ extend-exclude = [
     "Muspelheim/AI-Influencer",
     "Muspelheim/AutoMode",
     "Muspelheim/Docs",
+    "Muspelheim/Horror-GameMaster/unsloth_compiled_cache",
     "Asgard/Lilith",
     "Vanaheim/Agents",
     "Vanaheim/Bots_Lilith_v5",

@@ -6,16 +6,18 @@ GPU: RTX 3060 12GB
 """
 
 import json
+
 import torch
-from unsloth import FastLanguageModel
-from trl import SFTTrainer
-from transformers import TrainingArguments
 from datasets import Dataset
+from transformers import TrainingArguments
+from trl import SFTTrainer
+from unsloth import FastLanguageModel
+
 
 # ═══════════════════════════════════════════
 #  CONFIG
 # ═══════════════════════════════════════════
-MODEL_NAME = "unsloth/Qwen2.5-7B-Instruct"
+MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
 MAX_SEQ_LEN = 2048
 LORA_R = 16
 LORA_ALPHA = 32
@@ -66,8 +68,7 @@ print(f"Applying LoRA (r={LORA_R}, alpha={LORA_ALPHA})...")
 model = FastLanguageModel.get_peft_model(
     model,
     r=LORA_R,
-    target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
-                     "gate_proj", "up_proj", "down_proj"],
+    target_modules=["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
     lora_alpha=LORA_ALPHA,
     lora_dropout=LORA_DROPOUT,
     bias="none",
@@ -86,6 +87,7 @@ with open(DATASET_PATH) as f:
             entries.append(json.loads(line))
 
 print(f"  {len(entries)} entries loaded")
+
 
 def format_entry(entry):
     """Format as Qwen2.5 chat template."""
@@ -107,8 +109,10 @@ def format_entry(entry):
         ]
     }
 
+
 formatted = [format_entry(e) for e in entries]
 dataset = Dataset.from_list(formatted)
+
 
 def apply_chat_template(example):
     text = tokenizer.apply_chat_template(
@@ -117,6 +121,7 @@ def apply_chat_template(example):
         add_generation_prompt=False,
     )
     return {"text": text}
+
 
 dataset = dataset.map(apply_chat_template, remove_columns=["conversations"])
 print(f"  Formatted dataset: {len(dataset)} examples")
@@ -158,7 +163,9 @@ trainer = SFTTrainer(
 # ═══════════════════════════════════════════
 #  TRAIN
 # ═══════════════════════════════════════════
-print(f"\nStarting training: {EPOCHS} epochs, batch={BATCH_SIZE}x{GRAD_ACCUM}={BATCH_SIZE*GRAD_ACCUM}")
+print(
+    f"\nStarting training: {EPOCHS} epochs, batch={BATCH_SIZE}x{GRAD_ACCUM}={BATCH_SIZE * GRAD_ACCUM}"
+)
 print(f"  LoRA rank: {LORA_R}, alpha: {LORA_ALPHA}")
 print(f"  LR: {LEARNING_RATE}, max_seq_len: {MAX_SEQ_LEN}")
 print()
@@ -168,7 +175,7 @@ print(f"  GPU: {torch.cuda.get_device_name(0)} ({gpu_mem:.1f} GB)")
 print()
 
 stats = trainer.train()
-print(f"\nTraining complete!")
+print("\nTraining complete!")
 print(f"  Total steps: {stats.global_step}")
 print(f"  Training loss: {stats.training_loss:.4f}")
 
@@ -188,5 +195,5 @@ model.save_pretrained_merged(
 )
 
 print(f"\nDone! Files in {OUTPUT_DIR}/")
-print(f"  final/        — LoRA adapters (small, for loading on top of base)")
-print(f"  merged-16bit/ — Full merged model (ready for inference)")
+print("  final/        — LoRA adapters (small, for loading on top of base)")
+print("  merged-16bit/ — Full merged model (ready for inference)")

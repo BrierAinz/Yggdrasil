@@ -44,7 +44,7 @@ jobs:
         uses: astral-sh/setup-uv@v7
 
       - name: Install workspace dependencies
-        run: uv sync --all-packages --dev
+        run: uv sync --all-packages --group dev
 
       - name: Verify pytest available
         run: uv run python -m pytest --version
