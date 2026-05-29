@@ -13,7 +13,7 @@
 - [x] Fix tool_calls missing `type` field (DeepSeek streaming)
 - [x] Fix 400 error retry without tools
 - [x] Fix: sometimes tool results are not shown (empty response after tool)
-- [ ] Fix: context management sometimes removes too many messages
+- [x] Fix: context management sometimes removes too many messages
 - [ ] Fix: error when API key is invalid (better error message)
 - [ ] Fix: undo doesn't work for multi_edit
 

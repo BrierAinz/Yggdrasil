@@ -1725,19 +1725,64 @@ class LilithAgent:
     def _manage_context(self):
         tokens = estimate_messages_tokens(self.messages)
         threshold = self.max_context * 0.75
-        if tokens > threshold:
-            C.print(f"  [muted]Context: ~{tokens:,} tokens, summarizing...[/muted]")
-            old = self.messages[1:-6]
-            if len(old) < 3:
-                return
-            summary = "Previous conversation summary:\n" + "\n".join(
-                f"[{m['role']}]: {(m.get('content') or '')[:100]}" for m in old[-20:]
-            )
-            self.messages = [
-                self.messages[0],
-                {"role": "system", "content": summary},
-                *self.messages[-6:],
-            ]
+        if tokens <= threshold:
+            return
+        C.print(f"  [muted]Context: ~{tokens:,} tokens, summarizing...[/muted]")
+
+        # Find the safe boundary: walk backwards to avoid breaking tool call pairs.
+        # A tool result message has "tool_call_id" — keep those with their preceding
+        # assistant message that has "tool_calls".
+        safe_end = len(self.messages)
+        i = len(self.messages) - 1
+        while i > 0:
+            msg = self.messages[i]
+            if msg.get("role") == "tool" or msg.get("tool_call_id"):
+                # This is a tool result — walk back to find the assistant with tool_calls
+                while i > 0 and (
+                    self.messages[i].get("role") == "tool"
+                    or self.messages[i].get("tool_call_id")
+                ):
+                    i -= 1
+                # i now points to the assistant message with tool_calls (or earlier)
+                safe_end = i
+                continue
+            break
+        i = safe_end - 1
+
+        # Ensure we keep at least the last 4 non-tool messages
+        non_tool_count = 0
+        min_keep = 4
+        while i > 0 and non_tool_count < min_keep:
+            msg = self.messages[i]
+            if msg.get("role") != "tool" and not msg.get("tool_call_id"):
+                non_tool_count += 1
+            i -= 1
+
+        # Messages to summarize: [1 .. i+1], messages to keep: [i+1 .. end]
+        old = self.messages[1 : i + 2]
+        if len(old) < 3:
+            return
+
+        # Build summary from old messages (skip tool results for cleaner summary)
+        summary_lines = []
+        for m in old[-30:]:
+            if m.get("role") == "tool" or m.get("tool_call_id"):
+                continue
+            content = m.get("content") or ""
+            if not content and m.get("tool_calls"):
+                # Summarize tool calls instead of empty content
+                names = [tc.get("function", {}).get("name", "?") for tc in m["tool_calls"]]
+                content = f"[called tools: {', '.join(names)}]"
+            summary_lines.append(f"[{m['role']}]: {content[:200]}")
+
+        summary = "Previous conversation summary:\n" + "\n".join(summary_lines)
+        self.messages = [
+            self.messages[0],
+            {"role": "system", "content": summary},
+            *self.messages[i + 2 :],
+        ]
+        new_tokens = estimate_messages_tokens(self.messages)
+        C.print(f"  [muted]Context reduced: ~{tokens:,} → ~{new_tokens:,} tokens[/muted]")
 
     def _call_api(self, messages, stream=False):
         url = f"{self.provider['base_url']}/chat/completions"
