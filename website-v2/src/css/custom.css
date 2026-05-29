@@ -1,0 +1,43 @@
+/* Yggdrasil Nordic Frost Theme */
+:root {
+  --ifm-color-primary: #c9a84c;
+  --ifm-color-primary-dark: #b8962e;
+  --ifm-color-primary-darker: #ad8d22;
+  --ifm-color-primary-darkest: #8e741c;
+  --ifm-color-primary-light: #d4b76a;
+  --ifm-color-primary-lighter: #dcc583;
+  --ifm-color-primary-lightest: #e8d9a3;
+  --ifm-background-color: #0d1117;
+  --ifm-font-color-base: #e6e6e6;
+  --ifm-navbar-background-color: #161b22;
+  --ifm-footer-background-color: #0d1117;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(201, 168, 76, 0.1);
+}
+
+[data-theme='light'] {
+  --ifm-color-primary: #8a6d1b;
+  --ifm-color-primary-dark: #7a6018;
+  --ifm-color-primary-darker: #6f5a16;
+  --ifm-color-primary-darkest: #5c4a12;
+  --ifm-color-primary-light: #9a7a1e;
+  --ifm-color-primary-lighter: #a58020;
+  --ifm-color-primary-lightest: #b89024;
+}
+
+.navbar__title {
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.footer__title {
+  color: var(--ifm-color-primary);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: 0.02em;
+}
+
+code {
+  border-radius: 4px;
+}
