@@ -7,7 +7,7 @@ const config = {
   favicon: 'img/favicon.svg',
 
   url: 'https://docs.brierstudios.com',
-  baseUrl: '/Yggdrasil/',
+  baseUrl: '/',
 
   organizationName: 'BrierAinz',
   projectName: 'Yggdrasil',
