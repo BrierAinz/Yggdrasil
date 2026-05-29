@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Planes de Desarrollo Yggdrasil
 
 > Índice maestro de planes detallados para cada idea del ecosistema.
@@ -75,12 +74,3 @@ YggSiteGenerator ──→ Website actual (auto-build)
 - Los proyectos se crean en el realm correspondiente: `Muspelheim/AutoSub/`, `Vanaheim/CodeGhost/`, etc.
 - Todo proyecto usa: `pyproject.toml`, Typer CLI, Rich output, SQLite, pytest
 - Los tests se configuran según `REGLAS_YGGDRASIL.md`
-=======
-# Redirect — Plans Consolidated
-
-> **All implementation plans have been consolidated to `Svartalfheim/Docs/plans/`.**
-> This directory is kept for historical reference only.
-> Plans 19–23 have been copied to `Svartalfheim/Docs/plans/`.
-> 
-> See the master index at: `Svartalfheim/Docs/plans/INDEX.md`
->>>>>>> origin/main

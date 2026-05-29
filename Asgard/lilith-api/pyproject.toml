@@ -5,7 +5,6 @@ build-backend = "hatchling.build"
 [project]
 name = "lilith-api"
 version = "2.2.0"
-<<<<<<< HEAD
 description = "FastAPI Gateway with WebSocket support"
 requires-python = ">=3.11"
 license = "MIT"
@@ -13,41 +12,3 @@ dependencies = ["lilith-core", "lilith-orchestrator", "fastapi", "uvicorn"]
 
 [project.urls]
 Repository = "https://github.com/BrierAinz/Yggdrasil"
-=======
-description = "REST API for Lilith"
-readme = "README.md"
-license = "MIT"
-requires-python = ">=3.11"
-dependencies = [
-    "lilith-core>=2.0.0",
-    "lilith-tools>=2.0.0",
-    "lilith-memory>=2.0.0",
-    "lilith-orchestrator>=2.0.0",
-    "fastapi>=0.100",
-    "uvicorn[standard]>=0.23",
-    "pydantic>=2.0",
-    "orjson>=3.9",
-]
-
-[project.optional-dependencies]
-dev = [
-    "uvloop>=0.17",
-    "httpx>=0.24",
-    "pytest>=7.0",
-    "pytest-asyncio>=0.21",
-    "ruff>=0.1",
-]
-
-[project.scripts]
-lilith-api = "run:main"
-
-[project.urls]
-Homepage = "https://github.com/BrierAinz/Yggdrasil"
-Repository = "https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard/lilith-api"
-
-[tool.uv.sources]
-lilith-core = { workspace = true }
-lilith-memory = { workspace = true }
-lilith-tools = { workspace = true }
-lilith-orchestrator = { workspace = true }
->>>>>>> origin/main

@@ -42,6 +42,17 @@ MCP_CONFIG = ROOT / ".lilith" / "mcp.json"
 for d in [SKILLS_DIR, CONTEXT_DIR, SESSIONS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
+UNDO_DIR = ROOT / ".lilith" / "undo"
+UNDO_DIR.mkdir(parents=True, exist_ok=True)
+
+# Model pricing (per 1M tokens)
+MODEL_PRICING = {
+    "deepseek-chat": {"input": 0.14, "output": 0.28},
+    "deepseek-reasoner": {"input": 0.55, "output": 2.19},
+    "gpt-oss-120b-250805": {"input": 0.10, "output": 0.50},
+    "glm-4-7-251222": {"input": 0.60, "output": 2.20},
+}
+
 # ── Theme ─────────────────────────────────────────────────────
 T = Theme({
     "frost": "#7eb8c4", "amethyst": "#8b6cc7", "snow": "#c8d0e0",
@@ -639,6 +650,36 @@ TOOLS = [
             "verbose": {"type": "boolean", "default": True},
         }, "required": []},
     }},
+    # Productivity
+    {"type": "function", "function": {
+        "name": "undo",
+        "description": "Undo the last file change. Reverts a file to its previous state.",
+        "parameters": {"type": "object", "properties": {
+            "path": {"type": "string", "description": "File path to undo changes for"},
+        }, "required": ["path"]},
+    }},
+    {"type": "function", "function": {
+        "name": "clipboard",
+        "description": "Read from or write to the system clipboard. Actions: get (read), set (write).",
+        "parameters": {"type": "object", "properties": {
+            "action": {"type": "string", "description": "get|set"},
+            "content": {"type": "string", "description": "Content to set (for set action)"},
+        }, "required": ["action"]},
+    }},
+    {"type": "function", "function": {
+        "name": "notify",
+        "description": "Send a desktop notification. Use to alert user about completed tasks.",
+        "parameters": {"type": "object", "properties": {
+            "title": {"type": "string"}, "message": {"type": "string"},
+        }, "required": ["title", "message"]},
+    }},
+    {"type": "function", "function": {
+        "name": "workspace_info",
+        "description": "Detect project type, framework, dependencies, and config files in the workspace.",
+        "parameters": {"type": "object", "properties": {
+            "path": {"type": "string", "default": "."},
+        }},
+    }},
 ]
 
 
@@ -674,8 +715,18 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
         elif name == "write_file":
             p = ROOT / args["path"]
             p.parent.mkdir(parents=True, exist_ok=True)
+            # Undo backup
+            if p.exists():
+                backup_name = f"{args['path'].replace('/', '_')}.{int(time.time())}"
+                (UNDO_DIR / backup_name).write_text(p.read_text())
+                # Diff preview
+                old_lines = p.read_text().split("\n")
+                new_lines = args["content"].split("\n")
+                diff_count = sum(1 for a, b in zip(old_lines, new_lines) if a != b) + abs(len(old_lines) - len(new_lines))
+                p.write_text(args["content"])
+                return f"Written {len(args['content'])} bytes to {args['path']} ({diff_count} lines changed, undo available)"
             p.write_text(args["content"])
-            return f"Written {len(args['content'])} bytes to {args['path']}"
+            return f"Written {len(args['content'])} bytes to {args['path']} (new file)"
 
         elif name == "patch_file":
             p = ROOT / args["path"]
@@ -683,8 +734,14 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
             content = p.read_text()
             if args["old_string"] not in content:
                 return f"Text not found in {args['path']}"
+            # Undo backup
+            backup_name = f"{args['path'].replace('/', '_')}.{int(time.time())}"
+            (UNDO_DIR / backup_name).write_text(content)
+            # Diff preview
+            old_line = args["old_string"].split("\n")[0][:60]
+            new_line = args["new_string"].split("\n")[0][:60]
             p.write_text(content.replace(args["old_string"], args["new_string"], 1))
-            return f"Patched {args['path']}"
+            return f"Patched {args['path']}: '{old_line}' → '{new_line}' (undo available)"
 
         elif name == "search_files":
             r = subprocess.run(
@@ -908,6 +965,74 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
                 analysis = "\n\nFAILURE ANALYSIS:\n" + "\n".join(failures[:10])
                 return output + analysis
             return output
+
+        # Undo
+        elif name == "undo":
+            p = args["path"]
+            undo_files = sorted(UNDO_DIR.glob(f"{p.replace('/', '_')}.*"), reverse=True)
+            if not undo_files:
+                return f"No undo history for {p}"
+            backup = undo_files[0]
+            target = ROOT / p
+            target.write_text(backup.read_text())
+            backup.unlink()
+            return f"Undone: {p} restored to previous state"
+
+        # Clipboard
+        elif name == "clipboard":
+            action = args["action"]
+            if action == "get":
+                try:
+                    r = subprocess.run(["xclip", "-selection", "clipboard", "-o"], capture_output=True, text=True, timeout=5)
+                    return r.stdout[:5000] or "(clipboard empty)"
+                except:
+                    return "Clipboard not available (install xclip)"
+            elif action == "set":
+                try:
+                    subprocess.run(["xclip", "-selection", "clipboard"], input=args["content"], text=True, timeout=5)
+                    return f"Copied {len(args['content'])} chars to clipboard"
+                except:
+                    return "Clipboard not available (install xclip)"
+
+        # Notification
+        elif name == "notify":
+            try:
+                subprocess.Popen(["notify-send", args["title"], args["message"], "-i", "utilities-terminal"],
+                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                return f"Notification sent: {args['title']}"
+            except:
+                return "Notifications not available (install libnotify)"
+
+        # Workspace info
+        elif name == "workspace_info":
+            p = ROOT / args.get("path", ".")
+            info = {"path": str(p), "files": {}}
+            # Detect project type
+            checks = {
+                "pyproject.toml": "Python (pyproject.toml)", "setup.py": "Python (setup.py)",
+                "package.json": "Node.js (package.json)", "Cargo.toml": "Rust (Cargo.toml)",
+                "go.mod": "Go (go.mod)", "Makefile": "C/C++ (Makefile)",
+                "CMakeLists.txt": "C/C++ (CMakeLists.txt)", "pom.xml": "Java (Maven)",
+                "build.gradle": "Java (Gradle)", "Gemfile": "Ruby (Gemfile)",
+                "requirements.txt": "Python (requirements.txt)", ".env": "Has .env config",
+                "Dockerfile": "Docker", "docker-compose.yml": "Docker Compose",
+                "tsconfig.json": "TypeScript", "vite.config.ts": "Vite",
+                "next.config.js": "Next.js", "nuxt.config.js": "Nuxt.js",
+                "svelte.config.js": "Svelte", "angular.json": "Angular",
+                "REGLAS_YGGDRASIL.md": "Yggdrasil project",
+            }
+            for filename, desc in checks.items():
+                if (p / filename).exists():
+                    info["files"][filename] = desc
+            # Count files by extension
+            ext_counts = {}
+            for f in p.rglob("*"):
+                if f.is_file() and ".venv" not in str(f) and ".git" not in str(f):
+                    ext = f.suffix or "(no ext)"
+                    ext_counts[ext] = ext_counts.get(ext, 0) + 1
+            info["file_types"] = dict(sorted(ext_counts.items(), key=lambda x: -x[1])[:15])
+            return json.dumps(info, indent=2)
+
         return f"Unknown tool: {name}"
 
     except subprocess.TimeoutExpired:
@@ -922,7 +1047,7 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
 BASE_SYSTEM = """You are Lilith — the dark goddess of Yggdrasil Digital. A powerful AI coding agent.
 
 PERSONALITY: Direct, no fluff. Authority with warmth. Elder Futhark runes sparingly. No emojis.
-CAPABILITIES: terminal, read_file, write_file, patch_file, search_files, list_files, git, python_exec, think, remember, recall, save_skill, load_skill, create_plan, web_fetch, bg_run, bg_status, bg_log, bg_kill, todo, save_session, restore_session, mcp_tools, screenshot, analyze_image, open_browser, multi_edit, git_workflow, run_tests.
+CAPABILITIES: terminal, read_file, write_file, patch_file, search_files, list_files, git, python_exec, think, remember, recall, save_skill, load_skill, create_plan, web_fetch, bg_run, bg_status, bg_log, bg_kill, todo, save_session, restore_session, mcp_tools, screenshot, analyze_image, open_browser, multi_edit, git_workflow, run_tests, undo, clipboard, notify, workspace_info.
 
 BEHAVIOR:
 1. THINK first if complex. Create a plan.
@@ -953,6 +1078,11 @@ class LilithAgent:
         self.session_id = str(uuid.uuid4())[:8]
         self.messages = []
         self.tool_count = 0
+        self.total_input_tokens = 0
+        self.total_output_tokens = 0
+        self.total_cost = 0.0
+        self.tool_times = {}  # performance profiling
+        self.forks = {}  # conversation branches
         self._build_context()
 
     def _build_context(self):
@@ -996,9 +1126,23 @@ class LilithAgent:
     def _call_api(self, messages, stream=False):
         url = f"{self.provider['base_url']}/chat/completions"
         headers = {"Content-Type": "application/json", "Authorization": f"Bearer {self.provider['api_key']}"}
-        payload = {"model": self.model, "messages": messages, "temperature": 0.7, "max_tokens": 8192, "stream": stream, "tools": TOOLS}
+        payload = {"model": self.model, "messages": messages, "temperature": 0.7, "max_tokens": 4096, "stream": stream, "tools": TOOLS}
         resp = requests.post(url, headers=headers, json=payload, stream=stream, timeout=120)
+        if resp.status_code == 400:
+            payload.pop("tools", None)
+            resp = requests.post(url, headers=headers, json=payload, stream=stream, timeout=120)
         resp.raise_for_status()
+        # Track tokens (non-streaming only)
+        if not stream:
+            try:
+                usage = resp.json().get("usage", {})
+                self.total_input_tokens += usage.get("prompt_tokens", 0)
+                self.total_output_tokens += usage.get("completion_tokens", 0)
+                pricing = MODEL_PRICING.get(self.model, {"input": 0.14, "output": 0.28})
+                cost = (usage.get("prompt_tokens", 0) * pricing["input"] + usage.get("completion_tokens", 0) * pricing["output"]) / 1_000_000
+                self.total_cost += cost
+            except:
+                pass
         return resp
 
     def _handle_tools(self, tool_calls):
@@ -1048,6 +1192,7 @@ class LilithAgent:
         self._manage_context()
 
         for _ in range(15):
+            content_printed = False
             try:
                 resp = self._call_api(self.messages, stream=True)
                 content = ""
@@ -1064,6 +1209,7 @@ class LilithAgent:
                             token = delta["content"]
                             content += token
                             C.print(token, end="", highlight=False)
+                            content_printed = True
                         if delta.get("tool_calls"):
                             for tc in delta["tool_calls"]:
                                 idx = tc.get("index", 0)
@@ -1088,9 +1234,8 @@ class LilithAgent:
                     C.print()
                     self.messages.append({"role": "assistant", "content": content})
                     self.memory.store(self.session_id, "assistant", content)
-                    # Auto-save skill suggestion after complex tasks
                     if self.tool_count > 5 and self.tool_count % 10 == 0:
-                        C.print(f"\n  [muted]💡 {self.tool_count} tools used this session. Consider saving a skill with /skill[/muted]")
+                        C.print(f"\n  [muted]💡 {self.tool_count} tools used. Consider saving a skill.[/muted]")
                     return content
 
             except requests.exceptions.HTTPError:
@@ -1106,15 +1251,18 @@ class LilithAgent:
                         self.messages.extend(results)
                         continue
                     content = msg.get("content", "")
-                    C.print(Markdown(content))
+                    if not content_printed and content:
+                        C.print(Markdown(content))
                     self.messages.append({"role": "assistant", "content": content})
                     self.memory.store(self.session_id, "assistant", content)
                     return content
                 except Exception as e2:
-                    C.print(f"\n  [error]Error: {e2}[/error]")
+                    if not content_printed:
+                        C.print(f"\n  [error]Error: {e2}[/error]")
                     return ""
             except Exception as e:
-                C.print(f"\n  [error]Error: {e}[/error]")
+                if not content_printed:
+                    C.print(f"\n  [error]Error: {e}[/error]")
                 return ""
         return ""
 
@@ -1153,7 +1301,11 @@ def start_agent(provider="deepseek"):
 
     while True:
         try:
-            user_input = C.input("[user]ᚦ You[/user] [muted]»[/muted] ")
+            # Show token/cost in prompt
+            tokens_info = ""
+            if agent.total_input_tokens > 0:
+                tokens_info = f" [muted][{agent.total_input_tokens+agent.total_output_tokens:,}tok ${agent.total_cost:.3f}][/muted]"
+            user_input = C.input(f"[user]ᚦ You[/user]{tokens_info} [muted]»[/muted] ")
             if not user_input.strip(): continue
             cmd = user_input.strip().lower()
 

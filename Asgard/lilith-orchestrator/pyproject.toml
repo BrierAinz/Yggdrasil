@@ -4,7 +4,6 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lilith-orchestrator"
-<<<<<<< HEAD
 version = "1.0.0"
 description = "Agent coordination and task orchestration"
 requires-python = ">=3.11"
@@ -13,51 +12,3 @@ dependencies = ["lilith-core", "lilith-memory", "lilith-tools"]
 
 [project.urls]
 Repository = "https://github.com/BrierAinz/Yggdrasil"
-=======
-version = "2.0.0"
-description = "Orchestrator engine for Lilith"
-readme = "README.md"
-license = "MIT"
-requires-python = ">=3.11"
-dependencies = [
-    "lilith-core>=2.0.0",
-    "lilith-tools>=2.0.0",
-    "lilith-memory>=2.0.0",
-    "httpx>=0.24",
-    "orjson>=3.9",
-    "uvicorn>=0.24.0",
-    "fastapi>=0.104.0",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.0",
-    "pytest-asyncio>=0.21",
-    "httpx>=0.24",
-    "ruff>=0.1.0",
-    "mypy>=1.5",
-]
-
-[project.urls]
-Homepage = "https://github.com/BrierAinz/Yggdrasil"
-Repository = "https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard/lilith-orchestrator"
-
-[tool.uv.sources]
-lilith-core = { workspace = true }
-lilith-memory = { workspace = true }
-lilith-tools = { workspace = true }
-
-# uvloop is Unix-only and optional — install separately on Linux/macOS:
-#   pip install uvloop
-# It is intentionally NOT listed in core dependencies so that Windows
-# installs remain clean.  The gateway gracefully falls back to the default
-# asyncio event loop when uvloop is unavailable.
-
-[tool.hatch.build.targets.wheel]
-packages = ["gateway", "lilith_orchestrator"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["."]
-asyncio_mode = "auto"
->>>>>>> origin/main

@@ -5,7 +5,6 @@ build-backend = "hatchling.build"
 [project]
 name = "bifrost"
 version = "2.0.0"
-<<<<<<< HEAD
 description = "Bifrost bridge - inter-realm communication for Yggdrasil"
 requires-python = ">=3.11"
 license = "MIT"
@@ -13,43 +12,3 @@ dependencies = ["lilith-core"]
 
 [project.urls]
 Repository = "https://github.com/BrierAinz/Yggdrasil"
-=======
-description = "Bifrost Gateway — API gateway connecting Asgard services with JWT auth, streaming, and Hermes bridge"
-readme = "README_BIFROST.md"
-license = {text = "MIT"}
-requires-python = ">=3.10"
-dependencies = [
-    "lilith-core>=2.0.0",
-    "lilith-memory>=2.0.0",
-    "lilith-orchestrator>=2.0.0",
-    "lilith-bridge>=1.0.0",
-    "fastapi>=0.104.0",
-    "uvicorn[standard]>=0.24.0",
-    "pydantic>=2.0",
-    "python-jose[cryptography]>=3.3.0",
-    "passlib[bcrypt]>=1.7.4",
-    "httpx>=0.27",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0",
-    "pytest-asyncio>=0.23",
-    "httpx>=0.27",
-    "ruff>=0.1",
-]
-
-[tool.uv.sources]
-lilith-core = { workspace = true }
-lilith-memory = { workspace = true }
-lilith-orchestrator = { workspace = true }
-lilith-bridge = { workspace = true }
-
-[tool.hatch.build.targets.wheel]
-packages = ["bifrost"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["."]
-asyncio_mode = "auto"
->>>>>>> origin/main

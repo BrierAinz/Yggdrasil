@@ -5,7 +5,6 @@ build-backend = "hatchling.build"
 [project]
 name = "lilith-skills"
 version = "1.0.0"
-<<<<<<< HEAD
 description = "Skill management and discovery for Lilith"
 requires-python = ">=3.11"
 license = "MIT"
@@ -13,20 +12,3 @@ dependencies = ["lilith-core"]
 
 [project.urls]
 Repository = "https://github.com/BrierAinz/Yggdrasil"
-=======
-description = "Skill loader and registry for the Yggdrasil knowledge base"
-readme = "README.md"
-license = "MIT"
-requires-python = ">=3.11"
-dependencies = [
-    "pydantic>=2.0",
-    "pyyaml>=6.0",
-]
-
-[project.optional-dependencies]
-dev = ["pytest>=7.0", "ruff>=0.4", "mypy"]
-
-[project.urls]
-Homepage = "https://github.com/BrierAinz/Yggdrasil"
-Repository = "https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard/lilith-skills"
->>>>>>> origin/main

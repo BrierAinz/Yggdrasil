@@ -5,7 +5,6 @@ build-backend = "hatchling.build"
 [project]
 name = "lilith-cli"
 version = "3.0.0"
-<<<<<<< HEAD
 description = "Terminal interface for Lilith ecosystem"
 requires-python = ">=3.11"
 license = "MIT"
@@ -13,37 +12,3 @@ dependencies = ["lilith-core", "lilith-api", "rich", "cyclopts"]
 
 [project.urls]
 Repository = "https://github.com/BrierAinz/Yggdrasil"
-=======
-description = "Yggdrasil CLI v3.0 — Interactive AI Agent REPL (Where Ancient Meets Digital)"
-readme = "README.md"
-license = "MIT"
-requires-python = ">=3.11"
-dependencies = [
-    "lilith-core>=2.0.0",
-    "lilith-memory>=2.0.0",
-    "lilith-orchestrator>=2.0.0",
-    "lilith-tools>=2.0.0",
-    "textual>=0.50.0",
-    "cyclopts>=2.0.0",
-    "rich>=13.0.0",
-    "prompt-toolkit>=3.0",
-    "pydantic>=2.0",
-    "pyyaml>=6.0",
-    "litellm>=1.83.7",
-]
-
-[project.scripts]
-lilith = "lilith_cli.main:main"
-yggdrasil = "lilith_cli.main:main"
-yggdrasil-tui = "lilith_cli.tui.app:main"
-
-[project.urls]
-Homepage = "https://github.com/BrierAinz/Yggdrasil"
-Repository = "https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard/lilith-cli"
-
-[tool.uv.sources]
-lilith-core = { workspace = true }
-lilith-memory = { workspace = true }
-lilith-tools = { workspace = true }
-lilith-orchestrator = { workspace = true }
->>>>>>> origin/main
