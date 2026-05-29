@@ -1,0 +1,115 @@
+# Norse-themed GitHub Issue Templates for Yggdrasil-style projects
+# Place under .github/ISSUE_TEMPLATE/
+
+# === bug_report.yml ===
+name: Bug Report
+description: Report something that isn't working as expected
+title: "[BUG] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > 🌳 Thank you for reporting! May the roots of Yggdrasil guide us to the truth.
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: What happened? What did you expect to happen?
+    validations:
+      required: true
+  - type: dropdown
+    id: realm
+    attributes:
+      label: Which Realm?
+      description: Which part of the ecosystem is affected?
+      options:
+        - 🏰 Asgard (Core Technology)
+        - 🤖 Vanaheim (AI Agents)
+        - ✨ Alfheim (UI Prototypes)
+        - 📚 Svartalfheim (Knowledge Base)
+        - 🔥 Muspelheim (Active Development)
+        - ❄️ Niflheim (Resources)
+        - 🌍 Midgard (Personal Apps)
+        - 🐉 Jotunheim (Massive Projects)
+        - ☠️ Helheim (Archived)
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this?
+      placeholder: |
+        1. Start lilith gateway...
+        2. Send message via Telegram...
+        3. See error...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      description: Paste error output, stack traces, etc.
+      render: shell
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: What version are you running?
+      placeholder: e.g., v4.0.0
+
+# === feature_request.yml ===
+name: Feature Request
+description: Suggest an idea or enhancement
+title: "[FEATURE] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > 🌳 Great ideas grow like branches on Yggdrasil. Tell us yours.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Motivation
+      description: What problem does this solve or what need does it address?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like it to work?
+    validations:
+      required: true
+  - type: dropdown
+    id: realm
+    attributes:
+      label: Target Realm
+      options:
+        - 🏰 Asgard
+        - 🤖 Vanaheim
+        - ✨ Alfheim
+        - 📚 Svartalfheim
+        - 🔥 Muspelheim
+        - ❄️ Niflheim
+        - 🌍 Midgard
+        - 🐉 Jotunheim
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: What other approaches have you thought about?
+
+# === config.yml ===
+blank_issues_enabled: false
+contact_links:
+  - name: "📚 Documentation"
+    url: "https://OWNER.github.io/REPO/"
+    about: "Check the documentation site for guides and API reference."
+  - name: "🗣️ Discussions"
+    url: "https://github.com/OWNER/REPO/discussions"
+    about: "Ask questions and share ideas in Discussions."

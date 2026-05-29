@@ -1,0 +1,54 @@
+# Lilith v2.1 - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Web Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+websockets>=12.0
+
+# HTTP Client
+httpx>=0.25.0
+requests>=2.31.0
+
+# Web scraping (4.0 Fase 2 — WebScraperAgent)
+beautifulsoup4>=4.12.0
+
+# Web search (Agencia Web V1.0 — puente de búsqueda)
+ddgs>=1.1.0
+
+# RSS/Atom feeds (4.0 Fase 4.1 — fuente constante)
+feedparser>=6.0.0
+
+# Browser automation (Agencia Web V1)
+playwright>=1.47.0
+readability-lxml>=0.8.1
+markdownify>=0.13.1
+
+# Data Validation
+pydantic>=2.0.0
+
+# Environment Variables
+python-dotenv>=1.0.0
+
+# Windows IPC (required for IPC Core)
+pywin32>=306; platform_system=="Windows"
+
+# Utilities
+pyyaml>=6.0.1
+GitPython>=3.1.40
+pathspec>=0.11.0
+astor>=0.8.0
+
+# Optional: Enhanced terminal experience
+rich>=13.0.0
+click>=8.1.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# Database
+chromadb>=0.4.0
+
+# Optional: Pre-4.0 MuninnDB. Adapter usa REST (httpx) si el SDK no está; con servidor en localhost:8475 basta.
+# pip install muninndb  # opcional; activar en Config/muninn.json (muninn_enabled: true)

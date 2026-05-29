@@ -1,0 +1,309 @@
+{
+  "eir_01.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, dark fantasy aesthetic, sharp features, high cheekbones, portrait, close-up face, detailed skin, moody lighting",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "dark fantasy aesthetic",
+      "sharp features",
+      "high cheekbones",
+      "portrait",
+      "close-up face",
+      "detailed skin",
+      "moody lighting"
+    ]
+  },
+  "eir_02.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, close-up portrait, detailed face, runic tattoo, atmospheric lighting",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "close-up portrait",
+      "detailed face",
+      "runic tattoo",
+      "atmospheric lighting"
+    ]
+  },
+  "eir_03.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, medium shot, dark flowing robes, silver embroidery, runic amulet",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "medium shot",
+      "dark flowing robes",
+      "silver embroidery",
+      "runic amulet"
+    ]
+  },
+  "eir_04.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, side profile, silver hair flowing, rim lighting, dramatic atmosphere",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "side profile",
+      "silver hair flowing",
+      "rim lighting",
+      "dramatic atmosphere"
+    ]
+  },
+  "eir_05.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, ethereal mood, soft diffused lighting, violet aura, dreamlike, floating runes",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "ethereal mood",
+      "soft diffused lighting",
+      "violet aura",
+      "dreamlike",
+      "floating runes"
+    ]
+  },
+  "eir_06.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, serene expression, soft morning light, white fur-lined cloak, gentle smile",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "serene expression",
+      "soft morning light",
+      "white fur-lined cloak",
+      "gentle smile"
+    ]
+  },
+  "eir_07.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, dark velvet robes, silver runic embroidery, hood down, scholar outfit, candlelit",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "dark velvet robes",
+      "silver runic embroidery",
+      "hood down",
+      "scholar outfit",
+      "candlelit"
+    ]
+  },
+  "eir_08.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, ornate dark plate armor, silver runic etchings, shoulder pauldrons, warrior",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "ornate dark plate armor",
+      "silver runic etchings",
+      "shoulder pauldrons",
+      "warrior"
+    ]
+  },
+  "eir_09.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, rim lighting, silhouette outline, silver light, face in shadow",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "rim lighting",
+      "silhouette outline",
+      "silver light",
+      "face in shadow"
+    ]
+  },
+  "eir_10.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, moonlit night, cool blue and silver lighting, full moon behind, castle battlement",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "moonlit night",
+      "cool blue and silver lighting",
+      "full moon behind",
+      "castle battlement"
+    ]
+  },
+  "eir_11.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, contemplative expression, hand on chin, dim candlelit study, soft focus",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "contemplative expression",
+      "hand on chin",
+      "dim candlelit study",
+      "soft focus"
+    ]
+  },
+  "eir_12.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, mysterious half-smile, partially hidden by shadow, one eye visible, theatrical lighting",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "mysterious half-smile",
+      "partially hidden by shadow",
+      "one eye visible",
+      "theatrical lighting"
+    ]
+  },
+  "eir_13.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, standing in enchanted dark forest, bioluminescent mushrooms, twisted trees, fog",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "standing in enchanted dark forest",
+      "bioluminescent mushrooms",
+      "twisted trees",
+      "fog"
+    ]
+  },
+  "eir_14.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, ancient Nordic library, floor-to-ceiling bookshelves, floating tomes, warm candlelight",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "ancient Nordic library",
+      "floor-to-ceiling bookshelves",
+      "floating tomes",
+      "warm candlelight"
+    ]
+  },
+  "eir_15.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair in intricate Norse braids, violet highlights, icy blue eyes, silver hair accessories, runic beads, Viking hairstyle",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair in intricate Norse braids",
+      "violet highlights",
+      "icy blue eyes",
+      "silver hair accessories",
+      "runic beads",
+      "Viking hairstyle"
+    ]
+  },
+  "eir_16.png": {
+    "train_resolution": [
+      1024,
+      1024
+    ],
+    "caption": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, casting ice magic, frost crystals from hands, frozen ground, magical glow",
+    "tags": [
+      "eir_niflheimr",
+      "1girl",
+      "solo",
+      "pale skin",
+      "silver-white hair with violet highlights",
+      "icy blue eyes",
+      "casting ice magic",
+      "frost crystals from hands",
+      "frozen ground",
+      "magical glow"
+    ]
+  }
+}

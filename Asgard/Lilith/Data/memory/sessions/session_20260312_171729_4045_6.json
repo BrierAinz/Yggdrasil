@@ -1,0 +1,18 @@
+{
+  "session_id": "session_20260312_171729_4045",
+  "saved_at": "2026-03-12T17:49:20.476412",
+  "message_count": 2,
+  "summary": "¿Qué proyectos tengo activos?",
+  "messages": [
+    {
+      "role": "user",
+      "content": "¿Qué proyectos tengo activos?"
+    },
+    {
+      "role": "assistant",
+      "content": "**Proyectos activos confirmados:**\n\n| Proyecto | Estado | Descripción |\n|----------|--------|-------------|\n| **Lilith** | Operacional | Tu IA táctica personal (este sistema) |\n| **Yggdrasil** | Remakeado | Organización de proyectos — estructura de 9 reinos |\n| **Svartalfheim** | Remakeado | Continúa bajo la nueva arquitectura Yggdrasil |\n| **Juego de terror procedural** | Desarrollo activo | Tu proyecto principal como Game Creator |\n\n**Nota:** No tengo visibilidad de tu filesystem local. Si hay más proyectos en `Workspace/` o directorios que no has mencionado en sesiones previas, necesito que me lo indiques para actualizar el registro.\n\n¿Priorizamos alguno hoy, Ainz?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    }
+  ]
+}

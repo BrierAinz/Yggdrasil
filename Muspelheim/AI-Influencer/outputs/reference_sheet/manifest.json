@@ -1,0 +1,188 @@
+[
+  {
+    "category": "01_portrait",
+    "variant": "close-up portrait",
+    "status": "error",
+    "error": "URL can't contain control characters. '/view?filename=eir_01_portrait_close-up portrait_00001_.png&subfolder=&type=output' (found at least ' ')"
+  },
+  {
+    "category": "01_portrait",
+    "variant": "medium portrait",
+    "status": "error",
+    "error": "URL can't contain control characters. '/view?filename=eir_01_portrait_medium portrait_00001_.png&subfolder=&type=output' (found at least ' ')"
+  },
+  {
+    "category": "01_portrait",
+    "variant": "side profile",
+    "status": "error",
+    "error": "URL can't contain control characters. '/view?filename=eir_01_portrait_side profile_00001_.png&subfolder=&type=output' (found at least ' ')"
+  },
+  {
+    "category": "02_mood",
+    "variant": "ethereal",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_02_mood_ethereal.png",
+    "size_kb": 1317.3681640625
+  },
+  {
+    "category": "02_mood",
+    "variant": "dark_brooding",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_02_mood_dark_brooding.png",
+    "size_kb": 1299.53125
+  },
+  {
+    "category": "02_mood",
+    "variant": "serene",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_02_mood_serene.png",
+    "size_kb": 1106.0888671875
+  },
+  {
+    "category": "03_outfit",
+    "variant": "dark_robes",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_03_outfit_dark_robes.png",
+    "size_kb": 1309.8349609375
+  },
+  {
+    "category": "03_outfit",
+    "variant": "armor",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_03_outfit_armor.png",
+    "size_kb": 1553.314453125
+  },
+  {
+    "category": "03_outfit",
+    "variant": "casual_modern",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_03_outfit_casual_modern.png",
+    "size_kb": 1356.6259765625
+  },
+  {
+    "category": "04_lighting",
+    "variant": "rim_light",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_04_lighting_rim_light.png",
+    "size_kb": 1387.8466796875
+  },
+  {
+    "category": "04_lighting",
+    "variant": "golden_hour",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_04_lighting_golden_hour.png",
+    "size_kb": 1206.7314453125
+  },
+  {
+    "category": "04_lighting",
+    "variant": "moonlit",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_04_lighting_moonlit.png",
+    "size_kb": 1295.3740234375
+  },
+  {
+    "category": "05_expression",
+    "variant": "contemplative",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_05_expression_contemplative.png",
+    "size_kb": 1216.072265625
+  },
+  {
+    "category": "05_expression",
+    "variant": "fierce",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_05_expression_fierce.png",
+    "size_kb": 1435.009765625
+  },
+  {
+    "category": "05_expression",
+    "variant": "mysterious",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_05_expression_mysterious.png",
+    "size_kb": 1404.427734375
+  },
+  {
+    "category": "06_background",
+    "variant": "enchanted_forest",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_06_background_enchanted_forest.png",
+    "size_kb": 1424.8515625
+  },
+  {
+    "category": "06_background",
+    "variant": "throne_room",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_06_background_throne_room.png",
+    "size_kb": 1294.259765625
+  },
+  {
+    "category": "06_background",
+    "variant": "ancient_library",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_06_background_ancient_library.png",
+    "size_kb": 1291.8271484375
+  },
+  {
+    "category": "07_hair",
+    "variant": "flowing",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_07_hair_flowing.png",
+    "size_kb": 1277.0849609375
+  },
+  {
+    "category": "07_hair",
+    "variant": "braided",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_07_hair_braided.png",
+    "size_kb": 1407.70703125
+  },
+  {
+    "category": "07_hair",
+    "variant": "windswept",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_07_hair_windswept.png",
+    "size_kb": 1476.23828125
+  },
+  {
+    "category": "08_fullbody",
+    "variant": "standing",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_08_fullbody_standing.png",
+    "size_kb": 1327.7705078125
+  },
+  {
+    "category": "08_fullbody",
+    "variant": "seated",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_08_fullbody_seated.png",
+    "size_kb": 1307.3359375
+  },
+  {
+    "category": "08_fullbody",
+    "variant": "dynamic",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_08_fullbody_dynamic.png",
+    "size_kb": 1482.322265625
+  },
+  {
+    "category": "09_special",
+    "variant": "magic_effect",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_09_special_magic_effect.png",
+    "size_kb": 1488.8115234375
+  },
+  {
+    "category": "09_special",
+    "variant": "silhouette",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_09_special_silhouette.png",
+    "size_kb": 1436.0029296875
+  },
+  {
+    "category": "09_special",
+    "variant": "mirror_reflection",
+    "status": "ok",
+    "file": "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/outputs/reference_sheet/eir_09_special_mirror_reflection.png",
+    "size_kb": 1441.0078125
+  }
+]

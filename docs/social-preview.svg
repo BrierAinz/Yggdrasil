@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="60%" stop-color="#0B0F19"/>
+      <stop offset="100%" stop-color="#050810"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0B0F19" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="textGlow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="runeGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- Center glow -->
+  <ellipse cx="640" cy="320" rx="500" ry="300" fill="url(#glow)"/>
+
+  <!-- Tree trunk -->
+  <path d="M640 580 L630 420 Q625 380 628 340 L632 280 Q634 250 636 220 L640 160"
+        stroke="#8B7355" stroke-width="8" fill="none" opacity="0.8"/>
+  <path d="M640 580 L650 420 Q655 380 652 340 L648 280 Q645 250 643 220 L640 160"
+        stroke="#A0865E" stroke-width="6" fill="none" opacity="0.7"/>
+
+  <!-- Roots -->
+  <path d="M640 580 Q600 590 520 600 Q480 605 420 610" stroke="#8B7355" stroke-width="5" fill="none" opacity="0.6"/>
+  <path d="M640 580 Q680 590 760 600 Q800 605 860 610" stroke="#8B7355" stroke-width="5" fill="none" opacity="0.6"/>
+  <path d="M640 580 Q640 600 640 620" stroke="#8B7355" stroke-width="4" fill="none" opacity="0.5"/>
+
+  <!-- Branches -->
+  <path d="M640 220 Q580 200 500 170 Q460 155 420 140" stroke="#8B7355" stroke-width="4" fill="none" opacity="0.6"/>
+  <path d="M640 220 Q700 200 780 170 Q820 155 860 140" stroke="#8B7355" stroke-width="4" fill="none" opacity="0.6"/>
+  <path d="M640 240 Q550 230 450 210 Q420 205 390 200" stroke="#8B7355" stroke-width="3" fill="none" opacity="0.5"/>
+  <path d="M640 240 Q730 230 830 210 Q860 205 890 200" stroke="#8B7355" stroke-width="3" fill="none" opacity="0.5"/>
+  <path d="M640 200 Q600 180 540 160" stroke="#8B7355" stroke-width="3" fill="none" opacity="0.4"/>
+  <path d="M640 200 Q680 180 740 160" stroke="#8B7355" stroke-width="3" fill="none" opacity="0.4"/>
+
+  <!-- Amber glow on roots -->
+  <circle cx="420" cy="610" r="6" fill="#F59E0B" opacity="0.7" filter="url(#runeGlow)"/>
+  <circle cx="860" cy="610" r="6" fill="#F59E0B" opacity="0.7" filter="url(#runeGlow)"/>
+  <circle cx="640" cy="620" r="5" fill="#F59E0B" opacity="0.6" filter="url(#runeGlow)"/>
+
+  <!-- Cyan glow on branches -->
+  <circle cx="420" cy="140" r="6" fill="#22D3EE" opacity="0.7" filter="url(#runeGlow)"/>
+  <circle cx="860" cy="140" r="6" fill="#22D3EE" opacity="0.7" filter="url(#runeGlow)"/>
+  <circle cx="390" cy="200" r="5" fill="#22D3EE" opacity="0.6" filter="url(#runeGlow)"/>
+  <circle cx="890" cy="200" r="5" fill="#22D3EE" opacity="0.6" filter="url(#runeGlow)"/>
+
+  <!-- Realm circles (9 positions around the tree) -->
+  <!-- Asgard - top -->
+  <circle cx="640" cy="80" r="18" fill="none" stroke="#F59E0B" stroke-width="1.5" opacity="0.6"/>
+  <circle cx="640" cy="80" r="8" fill="#F59E0B" opacity="0.3"/>
+
+  <!-- Vanaheim - top right -->
+  <circle cx="820" cy="120" r="14" fill="none" stroke="#22D3EE" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="820" cy="120" r="6" fill="#22D3EE" opacity="0.25"/>
+
+  <!-- Alfheim - right -->
+  <circle cx="920" cy="230" r="14" fill="none" stroke="#A78BFA" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="920" cy="230" r="6" fill="#A78BFA" opacity="0.25"/>
+
+  <!-- Svartalfheim - bottom right -->
+  <circle cx="870" cy="400" r="14" fill="none" stroke="#FB7185" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="870" cy="400" r="6" fill="#FB7185" opacity="0.25"/>
+
+  <!-- Muspelheim - bottom -->
+  <circle cx="700" cy="520" r="14" fill="none" stroke="#EF4444" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="700" cy="520" r="6" fill="#EF4444" opacity="0.25"/>
+
+  <!-- Niflheim - bottom left -->
+  <circle cx="410" cy="400" r="14" fill="none" stroke="#93C5FD" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="410" cy="400" r="6" fill="#93C5FD" opacity="0.25"/>
+
+  <!-- Midgard - left -->
+  <circle cx="360" cy="230" r="14" fill="none" stroke="#34D399" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="360" cy="230" r="6" fill="#34D399" opacity="0.25"/>
+
+  <!-- Jotunheim - top left -->
+  <circle cx="460" cy="120" r="14" fill="none" stroke="#C084FC" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="460" cy="120" r="6" fill="#C084FC" opacity="0.25"/>
+
+  <!-- Helheim - very bottom -->
+  <circle cx="580" cy="560" r="14" fill="none" stroke="#6B7280" stroke-width="1.5" opacity="0.4"/>
+  <circle cx="580" cy="560" r="6" fill="#6B7280" opacity="0.2"/>
+
+  <!-- Title: YGGDRASIL -->
+  <text x="640" y="340" text-anchor="middle" font-family="'Segoe UI', Helvetica, Arial, sans-serif"
+        font-size="72" font-weight="800" letter-spacing="12" fill="#F59E0B" filter="url(#textGlow)">
+    YGGDRASIL
+  </text>
+
+  <!-- Subtitle -->
+  <text x="640" y="385" text-anchor="middle" font-family="'Segoe UI', Helvetica, Arial, sans-serif"
+        font-size="22" font-weight="300" letter-spacing="6" fill="#E5E7EB" opacity="0.85">
+    LOCAL-FIRST AI ECOSYSTEM
+  </text>
+
+  <!-- Bottom tagline -->
+  <text x="640" y="425" text-anchor="middle" font-family="'Segoe UI', Helvetica, Arial, sans-serif"
+        font-size="14" font-weight="300" letter-spacing="3" fill="#9CA3AF" opacity="0.7">
+    NINE REALMS · ONE TREE · INFINITE POSSIBILITIES
+  </text>
+
+  <!-- Rune decorations along the bottom -->
+  <text x="320" y="610" font-size="16" fill="#F59E0B" opacity="0.2" font-family="serif">ᚠ</text>
+  <text x="380" y="600" font-size="14" fill="#22D3EE" opacity="0.15" font-family="serif">ᚢ</text>
+  <text x="450" y="615" font-size="16" fill="#F59E0B" opacity="0.2" font-family="serif">ᚦ</text>
+  <text x="530" y="608" font-size="14" fill="#A78BFA" opacity="0.15" font-family="serif">ᚨ</text>
+  <text x="640" y="615" font-size="16" fill="#F59E0B" opacity="0.2" font-family="serif">ᚱ</text>
+  <text x="750" y="608" font-size="14" fill="#22D3EE" opacity="0.15" font-family="serif">ᚲ</text>
+  <text x="830" y="615" font-size="16" fill="#F59E0B" opacity="0.2" font-family="serif">ᚷ</text>
+  <text x="900" y="600" font-size="14" fill="#A78BFA" opacity="0.15" font-family="serif">ᚹ</text>
+  <text x="960" y="610" font-size="16" fill="#F59E0B" opacity="0.2" font-family="serif">ᚺ</text>
+
+  <!-- Bottom corners: tech badges -->
+  <rect x="40" y="555" width="90" height="28" rx="14" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+  <text x="85" y="574" text-anchor="middle" font-family="'Segoe UI', monospace" font-size="11" fill="#22D3EE" opacity="0.9">Python</text>
+
+  <rect x="142" y="555" width="100" height="28" rx="14" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+  <text x="192" y="574" text-anchor="middle" font-family="'Segoe UI', monospace" font-size="11" fill="#F59E0B" opacity="0.9">FastAPI</text>
+
+  <rect x="254" y="555" width="110" height="28" rx="14" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+  <text x="309" y="574" text-anchor="middle" font-family="'Segoe UI', monospace" font-size="11" fill="#34D399" opacity="0.9">Telegram</text>
+
+  <rect x="920" y="555" width="80" height="28" rx="14" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+  <text x="960" y="574" text-anchor="middle" font-family="'Segoe UI', monospace" font-size="11" fill="#A78BFA" opacity="0.9">MCP</text>
+
+  <rect x="1014" y="555" width="120" height="28" rx="14" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+  <text x="1074" y="574" text-anchor="middle" font-family="'Segoe UI', monospace" font-size="11" fill="#60A5FA" opacity="0.9">LM Studio</text>
+
+  <rect x="1148" y="555" width="90" height="28" rx="14" fill="#1F2937" stroke="#374151" stroke-width="1"/>
+  <text x="1193" y="574" text-anchor="middle" font-family="'Segoe UI', monospace" font-size="11" fill="#FB7185" opacity="0.9">RAG</text>
+</svg>

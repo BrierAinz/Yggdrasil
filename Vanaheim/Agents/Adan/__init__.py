@@ -1,0 +1,1 @@
+"""Adán — Artesano del código del Panteón (Ollama/qwen2.5-coder:7b)."""

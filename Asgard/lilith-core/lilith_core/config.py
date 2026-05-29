@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 """Configuration loader for Yggdrasil ecosystem."""
 
 import os
@@ -71,3 +72,58 @@ def get_config() -> YggdrasilConfig:
     if _config is None:
         _config = YggdrasilConfig.load()
     return _config
+=======
+"""Central configuration management for the Lilith agent ecosystem."""
+
+import json
+from pathlib import Path
+from typing import Any
+
+
+class Config:
+    """Configuracion centralizada de Lilith."""
+
+    def __init__(self, root_path: Path | None = None) -> None:
+        """Initialise Config with an optional root path.
+
+        Args:
+            root_path: Path to the Lilith config directory.
+                       Defaults to ``~/.lilith``.
+
+        """
+        self.root = root_path or Path.home() / ".lilith"
+        self.root.mkdir(parents=True, exist_ok=True)
+        self.config_file = self.root / "config.json"
+        self._data: dict[str, Any] = self._load()
+
+    def _load(self) -> dict[str, Any]:
+        """Load configuration from disk, falling back to defaults."""
+        if self.config_file.exists():
+            return json.loads(self.config_file.read_text(encoding="utf-8"))
+        return self._defaults()
+
+    def _defaults(self) -> dict[str, Any]:
+        """Return sensible default configuration values."""
+        return {
+            "model": "auto",
+            "lm_studio_url": "http://localhost:1234/v1",
+            "max_context": 8192,
+            "temperature": 0.7,
+        }
+
+    def get(self, key: str, default: Any = None) -> Any:
+        """Recuperar un valor de configuración por clave."""
+        return self._data.get(key, default)
+
+    def set(self, key: str, value: Any) -> None:
+        """Establecer un valor de configuración y guardar en disco."""
+        self._data[key] = value
+        self._save()
+
+    def _save(self) -> None:
+        """Persist the current configuration to disk as JSON."""
+        self.config_file.write_text(
+            json.dumps(self._data, indent=2, ensure_ascii=False),
+            encoding="utf-8",
+        )
+>>>>>>> origin/main

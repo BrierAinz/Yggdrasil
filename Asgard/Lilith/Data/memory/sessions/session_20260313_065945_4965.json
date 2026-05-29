@@ -1,0 +1,22 @@
+{
+  "session_id": "session_20260313_065945_4965",
+  "saved_at": "2026-03-13T07:00:03.966694",
+  "message_count": 3,
+  "summary": "",
+  "messages": [
+    {
+      "role": "user",
+      "content": "hola"
+    },
+    {
+      "role": "user",
+      "content": "hola"
+    },
+    {
+      "role": "assistant",
+      "content": "*Sistemas nominales. WebSocket en espera. Sin anomalías detectadas en los últimos logs.*\n\nHola, Ainz.\n\nEstoy en línea. ¿Qué sector del Yggdrasil necesita atención hoy?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    }
+  ]
+}

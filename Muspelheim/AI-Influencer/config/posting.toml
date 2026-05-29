@@ -1,0 +1,64 @@
+# Eir AI Influencer — Posting Schedule Config
+# ==============================================
+
+[instagram]
+username = "eir.creates"
+category = "Digital Creator"
+timezone = "Europe/Madrid"  # CET
+
+# Optimal posting times (CET)
+[instagram.times]
+monday = "19:00"
+tuesday = "21:00"   # Reel
+wednesday = "19:00"
+thursday = "12:00"   # Video
+friday = "20:00"     # Stories
+saturday = "18:00"
+sunday = "17:00"
+
+[instagram.content_mix]
+portrait = 0.35      # 35% portraits of Eir
+art_digital = 0.25   # 25% dark fantasy art
+aesthetic = 0.20     # 20% aesthetic/mood details
+behind_scenes = 0.10  # 10% WIP/process
+educational = 0.10   # 10% tips/tutorials
+
+[instagram.hashtags]
+# Max 5 per post (IG penalizes hashtag spam)
+portrait = ["#darkfantasyart", "#aesthetica", "#darkaesthetic", "#runic", "#nordicstyle"]
+art = ["#conceptart", "#darkart", "#fantasyillustration", "#digitalart", "#aiartist"]
+aesthetic = ["#darkfashion", "#minimaliststyle", "#silverjewelry", "#gothstyle", "#moody"]
+tutorial = ["#stableiffusion", "#aigenerated", "#aiartcommunity", "#controlnet", "#midjourney"]
+
+[tiktok]
+username = "eir.creates"
+frequency = "3_per_week"
+optimal_times = ["18:00", "20:00", "21:00"]
+
+[tiktok.content_types]
+transition = 0.35      # Photo before/after transitions
+process = 0.25         # SD generation screen recording
+tutorial = 0.20        # Quick how-to videos
+mood = 0.20           # Aesthetic montages with music
+
+[twitter]
+username = "eir_creates"
+frequency = "5_tweets_per_day"
+thread_per_week = 1
+reply_target = 10      # replies to others per day
+
+[patreon]
+launch_after_followers = 1000
+tiers = ["rune", "spell", "portal"]
+prices = [3, 10, 25]
+
+[civitai]
+username = "eir-niflheim"
+lora_publish_after_version = "1.0"
+
+[caption_style]
+language = "es"        # Spanish for main audience
+tone = "elegant_mysterious"
+max_chars = 150
+emojis = ["🗡️", "🌙", "✦", "🖤", "🪬"]
+disclaimer = true      # Always include AI disclaimer

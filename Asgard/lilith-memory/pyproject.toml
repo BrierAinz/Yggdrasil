@@ -4,6 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lilith-memory"
+<<<<<<< HEAD
 version = "1.0.0"
 description = "Vector memory store with SQLite backend"
 requires-python = ">=3.11"
@@ -12,3 +13,20 @@ dependencies = ["lilith-core"]
 
 [project.urls]
 Repository = "https://github.com/BrierAinz/Yggdrasil"
+=======
+version = "2.0.0"
+description = "Memory system for Lilith AI agent"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "ruff>=0.4"]
+mem0 = ["mem0ai>=0.1"]
+chroma = ["chromadb>=0.4.0", "sentence-transformers>=2.0"]
+
+[project.urls]
+Homepage = "https://github.com/BrierAinz/Yggdrasil"
+Repository = "https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard/lilith-memory"
+>>>>>>> origin/main

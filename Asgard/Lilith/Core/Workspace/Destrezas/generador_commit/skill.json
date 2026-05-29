@@ -1,0 +1,11 @@
+﻿{
+    "name": "generador_commit",
+    "description": "Analiza cambios git pendientes y genera mensajes de commit descriptivos",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {},
+    "output": "Mensaje de commit sugerido basado en los cambios",
+    "tools_required": [
+        "GeminiClient"
+    ]
+}

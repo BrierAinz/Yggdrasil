@@ -1,0 +1,81 @@
+{
+  "1": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": {
+      "ckpt_name": "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"
+    }
+  },
+  "2": {
+    "class_type": "LoraLoader",
+    "inputs": {
+      "lora_name": "eir_niflheimr_v2_best.safetensors",
+      "strength_model": 0.8,
+      "strength_clip": 0.8,
+      "model": ["1", 0],
+      "clip": ["1", 1]
+    }
+  },
+  "6": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "eir_niflheimr, portrait, silver-white hair with violet highlights, icy blue eyes, pale skin, looking at viewer, snowflakes gently falling, subtle movement, cinematic lighting, 8k, masterpiece, photorealistic",
+      "clip": ["2", 1]
+    }
+  },
+  "7": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "cartoon, anime, 3d render, deformed, bad anatomy, extra fingers, blurry, low quality, watermark, text, logo, signature, ugly, duplicate, morbid, mutation, static, frozen",
+      "clip": ["2", 1]
+    }
+  },
+  "8": {
+    "class_type": "EmptyLatentImage",
+    "inputs": {
+      "width": 512,
+      "height": 512,
+      "batch_size": 16
+    }
+  },
+  "10": {
+    "class_type": "ADE_AnimateDiffLoaderWithContext",
+    "inputs": {
+      "model_name": "mm_sdxl_v10_beta.ckpt",
+      "beta_schedule": "autoselect",
+      "model": ["2", 0]
+    }
+  },
+  "3": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 42,
+      "steps": 20,
+      "cfg": 7.5,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "normal",
+      "denoise": 1.0,
+      "model": ["10", 0],
+      "positive": ["6", 0],
+      "negative": ["7", 0],
+      "latent_image": ["8", 0]
+    }
+  },
+  "4": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["3", 0],
+      "vae": ["1", 2]
+    }
+  },
+  "5": {
+    "class_type": "SaveAnimatedWEBP",
+    "inputs": {
+      "filename_prefix": "eir_animated_portrait",
+      "fps": 8,
+      "lossless": false,
+      "quality": 80,
+      "method": "default",
+      "images": ["4", 0]
+    }
+  }
+}

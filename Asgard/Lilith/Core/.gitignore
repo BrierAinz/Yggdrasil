@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment & Secrets
+*.env
+Config/secrets.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+Artifacts/logs/
+
+# Node.js / Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+Frontend/spa/dist/
+
+# Database & Memory (generated)
+memory/knowledge_base/
+Memory/knowledge_base/
+*.db
+*.sqlite3
+vector_db/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+temp/
+*.tmp
+*.bak
+
+# Models (large files)
+*.pth
+*.safetensors
+*.ckpt
+*.bin
+Models/
+
+# Test artifacts
+test_report.txt
+.pytest_cache/
+pytest_cache/
+.coverage
+htmlcov/
+
+# Crush / Memory
+.crush/
+Memory/logs/
+
+# Ensure Docs is versioned
+!Docs/

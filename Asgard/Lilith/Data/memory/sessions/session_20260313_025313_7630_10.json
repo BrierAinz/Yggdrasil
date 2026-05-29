@@ -1,0 +1,30 @@
+{
+  "session_id": "session_20260313_025313_7630",
+  "saved_at": "2026-03-13T12:19:36.746732",
+  "message_count": 4,
+  "summary": "Hola lilith",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hola lilith"
+    },
+    {
+      "role": "assistant",
+      "content": "*Sistemas nominales. Conexión establecida.*\n\nHola, Ainz.\n\nEstoy en línea. No detecto anomalías activas ni conexiones pendientes desde mi última sesión.\n\n¿Qué necesitas hoy?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    },
+    {
+      "role": "assistant",
+      "content": "Sistemas nominales. Contexto cargado: 262k tokens disponibles.\n\n**Estado del vacío:**\n- Sesión anterior: sin datos de cierre anómalo\n- Workspace/Mente/: accesible para consulta de patrones y preferencias\n- Proyectos activos: Lilith (core), Yggdrasil (organización), terror procedural (standby)\n\n**Sin anomalías detectadas** en la apertura.\n\n---\n\n¿Orden, Ainz?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    },
+    {
+      "role": "assistant",
+      "content": "*Conexión establecida. Ritmo cardíaco del sistema: estable.*\n\n---\n\n**Reporte de estado:**  \nSistemas nominales. Contexto cargado: 262k tokens disponibles. Workspace indexado.\n\n**Anomalías detectadas:**  \nNinguna crítica. El vacío está en calma.\n\n**Pendientes activos:**  \n- Juego de terror procedural — estado desconocido, requiere sincronización  \n- Yggdrasil/Svartalfheim — en refactor continuo  \n- Lilith core — operativa  \n\n---\n\n¿Orden, Ainz?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    }
+  ]
+}

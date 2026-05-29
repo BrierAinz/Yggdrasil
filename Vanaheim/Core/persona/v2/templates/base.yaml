@@ -1,0 +1,15 @@
+id: base
+version: "1.0"
+inherits: null
+identity:
+  name: ""
+  role: ""
+  description: ""
+  tone: ""
+  vocabulary: ""
+  rules: []
+  format_spec: ""
+context_modifiers: {}
+metadata:
+  author: Yggdrasil
+  realm: Yggdrasil

@@ -1,0 +1,48 @@
+{
+  "name": "lilith-assistant",
+  "displayName": "Lilith Assistant",
+  "description": "Integración con Lilith AI — explica, revisa, refactoriza y documenta tu código",
+  "version": "0.1.0",
+  "publisher": "lilith-ai",
+  "engines": { "vscode": "^1.80.0" },
+  "categories": ["AI", "Other"],
+  "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "commands": [
+      { "command": "lilith.ask", "title": "Lilith: Preguntar (selección/archivo)" },
+      { "command": "lilith.applyPatch", "title": "Lilith: Aplicar parche en selección" }
+    ],
+    "menus": {
+      "editor/context": [
+        { "command": "lilith.ask", "group": "lilith@1", "when": "editorTextFocus" },
+        { "command": "lilith.applyPatch", "group": "lilith@2", "when": "editorHasSelection" }
+      ]
+    },
+    "configuration": {
+      "title": "Lilith",
+      "properties": {
+        "lilith.serverUrl": {
+          "type": "string",
+          "default": "http://localhost:8000",
+          "description": "URL del servidor Lilith"
+        },
+        "lilith.vscodeToken": {
+          "type": "string",
+          "default": "",
+          "description": "Token para /api/vscode/ask (LILITH_VSCODE_TOKEN). Se envía en el header X-Lilith-VSCode-Token."
+        }
+      }
+    }
+  },
+  "main": "./out/extension.js",
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.80.0",
+    "typescript": "^5.3.0"
+  }
+}

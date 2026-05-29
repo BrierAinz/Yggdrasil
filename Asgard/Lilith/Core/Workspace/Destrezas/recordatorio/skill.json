@@ -1,0 +1,24 @@
+﻿{
+    "name": "recordatorio",
+    "description": "Sistema de notas y recordatorios con timestamp",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {
+        "accion": {
+            "type": "string",
+            "required": true,
+            "enum": [
+                "agregar",
+                "listar"
+            ],
+            "description": "Accion a realizar"
+        },
+        "nota": {
+            "type": "string",
+            "required": false,
+            "description": "Texto del recordatorio (solo para 'agregar')"
+        }
+    },
+    "output": "Confirmacion o lista de recordatorios",
+    "tools_required": []
+}

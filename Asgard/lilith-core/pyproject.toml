@@ -4,6 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lilith-core"
+<<<<<<< HEAD
 version = "2.1.0"
 description = "Base types, configuration, and logging for Lilith"
 requires-python = ">=3.11"
@@ -12,3 +13,22 @@ dependencies = ["pyyaml", "python-dotenv", "requests"]
 
 [project.urls]
 Repository = "https://github.com/BrierAinz/Yggdrasil"
+=======
+version = "2.0.0"
+description = "Core engine for the Lilith AI agent"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.28.0",
+    "pydantic>=2.0",
+    "litellm>=1.83.7",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "ruff>=0.4", "mypy"]
+
+[project.urls]
+Homepage = "https://github.com/BrierAinz/Yggdrasil"
+Repository = "https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard/lilith-core"
+>>>>>>> origin/main

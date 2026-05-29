@@ -1,10 +1,15 @@
 ---
 sidebar_position: 2
 title: Architecture
+<<<<<<< HEAD
+=======
+description: "Full architecture diagram of the Yggdrasil ecosystem"
+>>>>>>> origin/main
 ---
 
 # Architecture
 
+<<<<<<< HEAD
 Yggdrasil follows a modular architecture organized in 9 realms with clear separation of concerns.
 
 ## Monorepo Structure
@@ -61,3 +66,156 @@ lilith-skills                lilith-tools
 - **Linting:** ruff
 - **Testing:** pytest
 - **CI:** GitHub Actions
+=======
+A complete map of the Yggdrasil ecosystem — from the Nine Realms directory structure to the REST Gateway, every component that makes Lilith v5.0 work, including Multi-Provider LLM, Swarm Intelligence, MCP, Skills, Batch Mode, and the real-time Dashboard.
+
+## Nine Realms Layout
+
+The directory structure follows the Norse cosmology. Each realm is a top-level directory with a strict purpose.
+
+```
+Yggdrasil/
+│
+├── Asgard/                           ← Core Technology (permanent)
+│   ├── Lilith/                       CLI agent, memory, orchestrator
+│   │   ├── Lilith/                   Core modules (Core, Swarm, MCP,
+│   │   │                             Dashboard, Lilith, RAG, Scheduler, Plugins)
+│   │   ├── memory/                   Hybrid memory (vector + graph + FTS5)
+│   │   └── skills/                   Hot-reloadable skill packs
+│   ├── lilith-orchestrator/gateway/  FastAPI REST Gateway
+│   └── lilith-v3-master-plan.md     Phase roadmap
+│
+├── Vanaheim/                         ← AI Agents & Bots
+│   ├── Bots_Lilith_v5/
+│   │   ├── telegram/                 Telegram bot (owner-only)
+│   │   └── bridge/                   Gateway client bridge
+│   ├── Agents/                       4 active agents (Shalltear, Adán, Eva, Odín)
+│   ├── bifrost/                      Cross-realm communication protocol
+│   ├── Core/                         Shared agent libraries
+│   └── LLM_Experiments/             Model testing
+│
+├── Alfheim/                          ← UI Prototypes
+│   ├── VSCode_Extension_Lilith/      IDE integration
+│   └── ui-seed/                      Visual experiments
+│
+├── Svartalfheim/                     ← Knowledge Base
+│   ├── Knowledge_Base/               Documentation
+│   ├── Grimorios/                    Architecture decisions
+│   └── Playbooks/                    Deployment guides
+│
+├── Muspelheim/                       ← Active Development
+│   ├── AutoMode/                     Sprint templates
+│   └── Hotfixes/                     Emergency patches
+│
+├── Niflheim/                         ← Resources
+│   ├── Datasets/                     Training data
+│   └── Models/                       LLM checkpoints
+│
+├── Midgard/                          ← Personal Apps
+│   └── app/                          Completed applications
+│
+├── Jotunheim/                        ← Massive Projects
+│   └── projects/                     Long-term builds
+│
+├── Helheim/                          ← Graveyard
+│   ├── Archives_Lilith_Legacy/       Old code
+│   └── Quarantine/                   Regenerable trash
+│
+├── website/                          ← Documentation site (GitHub Pages)
+│   ├── index.html
+│   ├── hermes-lilith.html
+│   ├── architecture.html
+│   ├── realms.html
+│   ├── setup.html
+│   ├── changelog.html
+│   ├── js/main.js
+│   └── css/style.css
+│
+├── REGLAS_YGGDRASIL.md               ← Realm rules
+├── README.md                         ← Project overview
+├── CHANGELOG.md                      ← Version history
+├── setup_yggdrasil.py                ← Setup script
+├── yggdrasil_cli.py                  ← CLI tool
+└── start_lilith.bat                  ← Launcher script
+```
+
+## Request Lifecycle
+
+A single message from Telegram travels through multiple layers before returning with an answer. Here's the full path.
+
+| Step | What Happens |
+|------|-------------|
+| **1. Telegram** | User sends a message to the bot. The bot validates the sender (owner-only) and forwards the text to the Bridge. |
+| **2. Bridge** | The Bridge (Python client) packages the message into a JSON payload and POSTs it to the Gateway at `localhost:8000/api/telegram/chat`. |
+| **3. Gateway** | FastAPI receives the request, generates a session ID (`gateway_{user_id}_{timestamp}`), and routes to the appropriate handler. |
+| **4. Lilith** | The orchestrator loads the conversation context, queries hybrid memory (vector + graph + FTS5) for relevant past interactions, checks Skills for applicable routines, and builds the full prompt. |
+| **5. LLM Provider** | The prompt is sent to LM Studio (local) via OpenAI-compatible API. If LM Studio is unavailable, the LLM Provider automatically falls back to Kimi or another configured remote provider. |
+| **6. Skill / Tool Execution** | If the model requests a tool or skill, Lilith dispatches it — native tools, MCP connections, dynamic tool calls, or spawns a Swarm agent for parallel work. |
+| **7. Dashboard** | Real-time events stream to the web Dashboard at `localhost:8080` via WebSocket — showing LLM calls, tool executions, memory operations, and swarm progress. |
+| **8. Response** | The final answer is returned to the Gateway, which forwards it to the Bridge, which sends it back to Telegram as a reply message. |
+| **9. Memory Store** | The conversation is compressed and stored across all three memory indices (vector, graph, full-text) for future context retrieval and swarm recall. |
+
+## Component Relationships
+
+How the major packages interact. Arrows indicate dependency or communication direction.
+
+### Layer 1: Interfaces
+
+| Component | Type |
+|-----------|------|
+| ᚨ Telegram Bot | Interface |
+| ᚲ VSCode Extension | Interface |
+| ᚱ CLI | Interface |
+
+↓ *HTTP / REST* ↓
+
+### Layer 2: Gateway
+
+| Component | Detail |
+|-----------|--------|
+| ᚦ Gateway | FastAPI · Port 8000 |
+
+↓ *Internal API* ↓
+
+### Layer 3: Core
+
+| Component | Detail |
+|-----------|--------|
+| ᚦ Lilith | Orchestrator |
+| ᛗ Memory | Vector + Graph + FTS5 |
+| ᛏ Scheduler | Cron + SQLite |
+| ᚦ Plugins | Dynamic tools |
+| ᛊ Swarm | Specialist Agents |
+| ᚺ Skills | Hot-reload Packs |
+| ᛇ MCP | Model Context Protocol |
+| ᛒ Dashboard | WebSocket · Port 8080 |
+
+↓ *Multi-Provider LLM* ↓
+
+### Layer 4: LLM
+
+| Component | Detail |
+|-----------|--------|
+| ᛃ LM Studio | Local · localhost:1234 |
+| ᚨ Kimi / OpenAI | Remote Fallback |
+
+## Security Model
+
+Yggdrasil is designed for a single owner. Security is focused on isolation, local execution, and preventing accidental damage.
+
+### Owner-Only Access
+
+The Telegram bot only responds to the configured `TELEGRAM_OWNER_CHAT_ID`. All other users are silently ignored. There is no multi-user support by design.
+
+### Local Execution
+
+The LLM runs on localhost via LM Studio. Memory is stored in local SQLite. File operations are confined to the host machine. Nothing leaves your network unless a tool explicitly requests it.
+
+### Confirmation Gates
+
+Destructive operations (file deletion, process kill, system changes) require explicit human confirmation via Telegram. The agent cannot act autonomously on dangerous commands.
+
+### No Secrets in Code
+
+All tokens, API keys, and sensitive configuration live in `.env` files (gitignored). The `.env.example` template shows what is needed without exposing values.
+>>>>>>> origin/main

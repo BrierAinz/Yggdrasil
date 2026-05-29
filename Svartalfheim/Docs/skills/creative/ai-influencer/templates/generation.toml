@@ -1,0 +1,56 @@
+# AI Influencer — Image Generation Config
+# Copy to config/generation.toml and customize
+
+[model]
+# Primary: Juggernaut XL for photorealistic
+# Secondary: FLUX.1-dev for artistic/creative
+name = "juggernautXL_v9Rundiffusion"
+refiner = ""  # Optional: refiner model name
+
+[sampling]
+sampler = "DPM++ 2M Karras"
+steps = 30
+cfg_scale = 7
+denoise = 0.75  # For img2img
+
+[dimensions]
+portrait = [768, 1024]    # Instagram portrait (3:4)
+landscape = [1024, 768]   # Landscape/carousel (4:3)
+square = [1024, 1024]      # Square posts (1:1)
+story = [1080, 1920]       # Stories/reels (9:16)
+thumbnail = [512, 512]     # Thumbnails/previews
+
+[lora]
+enabled = false  # Enable after training
+name = "character_name"
+weight = 0.7
+# Add multiple LoRAs with comma separation: "char_lora, style_lora"
+
+[prompts]
+# Character-positive prompt template (append to your scene description)
+character_positive = "masterpiece, best quality, 1girl, [CHARACTER_NAME], [CHARACTER_TRAITS]"
+# Always-use quality tags
+quality_positive = "highres, detailed, sharp focus, professional photography, studio lighting"
+# Universal negative prompt
+negative = "modern, phone, screenshot, watermark, text, blurry, low quality, deformed, disfigured, bad anatomy, bad hands, missing fingers, extra digits, nsfw, nude"
+
+[upscaling]
+enabled = true
+model = "4x-UltraSharp"
+scale = 2  # 2x upscale (768x1024 → 1536x2048)
+
+[watermark]
+enabled = true
+text = "@username"
+position = "bottom-right"  # bottom-right, bottom-left, bottom-center
+opacity = 0.15
+font_size = 0  # 0 = auto-size based on image dimensions
+font_color = [255, 255, 255]  # RGB
+
+[batch]
+# Number of images to generate per prompt template
+images_per_prompt = 4
+# Random seed range (0 = random)
+seed = 0
+# Save metadata alongside images
+save_metadata = true

@@ -1,0 +1,75 @@
+---
+# LoRA training config for BODY type — Pony V6 XL (SDXL)
+# Body-only LoRA using Flux-generated body images (center-cropped to 1024x1024)
+# 25 images, 1024x1024 center-cropped
+# Optimized for RTX 3060 12GB VRAM
+#
+# KEY SETTINGS:
+# - xformers: false (broken on PyTorch 2.11+cu130, set to true if your setup supports it)
+# - noise_scheduler: ddpm (SDXL, NOT flowmatch which is for Flux)
+# - sample prompts MUST include Pony quality tags: "score_9, score_8_up, ..."
+# - quantize: false for SDXL (only Flux needs quantization)
+# - Steps: 3000 is a good starting point for body LoRA
+# - Save every 500 steps to allow checkpoint comparison
+job: extension
+config:
+  name: "ehyra_body_lora_v1"
+  process:
+    - type: 'sd_trainer'
+      training_folder: "output"
+      device: cuda:0
+      trigger_word: "ehyra_body"
+      network:
+        type: "lora"
+        linear: 32
+        linear_alpha: 16
+      save:
+        dtype: float16
+        save_every: 500
+        max_step_saves_to_keep: 4
+      datasets:
+        - folder_path: "/path/to/training_data"  # UPDATE: point to your training dir
+          caption_ext: "txt"
+          caption_dropout_rate: 0.05
+          shuffle_tokens: false
+          cache_latents_to_disk: true
+          resolution: [ 768, 1024 ]
+      train:
+        batch_size: 1
+        steps: 3000
+        gradient_accumulation_steps: 1
+        train_unet: true
+        train_text_encoder: false
+        gradient_checkpointing: true
+        noise_scheduler: "ddpm"    # SDXL uses ddpm, NOT flowmatch
+        optimizer: "adamw8bit"
+        lr: 1e-4
+        lr_scheduler: "constant"
+        ema_config:
+          use_ema: true
+          ema_decay: 0.99
+        dtype: bf16
+        xformers: false             # Set true if your PyTorch/CUDA supports it
+        min_snr_gamma: 5.0
+      model:
+        name_or_path: "/path/to/ponyDiffusionV6XL_v6StartWithThisOne.safetensors"  # UPDATE: local SDXL checkpoint
+        is_xl: true
+        is_flux: false
+        quantize: false             # Only set true for Flux models
+      sample:
+        sampler: "ddpm"             # Match noise_scheduler
+        sample_every: 500
+        width: 1024
+        height: 1024
+        prompts:
+          - "score_9, score_8_up, ehyra_body, a woman with a curvy slim hourglass figure, wearing form-fitting black cocktail dress, standing confidently, studio lighting, photorealistic full body shot"
+          - "score_9, score_8_up, ehyra_body, a woman with a curvy slim hourglass figure, wearing casual denim outfit, walking in a sunny park, golden hour lighting, photorealistic"
+          - "score_9, score_8_up, ehyra_body, a woman with a curvy slim hourglass figure, wearing elegant evening gown, luxury hotel lobby, soft ambient lighting, photorealistic full body shot"
+        neg: "score_6, score_5, score_4, source_anime, bad anatomy, extra fingers, blurry, watermark, text, deformed hands"
+        seed: 42
+        walk_seed: true
+        guidance_scale: 7            # SDXL typical range 5-8
+        sample_steps: 25
+meta:
+  name: "[name]"
+  version: '1.0'

@@ -1,16 +1,28 @@
 #!/usr/bin/env python3
 """Test token directo de muninn.json."""
+<<<<<<< HEAD
 import urllib.request
 import json
+=======
+
+import json
+import urllib.request
+
+>>>>>>> origin/main
 
 # Token exacto del archivo muninn.json
 TOKEN = "mk_GOTOOZRB5dWooMIZ2A8Mg_pdBpIRloo8Xzca6Oqyd-s"
 MUNINN_URL = "http://127.0.0.1:8475/api"
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 def test_token():
     """Test query con token específico."""
     print(f"Probando token: {TOKEN[:20]}...")
     print()
+<<<<<<< HEAD
     
     req = urllib.request.Request(
         f'{MUNINN_URL}/activate',
@@ -30,6 +42,20 @@ def test_token():
         with urllib.request.urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode())
             activations = data.get('activations', [])
+=======
+
+    req = urllib.request.Request(
+        f"{MUNINN_URL}/activate",
+        data=json.dumps({"vault": "docs", "context": ["DAG Executor"], "max_results": 3}).encode(),
+        headers={"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode())
+            activations = data.get("activations", [])
+>>>>>>> origin/main
             print(f"[OK] Resultados: {len(activations)}")
             for a in activations[:3]:
                 print(f"  - {a.get('concept', 'N/A')}")
@@ -39,5 +65,9 @@ def test_token():
     except Exception as e:
         print(f"[ERROR] {e}")
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 if __name__ == "__main__":
     test_token()

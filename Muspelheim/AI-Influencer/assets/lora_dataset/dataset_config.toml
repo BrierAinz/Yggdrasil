@@ -1,0 +1,11 @@
+[general]
+enable_bucket = true
+
+[[datasets]]
+resolution = 1024
+batch_size = 1
+
+  [[datasets.subsets]]
+  image_dir = "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/assets/lora_dataset/eir_niflheimr"
+  class_tokens = "eir_niflheimr"
+  num_repeats = 10

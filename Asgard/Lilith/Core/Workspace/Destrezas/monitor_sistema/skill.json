@@ -1,0 +1,9 @@
+﻿{
+    "name": "monitor_sistema",
+    "description": "Revisa CPU, RAM, disco y procesos del sistema",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {},
+    "output": "Reporte del estado del sistema",
+    "tools_required": []
+}

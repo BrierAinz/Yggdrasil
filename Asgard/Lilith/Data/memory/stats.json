@@ -1,0 +1,11 @@
+{
+  "total_messages_sent": 9,
+  "total_tokens_received": 0,
+  "llm_usage_time_seconds": 37.961875599998166,
+  "commands_executed": {
+    "git": 0,
+    "system": 1
+  },
+  "session_start_time_iso": "2026-02-14T10:43:59.318665+00:00",
+  "last_activity_iso": "2026-02-14T11:27:28.205084+00:00"
+}

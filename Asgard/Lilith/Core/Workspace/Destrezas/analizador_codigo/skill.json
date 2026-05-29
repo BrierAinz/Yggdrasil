@@ -1,0 +1,17 @@
+﻿{
+    "name": "analizador_codigo",
+    "description": "Analiza un archivo Python, detecta bugs, antipatterns y sugiere mejoras",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {
+        "filepath": {
+            "type": "string",
+            "required": true,
+            "description": "Ruta al archivo a analizar (relativa al proyecto)"
+        }
+    },
+    "output": "Reporte de analisis con bugs y sugerencias",
+    "tools_required": [
+        "GeminiClient"
+    ]
+}

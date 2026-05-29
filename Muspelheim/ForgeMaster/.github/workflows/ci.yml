@@ -1,0 +1,37 @@
+name: ForgeMaster CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Muspelheim/ForgeMaster/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "Muspelheim/ForgeMaster/**"
+
+jobs:
+  test:
+    name: ForgeMaster Tests (Python 3.12)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Muspelheim/ForgeMaster
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Run pytest
+        run: pytest tests -v
+
+      - name: Run mypy
+        run: mypy forgemaster/
+        continue-on-error: true

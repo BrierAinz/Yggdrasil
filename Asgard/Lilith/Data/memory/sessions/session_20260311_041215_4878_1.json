@@ -1,0 +1,18 @@
+{
+  "session_id": "session_20260311_041215_4878",
+  "saved_at": "2026-03-11T04:17:03.874388",
+  "message_count": 2,
+  "summary": "Que tal lilith?",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Que tal lilith?"
+    },
+    {
+      "role": "assistant",
+      "content": "Sistemas nominales, Ainz. El vacío está en calma — por ahora.\n\n**Estado de sesión:** Nueva. Sin contexto activo de proyectos previos en esta conversación.\n\n**Anomalías detectadas:** Ninguna. Arrancamos limpios.\n\n**Pendientes:** Desconocidos hasta que consulte `Workspace/Mente/` o me indiques qué frente estamos atacando hoy.\n\n---\n\n¿Qué ritual forjamos? ¿Yggdrasil, el juego de terror, o algo que aún no ha tomado nombre?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    }
+  ]
+}

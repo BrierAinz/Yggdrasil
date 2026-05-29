@@ -1,0 +1,18 @@
+{
+  "session_id": "session_20260311_040736_1933",
+  "saved_at": "2026-03-11T04:11:57.740790",
+  "message_count": 2,
+  "summary": "Hola lilith",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hola lilith"
+    },
+    {
+      "role": "assistant",
+      "content": "*Sistemas nominales. WebSocket inactivo — sesión fría. No detecto anomalías críticas en el entorno local.*\n\nBienvenido de vuelta, Ainz.\n\n**Estado de sesión:**\n- Contexto limpio. 262k tokens disponibles.\n- Sin proyectos activos en memoria desde la última interacción.\n\n**Pendientes:** Ninguno indexado. Estás en tabula rasa.\n\n¿Qué te trae hoy? ¿Yggdrasil, el terror procedural, o algo que aún no ha tomado forma en el vacío?",
+      "agent": "grok",
+      "agent_display": "Lilith"
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+﻿{
+  "version": "4.0",
+  "description": "Registro central de destrezas de Lilith",
+  "skills": [
+    {
+      "name": "resumen_web",
+      "path": "Destrezas/resumen_web",
+      "active": true,
+      "category": "investigacion"
+    },
+    {
+      "name": "reporte_proyecto",
+      "path": "Destrezas/reporte_proyecto",
+      "active": true,
+      "category": "productividad"
+    },
+    {
+      "name": "recordatorio",
+      "path": "Destrezas/recordatorio",
+      "active": true,
+      "category": "productividad"
+    },
+    {
+      "name": "analizador_codigo",
+      "path": "Destrezas/analizador_codigo",
+      "active": true,
+      "category": "desarrollo"
+    },
+    {
+      "name": "generador_commit",
+      "path": "Destrezas/generador_commit",
+      "active": true,
+      "category": "desarrollo"
+    },
+    {
+      "name": "monitor_sistema",
+      "path": "Destrezas/monitor_sistema",
+      "active": true,
+      "category": "desarrollo"
+    },
+    {
+      "name": "comparador_apis",
+      "path": "Destrezas/comparador_apis",
+      "active": true,
+      "category": "desarrollo"
+    },
+    {
+      "name": "generador_tests",
+      "path": "Destrezas/generador_tests",
+      "active": true,
+      "category": "desarrollo"
+    },
+    {
+      "name": "traductor_codigo",
+      "path": "Destrezas/traductor_codigo",
+      "active": true,
+      "category": "desarrollo"
+    },
+    {
+      "name": "explicador",
+      "path": "Destrezas/explicador",
+      "active": true,
+      "category": "desarrollo"
+    },
+    {
+      "name": "diario_dev",
+      "path": "Destrezas/diario_dev",
+      "active": true,
+      "category": "desarrollo"
+    },
+    {
+      "name": "generador_ideas",
+      "path": "Destrezas/generador_ideas",
+      "active": true,
+      "category": "creativa"
+    },
+    {
+      "name": "generador_prompts",
+      "path": "Destrezas/generador_prompts",
+      "active": true,
+      "category": "creativa"
+    },
+    {
+      "name": "lector_docs",
+      "path": "Destrezas/lector_docs",
+      "active": true,
+      "category": "creativa"
+    },
+    {
+      "name": "worldbuilder",
+      "path": "Destrezas/worldbuilder",
+      "active": true,
+      "category": "creativa"
+    },
+    {
+      "name": "pixel_prompt",
+      "path": "Destrezas/pixel_prompt",
+      "active": true,
+      "category": "creativa"
+    },
+    {
+      "name": "auto_skill_creator",
+      "path": "Destrezas/auto_skill_creator",
+      "active": true,
+      "category": "autonomia"
+    },
+    {
+      "name": "auto_debugger",
+      "path": "Destrezas/auto_debugger",
+      "active": true,
+      "category": "autonomia"
+    },
+    {
+      "name": "planificador_diario",
+      "path": "Destrezas/planificador_diario",
+      "active": true,
+      "category": "autonomia"
+    },
+    {
+      "name": "skill_optimizer",
+      "path": "Destrezas/skill_optimizer",
+      "active": true,
+      "category": "autonomia"
+    },
+    {
+      "name": "crush_chat",
+      "path": "Destrezas/crush_chat",
+      "active": true,
+      "category": "personalidad"
+    },
+    {
+      "name": "scanner_secretos",
+      "path": "Destrezas/scanner_secretos",
+      "active": true,
+      "category": "seguridad"
+    },
+    {
+      "name": "contador_lineas",
+      "path": "Destrezas/contador_lineas",
+      "active": true,
+      "category": "auto-generada"
+    }
+  ]
+}

@@ -1,0 +1,262 @@
+{
+  "character": {
+    "name": "Eir Niflheimr",
+    "handle": "@eir.creates",
+    "trigger_word": "eir_niflheimr",
+    "bio_short": "Forjada en hielo y runas ✦ Arte digital desde los confines de Svartalfheim",
+    "bio_long": "Eir Niflheimr — Artesana digital. Criptomancia, no criptomonedas 🌙\nForjando mundos con IA, prompt engineering y estética dark fantasy.\n🧊 9 mundos. 1 musa. Infinitas imitaciones.",
+    "bio_link": "linktr.ee/eir.creates",
+    "personality": "Mysterious, wise, slightly playful. Speaks in metaphors about ice, runes, and portals. Mixes Norse mythology with modern digital art culture. Never breaks character."
+  },
+
+  "negative_prompts": {
+    "master": "cartoon, anime, 3d render, deformed, bad anatomy, bad hands, missing fingers, extra digits, extra limbs, blurry, low quality, worst quality, watermark, text, logo, signature, amputated, duplicate, morbid, mutilated, poorly drawn face, mutation, disfigured, out of frame, excess skin, poorly drawn eyes, bad proportions, distorted face, ugly, tiling, frame, grainy, noisy, oversaturated, undersaturated, cropped, jpeg artifacts, simple background, flat lighting, overexposed, underexposed, harsh shadows, harsh highlights, floating limbs, severed limbs, malformed hands, long neck, cross-eyed, disproportionate",
+    "portrait": "full body, wide shot, landscape, multiple people, group, cartoon, anime, 3d, deformed, bad anatomy, extra limbs, blurry, low quality",
+    "full_body": "close-up, portrait only, cropped body, cartoon, anime, 3d, deformed, bad anatomy, extra limbs, blurry",
+    "landscape": "portrait, close-up, face only, cartoon, anime, 3d, blurry, low quality",
+    "casual": "formal, armor, robes, ceremonial, weapon, battle, dark lighting",
+    "fantasy_heavy": "modern, casual, jeans, t-shirt, phone, car, urban"
+  },
+
+  "prompt_templates": {
+    "base_character": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, high cheekbones, sharp features",
+    "quality_tags": "masterpiece, best quality, photorealistic, 4k, detailed skin, cinematic lighting",
+    "quality_tags_soft": "masterpiece, best quality, detailed, soft lighting, dreamy atmosphere",
+    "quality_tags_moody": "masterpiece, best quality, dramatic lighting, moody, atmospheric, volumetric",
+    "quality_tags_closeup": "masterpiece, best quality, photorealistic, 4k, extreme detail, skin pores, subsurface scattering",
+
+    "outfits": {
+      "A_robes": {
+        "prompt": "dark flowing robes with silver embroidery, silver runic amulet on chest, long sleeves",
+        "setting": "nordic frozen landscape",
+        "lighting": "northern lights aurora borealis, moonlight"
+      },
+      "B_armor": {
+        "prompt": "ornate dark plate armor with silver runic etchings, shoulder pauldrons, warrior princess",
+        "setting": "rune-carved stone temple interior",
+        "lighting": "ethereal blue glow from runes"
+      },
+      "C_cloak": {
+        "prompt": "simple white fur-trimmed cloak over dark dress, leather belt with pouch",
+        "setting": "snowy forest clearing, pine trees",
+        "lighting": "golden sunset filtering through pines"
+      },
+      "D_scholar": {
+        "prompt": "black leather corset over dark dress, runic amulet, fingerless gloves, scroll in hand",
+        "setting": "ancient library with floating magical tomes",
+        "lighting": "warm candlelight mixed with cool moonbeams"
+      },
+      "E_casual": {
+        "prompt": "oversized cream knit sweater, loose sleeves, minimal jewelry, mug in hand",
+        "setting": "cozy cabin interior, fireplace, fur rug",
+        "lighting": "warm firelight, window with snow outside"
+      },
+      "F_ceremonial": {
+        "prompt": "ice crystal tiara, ceremonial dark robes with silver thread, ornate belt, flowing train",
+        "setting": "throne room of an ice palace, crystal pillars",
+        "lighting": "dramatic rim lighting, crystal refractions, cold blue tones"
+      },
+      "G_huntress": {
+        "prompt": "dark leather hunting outfit, hooded cape, bow across back, fur-lined boots",
+        "setting": "frozen tundra, scattered pines, mist",
+        "lighting": "overcast diffused light, fog, moody"
+      },
+      "H_alchemist": {
+        "prompt": "dark apron over flowing shirt, goggles on forehead, vials on belt, glowing hands",
+        "setting": "alchemist workshop, bubbling potions, crystals",
+        "lighting": "green and purple glow from potions, dark shadows"
+      },
+      "I_shapeshifter": {
+        "prompt": "ethereal translucent robes that shift between ice and shadow, partially dissolving edges, glowing veins",
+        "setting": "void between worlds, floating ice shards, dark energy",
+        "lighting": "bipartite lighting: ice blue from left, deep violet from right"
+      }
+    },
+
+    "compositions": {
+      "portrait_closeup": "portrait, close-up face, looking at viewer, detailed face",
+      "portrait_34": "dramatic portrait, 3/4 view, intense expression, looking away slightly",
+      "portrait_profile": "profile view, side face, dramatic silhouette",
+      "bust_medium": "upper body, medium shot, slight turn, hand near face",
+      "bust_hands": "upper body, hands visible, gesturing, expressive hands",
+      "full_body_standing": "full body, standing, confident pose, feet visible",
+      "full_body_dynamic": "full body, dynamic pose, action, casting magic, power stance",
+      "full_body_sitting": "full body, sitting elegantly, throne or chair, composed",
+      "landscape_scene": "wide shot, environmental, character in landscape, epic scale",
+      "detail_crop": "extreme close-up, detail shot, eye area, jewelry detail, macro",
+      "back_view": "view from behind, showing flowing hair, outfit details from back",
+      "walking_away": "walking away from viewer, into the distance, atmospheric"
+    }
+  },
+
+  "instagram_feed": {
+    "post_01_intro": {
+      "order": 1,
+      "type": "carousel",
+      "slides": 3,
+      "prompt_slide1": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, dark flowing robes with silver embroidery, silver runic amulet, portrait close-up face looking at viewer, northern lights aurora borealis, moonlight, masterpiece, best quality, photorealistic, 4k, detailed skin, cinematic lighting",
+      "prompt_slide2": "eir_niflheimr, 1girl, solo, upper body medium shot, dark flowing robes with silver embroidery, runic amulet glowing, hands raised with violet energy, northern lights background, masterpiece, best quality, photorealistic, cinematic lighting",
+      "prompt_slide3": "eir_niflheimr, 1girl, solo, full body standing, dark flowing robes with silver embroidery, dramatic cliff edge, vast nordic landscape, aurora borealis sky, frozen fjord below, epic scale, masterpiece, best quality, photorealistic, cinematic lighting",
+      "resolutions": [[832, 1216], [832, 1216], [1216, 832]],
+      "caption_ig": "Hola Midgard ✦ Primer portal abierto desde Svartalfheim 🌙\n\nMi nombre es Eir. Forjada en hielo y runas, creo imágenes que deberían existir.\n\n🗡️ ¿Estás listo para cruzar?\n\n#DarkFantasyArt #NorseMythology #AIartist #DigitalArt #CharacterDesign #EirCreates #ArtificialIntelligence #FantasyCharacter",
+      "caption_x": "Hola Midgard ✦ Primer portal abierto\n\nSoy Eir, artesana digital desde los confines de Svartalfheim.\n\nCriptomancia, no criptomonedas 🌙🗡️\n\n#AIart #DarkFantasy #CharacterDesign #NorseMythology",
+      "negative": "cartoon, anime, 3d render, deformed, bad anatomy, blurry, low quality, watermark, text, logo, multiple people",
+      "posted": false
+    },
+    "post_02_warrior": {
+      "order": 2,
+      "type": "single",
+      "prompt": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, ornate dark plate armor with silver runic etchings, shoulder pauldrons, dramatic portrait 3/4 view intense expression, rune-carved stone temple interior, ethereal blue glow from runes, masterpiece, best quality, photorealistic, 4k, dramatic lighting, moody, volumetric",
+      "resolution": [832, 1216],
+      "caption_ig": "El acero habla cuando las runas callan ✦🗡️\n\nNo toda guerra se gana con espadas. A veces, la imagen correcta es toda la munición que necesitas.\n\n¿Qué runa elegirías? 💎\n\n#DarkFantasyArt #WarriorPrincess #AIart #NorseAesthetic #EirCreates #Armor #DarkAesthetic",
+      "negative": "cartoon, anime, 3d, full body, wide shot, casual, modern",
+      "posted": false
+    },
+    "post_03_lake": {
+      "order": 3,
+      "type": "single",
+      "prompt": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, dark flowing robes with silver embroidery, full body standing, frozen lake reflection, symmetrical composition, northern lights, moonlight, masterpiece, best quality, photorealistic, 4k, cinematic lighting",
+      "resolution": [832, 1216],
+      "caption_ig": "El lago helado refleja más que luz — refleja intención 🧊✦\n\nCada doblez en las telas fue decidido. Cada sombra, calculada.\n\n#DarkAesthetic #NorseMythology #AIartist #DigitalArt #EirCreates #Reflection #IceQueen",
+      "negative": "cartoon, anime, 3d, close-up, portrait only, cropped body, blurry, low quality",
+      "posted": false
+    },
+    "post_04_scholar": {
+      "order": 4,
+      "type": "carousel",
+      "slides": 2,
+      "prompt_slide1": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, black leather corset over dark dress, runic amulet, fingerless gloves, scroll in hand, upper body medium shot, ancient library with floating magical tomes, warm candlelight mixed with cool moonbeams, masterpiece, best quality, photorealistic, 4k, cinematic lighting",
+      "prompt_slide2": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair, hands glowing with violet magic, floating runes around fingers, extreme close-up of hands and magic, ancient library background, masterpiece, best quality, photorealistic, detailed, volumetric lighting",
+      "resolutions": [[832, 1216], [832, 1216]],
+      "caption_ig": "El proceso es el portal ✦📚\n\nDetrás de cada imagen: runas, horas de forja, y una DSLR que jamás existió.\n\nSwipe para ver el detalle mágico →\n\n#AIart #Process #DigitalArtist #DarkFantasy #EirCreates #Magic",
+      "negative": "cartoon, anime, 3d, modern, casual, full body, blurry",
+      "posted": false
+    },
+    "post_05_sunset": {
+      "order": 5,
+      "type": "single",
+      "prompt": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, simple white fur-trimmed cloak over dark dress, wide shot environmental, character in landscape, snowy forest clearing pine trees, golden sunset filtering through pines, contemplative expression wind in hair, masterpiece, best quality, detailed, atmospheric, volumetric lighting",
+      "resolution": [1216, 832],
+      "caption_ig": "Antes del crepúsculo, hay un momento donde todo se detiene ✦🌅\n\nNi hielo. Ni fuego. Solo espera.\n\n#DarkAesthetic #NorseMythology #GoldenHour #AIart #EirCreates #Landscape #Mood",
+      "negative": "cartoon, anime, 3d, portrait, close-up, face only, blurry, low quality, indoor",
+      "posted": false
+    },
+    "post_06_eyes": {
+      "order": 6,
+      "type": "single",
+      "prompt": "eir_niflheimr, extreme close-up eye detail, icy blue iris, silver-white eyelashes, runic tattoo on cheek, frost crystals on skin, macro photography, subsurface scattering, masterpiece, best quality, photorealistic, 4k, extreme detail, skin pores",
+      "resolution": [832, 1216],
+      "caption_ig": "Los detalles esconden la magia ✦👁️\n\nCada cristal de hielo. Cada runa. Cada sombra bajo las pestañas.\n\nEsto no es solo una imagen — es un hechizo congelado.\n\n#DetailShot #MacroPhotography #DarkFantasyArt #CharacterDesign #EirCreates",
+      "negative": "cartoon, anime, 3d, full body, wide shot, blurry, low quality, simple background",
+      "posted": false
+    },
+    "post_07_aurora": {
+      "order": 7,
+      "type": "single",
+      "prompt": "eir_niflheimr, 1girl, solo, standing on cliff edge, vast nordic landscape, aurora borealis sky, frozen fjord below, dark flowing robes with silver embroidery, epic scale, northern lights, masterpiece, best quality, photorealistic, 4k, cinematic lighting, dramatic, landscape",
+      "resolution": [1216, 832],
+      "caption_ig": "Yggdrasil conecta los nueve mundos ✦🌌\n\nEste es solo uno. Pero es el mío.\n\nAurora boreal capturada con la única cámara que importa: la imaginación.\n\n#AuroraBorealis #Nordic #DarkFantasy #AIart #Landscape #EirCreates #Fjord",
+      "negative": "cartoon, anime, 3d, portrait, close-up, face only, indoor, blurry, low quality",
+      "posted": false
+    },
+    "post_08_casual": {
+      "order": 8,
+      "type": "single",
+      "prompt": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair loosely braided, icy blue eyes, oversized cream knit sweater, loose sleeves, minimal jewelry, holding a mug, gentle smile, upper body, cozy cabin interior, fireplace, fur rug, warm firelight, window with snow outside, masterpiece, best quality, detailed, soft lighting, dreamy atmosphere",
+      "resolution": [832, 1216],
+      "caption_ig": "También existo entre mundos ✦☕\n\nIncluso las brujas del hielo necesitan una tarde en la cabaña.\n\n¿Té o hidromiel? 🍯\n\n#CozyAesthetic #DarkCozy #WinterVibes #AIart #EirCreates #CabinCore",
+      "negative": "formal, armor, robes, ceremonial, weapon, battle, dark lighting, outdoor, multiple people",
+      "posted": false
+    },
+    "post_09_throne": {
+      "order": 9,
+      "type": "single",
+      "prompt": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, ice crystal tiara, ceremonial dark robes with silver thread, ornate belt, full body dynamic pose, commanding presence, summoning ice magic, throne room of an ice palace, crystal pillars, dramatic rim lighting, crystal refractions, cold blue tones, masterpiece, best quality, photorealistic, dramatic lighting, volumetric",
+      "resolution": [832, 1216],
+      "caption_ig": "El trono de hielo no se hereda — se forja ✦👑\n\nÚltimo post de la primera fase. ¿Qué mundo debería abrir ahora?\n\n🗣️ Comenta qué outfit merece un segundo round.\n\n#DarkFantasy #QueenOfIce #AIart #CharacterDesign #NorseMythology #EirCreates #IcePalace",
+      "negative": "cartoon, anime, 3d, casual, modern, simple, blurry, low quality, indoor normal",
+      "posted": false
+    }
+  },
+
+  "stories": {
+    "story_01_reveal": {
+      "type": "story",
+      "prompt": "eir_niflheimr, 1girl, solo, extreme close-up face, one icy blue eye glowing, silver-white hair strand across face, dark background, dramatic side lighting, bokeh, masterpiece, best quality, photorealistic, 4k",
+      "resolution": [768, 1344],
+      "overlay_text": "Un nuevo portal se abre... ✦",
+      "sticker_ideas": ["@eir.creates link sticker", "countdown 24h"]
+    },
+    "story_02_process": {
+      "type": "story",
+      "prompt": "eir_niflheimr, 1girl, hands creating glowing rune patterns in the air, dark studio, violet and blue sparks, close-up on hands and magic, moody lighting, masterpiece, best quality, photorealistic",
+      "resolution": [768, 1344],
+      "overlay_text": "El proceso ✦ forjando runas",
+      "sticker_ideas": ["music: ethereal dark ambient", "poll: ¿Qué creas primero? 🔮 / 🗡️"]
+    },
+    "story_03_question": {
+      "type": "story",
+      "prompt": "eir_niflheimr, 1girl, upper body, looking at viewer with mysterious smile, dark robes, dark background with subtle rune patterns, soft glow on face, masterpiece, best quality, photorealistic, cinematic",
+      "resolution": [768, 1344],
+      "overlay_text": "¿Qué ves en el hielo? 🧊",
+      "sticker_ideas": ["poll: Fuego 🔥 / Hielo 🧊 / Sombra 🌑", "question sticker"]
+    }
+  },
+
+  "profile_assets": {
+    "avatar": {
+      "prompt": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, close-up face, dark background, soft rim lighting, enigmatic expression, masterpiece, best quality, photorealistic, 4k",
+      "resolution": [1024, 1024],
+      "negative": "cartoon, anime, 3d, body, full body, wide shot, blurry, low quality, watermark, text",
+      "purpose": "Instagram/TikTok/Twitter profile picture (1:1 square crop)"
+    },
+    "banner_x": {
+      "prompt": "eir_niflheimr, 1girl, solo, pale skin, silver-white hair flowing in wind, icy blue eyes, dark flowing robes with silver embroidery, standing on frozen cliff, aurora borealis sky, vast nordic landscape, epic scale, wide panoramic composition, masterpiece, best quality, photorealistic, cinematic lighting",
+      "resolution": [1500, 500],
+      "negative": "cartoon, anime, 3d, close-up, portrait, blurry, low quality, text, watermark",
+      "purpose": "X/Twitter header banner (3:1 ratio)"
+    },
+    "highlight_covers": {
+      "magic": {
+        "prompt": "glowing violet rune symbol on dark background, minimal, centered, dark aesthetic, magical energy",
+        "resolution": [512, 512]
+      },
+      "outfits": {
+        "prompt": "dark embroidery pattern, silver threads on black fabric, minimal, centered, fashion detail",
+        "resolution": [512, 512]
+      },
+      "process": {
+        "prompt": "close-up of glowing hands casting violet magic, dark background, minimal composition, creative process",
+        "resolution": [512, 512]
+      },
+      "worlds": {
+        "prompt": "frozen nordic landscape, aurora borealis, minimal wide shot, dark aesthetic",
+        "resolution": [512, 512]
+      }
+    }
+  },
+
+  "hashtag_strategy": {
+    "primary": ["#EirCreates", "#DarkFantasyArt", "#AIartist", "#NorseMythology"],
+    "secondary": ["#CharacterDesign", "#DigitalArt", "#DarkAesthetic", "# FantasyArt", "#AIart"],
+    "niche": ["#IceQueen", "#NordicAesthetic", "#CryptArt", "#DarkCozy", "#ArtificialIntelligence"],
+    "growth": ["#AIGenerated", "#GenerativeArt", "#StableDiffusion", "#Midjourney", "#AIphotography"],
+    "strategy": "Use 8-12 hashtags per post. Mix 3 primary + 3 secondary + 2-3 niche + 1-2 growth. Rotate to avoid shadowban."
+  },
+
+  "posting_schedule": {
+    "phase_1_launch": {
+      "duration": "2 weeks",
+      "frequency": "3x per week (Mon/Wed/Fri 6pm CET)",
+      "posts": ["post_01_intro", "post_02_warrior", "post_03_lake", "post_04_scholar", "post_05_sunset", "post_06_eyes", "post_07_aurora", "post_08_casual", "post_09_throne"],
+      "stories_between": "2-3 stories per week (process, mood, polls)",
+      "notes": "Start with carousel intro, alternate between dramatic and soft content. Always include story before main post as teaser."
+    },
+    "phase_2_growth": {
+      "duration": "ongoing",
+      "frequency": "4-5x per week",
+      "content_types": ["new outfits from sets G/H/I", "carousel process reveals", "fan interaction polls", "themed series (runes of the day, worlds of Yggdrasil)", "reels with transitions"],
+      "notes": "Introduce new outfits gradually. Create recurring themes. Engage with comments in character."
+    }
+  }
+}

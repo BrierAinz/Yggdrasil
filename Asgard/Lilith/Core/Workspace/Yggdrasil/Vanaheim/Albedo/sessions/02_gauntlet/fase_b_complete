@@ -1,0 +1,9 @@
+Fase B completada: Gauntlet Mode implementado
+Fecha: 2026-03-07 05:45:08
+
+Features:
+- run_training: Ejecuta scripts con captura de métricas
+- gauntlet: Pipeline completo (generate → save → train → report)
+- stop_training: Detiene entrenamiento en curso
+- live_output: Captura métricas en tiempo real
+- CIFAR-10 script mejorado con CLI args y JSON output

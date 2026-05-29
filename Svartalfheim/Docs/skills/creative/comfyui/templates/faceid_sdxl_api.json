@@ -1,0 +1,89 @@
+{
+  "4": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": {
+      "ckpt_name": "Juggernaut-XL_v9_RunDiffusionPhoto_v2.safetensors"
+    }
+  },
+  "11": {
+    "class_type": "IPAdapterUnifiedLoaderFaceID",
+    "inputs": {
+      "model": ["4", 0],
+      "preset": "FACEID",
+      "lora_strength": 0.6,
+      "provider": "CUDA"
+    }
+  },
+  "12": {
+    "class_type": "LoadImage",
+    "inputs": {
+      "image": "REFERENCE_IMAGE_PLACEHOLDER"
+    }
+  },
+  "13": {
+    "class_type": "IPAdapterFaceID",
+    "inputs": {
+      "model": ["11", 0],
+      "ipadapter": ["11", 1],
+      "image": ["12", 0],
+      "weight": 0.85,
+      "weight_faceidv2": 1.0,
+      "weight_type": "linear",
+      "combine_embeds": "average",
+      "start_at": 0.0,
+      "end_at": 1.0,
+      "embeds_scaling": "K+V"
+    }
+  },
+  "6": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "PROMPT_PLACEHOLDER",
+      "clip": ["4", 1]
+    }
+  },
+  "7": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "illustration, anime, cartoon, cg, 3d render, painting, oversmoothed, airbrushed, plastic skin, fake, watermark, blurry, deformed, bad anatomy, extra fingers, low quality, jpeg artifacts, cross-eyed, asymmetrical eyes, uneven skin, wax figure, mannequin, doll, emoji, text, logo",
+      "clip": ["4", 1]
+    }
+  },
+  "5": {
+    "class_type": "EmptyLatentImage",
+    "inputs": {
+      "width": 768,
+      "height": 1024,
+      "batch_size": 1
+    }
+  },
+  "3": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": 0,
+      "steps": 30,
+      "cfg": 7.0,
+      "sampler_name": "dpmpp_2m",
+      "scheduler": "karras",
+      "denoise": 1.0,
+      "model": ["13", 0],
+      "positive": ["6", 0],
+      "negative": ["7", 0],
+      "latent_image": ["5", 0]
+    }
+  },
+  "8": {
+    "class_type": "VAEDecode",
+    "inputs": {
+      "samples": ["3", 0],
+      "vae": ["4", 2]
+    }
+  },
+  "9": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "filename_prefix": "faceid_output",
+      "images": ["8", 0]
+    }
+  }
+}

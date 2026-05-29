@@ -1,0 +1,10 @@
+# Vanaheim Framework
+pydantic>=2.13.4
+python-dotenv>=1.2.2
+
+# Bot dependencies
+python-telegram-bot>=22.7
+beautifulsoup4>=4.12
+lxml>=6.1.0
+selenium>=4.15
+requests>=2.28.0

@@ -1,0 +1,22 @@
+﻿{
+    "name": "worldbuilder",
+    "description": "Construye incrementalmente un documento de lore/worldbuilding para el universo del juego",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {
+        "aspecto": {
+            "type": "string",
+            "required": true,
+            "description": "Aspecto del mundo a expandir: cosmologia, facciones, magia, historia, geografia, criaturas"
+        },
+        "semilla": {
+            "type": "string",
+            "required": false,
+            "description": "Idea o concepto semilla para inspirar la generacion"
+        }
+    },
+    "output": "Seccion de worldbuilding guardada y acumulada",
+    "tools_required": [
+        "GeminiClient"
+    ]
+}

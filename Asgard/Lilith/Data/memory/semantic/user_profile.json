@@ -1,0 +1,21 @@
+{
+    "nombre": "Ainz",
+    "edad": 23,
+    "proyectos": {
+        "Lilith": {
+            "tipo": "AI Assistant personal",
+            "stack": ["FastAPI", "React/Vite", "Kimi", "ChromaDB", "SQLite"],
+            "ubicacion": "D:/Proyectos/Yggdrasil/Asgard/Lilith/Core",
+            "estado": "activo"
+        },
+        "Yggdrasil": {
+            "tipo": "Organización de proyectos (9 reinos)",
+            "estado": "activo"
+        }
+    },
+    "preferencias": {
+        "respuesta": "directa, sin preambles",
+        "idioma": "español",
+        "tema_visual": "Dark Fantasy"
+    }
+}

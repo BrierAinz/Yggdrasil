@@ -1,0 +1,23 @@
+﻿{
+    "name": "lector_docs",
+    "description": "Lee una URL de documentacion tecnica, la resume y la guarda en la Mente",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {
+        "url": {
+            "type": "string",
+            "required": true,
+            "description": "URL de la documentacion a leer"
+        },
+        "tema": {
+            "type": "string",
+            "required": false,
+            "default": "documentacion",
+            "description": "Nombre del tema para el archivo"
+        }
+    },
+    "output": "Resumen de la documentacion guardado en Mente/conceptos_clave/",
+    "tools_required": [
+        "GeminiClient"
+    ]
+}

@@ -1,0 +1,24 @@
+﻿{
+    "name": "resumen_web",
+    "description": "Investiga un tema en internet usando DuckDuckGo y genera un resumen en espaÃ±ol",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {
+        "tema": {
+            "type": "string",
+            "required": true,
+            "description": "Tema a investigar"
+        },
+        "max_results": {
+            "type": "integer",
+            "required": false,
+            "default": 5,
+            "description": "Cantidad de resultados a buscar"
+        }
+    },
+    "output": "Archivo markdown en Mente/conceptos_clave/",
+    "tools_required": [
+        "Research",
+        "GeminiClient"
+    ]
+}

@@ -1,0 +1,58 @@
+# Eir LoRA Training Config — Kohya sd-scripts
+# ============================================================
+# SDXL LoRA training configuration
+# Target model: SDXL 1.0 base (will also work with Juggernaut XL)
+# Trigger word: eir_niflheimr
+# ============================================================
+
+# Model settings
+pretrained_model_name_or_path = "/home/brierainz/comfy/ComfyUI/models/checkpoints/sd_xl_base_1.0.safetensors"
+tokenizer_cache_dir = "/home/brierainz/comfy/ComfyUI/models/tokenizer"
+
+# Dataset
+image_dir = "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/assets/lora_dataset"
+caption_extension = ".txt"
+shuffle_caption = true
+keep_tokens = 1  # Keep trigger word (eir_niflheimr) always first
+
+# Output
+output_dir = "/mnt/d/Proyectos/Yggdrasil/Muspelheim/AI-Influencer/assets/lora"
+output_name = "eir_niflheimr_sdxl"
+save_model_as = "safetensors"
+save_precision = "fp16"
+
+# Training resolution
+resolution = "1024,1024"
+enable_bucket = true
+min_bucket_reso = 512
+max_bucket_reso = 1536
+bucket_reso_steps = 64
+
+# LoRA settings
+network_module = "networks.lora"
+network_dim = 32
+network_alpha = 16
+network_dropout = 0.1
+
+# Optimizer
+optimizer_type = "AdamW8bit"
+learning_rate = 1e-4
+text_encoder_lr = 5e-5
+unet_lr = 1e-4
+lr_scheduler = "cosine"
+lr_warmup_steps = 100
+
+# Training
+max_train_epochs = 15
+train_batch_size = 1
+gradient_accumulation_steps = 4
+mixed_precision = "bf16"
+save_every_n_epochs = 5
+xformers = true
+gradient_checkpointing = true
+cache_latents = true
+cache_text_encoder_outputs = true
+
+# Validation
+sample_prompts = "eir_niflheimr, 1girl, solo, pale skin, silver-white hair with violet highlights, icy blue eyes, dark fantasy aesthetic, portrait --n low quality, blurry, deformed"
+sample_every_n_epochs = 5

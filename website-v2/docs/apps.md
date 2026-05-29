@@ -1,4 +1,5 @@
 ---
+<<<<<<< HEAD
 sidebar_position: 7
 title: Midgard Apps
 ---
@@ -26,3 +27,138 @@ Custom character generation pipeline:
 ## YggdrasilStudio (Planned)
 
 Web-based creative studio for 3D asset generation.
+=======
+sidebar_position: 6
+title: Midgard Apps
+description: "Midgard: personal applications forged in the Nine Realms"
+---
+
+# The Realm of Mortals
+
+Midgard is where finished applications live — **stable, battle-tested tools** forged in Muspelheim's fire and tempered for daily use. Three CLI applications with dark fantasy aesthetics, all powered by SQLite and Rich.
+
+## The Realm of Humans
+
+In Norse cosmology, **Midgard** is the realm of mortals — the world where people live, work, and build. In Yggdrasil, it serves the same purpose: this is where personal applications reside. Every app here is stable, tested, and maintained. No experiments. No prototypes. Only tools that earned their place.
+
+> **᛭ Midgard Rules**
+>
+> - Projects arrive in Midgard only after surviving **Muspelheim** (active dev) or maturing from **Alfheim** (UI prototype) or **Vanaheim** (AI agent).
+> - All Midgard apps are **CLI-first**, **SQLite-backed**, and use **Rich** for dark fantasy terminal aesthetics.
+> - Each app is self-contained — no dependencies on Asgard (core) beyond the public API. Install, run, done.
+> - If an app dies, it is buried in **Helheim** alongside its lessons.
+
+## Midgard Arsenal
+
+Three tools. Three purposes. All forged with the same philosophy: local-first, zero-config, dark fantasy aesthetics.
+
+### ᚠ Finanzas — Personal Finance Tracker
+
+Track income, expenses, and budgets with rune-styled CLI output. SQLite-backed persistence, per-month reports, categorization with mnemonic colors, and CSV/JSON export. Every coin counts in the realm of mortals.
+
+- Add expenses and income with categories
+- Monthly balance reports (table or CSV)
+- Budget tracking with visual warnings
+- Predefined categories with mnemonic colors
+- Export to JSON and CSV
+- SQLite persistence — zero setup
+
+```bash
+$ python3 midgard_finanzas.py add 150 comida --desc "Almuerzo"
+$ python3 midgard_finanzas.py balance --mes 2025-05
+$ python3 midgard_finanzas.py report --mes 2025-05 --format table
+```
+
+*Tags: Active · SQLite · Rich · CLI*
+
+---
+
+### ᚲ Habits — Habit Tracker
+
+Build discipline with fire runes. Track daily and weekly habits, visualize streaks with rune symbols, and archive what no longer serves you (sending it to Helheim). Each check-in is a rune forged in the fire of commitment.
+
+- Daily, weekly, and N/week frequencies
+- Streak tracking with rune visualization (ᚠ)
+- Weekly and monthly statistics
+- Archive habits to Helheim
+- 7-day progress with rune symbols
+- SQLite persistence — zero setup
+
+```bash
+$ python3 midgard_habits.py add "Meditar" --freq diario --icon 🧘
+$ python3 midgard_habits.py check Meditar
+$ python3 midgard_habits.py streak Meditar
+$ python3 midgard_habits.py stats --semana
+```
+
+*Tags: Active · SQLite · Rich · CLI*
+
+---
+
+### ᚺ Recipes — Recipe Manager (Grimorio)
+
+A grimorio for your recipes. Store, search, and organize recipes with scroll-formatted output. Plan weekly meals, generate shopping lists automatically, and export recipes as parchment-styled markdown or JSON.
+
+- Add recipes with ingredients, steps, tags
+- Difficulty rated with Norse runes (ᚱ to ᛏᛏᛏ)
+- Weekly meal planning
+- Auto-generated shopping lists
+- Full-text search across names and ingredients
+- SQLite persistence — zero setup
+
+```bash
+$ python3 midgard_recipes.py add "Estofado de Dragón" --time 60 --difficulty dificil
+$ python3 midgard_recipes.py list
+$ python3 midgard_recipes.py plan --days 7
+```
+
+*Tags: Active · SQLite · Rich · CLI*
+
+## Forged in the Same Fire
+
+Every Midgard app shares the same DNA. Local-first, CLI-native, and beautiful in the terminal.
+
+| Feature | Description |
+|---------|-------------|
+| ᛒ **SQLite Persistence** | No external databases. No servers. Each app creates its own `.db` file on first run. Zero configuration required. |
+| ᛗ **Rich Terminal UI** | Styled panels, tables, and runic headers via the Rich library. Every app feels like a dark fantasy grimoire — not a boring spreadsheet. |
+| ᚦ **Argparse CLI** | Full subcommand interfaces with `--help` on everything. Flags, positional args, and sensible defaults. Composable and scriptable. |
+| ᛏ **Tested (>20 each)** | Every app ships with >20 pytest test cases covering CRUD, edge cases, and CLI argument parsing. Run `pytest tests/ -v` and verify. |
+| ᛉ **Zero External Dependencies** | Only `rich` and Python's standard library. No ORM, no web framework, no cloud SDK. Install `pip install rich` and you're running. |
+| ᛃ **Yggdrasil Native** | Built to live inside the Nine Realms. Dark fantasy naming, runic aesthetics, and architectural patterns that match the ecosystem's mythology. |
+
+## Quick Start
+
+Clone the repository, install Rich, and start tracking your life. Each app is self-contained in its own directory.
+
+```bash
+$ git clone https://github.com/BrierAinz/Yggdrasil.git
+$ cd Yggdrasil/Midgard
+$ pip install rich
+
+# Finanzas — track your gold
+$ cd finanzas && python3 midgard_finanzas.py balance
+
+# Habits — forge your discipline
+$ cd habits && python3 midgard_habits.py stats --semana
+
+# Recipes — manage your grimorio
+$ cd recipes && python3 midgard_recipes.py list
+```
+
+> **ᛏ Self-Contained Databases**
+>
+> All three apps use **SQLite databases** that are auto-created on first run. No migration commands, no setup scripts.
+>
+> Tests live in each app's `tests/` directory. Run `python3 -m pytest tests/ -v` from inside any app folder.
+
+## Midgard Health
+
+All three applications are stable and actively maintained.
+
+| Application | Type | Status | Tests |
+|-------------|------|--------|-------|
+| `finanzas` | Finance Tracker | ᛏ Active | >20 cases |
+| `habits` | Habit Tracker | ᛏ Active | >20 cases |
+| `recipes` | Recipe Manager | ᛏ Active | >20 cases |
+>>>>>>> origin/main

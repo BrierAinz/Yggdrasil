@@ -1,0 +1,60 @@
+{
+  "_comment": "ChilloutMix (SD1.5) generation workflow for AI influencer reference images. No LoRA, prompt-driven.",
+  "_model": "chilloutmix_NiPrunedFp16Fix.safetensors",
+  "_vae": "vae-ft-mse-840000.safetensors",
+  "_resolution": "512x768 portrait (SD1.5 native)",
+  "_steps": 35,
+  "_cfg": 7,
+  "_sampler": "euler_ancestral",
+  "_scheduler": "normal",
+
+  "4": {
+    "class_type": "CheckpointLoaderSimple",
+    "inputs": {"ckpt_name": "chilloutmix_NiPrunedFp16Fix.safetensors"}
+  },
+  "20": {
+    "class_type": "VAELoader",
+    "inputs": {"vae_name": "vae-ft-mse-840000.safetensors"}
+  },
+  "5": {
+    "class_type": "EmptyLatentImage",
+    "inputs": {"width": 512, "height": 768, "batch_size": 1}
+  },
+  "6": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "REPLACE_WITH_PROMPT",
+      "clip": ["4", 1]
+    }
+  },
+  "7": {
+    "class_type": "CLIPTextEncode",
+    "inputs": {
+      "text": "anime, cartoon, illustration, 3d render, painting, blurry, deformed, ugly, duplicate, watermark, text, bad anatomy, extra fingers, missing fingers, mutated hands, low quality, worst quality, extra limbs, disfigured, gross proportions",
+      "clip": ["4", 1]
+    }
+  },
+  "3": {
+    "class_type": "KSampler",
+    "inputs": {
+      "seed": "REPLACE_WITH_SEED",
+      "steps": 35,
+      "cfg": 7,
+      "sampler_name": "euler_ancestral",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": ["4", 0],
+      "positive": ["6", 0],
+      "negative": ["7", 0],
+      "latent_image": ["5", 0]
+    }
+  },
+  "8": {
+    "class_type": "VAEDecode",
+    "inputs": {"samples": ["3", 0], "vae": ["20", 0]}
+  },
+  "9": {
+    "class_type": "SaveImage",
+    "inputs": {"filename_prefix": "influencer_ref", "images": ["8", 0]}
+  }
+}

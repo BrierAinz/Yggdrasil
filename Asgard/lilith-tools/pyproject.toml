@@ -4,6 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lilith-tools"
+<<<<<<< HEAD
 version = "1.0.0"
 description = "PC control, browser automation, RAG tools"
 requires-python = ">=3.11"
@@ -12,3 +13,23 @@ dependencies = ["lilith-core", "lilith-memory", "requests"]
 
 [project.urls]
 Repository = "https://github.com/BrierAinz/Yggdrasil"
+=======
+version = "2.0.0"
+description = "Tool system for Lilith AI agent"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+    "lilith-core>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0", "ruff>=0.4"]
+
+[project.urls]
+Homepage = "https://github.com/BrierAinz/Yggdrasil"
+Repository = "https://github.com/BrierAinz/Yggdrasil/tree/main/Asgard/lilith-tools"
+
+[tool.uv.sources]
+lilith-core = { workspace = true }
+>>>>>>> origin/main

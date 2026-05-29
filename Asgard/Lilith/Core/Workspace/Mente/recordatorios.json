@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "nota": "Probar todas las skills del sistema",
+    "creado": "2026-03-03 17:27",
+    "timestamp": 1772580446.135728,
+    "completado": false
+  },
+  {
+    "id": 2,
+    "nota": "Revisar el sistema de skills",
+    "creado": "2026-03-03 17:28",
+    "timestamp": 1772580484.2026935,
+    "completado": false
+  }
+]

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alfheim Dashboard — Yggdrasil</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/style.css">
+
+  <!-- HTMX 2.0 -->
+  <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztootot8ads5so3s8cZ+nuRDVhB3+2UbL5O3L6ZqP70swHiZFu2we9VMIT6XK" crossorigin="anonymous"></script>
+
+  <!-- HTMX SSE extension -->
+  <script src="https://unpkg.com/htmx.org@2.0.4/dist/ext/sse.js" crossorigin="anonymous"></script>
+
+  <!-- Alpine.js 3.x (defer) -->
+  <script defer src="https://unpkg.com/alpinejs@3.14.8/dist/cdn.min.js" integrity="sha384-2NuQ7wQk8PtmWvRhOE0h5lS6B7GEWmOrO0VvEXn3L/0J2smJ1dJdw3U6mBUC2EB" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="dashboard-header">
+    <div style="display:flex;align-items:center;">
+      <h1>🌲 Alfheim Dashboard</h1>
+      <span class="header-subtitle">Yggdrasil Ecosystem Monitor</span>
+    </div>
+    <div class="header-right">
+      <span class="refresh-indicator">
+        <span class="pulse"></span>
+        En vivo
+      </span>
+      <span id="connection-badge" class="status-badge online">
+        <span class="dot"></span>
+        Conectado
+      </span>
+    </div>
+  </header>
+
+  <!-- ========== MAIN GRID ========== -->
+  <main class="dashboard-grid">
+
+    <!-- ===== PANEL 1: Yggdrasil Map ===== -->
+    <section class="panel" id="ecosystem-panel">
+      <div class="panel-header">
+        <h2><span class="panel-icon">🌳</span> Mapa de Yggdrasil</h2>
+        <span class="panel-meta" id="ecosystem-meta"></span>
+      </div>
+      <div class="panel-body" id="ecosystem-body"
+           hx-get="/api/ecosystem/status"
+           hx-trigger="load, every 5s"
+           hx-target="#ecosystem-body"
+           hx-swap="innerHTML"
+           hx-indicator="#ecosystem-loading">
+        <div class="htmx-indicator loading-spinner" id="ecosystem-loading">Cargando...</div>
+        <div class="empty-state">Cargando ecosistema...</div>
+      </div>
+    </section>
+
+    <!-- ===== PANEL 2: Pantheon Control ===== -->
+    <section class="panel" id="pantheon-panel">
+      <div class="panel-header">
+        <h2><span class="panel-icon">🏛️</span> Control del Panteón</h2>
+        <span class="panel-meta" id="pantheon-meta"></span>
+      </div>
+      <div class="panel-body" id="pantheon-body"
+           hx-get="/api/pantheon/status"
+           hx-trigger="load, every 5s"
+           hx-target="#pantheon-body"
+           hx-swap="innerHTML"
+           hx-indicator="#pantheon-loading">
+        <div class="htmx-indicator loading-spinner" id="pantheon-loading">Cargando...</div>
+        <div class="empty-state">Cargando agentes...</div>
+      </div>
+    </section>
+
+    <!-- ===== PANEL 3: Memory Stats ===== -->
+    <section class="panel" id="memory-panel">
+      <div class="panel-header">
+        <h2><span class="panel-icon">💾</span> Estadísticas de Memoria</h2>
+        <span class="panel-meta" id="memory-meta"></span>
+      </div>
+      <div class="panel-body" id="memory-body"
+           hx-get="/api/memory/stats"
+           hx-trigger="load, every 5s"
+           hx-target="#memory-body"
+           hx-swap="innerHTML"
+           hx-indicator="#memory-loading">
+        <div class="htmx-indicator loading-spinner" id="memory-loading">Cargando...</div>
+        <div class="empty-state">Cargando memoria...</div>
+      </div>
+    </section>
+
+    <!-- ===== PANEL 4: AutoMode Tasks ===== -->
+    <section class="panel" id="tasks-panel">
+      <div class="panel-header">
+        <h2><span class="panel-icon">⚙️</span> Tareas AutoMode</h2>
+        <span class="panel-meta" id="tasks-meta"></span>
+      </div>
+      <div class="panel-body" id="tasks-body"
+           hx-get="/api/automode/tasks"
+           hx-trigger="load, every 5s"
+           hx-target="#tasks-body"
+           hx-swap="innerHTML"
+           hx-indicator="#tasks-loading">
+        <div class="htmx-indicator loading-spinner" id="tasks-loading">Cargando...</div>
+        <div class="empty-state">Cargando tareas...</div>
+      </div>
+    </section>
+
+    <!-- ===== PANEL 5: Live Logs (SSE) ===== -->
+    <section class="panel span-2" id="logs-panel"
+             x-data="liveLogs()"
+             x-init="init()">
+      <div class="panel-header">
+        <h2><span class="panel-icon">📜</span> Registros en Vivo</h2>
+        <span class="panel-meta" id="logs-meta" x-text="logCountText()"></span>
+      </div>
+      <div class="panel-body" id="logs-body" style="max-height:300px;">
+        <div class="log-container" id="log-entries">
+          <template x-for="(entry, idx) in logs" :key="idx">
+            <div class="log-entry">
+              <span class="log-time" x-text="formatTime(entry.timestamp)"></span>
+              <span class="log-level" :class="entry.level" x-text="entry.level"></span>
+              <span class="log-source" x-text="entry.source"></span>
+              <span class="log-message" x-text="entry.message"></span>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PANEL 6: Chat (WebSocket) ===== -->
+    <section class="panel" id="chat-panel"
+             x-data="agentChat()"
+             x-init="init()">
+      <div class="panel-header">
+        <h2><span class="panel-icon">💬</span> Chat con Agentes</h2>
+        <span class="panel-meta" id="chat-meta" x-text="connectionStatus"></span>
+      </div>
+      <div class="panel-body">
+        <div class="chat-container">
+          <div class="chat-messages" id="chat-messages">
+            <template x-for="(msg, idx) in messages" :key="idx">
+              <div class="chat-msg" :class="msg.role">
+                <div class="msg-meta" x-text="msg.meta"></div>
+                <div class="msg-text" x-text="msg.text"></div>
+              </div>
+            </template>
+          </div>
+          <div class="chat-input-area">
+            <input type="text"
+                   x-model="inputText"
+                   @keydown.enter="sendMessage()"
+                   placeholder="Escribe un mensaje al agente..."
+                   :disabled="!wsConnected">
+            <button @click="sendMessage()" :disabled="!wsConnected || !inputText.trim()">
+              Enviar
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== HTMX Response Templates (rendered server-side) ========== -->
+
+  <!-- Ecosystem Status Template (rendered via HTMX partial) -->
+  <template id="tpl-ecosystem">
+  </template>
+
+  <!-- ========== Alpine.js Components ========== -->
+  <script>
+    // --- Live Logs with SSE (EventSource) ---
+    function liveLogs() {
+      return {
+        logs: [],
+        maxLogs: 100,
+        eventSource: null,
+
+        init() {
+          // Load initial recent logs via HTMX fetch
+          fetch('/api/logs/recent?limit=30')
+            .then(r => r.json())
+            .then(data => {
+              this.logs = data.logs || [];
+              this.scrollToBottom();
+            })
+            .catch(err => console.error('Error loading initial logs:', err));
+
+          // Connect to SSE stream
+          this.connectSSE();
+        },
+
+        connectSSE() {
+          try {
+            this.eventSource = new EventSource('/api/logs/stream');
+
+            this.eventSource.addEventListener('heartbeat', (e) => {
+              // Heartbeat received, connection alive
+              const badge = document.getElementById('connection-badge');
+              if (badge) {
+                badge.className = 'status-badge online';
+                badge.innerHTML = '<span class="dot"></span> Conectado';
+              }
+            });
+
+            this.eventSource.addEventListener('log', (e) => {
+              const entry = JSON.parse(e.data);
+              this.logs.push(entry);
+              if (this.logs.length > this.maxLogs) {
+                this.logs = this.logs.slice(-this.maxLogs);
+              }
+              this.scrollToBottom();
+            });
+
+            this.eventSource.onerror = () => {
+              const badge = document.getElementById('connection-badge');
+              if (badge) {
+                badge.className = 'status-badge offline';
+                badge.innerHTML = '<span class="dot"></span> Reconectando...';
+              }
+              // Reconnect after 5 seconds
+              this.eventSource.close();
+              setTimeout(() => this.connectSSE(), 5000);
+            };
+          } catch (e) {
+            console.error('SSE connection failed:', e);
+          }
+        },
+
+        scrollToBottom() {
+          this.$nextTick(() => {
+            const container = document.getElementById('logs-body');
+            if (container) container.scrollTop = container.scrollHeight;
+          });
+        },
+
+        formatTime(ts) {
+          if (!ts) return '--:--:--';
+          const d = new Date(ts);
+          return d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        },
+
+        logCountText() {
+          return this.logs.length > 0 ? `${this.logs.length} entradas` : '';
+        }
+      };
+    }
+
+    // --- Chat with WebSocket ---
+    function agentChat() {
+      return {
+        messages: [
+          { role: 'agent', meta: '🧠 odin', text: 'Sistema iniciado. ¿En qué puedo ayudarte?' }
+        ],
+        inputText: '',
+        ws: null,
+        wsConnected: false,
+        connectionStatus: 'Desconectado',
+
+        init() {
+          this.connectWS();
+        },
+
+        connectWS() {
+          const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+          const wsUrl = `${protocol}//${location.host}/api/ws/chat`;
+
+          try {
+            this.ws = new WebSocket(wsUrl);
+
+            this.ws.onopen = () => {
+              this.wsConnected = true;
+              this.connectionStatus = '🟢 Conectado';
+            };
+
+            this.ws.onmessage = (event) => {
+              const data = JSON.parse(event.data);
+              this.messages.push({
+                role: 'agent',
+                meta: `${data.emoji || '🤖'} ${data.agent || 'agente'}`,
+                text: data.message || event.data,
+              });
+              this.$nextTick(() => this.scrollChat());
+            };
+
+            this.ws.onclose = () => {
+              this.wsConnected = false;
+              this.connectionStatus = '🔴 Desconectado';
+              // Reconnect after 3 seconds
+              setTimeout(() => this.connectWS(), 3000);
+            };
+
+            this.ws.onerror = () => {
+              this.wsConnected = false;
+              this.connectionStatus = '🔴 Error de conexión';
+            };
+          } catch (e) {
+            console.error('WebSocket connection failed:', e);
+            this.connectionStatus = '🔴 Error';
+          }
+        },
+
+        sendMessage() {
+          const text = this.inputText.trim();
+          if (!text || !this.wsConnected) return;
+
+          this.messages.push({
+            role: 'user',
+            meta: '👤 tú',
+            text: text,
+          });
+
+          try {
+            this.ws.send(JSON.stringify({ message: text }));
+          } catch (e) {
+            console.error('Send failed:', e);
+          }
+
+          this.inputText = '';
+          this.$nextTick(() => this.scrollChat());
+        },
+
+        scrollChat() {
+          const el = document.getElementById('chat-messages');
+          if (el) el.scrollTop = el.scrollHeight;
+        }
+      };
+    }
+  </script>
+
+  <!-- ========== HTMX - Handle JSON responses and render as HTML ========== -->
+  <script>
+    // Override HTMX response handling to render JSON as HTML
+    document.body.addEventListener('htmx:afterRequest', function(event) {
+      const target = event.detail.target;
+      const xhr = event.detail.xhr;
+      if (!xhr || !target) return;
+
+      const path = event.detail.pathInfo?.requestPath || '';
+      let data;
+
+      try {
+        data = JSON.parse(xhr.responseText);
+      } catch (e) {
+        return; // Not JSON, let HTMX handle it
+      }
+
+      let html = '';
+
+      if (path.includes('/api/ecosystem/status')) {
+        html = renderEcosystem(data);
+      } else if (path.includes('/api/pantheon/status')) {
+        html = renderPantheon(data);
+      } else if (path.includes('/api/memory/stats')) {
+        html = renderMemory(data);
+      } else if (path.includes('/api/automode/tasks')) {
+        html = renderTasks(data);
+      }
+
+      if (html) {
+        target.innerHTML = html;
+      }
+    });
+
+    // --- Render: Ecosystem (Realms) ---
+    function renderEcosystem(data) {
+      const realms = data.realms || {};
+      const entries = Object.entries(realms);
+      const totalFiles = data.total_files || 0;
+      const totalDirs = data.total_dirs || 0;
+      const activeRealms = data.active_realms || 0;
+
+      let html = `<div class="summary-row">
+        <span class="summary-stat">📁 <strong>${totalFiles.toLocaleString()}</strong> archivos</span>
+        <span class="summary-stat">📂 <strong>${totalDirs.toLocaleString()}</strong> directorios</span>
+        <span class="summary-stat">✅ <strong>${activeRealms}</strong>/9 reinos activos</span>
+      </div>`;
+
+      html += '<div class="realm-grid">';
+      for (const [name, realm] of entries) {
+        html += `
+          <div class="realm-card">
+            <div class="realm-emoji">${realm.emoji}</div>
+            <div class="realm-name">${name.charAt(0).toUpperCase() + name.slice(1)}</div>
+            <div class="realm-stats">
+              <span>${realm.file_count} arch</span>
+              <span>${realm.dir_count} dir</span>
+            </div>
+            <div class="realm-status ${realm.status}">
+              <span class="status-dot"></span>
+              ${realm.status}
+            </div>
+            ${realm.has_rules ? '<div class="realm-rules">📋 rules.yml</div>' : ''}
+          </div>`;
+      }
+      html += '</div>';
+      return html;
+    }
+
+    // --- Render: Pantheon (Agents) ---
+    function renderPantheon(data) {
+      const agents = data.agents || {};
+      const entries = Object.entries(agents);
+      const totalCalls = data.total_calls || 0;
+      const avgSuccess = ((data.avg_success_rate || 0) * 100).toFixed(1);
+
+      let html = `<div class="summary-row">
+        <span class="summary-stat">🤖 <strong>${entries.length}</strong> agentes</span>
+        <span class="summary-stat">📞 <strong>${totalCalls.toLocaleString()}</strong> llamadas</span>
+        <span class="summary-stat">✅ <strong>${avgSuccess}%</strong> éxito prom.</span>
+      </div>`;
+
+      html += '<div class="agent-list">';
+      for (const [name, agent] of entries) {
+        const successPct = (agent.success_rate * 100).toFixed(1);
+        html += `
+          <div class="agent-row">
+            <span class="agent-emoji">${agent.emoji}</span>
+            <div class="agent-info">
+              <span class="agent-name">${name.charAt(0).toUpperCase() + name.slice(1)}</span>
+              <span class="agent-details">${agent.total_calls.toLocaleString()} llamadas · ${successPct}% éxito · ${agent.avg_latency}s latencia</span>
+            </div>
+            <span class="agent-status ${agent.status}">${agent.status}</span>
+          </div>`;
+      }
+      html += '</div>';
+      return html;
+    }
+
+    // --- Render: Memory Stats ---
+    function renderMemory(data) {
+      const sections = ['semantic', 'episodic', 'muninn'];
+      const total = data.total_memories || 0;
+      const totalSize = (data.total_size_mb || 0).toFixed(1);
+      const maxMemories = Math.max(...sections.map(s => data[s]?.total || 1));
+
+      let html = `<div class="summary-row">
+        <span class="summary-stat">🧠 <strong>${total.toLocaleString()}</strong> memorias</span>
+        <span class="summary-stat">💾 <strong>${totalSize}</strong> MB</span>
+      </div>`;
+
+      html += '<div class="memory-sections">';
+      for (const section of sections) {
+        const mem = data[section] || {};
+        const pct = ((mem.total || 0) / maxMemories * 100).toFixed(0);
+        html += `
+          <div class="memory-card ${section}">
+            <div class="memory-title ${section}">${section.charAt(0).toUpperCase() + section.slice(1)}</div>
+            <div class="memory-stats-row">
+              <span>${(mem.total || 0).toLocaleString()} total</span>
+              <span>${mem.recent || 0} recientes</span>
+              <span>${(mem.size_mb || 0).toFixed(1)} MB</span>
+            </div>
+            <div class="memory-bar">
+              <div class="memory-bar-fill" style="width: ${pct}%"></div>
+            </div>
+          </div>`;
+      }
+      html += '</div>';
+      return html;
+    }
+
+    // --- Render: AutoMode Tasks ---
+    function renderTasks(data) {
+      const tasks = data.tasks || [];
+      const running = data.running || 0;
+      const pending = data.pending || 0;
+      const completed = data.completed || 0;
+
+      let html = `<div class="summary-row">
+        <span class="summary-stat">▶️ <strong>${running}</strong> ejecutando</span>
+        <span class="summary-stat">⏳ <strong>${pending}</strong> pendientes</span>
+        <span class="summary-stat">✅ <strong>${completed}</strong> completadas</span>
+      </div>`;
+
+      html += '<div class="task-list">';
+      for (const task of tasks) {
+        const statusClass = 'task-' + task.status;
+        const progressPct = (task.progress * 100).toFixed(0);
+        html += `
+          <div class="task-card ${statusClass}">
+            <div class="task-header">
+              <span class="task-name">${task.name}</span>
+              <span class="task-status ${task.status}">${task.status}</span>
+            </div>
+            <div class="task-meta">${task.agent} · ${task.realm} · ${task.id}</div>
+            <div class="task-progress">
+              <div class="task-progress-fill" style="width: ${progressPct}%"></div>
+            </div>
+          </div>`;
+      }
+      html += '</div>';
+      return html;
+    }
+  </script>
+
+</body>
+</html>

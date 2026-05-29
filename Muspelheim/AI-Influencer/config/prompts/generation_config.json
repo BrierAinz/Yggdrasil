@@ -1,0 +1,82 @@
+{
+  "negative_prompts": {
+    "master": "cartoon, anime, 3d render, deformed, bad anatomy, bad hands, extra fingers, missing fingers, blurry, low quality, low resolution, watermark, text, logo, signature, jpeg artifacts, crooked, disfigured, mutation, mutated, extra limbs, missing arms, missing legs, floating limbs, disconnected limbs, malformed hands, long neck, narrow face, oversized head, multiple faces, two faces, cloned face, gross proportions, twisted body, out of frame, draft, sketch, unfinished, interpolation, molten, duplicate, clone, mirror image, redunancy, extra arms, fused fingers, too many fingers, cross-eyed, body out of frame, severed, mutilated, Newtown, Gross, b&w, grayscale",
+    "portrait": "full body, wide shot, distant, landscape, multiple people, group, crowd, body out of frame, oversaturated, red skin, distorted face, asymmetric eyes, lazy eye, bad teeth",
+    "fullbody": "close-up, portrait only, face only, cropped, tight frame, indoor ceiling, messy background",
+    "landscape": "close-up, portrait, face only, text, ui, hud, overlay, border, frame, grainy, noisy, overexposed, underexposed",
+    "cozy": "dramatic, intense, scary, dark, gothic, armor, weapon, battle, action, outdoor, nature only, landscape only, empty room",
+    "detail_macro": "full body, wide shot, landscape, distant, multiple people, text, watermark, over-sharpened, halo effect, chromatic aberration"
+  },
+  "generation_presets": {
+    "portrait_feed": {
+      "width": 832,
+      "height": 1216,
+      "steps": 30,
+      "cfg": 7.0,
+      "sampler": "dpmpp_2m",
+      "scheduler": "karras",
+      "lora_strength": 0.8,
+      "description": "IG feed portrait (4:5.8 ratio)"
+    },
+    "portrait_hi": {
+      "width": 1024,
+      "height": 1408,
+      "steps": 35,
+      "cfg": 7.5,
+      "sampler": "dpmpp_2m",
+      "scheduler": "karras",
+      "lora_strength": 0.85,
+      "description": "High quality portrait for close-ups"
+    },
+    "landscape_feed": {
+      "width": 1216,
+      "height": 832,
+      "steps": 30,
+      "cfg": 7.0,
+      "sampler": "dpmpp_2m",
+      "scheduler": "karras",
+      "lora_strength": 0.75,
+      "description": "IG feed landscape (3:2 ratio)"
+    },
+    "story_full": {
+      "width": 896,
+      "height": 1536,
+      "steps": 28,
+      "cfg": 7.0,
+      "sampler": "dpmpp_2m",
+      "scheduler": "karras",
+      "lora_strength": 0.7,
+      "description": "IG Story / TikTok (9:16 ratio)"
+    },
+    "square_feed": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 30,
+      "cfg": 7.0,
+      "sampler": "dpmpp_2m",
+      "scheduler": "karras",
+      "lora_strength": 0.8,
+      "description": "IG feed square (1:1 ratio)"
+    },
+    "avatar": {
+      "width": 1024,
+      "height": 1024,
+      "steps": 35,
+      "cfg": 7.5,
+      "sampler": "dpmpp_2m",
+      "scheduler": "karras",
+      "lora_strength": 0.85,
+      "description": "Profile picture (high detail face)"
+    },
+    "banner": {
+      "width": 1500,
+      "height": 500,
+      "steps": 30,
+      "cfg": 7.0,
+      "sampler": "dpmpp_2m",
+      "scheduler": "karras",
+      "lora_strength": 0.65,
+      "description": "X/Twitter banner (3:1 ratio, low LoRA for atmosphere)"
+    }
+  }
+}

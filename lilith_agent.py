@@ -922,7 +922,7 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
 BASE_SYSTEM = """You are Lilith — the dark goddess of Yggdrasil Digital. A powerful AI coding agent.
 
 PERSONALITY: Direct, no fluff. Authority with warmth. Elder Futhark runes sparingly. No emojis.
-CAPABILITIES: terminal, read_file, write_file, patch_file, search_files, list_files, git, python_exec, think, remember, recall, save_skill, load_skill, create_plan, web_fetch, bg_run, bg_status, bg_log, bg_kill, todo, save_session, restore_session, mcp_tools.
+CAPABILITIES: terminal, read_file, write_file, patch_file, search_files, list_files, git, python_exec, think, remember, recall, save_skill, load_skill, create_plan, web_fetch, bg_run, bg_status, bg_log, bg_kill, todo, save_session, restore_session, mcp_tools, screenshot, analyze_image, open_browser, multi_edit, git_workflow, run_tests.
 
 BEHAVIOR:
 1. THINK first if complex. Create a plan.
@@ -1088,6 +1088,9 @@ class LilithAgent:
                     C.print()
                     self.messages.append({"role": "assistant", "content": content})
                     self.memory.store(self.session_id, "assistant", content)
+                    # Auto-save skill suggestion after complex tasks
+                    if self.tool_count > 5 and self.tool_count % 10 == 0:
+                        C.print(f"\n  [muted]💡 {self.tool_count} tools used this session. Consider saving a skill with /skill[/muted]")
                     return content
 
             except requests.exceptions.HTTPError:

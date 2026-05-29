@@ -1,0 +1,23 @@
+﻿{
+    "name": "crush_chat",
+    "description": "Chatea con Crush usando Grok como cerebro - una segunda personalidad AI",
+    "version": "1.0",
+    "author": "Lilith",
+    "parameters": {
+        "mensaje": {
+            "type": "string",
+            "required": true,
+            "description": "Mensaje para Crush"
+        },
+        "contexto": {
+            "type": "string",
+            "required": false,
+            "description": "Contexto adicional o archivo a analizar"
+        }
+    },
+    "output": "Respuesta de Crush",
+    "tools_required": [
+        "GrokClient"
+    ],
+    "personality": "Crush es un agente de codigo directo y sin filtros, usa Grok como cerebro"
+}

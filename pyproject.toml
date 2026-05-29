@@ -1,13 +1,24 @@
 # ============================================================================
+<<<<<<< HEAD
 # BrierStudios — Yggdrasil Monorepo
 # ============================================================================
 # The World Tree — Nine Realms of AI and Software
 # Managed via uv.workspace.members
+=======
+# Yggdrasil Monorepo – Root Configuration
+# ============================================================================
+# This is the workspace root.  All sub-packages are managed via
+# `uv.workspace.members` and resolved as editable installs automatically.
+>>>>>>> origin/main
 
 [project]
 name = "yggdrasil"
 version = "5.1.0"
+<<<<<<< HEAD
 description = "BrierStudios — Yggdrasil: The World Tree AI ecosystem"
+=======
+description = "Yggdrasil – Norse-themed AI agent ecosystem"
+>>>>>>> origin/main
 requires-python = ">=3.11"
 license = {text = "MIT"}
 

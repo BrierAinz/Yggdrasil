@@ -1,0 +1,45 @@
+# Eir AI Influencer — Generation Config
+# ==========================================
+
+[model]
+# Primary: Juggernaut XL for photorealistic portraits
+primary = "juggernautXL_v9Rdphoto2Light.safetensors"
+# Alternative: Flux.1 Dev for maximum quality (requires CPU offload)
+alternative = "flux1-dev.safetensors"
+# Fallback: DreamShaper XL for artistic style
+artistic = "dreamshaperXL_v21.safetensors"
+
+[lora]
+# Eir character LoRA
+name = "eir_niflheimr"
+weight = 0.8  # 0.7-0.9 range recommended
+path = "assets/lora/eir_niflheimr.safetensors"
+
+[defaults]
+sampler = "DPM++ 2M Karras"
+steps = 30
+cfg_scale = 7
+clip_skip = 2
+vae = "sdxl_vae.safetensors"
+
+[sizes]
+portrait_feed = [832, 1216]    # 2:3 portrait for IG feed
+portrait_reel = [1080, 1920]   # 9:16 for Reels/TikTok
+square = [1024, 1024]           # 1:1 for art pieces
+landscape = [1344, 768]         # ~16:9 for landscapes
+story = [1080, 1920]            # 9:16 for Stories
+
+[negative_prompt]
+base = "cartoon, anime, 3d render, deformed, extra fingers, extra limbs, blurry, low quality, watermark, text, logo, signature, worst quality, lowres, bad anatomy, bad hands, missing fingers, extra digit, fewer digits, cropped"
+
+[upscaling]
+model = "4x-UltraSharp.safetensors"
+scale = 2
+target_width = 2160   # 1080 * 2 for Retina
+target_height = 2700  # 1350 * 2 for Retina
+
+[watermark]
+text = "@eir.creates"
+font_size = 16
+opacity = 153  # 60% alpha (0-255)
+position = "bottom_right"

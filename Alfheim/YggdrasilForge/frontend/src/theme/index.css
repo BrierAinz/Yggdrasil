@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-rune-950 text-rune-100;
+  }
+}
+
+@layer components {
+  .forge-card {
+    @apply bg-rune-900/80 border border-rune-700/50 rounded-xl p-4 backdrop-blur-sm;
+  }
+  .forge-btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+  }
+  .forge-btn-primary {
+    @apply forge-btn bg-ember hover:bg-ember-light text-white;
+  }
+  .forge-btn-secondary {
+    @apply forge-btn bg-rune-700 hover:bg-rune-600 text-rune-100;
+  }
+  .forge-btn-fjord {
+    @apply forge-btn bg-fjord hover:bg-fjord-light text-white;
+  }
+  .forge-input {
+    @apply w-full bg-rune-800 border border-rune-600 rounded-lg px-3 py-2 text-rune-100 placeholder-rune-400 focus:outline-none focus:border-ember focus:ring-1 focus:ring-ember;
+  }
+  .forge-select {
+    @apply forge-input appearance-none cursor-pointer;
+  }
+  .forge-badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+  }
+  .forge-badge-queued {
+    @apply forge-badge bg-rune-600 text-rune-200;
+  }
+  .forge-badge-processing {
+    @apply forge-badge bg-fjord/20 text-fjord-light;
+  }
+  .forge-badge-completed {
+    @apply forge-badge bg-yggdrasil-green/20 text-yggdrasil-green;
+  }
+  .forge-badge-failed {
+    @apply forge-badge bg-ember/20 text-ember;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a2a5a; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #47477b; }

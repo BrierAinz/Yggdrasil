@@ -1,0 +1,75 @@
+# ai-toolkit YAML config for Body-Only LoRA (SDXL base)
+# Used for Ehyra body LoRA v1 training on Pony V6 XL
+# Training images: 25 center-cropped 1024x1024 images from Flux GGUF generation
+# Base model: Pony V6 XL (SDXL) — local checkpoint
+# RTX 3060 12GB VRAM optimized
+
+job: extension
+config:
+  name: "ehyra_body_lora_v1"
+  process:
+    - type: 'sd_trainer'
+      training_folder: "output"
+      device: cuda:0
+      trigger_word: "ehyra_body"
+      network:
+        type: "lora"
+        linear: 32
+        linear_alpha: 16
+      save:
+        dtype: float16
+        save_every: 500
+        max_step_saves_to_keep: 4
+      datasets:
+        - folder_path: "/home/brierainz/comfy/ai-toolkit/dataset/ehyra_body_lora_train_sdxl"
+          caption_ext: "txt"
+          caption_dropout_rate: 0.05
+          shuffle_tokens: false
+          cache_latents_to_disk: true
+          resolution: [ 768, 1024 ]
+      train:
+        batch_size: 1
+        steps: 3000
+        gradient_accumulation_steps: 1
+        train_unet: true
+        train_text_encoder: false
+        gradient_checkpointing: true
+        noise_scheduler: "ddpm"
+        optimizer: "adamw8bit"
+        lr: 1e-4
+        lr_scheduler: "constant"
+        ema_config:
+          use_ema: true
+          ema_decay: 0.99
+        dtype: bf16
+        xformers: false   # Set to false if xformers version mismatch with PyTorch
+        min_snr_gamma: 5.0
+      model:
+        # SDXL local checkpoint path
+        name_or_path: "/home/brierainz/comfy/ComfyUI/models/checkpoints/ponyDiffusionV6XL_v6StartWithThisOne.safetensors"
+        is_xl: true
+        is_flux: false
+        quantize: false   # Not needed for SDXL on 12GB VRAM
+      sample:
+        sampler: "ddpm"
+        sample_every: 500
+        width: 1024
+        height: 1024
+        prompts:
+          - "score_9, score_8_up, ehyra_body, a woman with a curvy slim hourglass figure, wide hips, full bust, narrow defined waist, wearing form-fitting black cocktail dress, standing confidently, studio lighting, photorealistic full body shot"
+          - "score_9, score_8_up, ehyra_body, a woman with a curvy slim hourglass figure, wearing casual denim outfit, walking in a sunny park, golden hour lighting, photorealistic"
+          - "score_9, score_8_up, ehyra_body, a woman with a curvy slim hourglass figure, wearing elegant evening gown, luxury hotel lobby, soft ambient lighting, photorealistic full body shot"
+        neg: "score_6, score_5, score_4, source_anime, bad anatomy, extra fingers, blurry, watermark, text, deformed hands"
+        seed: 42
+        walk_seed: true
+        guidance_scale: 7
+        sample_steps: 25
+
+# KEY NOTES:
+# 1. xformers: false — PyTorch 2.11+cu130 vs xformers 0.0.35 (built for 2.10+cu128) = ModuleNotFoundError
+#    Set xformers: false to avoid crash. Slightly more VRAM but works.
+# 2. Pony V6 XL uses "score_9, score_8_up" quality tags in prompts
+# 3. noise_scheduler: "ddpm" for SDXL (NOT "flowmatch" which is Flux-only)
+# 4. For FLUX.1-dev: change is_flux:true, quantize:true, low_vram:true,
+#    noise_scheduler:"flowmatch", and use "black-forest-labs/FLUX.1-dev" (requires HF auth)
+# 5. ai-toolkit does NOT support GGUF models for training — needs full diffusers format
