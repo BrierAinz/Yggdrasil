@@ -1564,7 +1564,68 @@ class LilithAgent:
         self.total_cost = 0.0
         self.tool_times = {}  # performance profiling
         self.forks = {}  # conversation branches
+        self._validate_api_key()
         self._build_context()
+
+    def _validate_api_key(self):
+        """Check API key exists and warn if missing/empty."""
+        api_key = self.provider.get("api_key", "")
+        provider_name = None
+        for name, prov in PROVIDERS.items():
+            if prov is self.provider:
+                provider_name = name
+                break
+        if not api_key:
+            env_var = {
+                "deepseek": "DEEPSEEK_API_KEY",
+                "gpt-oss": "BYTEPLUS_API_KEY",
+                "glm": "BYTEPLUS_API_KEY",
+            }.get(provider_name, "API_KEY")
+            key_file = ROOT / ".lilith" / ".deepseek_key"
+            C.print()
+            C.print(f"  [error]⚠ No API key configured for provider '{provider_name}'[/error]")
+            C.print(f"  [muted]Set one of:[/muted]")
+            C.print(f"    [frost]export {env_var}=\"your-key-here\"[/frost]")
+            if provider_name == "deepseek":
+                C.print(f"    [muted]or write key to:[/muted] [frost]{key_file}[/frost]")
+            C.print()
+
+    def _handle_auth_error(self, resp):
+        """Handle 401/403 with actionable guidance."""
+        provider_name = None
+        for name, prov in PROVIDERS.items():
+            if prov is self.provider:
+                provider_name = name
+                break
+        env_var = {
+            "deepseek": "DEEPSEEK_API_KEY",
+            "gpt-oss": "BYTEPLUS_API_KEY",
+            "glm": "BYTEPLUS_API_KEY",
+        }.get(provider_name, "API_KEY")
+
+        error_body = ""
+        try:
+            error_body = resp.json()
+        except Exception:
+            error_body = resp.text[:200]
+
+        C.print()
+        C.print(f"  [error]🔒 Authentication failed ({resp.status_code}) for '{provider_name}'[/error]")
+        if isinstance(error_body, dict):
+            msg = error_body.get("error", {}).get("message", "") if isinstance(error_body.get("error"), dict) else str(error_body.get("error", ""))
+            if msg:
+                C.print(f"  [muted]Server says: {msg[:120]}[/muted]")
+        C.print(f"  [muted]Possible causes:[/muted]")
+        C.print(f"    1. API key is expired or revoked")
+        C.print(f"    2. API key is incorrect")
+        C.print(f"    3. Rate limit exceeded (wait and retry)")
+        C.print(f"  [muted]Fix:[/muted]")
+        C.print(f"    [frost]export {env_var}=\"your-valid-key\"[/frost]")
+        if provider_name == "deepseek":
+            key_file = ROOT / ".lilith" / ".deepseek_key"
+            C.print(f"    [muted]or update:[/muted] [frost]{key_file}[/frost]")
+        C.print(f"    [muted]Then restart with:[/muted] [frost]lilith --provider {provider_name}[/frost]")
+        C.print()
 
     def _build_context(self):
         parts = [BASE_SYSTEM]
@@ -1802,6 +1863,8 @@ class LilithAgent:
         if resp.status_code == 400:
             payload.pop("tools", None)
             resp = requests.post(url, headers=headers, json=payload, stream=stream, timeout=120)
+        if resp.status_code in (401, 403):
+            self._handle_auth_error(resp)
         resp.raise_for_status()
         # Track tokens (non-streaming only)
         if not stream:
@@ -1934,12 +1997,16 @@ class LilithAgent:
                     continue
 
             except requests.exceptions.HTTPError as e:
+                status = e.response.status_code if e.response is not None else "?"
                 error_body = ""
                 try:
                     error_body = e.response.text[:200]
                 except:
                     pass
-                C.print(f"\n  [error]API error: {e.response.status_code} — {error_body}[/error]")
+                if status in (401, 403):
+                    # Auth error already handled by _handle_auth_error
+                    return ""
+                C.print(f"\n  [error]API error: {status} — {error_body}[/error]")
                 return ""
             except Exception as e:
                 C.print(f"\n  [error]Error: {e}[/error]")

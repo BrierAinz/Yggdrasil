@@ -14,7 +14,7 @@
 - [x] Fix 400 error retry without tools
 - [x] Fix: sometimes tool results are not shown (empty response after tool)
 - [x] Fix: context management sometimes removes too many messages
-- [ ] Fix: error when API key is invalid (better error message)
+- [x] Fix: error when API key is invalid (better error message)
 - [ ] Fix: undo doesn't work for multi_edit
 
 ### 1.2 Reliability
