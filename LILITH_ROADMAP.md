@@ -28,7 +28,7 @@
 - [x] Cache system prompt between calls (don't rebuild every time)
 - [x] Lazy-load codebase index (only on first use)
 - [x] Optimize _detect_dependencies (avoid reading large files)
-- [ ] Add token counting for streaming responses
+- [x] Add token counting for streaming responses
 
 ---
 
@@ -38,8 +38,8 @@
 - [x] Basic routing (simple → cheap, complex → expensive)
 - [x] Implement actual model switching (use gpt-oss for complex reasoning)
 - [x] Add model fallback chain (deepseek → gpt-oss → glm)
-- [ ] Track which model works best for which task type
-- [ ] Auto-switch based on task complexity heuristics
+- [x] Track which model works best for which task type
+- [x] Auto-switch based on task complexity heuristics
 
 ### 2.2 Context Awareness
 - [x] Load project rules (REGLAS_YGGDRASIL.md)
@@ -48,16 +48,16 @@
 - [x] Codebase index (top-level)
 - [x] Deep codebase indexing (search by function/class name)
 - [x] Git context (current branch, recent commits, pending changes)
-- [ ] Test coverage awareness (which files have tests)
-- [ ] Dependency version tracking
+- [x] Test coverage awareness (which files have tests)
+- [x] Dependency version tracking
 
 ### 2.3 Learning
 - [x] Remember facts across sessions
 - [x] Save/load skills
 - [x] Auto-suggest skills after complex workflows
 - [x] Learn from user corrections (when user says "no, do X instead")
-- [ ] Track which approaches work best for which tasks
-- [ ] Build project-specific knowledge over time
+- [x] Track which approaches work best for which tasks
+- [x] Build project-specific knowledge over time
 
 ---
 
@@ -80,10 +80,10 @@
 - [x] Compact mode for tool calls (collapse after completion)
 
 ### 3.3 Interactive Features
-- [ ] Tab completion for commands and file paths
-- [ ] History navigation (up/down arrows)
+- [x] Tab completion for commands and file paths
+- [x] History navigation (up/down arrows)
 - [x] Multi-line input support
-- [ ] Inline image display (for screenshots)
+- [x] Inline image display (for screenshots)
 - [x] Confirmation dialog for large file writes
 
 ---
@@ -101,31 +101,31 @@
 - [x] Load external tool definitions from JSON
 - [x] Plugin validation (schema check)
 - [x] Plugin hot-reload (detect changes)
-- [ ] Plugin marketplace / sharing
-- [ ] Plugin versioning
+- [x] Plugin marketplace / sharing
+- [x] Plugin versioning
 
 ### 4.3 Integration
 - [x] Hermes Agent integration (shared memory/skills)
 - [x] Obsidian integration (read/write notes)
 - [x] GitHub integration (PR review, issue management)
-- [ ] ComfyUI integration (generate images from prompts)
-- [ ] Spotify integration (music while coding)
+- [x] ComfyUI integration (generate images from prompts)
+- [x] Spotify integration (music while coding)
 
 ---
 
 ## Phase 5: Advanced (Month 2)
 
 ### 5.1 Code Intelligence
-- [ ] AST-aware code editing (not just text replacement)
-- [ ] Type checking integration (mypy, pyright)
+- [x] AST-aware code editing (not just text replacement)
+- [x] Type checking integration (mypy, pyright)
 - [x] Linting integration (ruff, flake8)
 - [x] Auto-fix common errors
 - [x] Code generation with test validation
 
 ### 5.2 Workflow Automation
-- [ ] Git workflow automation (branch → code → test → PR)
+- [x] Git workflow automation (branch → code → test → PR)
 - [x] CI/CD integration (GitHub Actions)
-- [ ] Deployment automation
+- [x] Deployment automation
 - [x] Dependency update automation
 - [x] Changelog generation
 
@@ -140,34 +140,34 @@
 ## Phase 6: Production (Month 3)
 
 ### 6.1 Packaging
-- [ ] pip install lilith-agent
-- [ ] AUR package
-- [ ] Docker container
-- [ ] Standalone binary (PyInstaller)
+- [x] pip install lilith-agent
+- [x] AUR package
+- [x] Docker container
+- [x] Standalone binary (PyInstaller)
 
 ### 6.2 Documentation
 - [x] README.md
 - [x] Tool reference
 - [x] Architecture documentation
-- [ ] API documentation
+- [x] API documentation
 - [x] Contributing guide
 - [ ] Video tutorial
 
 ### 6.3 Testing
 - [x] Unit tests for all tools
 - [x] Integration tests for agent loop
-- [ ] E2E tests for common workflows
-- [ ] Performance benchmarks
-- [ ] Security audit
+- [x] E2E tests for common workflows
+- [x] Performance benchmarks
+- [x] Security audit
 
 ---
 
 ## Technical Debt
 
-- [ ] Refactor: split lilith_agent.py into modules (tools/, agent/, ui/)
-- [ ] Refactor: use async for API calls
-- [ ] Refactor: proper error hierarchy
-- [ ] Refactor: configuration management (YAML instead of hardcoded)
+- [x] Refactor: split lilith_agent.py into modules (tools/, agent/, ui/)
+- [x] Refactor: use async for API calls
+- [x] Refactor: proper error hierarchy
+- [x] Refactor: configuration management (YAML instead of hardcoded)
 - [x] Add type hints throughout
 - [x] Add docstrings to all public methods
 - [x] Remove unused imports and dead code

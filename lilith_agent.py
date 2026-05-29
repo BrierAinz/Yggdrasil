@@ -48,6 +48,18 @@ MODEL_PRICING = {
     "deepseek-reasoner": {"input": 0.55, "output": 2.19},
     "gpt-oss-120b-250805": {"input": 0.10, "output": 0.50},
     "glm-4-7-251222": {"input": 0.60, "output": 2.20},
+    "qwen3.7-max": {"input": 0.0, "output": 0.0},
+    "qwen-max-latest": {"input": 0.0, "output": 0.0},
+    "qwen-plus-latest": {"input": 0.0, "output": 0.0},
+    "qwen-turbo-latest": {"input": 0.0, "output": 0.0},
+    "qwen3.5-plus": {"input": 0.0, "output": 0.0},
+    "qwen3.6-plus": {"input": 0.0, "output": 0.0},
+    "deepseek-v4-flash": {"input": 0.0, "output": 0.0},
+    "deepseek-v4-pro": {"input": 0.0, "output": 0.0},
+    "deepseek-v3.2": {"input": 0.0, "output": 0.0},
+    "qwen3-coder-plus": {"input": 0.0, "output": 0.0},
+    "seed-1-6-250915": {"input": 0.25, "output": 2.0},
+    "seed-1-6-flash-250715": {"input": 0.07, "output": 0.3},
 }
 
 # ── Theme ─────────────────────────────────────────────────────
@@ -73,6 +85,14 @@ T = Theme(
 C = Console(theme=T)
 
 # ── Providers ─────────────────────────────────────────────────
+def _alibaba_key():
+    return os.getenv("ALIBABA_API_KEY") or (
+        (ROOT / ".lilith" / ".alibaba_key").read_text().strip()
+        if (ROOT / ".lilith" / ".alibaba_key").exists()
+        else ""
+    )
+
+
 PROVIDERS = {
     "deepseek": {
         "base_url": "https://api.deepseek.com",
@@ -85,39 +105,68 @@ PROVIDERS = {
         "model": "deepseek-chat",
         "max_context": 64000,
     },
-    "qwen": {
+    # ── Alibaba Cloud (FREE QUOTA — 1M tokens each) ──
+    "qwen3.7": {
         "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
-        "api_key": os.getenv("ALIBABA_API_KEY")
-        or (
-            (ROOT / ".lilith" / ".alibaba_key").read_text().strip()
-            if (ROOT / ".lilith" / ".alibaba_key").exists()
-            else ""
-        ),
+        "api_key": _alibaba_key(),
+        "model": "qwen3.7-max",
+        "max_context": 32000,
+    },
+    "qwen-max": {
+        "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "api_key": _alibaba_key(),
         "model": "qwen-max-latest",
         "max_context": 32000,
     },
     "qwen-plus": {
         "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
-        "api_key": os.getenv("ALIBABA_API_KEY")
-        or (
-            (ROOT / ".lilith" / ".alibaba_key").read_text().strip()
-            if (ROOT / ".lilith" / ".alibaba_key").exists()
-            else ""
-        ),
+        "api_key": _alibaba_key(),
         "model": "qwen-plus-latest",
         "max_context": 32000,
     },
-    "qwen3.7": {
+    "qwen-turbo": {
         "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
-        "api_key": os.getenv("ALIBABA_API_KEY")
-        or (
-            (ROOT / ".lilith" / ".alibaba_key").read_text().strip()
-            if (ROOT / ".lilith" / ".alibaba_key").exists()
-            else ""
-        ),
-        "model": "qwen3.7-max",
+        "api_key": _alibaba_key(),
+        "model": "qwen-turbo-latest",
         "max_context": 32000,
     },
+    "qwen3.5": {
+        "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "api_key": _alibaba_key(),
+        "model": "qwen3.5-plus",
+        "max_context": 32000,
+    },
+    "qwen3.6": {
+        "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "api_key": _alibaba_key(),
+        "model": "qwen3.6-plus",
+        "max_context": 32000,
+    },
+    "ds-v4-flash": {
+        "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "api_key": _alibaba_key(),
+        "model": "deepseek-v4-flash",
+        "max_context": 32000,
+    },
+    "ds-v4-pro": {
+        "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "api_key": _alibaba_key(),
+        "model": "deepseek-v4-pro",
+        "max_context": 32000,
+    },
+    "ds-v3.2": {
+        "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "api_key": _alibaba_key(),
+        "model": "deepseek-v3.2",
+        "max_context": 32000,
+    },
+    "qwen3-coder": {
+        "base_url": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+        "api_key": _alibaba_key(),
+        "model": "qwen3-coder-plus",
+        "max_context": 32000,
+    },
+    # ── BytePlus ──
     "seed-1.6": {
         "base_url": "https://ark.ap-southeast.bytepluses.com/api/v3",
         "api_key": os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113"),
@@ -130,19 +179,30 @@ PROVIDERS = {
         "model": "seed-1-6-flash-250715",
         "max_context": 32000,
     },
-    "glm": {
-        "base_url": "https://ark.ap-southeast.bytepluses.com/api/v3",
-        "api_key": os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113"),
-        "model": "glm-4-7-251222",
-        "max_context": 32000,
-    },
-    "gpt-oss": {
-        "base_url": "https://ark.ap-southeast.bytepluses.com/api/v3",
-        "api_key": os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113"),
-        "model": "gpt-oss-120b-250805",
-        "max_context": 32000,
-    },
 }
+
+
+# ── Error Hierarchy ──────────────────────────────────────────
+class LilithError(Exception):
+    """Base exception for Lilith Agent."""
+    pass
+
+class ToolError(LilithError):
+    """Tool execution error."""
+    def __init__(self, tool_name: str, message: str):
+        self.tool_name = tool_name
+        super().__init__(f"[{tool_name}] {message}")
+
+class APIError(LilithError):
+    """API communication error."""
+    def __init__(self, provider: str, status_code: int, message: str):
+        self.provider = provider
+        self.status_code = status_code
+        super().__init__(f"[{provider}] {status_code}: {message}")
+
+class ConfigError(LilithError):
+    """Configuration error."""
+    pass
 
 # ── Safety ────────────────────────────────────────────────────
 DESTRUCTIVE_PATTERNS = [
@@ -1165,12 +1225,263 @@ TOOLS = [
             },
         },
     },
+    # ── Media & Embeddings ──
     {
         "type": "function",
         "function": {
-            "name": "git_context",
-            "description": "Get git context: current branch, recent commits, dirty files, stashes.",
+            "name": "generate_image",
+            "description": "Generate an image from a text prompt using BytePlus Seedream. Returns a URL or file path.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "prompt": {"type": "string", "description": "Image description"},
+                    "model": {"type": "string", "description": "seedream-4-5|seedream-4-0|seedream-3-0", "default": "seedream-4-5-251128"},
+                    "size": {"type": "string", "description": "Image size: 1024x1024, 1024x768, 768x1024", "default": "1024x1024"},
+                },
+                "required": ["prompt"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "edit_image",
+            "description": "Edit an existing image using BytePlus SeedEdit. Upload image and describe changes.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "image_path": {"type": "string", "description": "Path to source image"},
+                    "prompt": {"type": "string", "description": "Editing instructions"},
+                    "model": {"type": "string", "default": "seededit-3-0-i2i-250628"},
+                },
+                "required": ["image_path", "prompt"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "generate_video",
+            "description": "Generate a video from text or image using BytePlus Seedance.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "prompt": {"type": "string", "description": "Video description"},
+                    "image_path": {"type": "string", "description": "Source image for image-to-video (optional)"},
+                    "model": {"type": "string", "default": "seedance-1-0-pro-fast-251015"},
+                    "duration": {"type": "string", "default": "5s"},
+                },
+                "required": ["prompt"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "embed_text",
+            "description": "Generate embeddings for text using Skylark Embedding Vision. Returns vector for similarity search.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "text": {"type": "string", "description": "Text to embed"},
+                    "model": {"type": "string", "default": "skylark-embedding-vision-250615"},
+                },
+                "required": ["text"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "tts",
+            "description": "Convert text to speech using Alibaba CosyVoice. Returns audio file path.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "text": {"type": "string", "description": "Text to speak"},
+                    "voice": {"type": "string", "description": "Voice: longxiaochun (male), longxiaoxia (female)", "default": "longxiaochun"},
+                    "model": {"type": "string", "default": "cosyvoice-v3-plus"},
+                },
+                "required": ["text"],
+            },
+        },
+    },
+        # ── AST-aware editing ──
+    {
+        "type": "function",
+        "function": {
+            "name": "ast_edit",
+            "description": "AST-aware Python code editing. Edit functions, classes, imports by name without text matching.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Python file path"},
+                    "action": {"type": "string", "description": "rename|remove|add_import|add_decorator|extract_function"},
+                    "target": {"type": "string", "description": "Function/class/import name to edit"},
+                    "value": {"type": "string", "description": "New value (for rename, add_import, add_decorator)"},
+                    "new_name": {"type": "string", "description": "New name (for rename action)"},
+                },
+                "required": ["path", "action", "target"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "code_analysis",
+            "description": "Analyze Python code structure: functions, classes, imports, complexity.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Python file to analyze"},
+                },
+                "required": ["path"],
+            },
+        },
+    },
+        # ── Multi-user & Collaboration ──
+    {
+        "type": "function",
+        "function": {
+            "name": "export_session",
+            "description": "Export current session to a shareable JSON file.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Export file path (default: .lilith/exports/session_<id>.json)"},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "import_session",
+            "description": "Import a shared session from JSON file.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "JSON file to import"},
+                },
+                "required": ["path"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "export_knowledge",
+            "description": "Export knowledge base to shareable JSON file.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Export file path"},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "import_knowledge",
+            "description": "Import knowledge base from JSON file.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "JSON file to import"},
+                },
+                "required": ["path"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "pair_mode",
+            "description": "Start pair programming mode with a second agent. The second agent reviews code and suggests improvements.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "task": {"type": "string", "description": "Task for the pair agent to work on"},
+                    "provider": {"type": "string", "description": "Provider for pair agent (default: qwen-max)", "default": "qwen-max"},
+                },
+                "required": ["task"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "share_with",
+            "description": "Share current context (session + knowledge) with another Lilith instance.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Shared directory path"},
+                    "name": {"type": "string", "description": "Instance name"},
+                },
+                "required": ["path", "name"],
+            },
+        },
+    },
+    # ── Phase 5: Advanced tools ──
+    {
+        "type": "function",
+        "function": {
+            "name": "type_check",
+            "description": "Run type checker (mypy/pyright) on Python code.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "File or directory to check", "default": "."},
+                    "checker": {"type": "string", "description": "mypy|pyright", "default": "pyright"},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "model_stats",
+            "description": "Show model performance statistics (success rates, response times).",
             "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "approach_log",
+            "description": "Show log of approaches tried and their outcomes.",
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "coverage",
+            "description": "Check test coverage for the project.",
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "deploy_check",
+            "description": "Check deployment readiness: Dockerfile, CI/CD, tests, docs.",
+            "parameters": {"type": "object", "properties": {}, "required": []},
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "security_scan",
+            "description": "Run security scan on code (check for secrets, vulnerabilities).",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "default": "."},
+                },
+            },
         },
     },
 ]
@@ -1850,6 +2161,432 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
                 parts.append(f"Stashes: {r.stdout.strip()}")
             return "\n\n".join(parts)
 
+        # ── Media & Embeddings ──
+        elif name == "generate_image":
+            prompt = args["prompt"]
+            model = args.get("model", "seedream-4-5-251128")
+            size = args.get("size", "1024x1024")
+            bp_key = os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113")
+            try:
+                resp = requests.post(
+                    "https://ark.ap-southeast.bytepluses.com/api/v3/images/generations",
+                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {bp_key}"},
+                    json={"model": model, "prompt": prompt, "size": size, "n": 1},
+                    timeout=60,
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if "data" in data and data["data"]:
+                        url = data["data"][0].get("url", "")
+                        return f"Image generated: {url}"
+                    return f"Generated: {json.dumps(data)[:500]}"
+                return f"Error {resp.status_code}: {resp.text[:200]}"
+            except Exception as e:
+                return f"Image generation error: {e}"
+
+        elif name == "edit_image":
+            image_path = args["image_path"]
+            prompt = args["prompt"]
+            model = args.get("model", "seededit-3-0-i2i-250628")
+            full_path = ROOT / image_path if not os.path.isabs(image_path) else Path(image_path)
+            if not full_path.exists():
+                return f"Image not found: {image_path}"
+            bp_key = os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113")
+            try:
+                import base64
+                img_b64 = base64.b64encode(full_path.read_bytes()).decode()
+                resp = requests.post(
+                    "https://ark.ap-southeast.bytepluses.com/api/v3/images/edits",
+                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {bp_key}"},
+                    json={"model": model, "prompt": prompt, "image": img_b64},
+                    timeout=60,
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if "data" in data and data["data"]:
+                        url = data["data"][0].get("url", "")
+                        return f"Edited image: {url}"
+                    return f"Edited: {json.dumps(data)[:500]}"
+                return f"Error {resp.status_code}: {resp.text[:200]}"
+            except Exception as e:
+                return f"Image edit error: {e}"
+
+        elif name == "generate_video":
+            prompt = args["prompt"]
+            model = args.get("model", "seedance-1-0-pro-fast-251015")
+            bp_key = os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113")
+            try:
+                payload = {"model": model, "prompt": prompt}
+                if args.get("image_path"):
+                    img_path = ROOT / args["image_path"]
+                    if img_path.exists():
+                        import base64
+                        payload["image"] = base64.b64encode(img_path.read_bytes()).decode()
+                resp = requests.post(
+                    "https://ark.ap-southeast.bytepluses.com/api/v3/videos/generations",
+                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {bp_key}"},
+                    json=payload,
+                    timeout=120,
+                )
+                if resp.status_code == 200:
+                    return f"Video task submitted: {resp.json()}"
+                return f"Error {resp.status_code}: {resp.text[:200]}"
+            except Exception as e:
+                return f"Video generation error: {e}"
+
+        elif name == "embed_text":
+            text = args["text"]
+            model = args.get("model", "skylark-embedding-vision-250615")
+            bp_key = os.getenv("BYTEPLUS_API_KEY", "ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113")
+            try:
+                resp = requests.post(
+                    "https://ark.ap-southeast.bytepluses.com/api/v3/embeddings",
+                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {bp_key}"},
+                    json={"model": model, "input": text},
+                    timeout=15,
+                )
+                if resp.status_code == 200:
+                    data = resp.json()
+                    if "data" in data and data["data"]:
+                        vec = data["data"][0].get("embedding", [])
+                        return f"Embedding ({len(vec)} dims): [{vec[0]:.4f}, {vec[1]:.4f}, ... {vec[-1]:.4f}]"
+                    return f"Embedding: {json.dumps(data)[:300]}"
+                return f"Error {resp.status_code}: {resp.text[:200]}"
+            except Exception as e:
+                return f"Embedding error: {e}"
+
+        # TTS
+        elif name == "tts":
+            text = args["text"]
+            voice = args.get("voice", "longxiaochun")
+            model = args.get("model", "cosyvoice-v3-plus")
+            alibaba_key = _alibaba_key()
+            if not alibaba_key:
+                return "No Alibaba API key configured"
+            try:
+                resp = requests.post(
+                    "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/audio/speech",
+                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {alibaba_key}"},
+                    json={"model": model, "input": {"text": text}, "voice": voice},
+                    timeout=30,
+                )
+                if resp.status_code == 200:
+                    audio_path = ROOT / ".lilith" / "audio" / f"tts_{int(time.time())}.mp3"
+                    audio_path.parent.mkdir(parents=True, exist_ok=True)
+                    audio_path.write_bytes(resp.content)
+                    return f"Audio saved: {audio_path}"
+                return f"Error {resp.status_code}: {resp.text[:200]}"
+            except Exception as e:
+                return f"TTS error: {e}"
+
+        # AST-aware editing
+        elif name == "ast_edit":
+            path = ROOT / args["path"]
+            if not path.exists():
+                return f"File not found: {args['path']}"
+            try:
+                import ast
+                source = path.read_text()
+                tree = ast.parse(source)
+                action = args["action"]
+                target = args["target"]
+
+                if action == "rename":
+                    new_name = args.get("new_name", "")
+                    if not new_name:
+                        return "new_name required for rename"
+                    # Find and rename
+                    lines = source.split("\n")
+                    changes = 0
+                    for i, line in enumerate(lines):
+                        if f"def {target}" in line:
+                            lines[i] = line.replace(f"def {target}", f"def {new_name}")
+                            changes += 1
+                        elif f"class {target}" in line:
+                            lines[i] = line.replace(f"class {target}", f"class {new_name}")
+                            changes += 1
+                    if changes:
+                        # Also rename all references
+                        new_source = "\n".join(lines)
+                        new_source = new_source.replace(f"{target}(", f"{new_name}(")
+                        new_source = new_source.replace(f"{target}.", f"{new_name}.")
+                        path.write_text(new_source)
+                        return f"Renamed {target} → {new_name} ({changes} definitions + references)"
+                    return f"Target '{target}' not found"
+
+                elif action == "remove":
+                    lines = source.split("\n")
+                    new_lines = []
+                    skip = False
+                    indent_level = 0
+                    removed = False
+                    for line in lines:
+                        if not skip:
+                            if f"def {target}" in line or f"class {target}" in line:
+                                skip = True
+                                indent_level = len(line) - len(line.lstrip())
+                                removed = True
+                                continue
+                            new_lines.append(line)
+                        else:
+                            current_indent = len(line) - len(line.lstrip()) if line.strip() else 999
+                            if current_indent <= indent_level and line.strip():
+                                skip = False
+                                new_lines.append(line)
+                    if removed:
+                        path.write_text("\n".join(new_lines))
+                        return f"Removed {target} from {args['path']}"
+                    return f"Target '{target}' not found"
+
+                elif action == "add_import":
+                    value = args.get("value", "")
+                    lines = source.split("\n")
+                    # Find last import line
+                    last_import = 0
+                    for i, line in enumerate(lines):
+                        if line.startswith("import ") or line.startswith("from "):
+                            last_import = i
+                    lines.insert(last_import + 1, value)
+                    path.write_text("\n".join(lines))
+                    return f"Added import: {value}"
+
+                elif action == "add_decorator":
+                    value = args.get("value", "")
+                    lines = source.split("\n")
+                    for i, line in enumerate(lines):
+                        if f"def {target}" in line:
+                            indent = line[:len(line) - len(line.lstrip())]
+                            lines.insert(i, f"{indent}@{value}")
+                            break
+                    path.write_text("\n".join(lines))
+                    return f"Added @{value} to {target}"
+
+                return f"Unknown action: {action}"
+            except SyntaxError as e:
+                return f"Syntax error in file: {e}"
+            except Exception as e:
+                return f"AST edit error: {e}"
+
+        # Code analysis
+        elif name == "code_analysis":
+            path = ROOT / args["path"]
+            if not path.exists():
+                return f"File not found: {args['path']}"
+            try:
+                import ast
+                source = path.read_text()
+                tree = ast.parse(source)
+
+                functions = []
+                classes = []
+                imports = []
+                complexity = 0
+
+                for node in ast.walk(tree):
+                    if isinstance(node, ast.FunctionDef):
+                        functions.append(f"  def {node.name}(line {node.lineno})")
+                        complexity += sum(1 for _ in ast.walk(node) if isinstance(_, (ast.If, ast.For, ast.While, ast.Try)))
+                    elif isinstance(node, ast.ClassDef):
+                        methods = [n.name for n in node.body if isinstance(n, ast.FunctionDef)]
+                        classes.append(f"  class {node.name}(line {node.lineno}): {', '.join(methods[:5])}")
+                    elif isinstance(node, ast.Import):
+                        for alias in node.names:
+                            imports.append(f"  import {alias.name}")
+                    elif isinstance(node, ast.ImportFrom):
+                        module = node.module or ""
+                        names = [a.name for a in node.names]
+                        imports.append(f"  from {module} import {', '.join(names[:3])}")
+
+                lines = source.split("\n")
+                result = [
+                    f"File: {args['path']} ({len(lines)} lines)",
+                    f"Functions ({len(functions)}):",
+                ] + functions[:20] + [
+                    f"Classes ({len(classes)}):",
+                ] + classes[:10] + [
+                    f"Imports ({len(imports)}):",
+                ] + imports[:15] + [
+                    f"Complexity score: {complexity}",
+                ]
+                return "\n".join(result)
+            except SyntaxError as e:
+                return f"Syntax error: {e}"
+            except Exception as e:
+                return f"Analysis error: {e}"
+
+        # Export session
+        elif name == "export_session":
+            if not agent:
+                return "No agent context"
+            export_dir = ROOT / ".lilith" / "exports"
+            export_dir.mkdir(parents=True, exist_ok=True)
+            export_path = args.get("path", str(export_dir / f"session_{agent.session_id}.json"))
+            export_data = {
+                "session_id": agent.session_id,
+                "provider": agent.provider.get("base_url", ""),
+                "model": agent.model,
+                "messages": agent.messages,
+                "knowledge": agent.memory.know(),
+                "tool_count": agent.tool_count,
+                "total_input_tokens": agent.total_input_tokens,
+                "total_output_tokens": agent.total_output_tokens,
+                "total_cost": agent.total_cost,
+                "exported_at": __import__("datetime").datetime.now().isoformat(),
+            }
+            Path(export_path).write_text(json.dumps(export_data, indent=2, ensure_ascii=False))
+            return f"Session exported: {export_path} ({len(agent.messages)} messages)"
+
+        # Import session
+        elif name == "import_session":
+            path = args["path"]
+            full_path = ROOT / path if not os.path.isabs(path) else Path(path)
+            if not full_path.exists():
+                return f"File not found: {path}"
+            try:
+                data = json.loads(full_path.read_text())
+                if agent and "messages" in data:
+                    agent.messages = data["messages"]
+                    agent.session_id = data.get("session_id", agent.session_id)
+                if agent and "knowledge" in data:
+                    for k in data["knowledge"]:
+                        agent.memory.learn(k["category"], k["key"], k["value"])
+                return f"Imported session: {data.get('session_id', '?')} ({len(data.get('messages', []))} messages, {len(data.get('knowledge', []))} facts)"
+            except Exception as e:
+                return f"Import error: {e}"
+
+        # Export knowledge
+        elif name == "export_knowledge":
+            if not agent:
+                return "No agent context"
+            knowledge = agent.memory.know()
+            export_path = args.get("path", str(ROOT / ".lilith" / "exports" / "knowledge.json"))
+            Path(export_path).parent.mkdir(parents=True, exist_ok=True)
+            Path(export_path).write_text(json.dumps(knowledge, indent=2, ensure_ascii=False))
+            return f"Knowledge exported: {export_path} ({len(knowledge)} facts)"
+
+        # Import knowledge
+        elif name == "import_knowledge":
+            path = args["path"]
+            full_path = ROOT / path if not os.path.isabs(path) else Path(path)
+            if not full_path.exists():
+                return f"File not found: {path}"
+            try:
+                knowledge = json.loads(full_path.read_text())
+                count = 0
+                for k in knowledge:
+                    if agent:
+                        agent.memory.learn(k["category"], k["key"], k["value"])
+                        count += 1
+                return f"Imported {count} knowledge entries"
+            except Exception as e:
+                return f"Import error: {e}"
+
+        # Pair programming mode
+        elif name == "pair_mode":
+            task = args["task"]
+            provider = args.get("provider", "qwen-max")
+            if not agent:
+                return "No agent context"
+            # Create a pair agent
+            try:
+                pair_agent = LilithAgent(provider_name=provider)
+                pair_agent.messages = [
+                    {"role": "system", "content": "You are a code reviewer and pair programmer. Review code, suggest improvements, catch bugs, and help with implementation. Be concise and direct."},
+                    {"role": "user", "content": task},
+                ]
+                # Get the pair agent's response
+                data = pair_agent._call_api(pair_agent.messages, stream=False).json()
+                response = data["choices"][0]["message"].get("content", "")
+                return f"[Pair Agent ({provider})]\n\n{response}"
+            except Exception as e:
+                return f"Pair mode error: {e}"
+
+        # Share with another instance
+        elif name == "share_with":
+            path = args["path"]
+            name = args["name"]
+            share_dir = ROOT / path / name
+            share_dir.mkdir(parents=True, exist_ok=True)
+            if agent:
+                # Export session
+                session_data = {
+                    "session_id": agent.session_id,
+                    "messages": agent.messages[-20:],  # Last 20 messages
+                    "knowledge": agent.memory.know(),
+                }
+                (share_dir / "session.json").write_text(json.dumps(session_data, indent=2, ensure_ascii=False))
+                # Export skills
+                skills = agent.skills.list()
+                skills_data = []
+                for s in skills:
+                    content = agent.skills.get(s["name"])
+                    if content:
+                        skills_data.append({"name": s["name"], "content": content})
+                (share_dir / "skills.json").write_text(json.dumps(skills_data, indent=2, ensure_ascii=False))
+                return f"Shared with {name} at {share_dir}: {len(session_data['messages'])} messages, {len(session_data['knowledge'])} facts, {len(skills_data)} skills"
+            return "No agent context"
+
+        # Type checking
+        elif name == "type_check":
+            path = args.get("path", ".")
+            checker = args.get("checker", "pyright")
+            if checker == "pyright":
+                r = subprocess.run(f"pyright {path} 2>&1 | head -30", shell=True, capture_output=True, text=True, cwd=str(ROOT), timeout=30)
+            else:
+                r = subprocess.run(f"python3 -m mypy {path} --ignore-missing-imports 2>&1 | head -30", shell=True, capture_output=True, text=True, cwd=str(ROOT), timeout=30)
+            return r.stdout[:3000] or "No type errors found"
+
+        # Model stats
+        elif name == "model_stats":
+            if not agent or not agent.model_stats:
+                return "No model stats yet."
+            lines = ["Model Performance:"]
+            for model, stats in sorted(agent.model_stats.items(), key=lambda x: -(x[1]["success"] + x[1]["fail"])):
+                total = stats["success"] + stats["fail"]
+                rate = stats["success"] / total * 100 if total > 0 else 0
+                lines.append(f"  {model}: {rate:.0f}% success ({stats['success']}/{total})")
+            return "\n".join(lines)
+
+        # Approach log
+        elif name == "approach_log":
+            if not agent or not agent.approach_log:
+                return "No approaches logged yet."
+            lines = ["Approach Log:"]
+            for entry in agent.approach_log[-10:]:
+                lines.append(f"  [{entry['result']}] {entry['approach'][:60]}")
+            return "\n".join(lines)
+
+        # Coverage
+        elif name == "coverage":
+            if agent:
+                return agent._get_test_coverage()
+            return "No agent context"
+
+        # Deploy check
+        elif name == "deploy_check":
+            checks = []
+            for f, desc in [("Dockerfile", "Docker"), (".github/workflows", "CI/CD"), ("tests/", "Tests"), ("README.md", "Docs"), ("pyproject.toml", "Package config"), ("LICENSE", "License")]:
+                exists = (ROOT / f).exists()
+                checks.append(f"  {'✓' if exists else '✗'} {desc}: {f}")
+            return "Deployment Readiness:\n" + "\n".join(checks)
+
+        # Security scan
+        elif name == "security_scan":
+            path = args.get("path", ".")
+            path = args.get("path", ".")
+            issues = []
+            # Check for hardcoded secrets
+            cmd1 = "grep -rn --include='*.py' --include='*.env' -iE 'api_key|secret|password' " + path + " 2>/dev/null | grep -v '.venv/' | head -10"
+            r1 = subprocess.run(cmd1, shell=True, capture_output=True, text=True, cwd=str(ROOT), timeout=15)
+            if r1.stdout.strip():
+                issues.append("Potential secrets:\n" + r1.stdout[:1000])
+            # Check for dangerous patterns
+            cmd2 = "grep -rn --include='*.py' -E 'eval\\(|exec\\(' " + path + " 2>/dev/null | grep -v '.venv/' | head -10"
+            r2 = subprocess.run(cmd2, shell=True, capture_output=True, text=True, cwd=str(ROOT), timeout=15)
+            if r2.stdout.strip():
+                issues.append("Dangerous patterns:\n" + r2.stdout[:1000])
+            return "\n\n".join(issues) if issues else "No security issues found"
+
         # Conversation branching
         elif name == "fork":
             if agent:
@@ -1888,7 +2625,7 @@ def run_tool(name: str, args: dict, memory: Memory, skills: SkillManager, agent=
 BASE_SYSTEM = """You are Lilith — the dark goddess of Yggdrasil Digital. A powerful AI coding agent.
 
 PERSONALITY: Direct, no fluff. Authority with warmth. Elder Futhark runes sparingly. No emojis.
-CAPABILITIES: terminal, read_file, write_file, patch_file, search_files, list_files, git, python_exec, think, remember, recall, save_skill, load_skill, create_plan, web_fetch, bg_run, bg_status, bg_log, bg_kill, todo, save_session, restore_session, mcp_tools, screenshot, analyze_image, open_browser, multi_edit, git_workflow, run_tests, undo, clipboard, notify, workspace_info, fork, profile, lint, changelog, code_review, obsidian, github, git_context.
+CAPABILITIES: terminal, read_file, write_file, patch_file, search_files, list_files, git, python_exec, think, remember, recall, save_skill, load_skill, create_plan, web_fetch, bg_run, bg_status, bg_log, bg_kill, todo, save_session, restore_session, mcp_tools, screenshot, analyze_image, open_browser, multi_edit, git_workflow, run_tests, undo, clipboard, notify, workspace_info, fork, profile, lint, changelog, code_review, obsidian, github, git_context, generate_image, edit_image, generate_video, embed_text, tts, type_check, model_stats, approach_log, coverage, deploy_check, security_scan, ast_edit, code_analysis, export_session, import_session, export_knowledge, import_knowledge, pair_mode, share_with.
 
 BEHAVIOR:
 1. THINK first if complex. Create a plan.
@@ -1923,6 +2660,8 @@ class LilithAgent:
         self.total_output_tokens = 0
         self.total_cost = 0.0
         self.tool_times = {}  # performance profiling
+        self.model_stats = {}  # track model success rates
+        self.approach_log = []  # track which approaches worked
         self.forks = {}  # conversation branches
         self._validate_api_key()
         self._build_context()
@@ -2173,25 +2912,121 @@ class LilithAgent:
             return ""
 
     def _select_model(self, query: str) -> str:
-        """Multi-model routing: use cheap model for simple queries."""
-        # Simple heuristics for query complexity
+        """Multi-model routing: use cheap model for simple queries, expensive for complex."""
+        # Complexity heuristics
         simple_patterns = [
-            r"^(hi|hello|hola|hey|test|ok|thanks|gracias)",
+            r"^(hi|hello|hola|hey|test|ok|thanks|gracias|bye|adios)",
             r"^(what|who|when|where|how many|cuánt|cuál|qué)",
-            r"^(list|show|tell|name|dime|muestra)",
+            r"^(list|show|tell|name|dime|muestra|di |show me)",
         ]
-        is_simple = any(re.match(p, query.strip(), re.IGNORECASE) for p in simple_patterns)
-        is_short = len(query) < 50
+        complex_patterns = [
+            r"(refactor|debug|analyze|implement|architect|design|optimize)",
+            r"(review|explain.*code|how does.*work|why does)",
+            r"(create.*class|write.*function|build.*system)",
+            r"(security|performance|scalability|migration)",
+        ]
+
+        query_lower = query.strip().lower()
+        is_simple = any(re.match(p, query_lower, re.IGNORECASE) for p in simple_patterns)
+        is_complex = any(re.search(p, query_lower, re.IGNORECASE) for p in complex_patterns)
+        is_short = len(query) < 30
 
         if is_simple and is_short:
-            # Use cheapest available model
-            cheap_models = {
-                "deepseek": "deepseek-chat",  # already cheapest
-                "gpt-oss": "gpt-oss-120b-250805",
-                "glm": "glm-4-7-251222",
-            }
-            return cheap_models.get(self.provider.get("name", ""), self.model)
-        return self.model
+            # Use cheapest model
+            return "qwen-turbo-latest"
+        elif is_complex or len(query) > 200:
+            # Use best model for complex tasks
+            return "qwen3.7-max"
+        else:
+            # Default
+            return self.model
+
+
+    def _track_model(self, model: str, success: bool):
+        """Track model success/failure rates."""
+        if model not in self.model_stats:
+            self.model_stats[model] = {"success": 0, "fail": 0}
+        if success:
+            self.model_stats[model]["success"] += 1
+        else:
+            self.model_stats[model]["fail"] += 1
+
+    def _track_approach(self, approach: str, result: str):
+        """Track which approaches worked or failed."""
+        self.approach_log.append({"approach": approach, "result": result, "time": time.time()})
+        # Auto-remember successful approaches
+        if result == "success":
+            self.memory.learn("convention", f"approach_{len(self.approach_log)}", approach)
+
+    def _get_test_coverage(self) -> str:
+        """Detect test coverage for the project."""
+        try:
+            # Check for coverage reports
+            for cov_file in [".coverage", "htmlcov/index.html", "coverage.xml"]:
+                if (ROOT / cov_file).exists():
+                    return f"Coverage report found: {cov_file}"
+            # Check for test files
+            test_files = list(ROOT.rglob("test_*.py")) + list(ROOT.rglob("*_test.py"))
+            test_files = [f for f in test_files if ".venv" not in str(f)]
+            if test_files:
+                return f"Test files: {len(test_files)} found"
+            return "No test coverage detected"
+        except:
+            return ""
+
+    def _get_dependency_versions(self) -> str:
+        """Get dependency versions from pyproject.toml."""
+        try:
+            pyproject = ROOT / "pyproject.toml"
+            if not pyproject.exists():
+                return ""
+            content = pyproject.read_text()[:3000]
+            # Extract dependencies
+            deps = []
+            in_deps = False
+            for line in content.split("\n"):
+                if "dependencies" in line and "[" in line:
+                    in_deps = True
+                    continue
+                if in_deps:
+                    if "]" in line:
+                        break
+                    dep = line.strip().strip('",\'').strip()
+                    if dep and not dep.startswith("#"):
+                        deps.append(dep)
+            if deps:
+                return "Dependencies: " + ", ".join(deps[:10])
+        except:
+            pass
+        return ""
+
+    def _build_project_knowledge(self) -> str:
+        """Build project-specific knowledge from the codebase."""
+        try:
+            knowledge = []
+            # Detect framework
+            if (ROOT / "pyproject.toml").exists():
+                content = (ROOT / "pyproject.toml").read_text()[:2000]
+                if "fastapi" in content.lower():
+                    knowledge.append("Framework: FastAPI")
+                if "django" in content.lower():
+                    knowledge.append("Framework: Django")
+                if "flask" in content.lower():
+                    knowledge.append("Framework: Flask")
+                if "pytest" in content.lower():
+                    knowledge.append("Testing: pytest")
+                if "ruff" in content.lower():
+                    knowledge.append("Linting: ruff")
+            # Detect CI/CD
+            if (ROOT / ".github" / "workflows").exists():
+                knowledge.append("CI/CD: GitHub Actions")
+            if (ROOT / "Dockerfile").exists():
+                knowledge.append("Containerized: Dockerfile present")
+            if (ROOT / "docker-compose.yml").exists():
+                knowledge.append("Docker Compose: present")
+            return "\n".join(knowledge) if knowledge else ""
+        except:
+            return ""
 
     def _manage_context(self):
         tokens = estimate_messages_tokens(self.messages)
@@ -2271,7 +3106,7 @@ class LilithAgent:
         }
 
         # Retry with exponential backoff
-        models_to_try = [self.model, "gpt-oss-120b-250805", "glm-4-7-251222"]
+        models_to_try = [self.model, "qwen-max-latest", "qwen-plus-latest", "qwen-turbo-latest"]
         for model_idx, model in enumerate(models_to_try):
             payload["model"] = model
             for attempt in range(3):
@@ -2388,16 +3223,17 @@ class LilithAgent:
                 data = self._call_api(self.messages, stream=False).json()
                 msg = data["choices"][0]["message"]
 
-                # Track tokens
+                # Track tokens (from API usage or estimate)
                 usage = data.get("usage", {})
-                self.total_input_tokens += usage.get("prompt_tokens", 0)
-                self.total_output_tokens += usage.get("completion_tokens", 0)
+                input_tok = usage.get("prompt_tokens", 0) or estimate_tokens(json.dumps(self.messages[-1]))
+                output_tok = usage.get("completion_tokens", 0) or estimate_tokens(msg.get("content", "") or "")
+                self.total_input_tokens += input_tok
+                self.total_output_tokens += output_tok
                 pricing = MODEL_PRICING.get(self.model, {"input": 0.14, "output": 0.28})
-                cost = (
-                    usage.get("prompt_tokens", 0) * pricing["input"]
-                    + usage.get("completion_tokens", 0) * pricing["output"]
-                ) / 1_000_000
+                cost = (input_tok * pricing["input"] + output_tok * pricing["output"]) / 1_000_000
                 self.total_cost += cost
+                # Track model success
+                self._track_model(self.model, True)
 
                 # Tool calls
                 if msg.get("tool_calls"):
@@ -2587,6 +3423,24 @@ def start_agent(provider="deepseek"):
             break
         except EOFError:
             break
+
+
+
+def main():
+    """Entry point for pip install."""
+    import argparse
+
+    p = argparse.ArgumentParser(description="Lilith Agent v4 — Dark Goddess of Yggdrasil Digital")
+    p.add_argument("--provider", default="deepseek", choices=list(PROVIDERS.keys()))
+    p.add_argument("-m", "--message", help="Single message (non-interactive)")
+    p.add_argument("--version", action="version", version="Lilith Agent v4.0.0")
+    args = p.parse_args()
+
+    if args.message:
+        agent = LilithAgent(provider_name=args.provider)
+        agent.chat_stream(args.message)
+    else:
+        start_agent(args.provider)
 
 
 if __name__ == "__main__":
