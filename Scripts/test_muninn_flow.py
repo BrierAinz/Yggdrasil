@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Test exacto del flujo de MuninnMemory."""
+
 import json
-import sys
 from pathlib import Path
+
 
 # Replicar exactamente lo que hace MuninnMemory
 base_path = Path("D:/Proyectos/Yggdrasil/Asgard/Lilith/Core")
@@ -36,24 +37,18 @@ print()
 # Test request con este token exacto
 import urllib.request
 
+
 req = urllib.request.Request(
-    'http://127.0.0.1:8475/api/activate',
-    data=json.dumps({
-        'vault': 'docs',
-        'context': ['DAG Executor'],
-        'max_results': 3
-    }).encode(),
-    headers={
-        'Authorization': f'Bearer {token_docs}',
-        'Content-Type': 'application/json'
-    },
-    method='POST'
+    "http://127.0.0.1:8475/api/activate",
+    data=json.dumps({"vault": "docs", "context": ["DAG Executor"], "max_results": 3}).encode(),
+    headers={"Authorization": f"Bearer {token_docs}", "Content-Type": "application/json"},
+    method="POST",
 )
 
 try:
     with urllib.request.urlopen(req, timeout=10) as response:
         data = json.loads(response.read().decode())
-        activations = data.get('activations', [])
+        activations = data.get("activations", [])
         print(f"[OK] Resultados: {len(activations)}")
         for a in activations[:3]:
             print(f"  - {a.get('concept', 'N/A')}")

@@ -2,12 +2,16 @@
 """
 Verifica que el vault "docs" funcione correctamente.
 """
+
 import json
-import httpx
 from pathlib import Path
+
+import httpx
+
 
 MUNINN_URL = "http://127.0.0.1:8475/api"
 VAULT_NAME = "docs"
+
 
 def get_docs_token():
     config_path = Path("D:/Proyectos/Yggdrasil/Asgard/Lilith/Core/Config/muninn.json")
@@ -15,31 +19,32 @@ def get_docs_token():
         cfg = json.load(f)
         return cfg.get("vault_tokens", {}).get("docs", "")
 
+
 def main():
     print("=" * 60)
     print("VERIFICACION DEL VAULT 'docs'")
     print("=" * 60)
     print()
-    
+
     token = get_docs_token()
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     # Test query
     queries = [
         "DAG Executor",
         "sistema de memoria",
         "MuninnDB",
     ]
-    
+
     with httpx.Client(timeout=10.0) as client:
         for query in queries:
             print(f"Query: '{query}'")
             response = client.post(
                 f"{MUNINN_URL}/activate",
                 headers=headers,
-                json={"vault": VAULT_NAME, "context": [query], "max_results": 3}
+                json={"vault": VAULT_NAME, "context": [query], "max_results": 3},
             )
-            
+
             if response.status_code == 200:
                 data = response.json()
                 activations = data.get("activations", [])
@@ -49,10 +54,11 @@ def main():
             else:
                 print(f"  [ERROR] HTTP {response.status_code}")
             print()
-    
+
     print("=" * 60)
     print("Verificacion completa")
     print("=" * 60)
+
 
 if __name__ == "__main__":
     main()

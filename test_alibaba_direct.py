@@ -3,7 +3,6 @@
 Prueba directa de la API de Alibaba Cloud Token Plan
 """
 
-
 import httpx
 
 
@@ -11,33 +10,24 @@ def test_alibaba_direct(api_key, base_url):
     """Prueba directa de la API de Alibaba Cloud Token Plan"""
     print(f"🔍 Probando API de Alibaba Cloud Token Plan con clave: {api_key[:10]}...")
 
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
     payload = {
         "model": "qwen3.6-plus",
         "messages": [
-            {
-                "role": "system",
-                "content": "Eres una asistente útil que responde de forma concisa."
-            },
+            {"role": "system", "content": "Eres una asistente útil que responde de forma concisa."},
             {
                 "role": "user",
-                "content": "Hola, ¿cómo estás? Responde en español en una sola frase."
-            }
+                "content": "Hola, ¿cómo estás? Responde en español en una sola frase.",
+            },
         ],
         "max_tokens": 50,
-        "temperature": 0.7
+        "temperature": 0.7,
     }
 
     try:
         response = httpx.post(
-            f"{base_url}/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=60
+            f"{base_url}/chat/completions", headers=headers, json=payload, timeout=60
         )
 
         print(f"📶 Código de estado: {response.status_code}")
@@ -63,8 +53,10 @@ def test_alibaba_direct(api_key, base_url):
     except Exception as e:
         print(f"❌ Error de conexión: {e}")
         import traceback
+
         print(f"💡 Detalles: {traceback.format_exc()}")
         return False
+
 
 def main():
     """Función principal para probar las API Keys"""
@@ -73,10 +65,7 @@ def main():
     BASE_URL = "https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1"
 
     # API Keys para probar
-    api_keys = [
-        "sk-249706f9b63f4c8f917a4daf087ed840",
-        "sk-sp-D.DRPL.cn****BwNrNv9B9d75tG3"
-    ]
+    api_keys = ["sk-249706f9b63f4c8f917a4daf087ed840", "sk-sp-D.DRPL.cn****BwNrNv9B9d75tG3"]
 
     print("🚀 Iniciando pruebas de la API de Alibaba Cloud...")
     print("=" * 50)
@@ -97,8 +86,10 @@ def main():
 
     return success
 
+
 if __name__ == "__main__":
     success = main()
     exit_code = 0 if success else 1
     import sys
+
     sys.exit(exit_code)

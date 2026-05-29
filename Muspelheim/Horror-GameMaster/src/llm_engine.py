@@ -11,30 +11,34 @@ Horror GameMaster — BrierStudios
 from __future__ import annotations
 
 import json
-import time
-from enum import Enum
-from typing import Generator, Optional
+from enum import StrEnum
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field
+
+
+if TYPE_CHECKING:
+    from collections.abc import Generator
 
 
 # ── Enums ────────────────────────────────────────────────────────────
 
 
-class Provider(str, Enum):
+class Provider(StrEnum):
     OLLAMA = "ollama"
     OPENAI = "openai"
     BYTEPLUS = "byteplus"
 
 
-class NarratorVoice(str, Enum):
+class NarratorVoice(StrEnum):
     """The narrator's tone and style."""
-    DETACHED = "detached"        # Clinical, observational
-    INTIMATE = "intimate"        # Close, whispering, personal
-    OMNISCIENT = "omniscient"    # God-like, vast, indifferent
-    UNRELIABLE = "unreliable"    # Contradicts itself, untrustworthy
-    POETIC = "poetic"            # Lyrical, beautiful horror
-    CLINICAL = "clinical"        # Medical/scientific precision
+
+    DETACHED = "detached"  # Clinical, observational
+    INTIMATE = "intimate"  # Close, whispering, personal
+    OMNISCIENT = "omniscient"  # God-like, vast, indifferent
+    UNRELIABLE = "unreliable"  # Contradicts itself, untrustworthy
+    POETIC = "poetic"  # Lyrical, beautiful horror
+    CLINICAL = "clinical"  # Medical/scientific precision
 
 
 # ── Data Models ──────────────────────────────────────────────────────
@@ -42,6 +46,7 @@ class NarratorVoice(str, Enum):
 
 class LLMConfig(BaseModel):
     """Configuration for LLM provider."""
+
     provider: Provider = Provider.OLLAMA
     base_url: str = "http://localhost:11434"
     model: str = "horror-gamemaster"
@@ -55,6 +60,7 @@ class LLMConfig(BaseModel):
 
 class GenerationContext(BaseModel):
     """Context for a generation call."""
+
     scene_description: str = ""
     player_action: str = ""
     fear_profile: dict[str, float] = Field(default_factory=dict)
@@ -178,7 +184,7 @@ class LLMEngine:
             print(chunk, end="", flush=True)
     """
 
-    def __init__(self, config: Optional[LLMConfig] = None):
+    def __init__(self, config: LLMConfig | None = None):
         self.config = config or LLMConfig()
         self._client = None
 
@@ -188,9 +194,11 @@ class LLMEngine:
         if self._client is None:
             if self.config.provider == Provider.OLLAMA:
                 import requests
+
                 self._client = requests
             else:
                 from openai import OpenAI
+
                 self._client = OpenAI(
                     api_key=self.config.api_key or "ollama",
                     base_url=self.config.base_url,
@@ -271,7 +279,7 @@ class LLMEngine:
         self,
         context: GenerationContext,
         fear_type: str = "psychological",
-        narrator_voice: Optional[NarratorVoice] = None,
+        narrator_voice: NarratorVoice | None = None,
     ) -> Generator[str, None, None]:
         """
         Generate horror narrative as a stream of text chunks.
@@ -291,7 +299,7 @@ class LLMEngine:
         self,
         context: GenerationContext,
         fear_type: str = "psychological",
-        narrator_voice: Optional[NarratorVoice] = None,
+        narrator_voice: NarratorVoice | None = None,
     ) -> str:
         """Generate horror narrative as a complete string."""
         return "".join(self.generate(context, fear_type, narrator_voice))

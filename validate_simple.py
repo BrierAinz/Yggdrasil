@@ -12,14 +12,12 @@ from pathlib import Path
 # Configuración de logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('validation_simple.log'),
-        logging.StreamHandler()
-    ]
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("validation_simple.log"), logging.StreamHandler()],
 )
 
 logger = logging.getLogger(__name__)
+
 
 class SimpleArchitectureValidator:
     """Validador simplificado de la arquitectura de Yggdrasil"""
@@ -32,7 +30,7 @@ class SimpleArchitectureValidator:
         manifest_path = Path("yggdrasil_manifest.json")
 
         if manifest_path.exists():
-            with open(manifest_path, encoding='utf-8') as f:
+            with open(manifest_path, encoding="utf-8") as f:
                 return json.load(f)
 
         raise FileNotFoundError("Manifesto de arquitectura no encontrado")
@@ -82,11 +80,13 @@ class SimpleArchitectureValidator:
         permissions_path = Path("agent_permissions.json")
 
         if permissions_path.exists():
-            with open(permissions_path, encoding='utf-8') as f:
+            with open(permissions_path, encoding="utf-8") as f:
                 permissions = json.load(f)
 
             if "Lilith CLI" in permissions:
-                logger.info(f"✅ Permisos para Lilith CLI - {len(permissions['Lilith CLI'])} configurados")
+                logger.info(
+                    f"✅ Permisos para Lilith CLI - {len(permissions['Lilith CLI'])} configurados"
+                )
                 return True
             else:
                 logger.error("❌ Permisos para Lilith CLI no configurados")
@@ -140,17 +140,27 @@ class SimpleArchitectureValidator:
         print(f"⚙️  Configuración: {'OK' if config_valid else 'ERROR'}")
 
         # Estado general
-        overall_status = "OK" if len(invalid_modules) == 0 and len(invalid_agents) == 0 and permissions_valid and config_valid else "ERROR"
+        overall_status = (
+            "OK"
+            if len(invalid_modules) == 0
+            and len(invalid_agents) == 0
+            and permissions_valid
+            and config_valid
+            else "ERROR"
+        )
 
         print(f"\n📋 Estado general: {overall_status}")
 
         if overall_status == "OK":
             print("\n🎉 Arquitectura de Yggdrasil es válida y operativa!")
-            print("Nota: Los servicios (API Gateway, Model Orchestrator, Memory Service) se deben iniciar manualmente.")
+            print(
+                "Nota: Los servicios (API Gateway, Model Orchestrator, Memory Service) se deben iniciar manualmente."
+            )
         else:
             print("\n❌ Arquitectura con problemas - revisar errores")
 
         return overall_status == "OK"
+
 
 def main():
     """Función principal"""
@@ -162,9 +172,10 @@ def main():
         return success
 
     except Exception as e:
-        logger.error(f"Error en la validación: {e!s}")
+        logger.exception(f"Error en la validación: {e!s}")
         print(f"❌ Error: {e!s}")
         return False
+
 
 if __name__ == "__main__":
     success = main()

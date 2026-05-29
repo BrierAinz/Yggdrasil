@@ -8,8 +8,7 @@ Horror GameMaster — BrierStudios
 from __future__ import annotations
 
 import time
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
@@ -17,28 +16,28 @@ from pydantic import BaseModel, Field
 # ── Enums ────────────────────────────────────────────────────────────
 
 
-class TensionState(str, Enum):
-    CALM = "calm"                # 0.0 - 0.2
-    UNEASY = "uneasy"            # 0.2 - 0.4
-    TENSE = "tense"              # 0.4 - 0.6
-    TERRIFYING = "terrifying"    # 0.6 - 0.8
-    PEAK = "peak"                # 0.8 - 1.0
-    AFTERMATH = "aftermath"      # Post-scare cooldown
+class TensionState(StrEnum):
+    CALM = "calm"  # 0.0 - 0.2
+    UNEASY = "uneasy"  # 0.2 - 0.4
+    TENSE = "tense"  # 0.4 - 0.6
+    TERRIFYING = "terrifying"  # 0.6 - 0.8
+    PEAK = "peak"  # 0.8 - 1.0
+    AFTERMATH = "aftermath"  # Post-scare cooldown
 
 
-class CooldownState(str, Enum):
+class CooldownState(StrEnum):
     INACTIVE = "inactive"
     ACTIVE = "active"
     FADING = "fading"
     COMPLETE = "complete"
 
 
-class DecisionType(str, Enum):
-    ESCALATE = "escalate"          # Raise tension
-    MAINTAIN = "maintain"          # Keep current level
-    DE_ESCALATE = "de_escalate"    # Give player a break
+class DecisionType(StrEnum):
+    ESCALATE = "escalate"  # Raise tension
+    MAINTAIN = "maintain"  # Keep current level
+    DE_ESCALATE = "de_escalate"  # Give player a break
     FALSE_SECURITY = "false_security"  # Pretend to calm down
-    SCARE = "scare"               # Deliver the scare
+    SCARE = "scare"  # Deliver the scare
 
 
 # ── Data Models ──────────────────────────────────────────────────────
@@ -334,16 +333,96 @@ class TensionManager:
     def _build_escalation_ladder(self) -> list[EscalationLevel]:
         """Build the 10-level escalation ladder."""
         return [
-            EscalationLevel(level=1, name="Whispers", description="Subtle hints that something is wrong", min_events=2, tension_threshold=0.0, available_events=["environmental", "sound"], max_intensity=0.3),
-            EscalationLevel(level=2, name="Shadows", description="Things seen in peripheral vision", min_events=3, tension_threshold=0.1, available_events=["environmental", "sound", "foreshadowing"], max_intensity=0.4),
-            EscalationLevel(level=3, name="Unease", description="A growing sense of wrongness", min_events=3, tension_threshold=0.2, available_events=["foreshadowing", "entity_sighting", "sound"], max_intensity=0.5),
-            EscalationLevel(level=4, name="Pursuit", description="Something is following", min_events=3, tension_threshold=0.3, available_events=["entity_sighting", "escalation", "sound"], max_intensity=0.6),
-            EscalationLevel(level=5, name="Confrontation", description="Direct encounters", min_events=4, tension_threshold=0.4, available_events=["entity_sighting", "escalation", "jumpscare"], max_intensity=0.7),
-            EscalationLevel(level=6, name="Assault", description="Active threat", min_events=3, tension_threshold=0.5, available_events=["jumpscare", "escalation", "revelation"], max_intensity=0.8),
-            EscalationLevel(level=7, name="Revelation", description="The truth is revealed", min_events=3, tension_threshold=0.6, available_events=["revelation", "jumpscare", "escalation"], max_intensity=0.9),
-            EscalationLevel(level=8, name="Collapse", description="Reality breaks down", min_events=2, tension_threshold=0.7, available_events=["revelation", "jumpscare", "escalation"], max_intensity=1.0),
-            EscalationLevel(level=9, name="Abyss", description="The deepest horror", min_events=2, tension_threshold=0.8, available_events=["jumpscare", "revelation"], max_intensity=1.0),
-            EscalationLevel(level=10, name="Transcendence", description="Beyond horror", min_events=1, tension_threshold=0.9, available_events=["revelation"], max_intensity=1.0),
+            EscalationLevel(
+                level=1,
+                name="Whispers",
+                description="Subtle hints that something is wrong",
+                min_events=2,
+                tension_threshold=0.0,
+                available_events=["environmental", "sound"],
+                max_intensity=0.3,
+            ),
+            EscalationLevel(
+                level=2,
+                name="Shadows",
+                description="Things seen in peripheral vision",
+                min_events=3,
+                tension_threshold=0.1,
+                available_events=["environmental", "sound", "foreshadowing"],
+                max_intensity=0.4,
+            ),
+            EscalationLevel(
+                level=3,
+                name="Unease",
+                description="A growing sense of wrongness",
+                min_events=3,
+                tension_threshold=0.2,
+                available_events=["foreshadowing", "entity_sighting", "sound"],
+                max_intensity=0.5,
+            ),
+            EscalationLevel(
+                level=4,
+                name="Pursuit",
+                description="Something is following",
+                min_events=3,
+                tension_threshold=0.3,
+                available_events=["entity_sighting", "escalation", "sound"],
+                max_intensity=0.6,
+            ),
+            EscalationLevel(
+                level=5,
+                name="Confrontation",
+                description="Direct encounters",
+                min_events=4,
+                tension_threshold=0.4,
+                available_events=["entity_sighting", "escalation", "jumpscare"],
+                max_intensity=0.7,
+            ),
+            EscalationLevel(
+                level=6,
+                name="Assault",
+                description="Active threat",
+                min_events=3,
+                tension_threshold=0.5,
+                available_events=["jumpscare", "escalation", "revelation"],
+                max_intensity=0.8,
+            ),
+            EscalationLevel(
+                level=7,
+                name="Revelation",
+                description="The truth is revealed",
+                min_events=3,
+                tension_threshold=0.6,
+                available_events=["revelation", "jumpscare", "escalation"],
+                max_intensity=0.9,
+            ),
+            EscalationLevel(
+                level=8,
+                name="Collapse",
+                description="Reality breaks down",
+                min_events=2,
+                tension_threshold=0.7,
+                available_events=["revelation", "jumpscare", "escalation"],
+                max_intensity=1.0,
+            ),
+            EscalationLevel(
+                level=9,
+                name="Abyss",
+                description="The deepest horror",
+                min_events=2,
+                tension_threshold=0.8,
+                available_events=["jumpscare", "revelation"],
+                max_intensity=1.0,
+            ),
+            EscalationLevel(
+                level=10,
+                name="Transcendence",
+                description="Beyond horror",
+                min_events=1,
+                tension_threshold=0.9,
+                available_events=["revelation"],
+                max_intensity=1.0,
+            ),
         ]
 
     def _check_escalation(self) -> None:
@@ -352,10 +431,12 @@ class TensionManager:
         current = self._escalation_ladder[self.escalation_level - 1]
 
         # Escalate if enough events and tension is above threshold
-        if (self._events_at_level >= current.min_events
-                and self.tension >= current.tension_threshold
-                and self.escalation_level < 10
-                and self.cooldown.state == CooldownState.INACTIVE):
+        if (
+            self._events_at_level >= current.min_events
+            and self.tension >= current.tension_threshold
+            and self.escalation_level < 10
+            and self.cooldown.state == CooldownState.INACTIVE
+        ):
             self.escalation_level += 1
             self._events_at_level = 0
 
@@ -424,10 +505,12 @@ class TensionManager:
             )
 
         # False security opportunity
-        if (self.tension > 0.4
-                and not self.false_security.active
-                and self.pacing.total_events > 10
-                and self.pacing.total_events % 8 == 0):
+        if (
+            self.tension > 0.4
+            and not self.false_security.active
+            and self.pacing.total_events > 10
+            and self.pacing.total_events % 8 == 0
+        ):
             self.trigger_false_security()
             return TensionDecision(
                 decision=DecisionType.FALSE_SECURITY,

@@ -8,8 +8,7 @@ Horror GameMaster — BrierStudios
 from __future__ import annotations
 
 import time
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
@@ -17,20 +16,21 @@ from pydantic import BaseModel, Field
 # ── Enums ────────────────────────────────────────────────────────────
 
 
-class ThreadType(str, Enum):
+class ThreadType(StrEnum):
     """Types of narrative threads."""
-    MAIN = "main"              # Primary narrative arc
-    SUBPLOT = "subplot"        # Secondary narrative
-    ENTITY = "entity"          # Entity-specific thread
-    PERSONAL = "personal"      # Player-specific thread
+
+    MAIN = "main"  # Primary narrative arc
+    SUBPLOT = "subplot"  # Secondary narrative
+    ENTITY = "entity"  # Entity-specific thread
+    PERSONAL = "personal"  # Player-specific thread
     ENVIRONMENTAL = "environmental"  # Location-based thread
 
 
-class ForeshadowState(str, Enum):
-    PLANTED = "planted"        # Foreshadowing planted, not yet delivered
-    ECHOING = "echoing"        # Being referenced in current events
-    DELIVERED = "delivered"    # The foreshadowed event happened
-    EXPIRED = "expired"        # Too late, context lost
+class ForeshadowState(StrEnum):
+    PLANTED = "planted"  # Foreshadowing planted, not yet delivered
+    ECHOING = "echoing"  # Being referenced in current events
+    DELIVERED = "delivered"  # The foreshadowed event happened
+    EXPIRED = "expired"  # Too late, context lost
 
 
 # ── Data Models ──────────────────────────────────────────────────────
@@ -38,6 +38,7 @@ class ForeshadowState(str, Enum):
 
 class NarrativeThread(BaseModel):
     """A connected narrative thread (red thread)."""
+
     thread_id: str
     thread_type: ThreadType
     name: str
@@ -65,6 +66,7 @@ class NarrativeThread(BaseModel):
 
 class ForeshadowSeed(BaseModel):
     """A planted piece of foreshadowing."""
+
     seed_id: str
     description: str
     payoff_event: str  # What will happen when it pays off
@@ -78,8 +80,7 @@ class ForeshadowSeed(BaseModel):
     @property
     def is_ready(self) -> bool:
         return (
-            self.state == ForeshadowState.PLANTED
-            and self.events_since_plant >= self.deliver_after
+            self.state == ForeshadowState.PLANTED and self.events_since_plant >= self.deliver_after
         )
 
     @property
@@ -89,6 +90,7 @@ class ForeshadowSeed(BaseModel):
 
 class Callback(BaseModel):
     """A reference to a past event."""
+
     callback_id: str
     original_event: str
     reference_text: str  # How to reference it in narration
@@ -104,6 +106,7 @@ class Callback(BaseModel):
 
 class SessionContext(BaseModel):
     """Complete context for a game session."""
+
     session_id: str
     started_at: float = Field(default_factory=time.time)
     current_scene: str = ""
@@ -222,7 +225,9 @@ class ContextManager:
 
     # ── Callbacks ────────────────────────────────────────────────────
 
-    def add_callback(self, original_event: str, reference_text: str, emotional_weight: float = 0.5) -> Callback:
+    def add_callback(
+        self, original_event: str, reference_text: str, emotional_weight: float = 0.5
+    ) -> Callback:
         """Register a past event for future callbacks."""
         self._callback_counter += 1
         cb = Callback(
@@ -308,32 +313,44 @@ class ContextManager:
         # Foreshadowing ready to pay off
         ready = self.get_ready_foreshadows()
         if ready:
-            parts.append("FORESHADOWING READY:\n" + "\n".join(f"- {s.description} → {s.payoff_event}" for s in ready))
+            parts.append(
+                "FORESHADOWING READY:\n"
+                + "\n".join(f"- {s.description} → {s.payoff_event}" for s in ready)
+            )
 
         # Active foreshadowing
         active = self.get_active_foreshadows()
         if active:
-            parts.append("PLANTED FORESHADOWING (use soon):\n" + "\n".join(f"- {s.description}" for s in active))
+            parts.append(
+                "PLANTED FORESHADOWING (use soon):\n"
+                + "\n".join(f"- {s.description}" for s in active)
+            )
 
         # Callbacks
         callbacks = self.get_callbacks()
         if callbacks:
-            parts.append("CALLBACKS (reference these):\n" + "\n".join(f"- {c.reference_text}" for c in callbacks))
+            parts.append(
+                "CALLBACKS (reference these):\n"
+                + "\n".join(f"- {c.reference_text}" for c in callbacks)
+            )
 
         # Active threads
         threads = self.get_active_threads()
         if threads:
-            parts.append("ACTIVE NARRATIVE THREADS:\n" + "\n".join(
-                f"- [{t.thread_type.value}] {t.name}: {t.description} ({len(t.events)} events)"
-                for t in threads
-            ))
+            parts.append(
+                "ACTIVE NARRATIVE THREADS:\n"
+                + "\n".join(
+                    f"- [{t.thread_type.value}] {t.name}: {t.description} ({len(t.events)} events)"
+                    for t in threads
+                )
+            )
 
         # Stale threads
         stale = self.get_stale_threads()
         if stale:
-            parts.append("STALE THREADS (need attention):\n" + "\n".join(
-                f"- {t.name}" for t in stale
-            ))
+            parts.append(
+                "STALE THREADS (need attention):\n" + "\n".join(f"- {t.name}" for t in stale)
+            )
 
         # Entity encounters
         if self.session.entity_encounters:
@@ -342,7 +359,9 @@ class ContextManager:
 
         # Revelations
         if self.session.revelations:
-            parts.append("REVELATIONS SO FAR:\n" + "\n".join(f"- {r}" for r in self.session.revelations))
+            parts.append(
+                "REVELATIONS SO FAR:\n" + "\n".join(f"- {r}" for r in self.session.revelations)
+            )
 
         # Turn count
         parts.append(f"TURN: {self.session.turn_count}")
@@ -351,12 +370,18 @@ class ContextManager:
 
     # ── Auto-Generation ──────────────────────────────────────────────
 
-    def auto_seed_foreshadow(self, fear_type: str) -> Optional[ForeshadowSeed]:
+    def auto_seed_foreshadow(self, fear_type: str) -> ForeshadowSeed | None:
         """Automatically plant foreshadowing based on fear type."""
         templates = {
             "psychological": [
-                ("A mirror shows your reflection a half-second behind", "Your reflection steps out of the mirror"),
-                ("You hear your own voice from another room", "You meet yourself coming the other way"),
+                (
+                    "A mirror shows your reflection a half-second behind",
+                    "Your reflection steps out of the mirror",
+                ),
+                (
+                    "You hear your own voice from another room",
+                    "You meet yourself coming the other way",
+                ),
                 ("The clock skips forward by an hour", "You have no memory of the lost hour"),
             ],
             "darkness": [
@@ -366,18 +391,25 @@ class ContextManager:
             ],
             "paranoia": [
                 ("You notice a camera in the smoke detector", "Every room has been watching you"),
-                ("Your phone shows a call from your own number", "You have been calling yourself for weeks"),
+                (
+                    "Your phone shows a call from your own number",
+                    "You have been calling yourself for weeks",
+                ),
                 ("A stranger smiles at you on the street", "The stranger has your face"),
             ],
             "body_horror": [
                 ("A mole appears on your hand that was not there", "The mole is moving"),
-                ("Your reflection shows a scar you do not have", "The scar appears on your real face"),
+                (
+                    "Your reflection shows a scar you do not have",
+                    "The scar appears on your real face",
+                ),
                 ("You hear a second heartbeat", "The second heartbeat is coming from inside you"),
             ],
         }
 
         options = templates.get(fear_type, templates["psychological"])
         import random
+
         desc, payoff = random.choice(options)
         return self.plant_foreshadow(desc, payoff, fear_type)
 

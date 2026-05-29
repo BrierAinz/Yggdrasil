@@ -1,9 +1,8 @@
 """LLM provider abstraction for Yggdrasil."""
 
 import os
-import json
+from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Optional, Iterator
 
 import requests
 
@@ -11,12 +10,13 @@ import requests
 @dataclass
 class ProviderConfig:
     """Configuration for an LLM provider."""
+
     name: str
     base_url: str
     api_key: str
     model: str
     headers: dict = None
-    
+
     def __post_init__(self):
         if self.headers is None:
             self.headers = {}
@@ -56,10 +56,10 @@ def get_provider(name: str) -> ProviderConfig:
     """Get provider config by name."""
     if name not in PROVIDERS:
         raise ValueError(f"Unknown provider: {name}. Available: {list(PROVIDERS.keys())}")
-    
+
     p = PROVIDERS[name]
     api_key = os.getenv(p["env_key"], "") if p["env_key"] else ""
-    
+
     return ProviderConfig(
         name=name,
         base_url=p["base_url"],
@@ -71,7 +71,7 @@ def get_provider(name: str) -> ProviderConfig:
 def chat_completion(
     provider: ProviderConfig,
     messages: list[dict],
-    model: Optional[str] = None,
+    model: str | None = None,
     temperature: float = 0.7,
     max_tokens: int = 2048,
     stream: bool = False,
@@ -90,7 +90,7 @@ def chat_completion(
         "max_tokens": max_tokens,
         "stream": stream,
     }
-    
+
     resp = requests.post(url, headers=headers, json=payload, timeout=60)
     resp.raise_for_status()
     return resp.json()

@@ -14,14 +14,12 @@ from pathlib import Path
 # Configuración de logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('yggdrasil_architecture.log'),
-        logging.StreamHandler()
-    ]
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("yggdrasil_architecture.log"), logging.StreamHandler()],
 )
 
 logger = logging.getLogger(__name__)
+
 
 class YggdrasilArchitecture:
     """Clase principal para la arquitectura modular de Yggdrasil"""
@@ -38,7 +36,7 @@ class YggdrasilArchitecture:
         config_path = Path("yggdrasil_config.json")
 
         if config_path.exists():
-            with open(config_path, encoding='utf-8') as f:
+            with open(config_path, encoding="utf-8") as f:
                 return json.load(f)
 
         return self.default_config()
@@ -54,19 +52,28 @@ class YggdrasilArchitecture:
                 {"name": "lilith-api", "version": "1.0.0", "path": "Asgard/lilith-api"},
                 {"name": "lilith-cli", "version": "3.0.0", "path": "Asgard/lilith-cli"},
                 {"name": "lilith-bridge", "version": "1.0.0", "path": "Asgard/lilith-bridge"},
-                {"name": "lilith-orchestrator", "version": "1.0.0", "path": "Asgard/lilith-orchestrator"},
+                {
+                    "name": "lilith-orchestrator",
+                    "version": "1.0.0",
+                    "path": "Asgard/lilith-orchestrator",
+                },
                 {"name": "lilith-memory", "version": "1.0.0", "path": "Asgard/lilith-memory"},
                 {"name": "lilith-skills", "version": "1.0.0", "path": "Asgard/lilith-skills"},
-                {"name": "lilith-tools", "version": "1.0.0", "path": "Asgard/lilith-tools"}
+                {"name": "lilith-tools", "version": "1.0.0", "path": "Asgard/lilith-tools"},
             ],
             "agents": [
-                {"name": "Lilith CLI", "version": "3.0.0", "path": "lilith_cli.py", "permissions": ["read_files", "run_commands", "access_web"]}
+                {
+                    "name": "Lilith CLI",
+                    "version": "3.0.0",
+                    "path": "lilith_cli.py",
+                    "permissions": ["read_files", "run_commands", "access_web"],
+                }
             ],
             "services": [
                 {"name": "API Gateway", "port": 8000, "path": "Asgard/lilith-orchestrator/gateway"},
                 {"name": "Model Orchestrator", "port": 8001, "path": "Asgard/lilith-orchestrator"},
-                {"name": "Memory Service", "port": 8002, "path": "Asgard/lilith-memory"}
-            ]
+                {"name": "Memory Service", "port": 8002, "path": "Asgard/lilith-memory"},
+            ],
         }
 
     def load_permissions(self):
@@ -74,7 +81,7 @@ class YggdrasilArchitecture:
         permissions_path = Path("agent_permissions.json")
 
         if permissions_path.exists():
-            with open(permissions_path, encoding='utf-8') as f:
+            with open(permissions_path, encoding="utf-8") as f:
                 return json.load(f)
 
         return self.default_permissions()
@@ -86,28 +93,28 @@ class YggdrasilArchitecture:
                 "read_files": {
                     "allowed": False,
                     "description": "Acceso a archivos locales para lectura",
-                    "scope": "Limited to Yggdrasil project files"
+                    "scope": "Limited to Yggdrasil project files",
                 },
                 "run_commands": {
                     "allowed": False,
                     "description": "Ejecución de comandos del sistema",
-                    "scope": "Limited to project-related commands"
+                    "scope": "Limited to project-related commands",
                 },
                 "access_web": {
                     "allowed": False,
                     "description": "Conexión a servicios web",
-                    "scope": "API calls only"
+                    "scope": "API calls only",
                 },
                 "manage_content": {
                     "allowed": False,
                     "description": "Gestión de contenido en plataformas",
-                    "scope": "Social media and business websites"
+                    "scope": "Social media and business websites",
                 },
                 "computer_vision": {
                     "allowed": False,
                     "description": "Visión por computadora para lectura de imágenes",
-                    "scope": "Text extraction and object detection"
-                }
+                    "scope": "Text extraction and object detection",
+                },
             }
         }
 
@@ -152,12 +159,14 @@ class YggdrasilArchitecture:
         channels = []
 
         for service in self.config["services"]:
-            channels.append({
-                "name": f"{service['name']} API",
-                "type": "REST API",
-                "port": service["port"],
-                "path": service["path"]
-            })
+            channels.append(
+                {
+                    "name": f"{service['name']} API",
+                    "type": "REST API",
+                    "port": service["port"],
+                    "path": service["path"],
+                }
+            )
 
         return channels
 
@@ -166,21 +175,13 @@ class YggdrasilArchitecture:
         logger.info("Optimizando transmisión de datos...")
 
         optimizations = {
-            "compression": {
-                "enabled": True,
-                "algorithm": "gzip",
-                "level": 5
-            },
+            "compression": {"enabled": True, "algorithm": "gzip", "level": 5},
             "caching": {
                 "enabled": True,
                 "ttl": 300,  # 5 minutes
-                "max_size": "100MB"
+                "max_size": "100MB",
             },
-            "batching": {
-                "enabled": True,
-                "size": 10,
-                "timeout": 5
-            }
+            "batching": {"enabled": True, "size": 10, "timeout": 5},
         }
 
         return optimizations
@@ -201,11 +202,11 @@ class YggdrasilArchitecture:
                 "python_version": sys.version,
                 "platform": sys.platform,
                 "modules_compatible": self.validate_module_compatibility(),
-                "agents_integrated": self.validate_agent_integration()
-            }
+                "agents_integrated": self.validate_agent_integration(),
+            },
         }
 
-        with open("yggdrasil_manifest.json", 'w', encoding='utf-8') as f:
+        with open("yggdrasil_manifest.json", "w", encoding="utf-8") as f:
             json.dump(manifest, f, indent=2, ensure_ascii=False)
 
         logger.info("Manifesto generado: yggdrasil_manifest.json")
@@ -216,7 +217,9 @@ class YggdrasilArchitecture:
         manifest = self.create_component_manifest()
 
         report = {
-            "architecture_status": "Healthy" if manifest["compatibility"]["modules_compatible"] else "Broken",
+            "architecture_status": "Healthy"
+            if manifest["compatibility"]["modules_compatible"]
+            else "Broken",
             "total_modules": len(manifest["modules"]),
             "total_agents": len(manifest["agents"]),
             "total_services": len(manifest["services"]),
@@ -225,15 +228,12 @@ class YggdrasilArchitecture:
             "platform": manifest["compatibility"]["platform"],
             "data_transmission": manifest["data_transmission"],
             "modules": [
-                {
-                    "name": module["name"],
-                    "version": module["version"],
-                    "compatibility": "OK"
-                } for module in manifest["modules"]
-            ]
+                {"name": module["name"], "version": module["version"], "compatibility": "OK"}
+                for module in manifest["modules"]
+            ],
         }
 
-        with open("architecture_report.json", 'w', encoding='utf-8') as f:
+        with open("architecture_report.json", "w", encoding="utf-8") as f:
             json.dump(report, f, indent=2, ensure_ascii=False)
 
         logger.info("Informe de arquitectura generado: architecture_report.json")
@@ -252,10 +252,12 @@ class YggdrasilArchitecture:
         while True:
             try:
                 manifest = self.create_component_manifest()
-                logger.info("Arquitectura en estado: %s", manifest["compatibility"]["modules_compatible"])
+                logger.info(
+                    "Arquitectura en estado: %s", manifest["compatibility"]["modules_compatible"]
+                )
                 time.sleep(300)  # Check every 5 minutes
             except Exception as e:
-                logger.error("Error en monitoreo: %s", str(e))
+                logger.exception("Error en monitoreo: %s", str(e))
                 time.sleep(60)
 
     def generate_system_requirements(self):
@@ -272,30 +274,29 @@ class YggdrasilArchitecture:
                     "opencv-python>=4.5.0",
                     "numpy>=1.20.0",
                     "pandas>=1.3.0",
-                    "matplotlib>=3.4.0"
-                ]
+                    "matplotlib>=3.4.0",
+                ],
             },
             "system": {
                 "os": ["Windows 10+", "macOS 10.15+", "Linux"],
                 "memory": "4GB RAM minimum, 8GB recommended",
                 "storage": "10GB available disk space",
-                "network": "Internet connection for API calls"
+                "network": "Internet connection for API calls",
             },
-            "ports": [
-                8000, 8001, 8002
-            ],
+            "ports": [8000, 8001, 8002],
             "permissions": [
                 "Read/write access to project files",
                 "Network connectivity",
-                "Process execution permissions"
-            ]
+                "Process execution permissions",
+            ],
         }
 
-        with open("system_requirements.json", 'w', encoding='utf-8') as f:
+        with open("system_requirements.json", "w", encoding="utf-8") as f:
             json.dump(requirements, f, indent=2, ensure_ascii=False)
 
         logger.info("Requisitos del sistema generados: system_requirements.json")
         return requirements
+
 
 def main():
     """Función principal para la transformación de Yggdrasil"""
@@ -309,9 +310,9 @@ def main():
         return False
 
     # Generar manifesto y reportes
-    manifest = architecture.create_component_manifest()
+    architecture.create_component_manifest()
     report = architecture.generate_architecture_report()
-    requirements = architecture.generate_system_requirements()
+    architecture.generate_system_requirements()
 
     logger.info("Transformación completada con éxito!")
 
@@ -325,6 +326,7 @@ def main():
     print(f"📦 Platform: {report['platform']}")
 
     return True
+
 
 if __name__ == "__main__":
     main()

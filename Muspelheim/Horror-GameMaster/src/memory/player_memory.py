@@ -10,18 +10,17 @@ from __future__ import annotations
 import json
 import sqlite3
 import time
-from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
-from typing import Optional, Sequence
 
 import numpy as np
 from pydantic import BaseModel, Field
 
+
 # ── Enums ────────────────────────────────────────────────────────────
 
 
-class FearDimension(str, Enum):
+class FearDimension(StrEnum):
     """The seven fundamental fear dimensions the engine tracks."""
 
     DARKNESS = "darkness"
@@ -33,7 +32,7 @@ class FearDimension(str, Enum):
     LOSS_OF_CONTROL = "loss_of_control"
 
 
-class ActionType(str, Enum):
+class ActionType(StrEnum):
     """High-level categories of player actions."""
 
     MOVE = "move"
@@ -47,7 +46,7 @@ class ActionType(str, Enum):
     PANIC = "panic"
 
 
-class EventCategory(str, Enum):
+class EventCategory(StrEnum):
     """Categories of game events for embedding and retrieval."""
 
     SCENE_DESCRIPTION = "scene_description"
@@ -97,9 +96,7 @@ class FearFingerprint(BaseModel):
 
     def to_vector(self) -> np.ndarray:
         """Convert to a 7-dim numpy vector for similarity computation."""
-        return np.array(
-            [self.get(d) for d in FearDimension], dtype=np.float32
-        )
+        return np.array([self.get(d) for d in FearDimension], dtype=np.float32)
 
 
 class ResponsePattern(BaseModel):
@@ -167,7 +164,7 @@ class GameEvent(BaseModel):
     timestamp: float = Field(default_factory=time.time)
     player_action: str = ""
     narrative_response: str = ""
-    embedding_id: Optional[str] = None
+    embedding_id: str | None = None
 
 
 class SessionMemory(BaseModel):
@@ -175,10 +172,10 @@ class SessionMemory(BaseModel):
 
     session_id: str
     started_at: float = Field(default_factory=time.time)
-    ended_at: Optional[float] = None
+    ended_at: float | None = None
     events: list[GameEvent] = []
-    fear_snapshot: Optional[FearFingerprint] = None
-    dominant_fear_at_end: Optional[FearDimension] = None
+    fear_snapshot: FearFingerprint | None = None
+    dominant_fear_at_end: FearDimension | None = None
     event_count: int = 0
     peak_intensity: float = 0.0
 
@@ -192,9 +189,7 @@ class SessionMemory(BaseModel):
         if self.events:
             self.dominant_fear_at_end = max(
                 FearDimension,
-                key=lambda d: sum(
-                    1 for e in self.events if d in e.fear_types
-                ),
+                key=lambda d: sum(1 for e in self.events if d in e.fear_types),
             )
 
 
@@ -214,9 +209,7 @@ class PlayerFearProfile(BaseModel):
     player_id: str
     fingerprint: FearFingerprint = Field(default_factory=FearFingerprint)
     habituation: dict[FearDimension, HabituationTracker] = Field(
-        default_factory=lambda: {
-            d: HabituationTracker(fear_type=d) for d in FearDimension
-        }
+        default_factory=lambda: {d: HabituationTracker(fear_type=d) for d in FearDimension}
     )
     response_history: list[ResponsePattern] = []
     sessions: list[SessionMemory] = []
@@ -257,19 +250,11 @@ class PlayerFearProfile(BaseModel):
 
     def get_fresh_fears(self) -> list[FearDimension]:
         """Return fears that the player has NOT habituated to."""
-        return [
-            d
-            for d in FearDimension
-            if not self.habituation[d].should_escalate()
-        ]
+        return [d for d in FearDimension if not self.habituation[d].should_escalate()]
 
     def get_stale_fears(self) -> list[FearDimension]:
         """Return fears the player has habituated to (needs escalation)."""
-        return [
-            d
-            for d in FearDimension
-            if self.habituation[d].should_escalate()
-        ]
+        return [d for d in FearDimension if self.habituation[d].should_escalate()]
 
 
 # ── Store ────────────────────────────────────────────────────────────
@@ -309,12 +294,8 @@ class PlayerMemoryStore:
                     FOREIGN KEY (player_id) REFERENCES players(player_id)
                 )"""
             )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_events_player ON events(player_id)"
-            )
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_events_session ON events(session_id)"
-            )
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_events_player ON events(player_id)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_events_session ON events(session_id)")
             conn.commit()
 
     def save_profile(self, profile: PlayerFearProfile) -> None:
@@ -325,7 +306,7 @@ class PlayerMemoryStore:
             )
             conn.commit()
 
-    def load_profile(self, player_id: str) -> Optional[PlayerFearProfile]:
+    def load_profile(self, player_id: str) -> PlayerFearProfile | None:
         with sqlite3.connect(self.db_path) as conn:
             row = conn.execute(
                 "SELECT profile_json FROM players WHERE player_id = ?",
@@ -363,9 +344,7 @@ class PlayerMemoryStore:
             )
             conn.commit()
 
-    def get_recent_events(
-        self, player_id: str, limit: int = 20
-    ) -> list[GameEvent]:
+    def get_recent_events(self, player_id: str, limit: int = 20) -> list[GameEvent]:
         with sqlite3.connect(self.db_path) as conn:
             rows = conn.execute(
                 """SELECT event_id, category, description, fear_types,

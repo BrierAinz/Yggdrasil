@@ -5,8 +5,12 @@ Rotates between models to maximize token usage.
 Stops when ALL models are exhausted.
 """
 
+import json
+import os
+import time
+
 from openai import OpenAI
-import json, time, sys, os
+
 
 client = OpenAI(
     api_key="ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113",
@@ -18,12 +22,12 @@ BASE = "/home/brierainz/Proyectos/Yggdrasil/Muspelheim/Horror-GameMaster/data"
 OUTFILE = f"{BASE}/dataset_generated.jsonl"
 
 MODELS = [
-    "seed-2-0-mini-260428",       # 500K tokens, cheapest
-    "seed-2-0-lite-260428",       # 495K tokens
-    "seed-2-0-pro-260328",        # 499K tokens
-    "seed-2-0-code-preview-260328", # 500K tokens
-    "seed-1-8-251228",            # 500K tokens
-    "deepseek-v3-2-251201",       # 500K tokens
+    "seed-2-0-mini-260428",  # 500K tokens, cheapest
+    "seed-2-0-lite-260428",  # 495K tokens
+    "seed-2-0-pro-260328",  # 499K tokens
+    "seed-2-0-code-preview-260328",  # 500K tokens
+    "seed-1-8-251228",  # 500K tokens
+    "deepseek-v3-2-251201",  # 500K tokens
 ]
 
 # Track which models are exhausted
@@ -46,32 +50,81 @@ print(f"Starting with {len(seen)} existing entries", flush=True)
 print(f"Models: {len(MODELS)}", flush=True)
 
 FEAR_TYPES = [
-    "psychological", "darkness", "isolation", "body_horror",
-    "paranoia", "loss_of_control", "jumpscare", "false_security",
+    "psychological",
+    "darkness",
+    "isolation",
+    "body_horror",
+    "paranoia",
+    "loss_of_control",
+    "jumpscare",
+    "false_security",
 ]
 
 ENTITY_TYPES = [
-    "lovecraftian", "junji_ito", "unknown", "flesh", "shadow",
-    "mimic", "memetic", "temporal", "geometric", "nature",
-    "parasitic", "recursive",
+    "lovecraftian",
+    "junji_ito",
+    "unknown",
+    "flesh",
+    "shadow",
+    "mimic",
+    "memetic",
+    "temporal",
+    "geometric",
+    "nature",
+    "parasitic",
+    "recursive",
 ]
 
 SCENARIOS = [
-    "a subway tunnel at 3am", "a parking garage", "a laundromat",
-    "a public library after hours", "a swimming pool", "a cruise ship",
-    "a shopping mall at night", "a factory", "a courtroom",
-    "a church confessional", "a morgue", "a greenhouse",
-    "a rooftop", "an elevator", "a sewer system",
-    "a lighthouse", "a submarine", "a space station",
-    "an abandoned theater", "a mirror maze", "an infinite library",
-    "a corrupted garden", "a frozen lake", "a mine shaft",
-    "a radio tower", "a barn", "a silo", "a phone booth",
-    "a bridge", "a tunnel", "a well", "a clock tower",
-    "a prison cell", "a hospital ward", "a school gymnasium",
-    "a server room", "a boiler room", "a cathedral", "a catacomb",
-    "a train station", "a cemetery", "a carnival", "a warehouse",
-    "a hotel lobby", "a restaurant kitchen", "a bank vault",
-    "a planetarium", "a greenhouse", "a greenhouse",
+    "a subway tunnel at 3am",
+    "a parking garage",
+    "a laundromat",
+    "a public library after hours",
+    "a swimming pool",
+    "a cruise ship",
+    "a shopping mall at night",
+    "a factory",
+    "a courtroom",
+    "a church confessional",
+    "a morgue",
+    "a greenhouse",
+    "a rooftop",
+    "an elevator",
+    "a sewer system",
+    "a lighthouse",
+    "a submarine",
+    "a space station",
+    "an abandoned theater",
+    "a mirror maze",
+    "an infinite library",
+    "a corrupted garden",
+    "a frozen lake",
+    "a mine shaft",
+    "a radio tower",
+    "a barn",
+    "a silo",
+    "a phone booth",
+    "a bridge",
+    "a tunnel",
+    "a well",
+    "a clock tower",
+    "a prison cell",
+    "a hospital ward",
+    "a school gymnasium",
+    "a server room",
+    "a boiler room",
+    "a cathedral",
+    "a catacomb",
+    "a train station",
+    "a cemetery",
+    "a carnival",
+    "a warehouse",
+    "a hotel lobby",
+    "a restaurant kitchen",
+    "a bank vault",
+    "a planetarium",
+    "a greenhouse",
+    "a greenhouse",
 ]
 
 total_new = 0
@@ -79,7 +132,7 @@ total_calls = 0
 consecutive_errors = 0
 batch_num = 0
 
-print(f"Generating until all models exhausted...", flush=True)
+print("Generating until all models exhausted...", flush=True)
 print("", flush=True)
 
 outf = open(OUTFILE, "a")
@@ -100,7 +153,7 @@ while len(exhausted) < len(MODELS):
     if batch_num % 4 == 0:
         etype = ENTITY_TYPES[batch_num % len(ENTITY_TYPES)]
         prompt = (
-            f"Generate 3 horror ENTITY entries. Type: \"{etype}\". "
+            f'Generate 3 horror ENTITY entries. Type: "{etype}". '
             f"Setting: {scenario}. "
             "JSON: instruction, input, output, fear_type. "
             "output=150-300 words: appearance, behavior, origin, horror, encounter. "
@@ -109,7 +162,7 @@ while len(exhausted) < len(MODELS):
         )
     else:
         prompt = (
-            f"Generate 5 horror entries. Fear: \"{ft}\". "
+            f'Generate 5 horror entries. Fear: "{ft}". '
             f"Setting: {scenario}. "
             "JSON: instruction, input, output, fear_type. "
             "output=100-250 words second-person horror narration. "
@@ -152,7 +205,11 @@ while len(exhausted) < len(MODELS):
         consecutive_errors = 0
 
         # Short model name for display
-        short = model.replace("seed-2-0-", "s20-").replace("seed-1-8-", "s18-").replace("deepseek-v3-2-", "ds3-")
+        short = (
+            model.replace("seed-2-0-", "s20-")
+            .replace("seed-1-8-", "s18-")
+            .replace("deepseek-v3-2-", "ds3-")
+        )
 
         print(
             f"#{total_calls:3d} {short:20s} {ft:18s} {scenario:22s} "
@@ -178,17 +235,17 @@ while len(exhausted) < len(MODELS):
             time.sleep(5)
 
         if consecutive_errors >= len(MODELS) * 2:
-            print(f"All models failing. Stopping.", flush=True)
+            print("All models failing. Stopping.", flush=True)
             break
 
 outf.close()
 
 # Final stats
-print(f"\n{'='*60}", flush=True)
-print(f"GENERATION COMPLETE", flush=True)
+print(f"\n{'=' * 60}", flush=True)
+print("GENERATION COMPLETE", flush=True)
 print(f"  Total new entries: {total_new}", flush=True)
 print(f"  Total unique entries: {len(seen)}", flush=True)
 print(f"  Total API calls: {total_calls}", flush=True)
 print(f"  Models exhausted: {len(exhausted)}/{len(MODELS)}", flush=True)
 print(f"  Output: {OUTFILE}", flush=True)
-print(f"{'='*60}", flush=True)
+print(f"{'=' * 60}", flush=True)

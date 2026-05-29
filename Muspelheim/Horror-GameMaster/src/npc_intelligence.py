@@ -9,8 +9,7 @@ from __future__ import annotations
 
 import random
 import time
-from enum import Enum
-from typing import Optional
+from enum import StrEnum
 
 from pydantic import BaseModel, Field
 
@@ -18,39 +17,42 @@ from pydantic import BaseModel, Field
 # ── Enums ────────────────────────────────────────────────────────────
 
 
-class NPCRole(str, Enum):
+class NPCRole(StrEnum):
     """NPC role types."""
-    ALLY = "ally"                  # Helpful, trustworthy (or is it?)
-    SUSPECT = "suspect"            # Possibly untrustworthy
-    HOSTILE = "hostile"            # Actively dangerous
-    NEUTRAL = "neutral"            # Ambiguous intent
-    MIMIC = "mimic"                # Not what it appears
-    GUIDE = "guide"                # Leads the player (to safety or trap)
-    VICTIM = "victim"              # Needs help (or pretends to)
-    GUARDIAN = "guardian"          # Protects (or controls)
-    ECHO = "echo"                  # A copy of the player
+
+    ALLY = "ally"  # Helpful, trustworthy (or is it?)
+    SUSPECT = "suspect"  # Possibly untrustworthy
+    HOSTILE = "hostile"  # Actively dangerous
+    NEUTRAL = "neutral"  # Ambiguous intent
+    MIMIC = "mimic"  # Not what it appears
+    GUIDE = "guide"  # Leads the player (to safety or trap)
+    VICTIM = "victim"  # Needs help (or pretends to)
+    GUARDIAN = "guardian"  # Protects (or controls)
+    ECHO = "echo"  # A copy of the player
 
 
-class TrustLevel(str, Enum):
+class TrustLevel(StrEnum):
     """Player's trust in an NPC."""
-    ABSOLUTE = "absolute"          # Complete trust
-    HIGH = "high"                  # Mostly trusted
-    CAUTIOUS = "cautious"          # Some doubt
-    DISTRUSTFUL = "distrustful"    # Significant doubt
-    HOSTILE = "hostile"            # Active distrust
-    UNKNOWN = "unknown"            # No data yet
+
+    ABSOLUTE = "absolute"  # Complete trust
+    HIGH = "high"  # Mostly trusted
+    CAUTIOUS = "cautious"  # Some doubt
+    DISTRUSTFUL = "distrustful"  # Significant doubt
+    HOSTILE = "hostile"  # Active distrust
+    UNKNOWN = "unknown"  # No data yet
 
 
-class NPCBehavior(str, Enum):
+class NPCBehavior(StrEnum):
     """NPC behavior modes."""
-    HELPFUL = "helpful"            # Provides useful information
-    MISLEADING = "misleading"      # Gives wrong information
-    EVASIVE = "evasive"            # Avoids direct answers
-    MENACING = "menacing"          # Subtly threatening
-    MIMICKING = "mimicking"        # Copies player behavior
-    LEARNING = "learning"          # Observing and adapting
-    BREAKING = "breaking"          # Losing composure
-    REVEALING = "revealing"        # Showing true nature
+
+    HELPFUL = "helpful"  # Provides useful information
+    MISLEADING = "misleading"  # Gives wrong information
+    EVASIVE = "evasive"  # Avoids direct answers
+    MENACING = "menacing"  # Subtly threatening
+    MIMICKING = "mimicking"  # Copies player behavior
+    LEARNING = "learning"  # Observing and adapting
+    BREAKING = "breaking"  # Losing composure
+    REVEALING = "revealing"  # Showing true nature
 
 
 # ── Data Models ──────────────────────────────────────────────────────
@@ -58,6 +60,7 @@ class NPCBehavior(str, Enum):
 
 class NPCMemory(BaseModel):
     """What an NPC remembers about the player."""
+
     interactions: list[str] = Field(default_factory=list)
     player_choices: list[str] = Field(default_factory=list)
     player_fears: list[str] = Field(default_factory=list)
@@ -72,6 +75,7 @@ class NPCMemory(BaseModel):
 
 class NPCProfile(BaseModel):
     """A complete NPC profile."""
+
     npc_id: str
     name: str
     role: NPCRole
@@ -103,6 +107,7 @@ class NPCProfile(BaseModel):
 
 class Doppelganger(BaseModel):
     """A doppelganger NPC that copies the player."""
+
     npc_id: str
     name: str = "You"  # Same name as player
     accuracy: float = 0.5  # How well it copies (0 = terrible, 1 = perfect)
@@ -135,6 +140,7 @@ class Doppelganger(BaseModel):
 
 class TrustSystem(BaseModel):
     """Tracks trust between player and all NPCs."""
+
     npc_trust: dict[str, TrustLevel] = Field(default_factory=dict)
     betrayals: int = 0
     correct_guesses: int = 0
@@ -161,7 +167,9 @@ class TrustSystem(BaseModel):
         if self.betrayals == 0 and self.correct_guesses == 0:
             return 0.3  # Default mild paranoia
         betrayal_factor = min(1.0, self.betrayals * 0.2)
-        accuracy_factor = 1.0 - (self.correct_guesses / max(1, self.correct_guesses + self.wrong_guesses))
+        accuracy_factor = 1.0 - (
+            self.correct_guesses / max(1, self.correct_guesses + self.wrong_guesses)
+        )
         return max(0.0, min(1.0, (betrayal_factor + accuracy_factor) / 2))
 
 
@@ -181,7 +189,7 @@ class NPCIntelligence:
     def __init__(self):
         self.npcs: dict[str, NPCProfile] = {}
         self.trust_system = TrustSystem()
-        self.doppelganger: Optional[Doppelganger] = None
+        self.doppelganger: Doppelganger | None = None
         self._npc_counter = 0
 
     # ── NPC Creation ─────────────────────────────────────────────────
@@ -287,7 +295,7 @@ class NPCIntelligence:
                 f'{npc.name}: "I can help you. I know this place. Follow me."',
                 f'{npc.name}: "Be careful. There\'s something in the next room."',
                 f'{npc.name}: "I\'ve been here before. I know the way out."',
-                f'{npc.name}: "Take this. You\'ll need it where you\'re going."',
+                f"{npc.name}: \"Take this. You'll need it where you're going.\"",
             ],
             NPCBehavior.MISLEADING: [
                 f'{npc.name}: "It\'s safe this way. Trust me."',
@@ -296,7 +304,7 @@ class NPCIntelligence:
                 f'{npc.name}: "The exit is through that door. I\'m sure of it."',
             ],
             NPCBehavior.EVASIVE: [
-                f'{npc.name}: "I... I don\'t remember. It\'s hard to think here."',
+                f"{npc.name}: \"I... I don't remember. It's hard to think here.\"",
                 f'{npc.name}: "Why do you want to know? What does it matter?"',
                 f'{npc.name}: "I don\'t want to talk about that. Not here. Not now."',
                 f'{npc.name}: "You ask too many questions. Some answers are worse than silence."',
@@ -311,22 +319,22 @@ class NPCIntelligence:
                 f'{npc.name}: "{player_says}" *They repeat your exact words, slightly delayed*',
                 f'{npc.name}: "I was just thinking the same thing. The exact same thing."',
                 f'{npc.name}: "I know how you feel. I feel it too. The same way."',
-                f'{npc.name}: *They mirror your posture, your gestures, your breathing*',
+                f"{npc.name}: *They mirror your posture, your gestures, your breathing*",
             ],
             NPCBehavior.LEARNING: [
                 f'{npc.name}: "Interesting. You chose to go left. Why left?"',
-                f'{npc.name}: "You\'re afraid of the dark, aren\'t you? I can tell."',
+                f"{npc.name}: \"You're afraid of the dark, aren't you? I can tell.\"",
                 f'{npc.name}: "Tell me about yourself. I want to understand."',
                 f'{npc.name}: "You keep checking behind you. What do you think is there?"',
             ],
             NPCBehavior.BREAKING: [
-                f'{npc.name}: "I can\'t — I can\'t keep — the walls are — I\'m fine. I\'m fine."',
+                f"{npc.name}: \"I can't — I can't keep — the walls are — I'm fine. I'm fine.\"",
                 f'{npc.name}: "Do you hear it too? Please tell me you hear it too."',
-                f'{npc.name}: *Their face contorts for a moment, then resets to a smile*',
+                f"{npc.name}: *Their face contorts for a moment, then resets to a smile*",
                 f'{npc.name}: "I don\'t know how much longer I can pretend this is normal."',
             ],
             NPCBehavior.REVEALING: [
-                f'{npc.name}: "I\'m not what you think I am. But I\'m trying to help."',
+                f"{npc.name}: \"I'm not what you think I am. But I'm trying to help.\"",
                 f'{npc.name}: "I\'ve been here since before you arrived. Since before the building."',
                 f'{npc.name}: "Look at me. Really look. Do I look human to you?"',
                 f'{npc.name}: "I am the building. And you are inside me."',
@@ -346,7 +354,8 @@ class NPCIntelligence:
     def _make_aware(self, template: str, npc: NPCProfile) -> str:
         """Modify dialogue to show NPC awareness of player."""
         aware_additions = [
-            template + f" *They know about your fear of {random.choice(['darkness', 'being alone', 'the unknown', 'losing control'])}*",
+            template
+            + f" *They know about your fear of {random.choice(['darkness', 'being alone', 'the unknown', 'losing control'])}*",
             template + " *They smile as if they know something you don't*",
         ]
         return random.choice(aware_additions)
@@ -407,7 +416,7 @@ class NPCIntelligence:
 
     # ── Doppelganger Progression ─────────────────────────────────────
 
-    def advance_doppelganger(self) -> Optional[str]:
+    def advance_doppelganger(self) -> str | None:
         """Advance the doppelganger's progression."""
         if not self.doppelganger:
             return None
@@ -467,7 +476,7 @@ class NPCIntelligence:
         """Get all NPCs."""
         return list(self.npcs.values())
 
-    def get_npc_by_name(self, name: str) -> Optional[NPCProfile]:
+    def get_npc_by_name(self, name: str) -> NPCProfile | None:
         """Get an NPC by name."""
         for npc in self.npcs.values():
             if npc.name.lower() == name.lower():
@@ -501,5 +510,7 @@ class NPCIntelligence:
                 "active": self.doppelganger is not None,
                 "stage": self.doppelganger.stage if self.doppelganger else 0,
                 "accuracy": self.doppelganger.accuracy if self.doppelganger else 0,
-            } if self.doppelganger else None,
+            }
+            if self.doppelganger
+            else None,
         }

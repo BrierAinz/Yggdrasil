@@ -13,41 +13,42 @@ Architecture:
 Target: RTX 3060 12GB, fully offline, no cloud APIs.
 """
 
-from .player_memory import (
-    PlayerMemoryStore,
-    FearFingerprint,
-    ResponsePattern,
-    HabituationTracker,
-    SessionMemory,
-    PlayerFearProfile,
-    GameEvent,
-    MemoryQueryResult,
-    FearDimension,
-    ActionType,
-    EventCategory,
-)
 from .embeddings import (
-    EmbeddingPipeline,
     EmbeddingConfig,
+    EmbeddingPipeline,
     get_embedding_pipeline,
 )
+from .player_memory import (
+    ActionType,
+    EventCategory,
+    FearDimension,
+    FearFingerprint,
+    GameEvent,
+    HabituationTracker,
+    MemoryQueryResult,
+    PlayerFearProfile,
+    PlayerMemoryStore,
+    ResponsePattern,
+    SessionMemory,
+)
+
 
 __all__ = [
-    # Store
-    "PlayerMemoryStore",
-    # Models
-    "FearFingerprint",
-    "ResponsePattern",
-    "HabituationTracker",
-    "SessionMemory",
-    "PlayerFearProfile",
-    "GameEvent",
-    "MemoryQueryResult",
-    "FearDimension",
     "ActionType",
-    "EventCategory",
+    "EmbeddingConfig",
     # Embeddings
     "EmbeddingPipeline",
-    "EmbeddingConfig",
+    "EventCategory",
+    "FearDimension",
+    # Models
+    "FearFingerprint",
+    "GameEvent",
+    "HabituationTracker",
+    "MemoryQueryResult",
+    "PlayerFearProfile",
+    # Store
+    "PlayerMemoryStore",
+    "ResponsePattern",
+    "SessionMemory",
     "get_embedding_pipeline",
 ]

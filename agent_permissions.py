@@ -13,14 +13,12 @@ from pathlib import Path
 # Configuración de logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('agent_permissions.log'),
-        logging.StreamHandler()
-    ]
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("agent_permissions.log"), logging.StreamHandler()],
 )
 
 logger = logging.getLogger(__name__)
+
 
 class PermissionSystem:
     """Sistema de permisos para el agente Lilith CLI"""
@@ -36,7 +34,7 @@ class PermissionSystem:
         permissions_path = Path("agent_permissions.json")
 
         if permissions_path.exists():
-            with open(permissions_path, encoding='utf-8') as f:
+            with open(permissions_path, encoding="utf-8") as f:
                 return json.load(f)
 
         return self.default_permissions()
@@ -50,63 +48,64 @@ class PermissionSystem:
                     "description": "Acceso a archivos locales para lectura",
                     "scope": "Limited to Yggdrasil project files",
                     "level": "medium",
-                    "category": "File System"
+                    "category": "File System",
                 },
                 "write_files": {
                     "allowed": False,
                     "description": "Acceso a archivos locales para escritura",
                     "scope": "Limited to project files",
                     "level": "high",
-                    "category": "File System"
+                    "category": "File System",
                 },
                 "run_commands": {
                     "allowed": False,
                     "description": "Ejecución de comandos del sistema",
                     "scope": "Limited to project-related commands",
                     "level": "high",
-                    "category": "System"
+                    "category": "System",
                 },
                 "access_web": {
                     "allowed": False,
                     "description": "Conexión a servicios web",
                     "scope": "API calls only",
                     "level": "medium",
-                    "category": "Network"
+                    "category": "Network",
                 },
                 "manage_content": {
                     "allowed": False,
                     "description": "Gestión de contenido en plataformas",
                     "scope": "Social media and business websites",
                     "level": "medium",
-                    "category": "Web Services"
+                    "category": "Web Services",
                 },
                 "computer_vision": {
                     "allowed": False,
                     "description": "Visión por computadora para lectura de imágenes",
                     "scope": "Text extraction and object detection",
                     "level": "medium",
-                    "category": "Computer Vision"
+                    "category": "Computer Vision",
                 },
                 "download_files": {
                     "allowed": False,
                     "description": "Descarga de archivos desde la web",
                     "scope": "Project-related files only",
                     "level": "medium",
-                    "category": "Network"
+                    "category": "Network",
                 },
                 "view_repositories": {
                     "allowed": False,
                     "description": "Visualización de repositorios de código",
                     "scope": "Yggdrasil project only",
                     "level": "low",
-                    "category": "File System"
-                }
+                    "category": "File System",
+                },
             }
         }
 
     def generate_verification_code(self):
         """Genera un código de verificación para el usuario"""
         import random
+
         self.verification_code = str(random.randint(100000, 999999))
         logger.info("Código de verificación generado: %s", self.verification_code)
         return self.verification_code
@@ -157,7 +156,7 @@ class PermissionSystem:
         print("=" * 50)
 
         # Generar y enviar código de verificación
-        verification_code = self.generate_verification_code()
+        self.generate_verification_code()
         print(f"Código de verificación enviado a: {self.get_user_email()}")
         print("Por favor, ingresa el código para confirmar tu consentimiento.")
 
@@ -179,7 +178,7 @@ class PermissionSystem:
 
                 accept = input("Aceptar permiso? (S/N): ").strip().lower()
 
-                if accept == 's' or accept == 'si':
+                if accept in {"s", "si"}:
                     permission_info["allowed"] = True
                     logger.info("Permiso %s aceptado", permission_name)
                 else:
@@ -203,7 +202,7 @@ class PermissionSystem:
 
     def save_permissions(self):
         """Guarda los permisos en archivo"""
-        with open("agent_permissions.json", 'w', encoding='utf-8') as f:
+        with open("agent_permissions.json", "w", encoding="utf-8") as f:
             json.dump(self.permissions, f, indent=2, ensure_ascii=False)
 
     def check_permission(self, agent_name: str, permission: str) -> bool:
@@ -223,7 +222,7 @@ class PermissionSystem:
             "agent": agent_name,
             "permission": permission,
             "context": context,
-            "success": True
+            "success": True,
         }
 
         log_path = Path("permission_usage.log")
@@ -235,7 +234,7 @@ class PermissionSystem:
 
         log_entries.append(log_entry)
 
-        with open(log_path, 'w') as f:
+        with open(log_path, "w") as f:
             json.dump(log_entries, f, indent=2, ensure_ascii=False)
 
         logger.info("Uso de permiso %s registrado", permission)
@@ -248,19 +247,21 @@ class PermissionSystem:
             "total_permissions": len(self.permissions["Lilith CLI"]),
             "permissions": [],
             "usage_statistics": self.get_usage_statistics(),
-            "security_level": self.calculate_security_level()
+            "security_level": self.calculate_security_level(),
         }
 
         for permission_name, permission_info in self.permissions["Lilith CLI"].items():
-            report["permissions"].append({
-                "name": permission_name,
-                "status": "Authorized" if permission_info["allowed"] else "Denied",
-                "description": permission_info["description"],
-                "scope": permission_info["scope"],
-                "level": permission_info.get("level", "medium")
-            })
+            report["permissions"].append(
+                {
+                    "name": permission_name,
+                    "status": "Authorized" if permission_info["allowed"] else "Denied",
+                    "description": permission_info["description"],
+                    "scope": permission_info["scope"],
+                    "level": permission_info.get("level", "medium"),
+                }
+            )
 
-        with open("permission_report.json", 'w', encoding='utf-8') as f:
+        with open("permission_report.json", "w", encoding="utf-8") as f:
             json.dump(report, f, indent=2, ensure_ascii=False)
 
         logger.info("Informe de permisos generado: permission_report.json")
@@ -271,10 +272,7 @@ class PermissionSystem:
         log_path = Path("permission_usage.log")
 
         if not log_path.exists():
-            return {
-                "total_usages": 0,
-                "permissions_used": []
-            }
+            return {"total_usages": 0, "permissions_used": []}
 
         with open(log_path) as f:
             log_entries = json.load(f)
@@ -289,9 +287,8 @@ class PermissionSystem:
         return {
             "total_usages": len(log_entries),
             "permissions_used": [
-                {"name": name, "count": count}
-                for name, count in permissions_used.items()
-            ]
+                {"name": name, "count": count} for name, count in permissions_used.items()
+            ],
         }
 
     def calculate_security_level(self):
@@ -311,7 +308,7 @@ class PermissionSystem:
                 else:
                     low_risk_permissions += 1
 
-        total_authorized = high_risk_permissions + medium_risk_permissions + low_risk_permissions
+        high_risk_permissions + medium_risk_permissions + low_risk_permissions
 
         if high_risk_permissions > 2:
             return "High Risk"
@@ -319,6 +316,7 @@ class PermissionSystem:
             return "Medium Risk"
         else:
             return "Low Risk"
+
 
 def main():
     """Función principal para la configuración de permisos"""
@@ -360,6 +358,7 @@ def main():
 
     logger.info("Configuración de permisos completada")
     return True
+
 
 if __name__ == "__main__":
     main()

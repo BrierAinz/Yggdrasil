@@ -6,7 +6,7 @@ Prueba la conexión con la API de Alibaba Cloud
 import sys
 
 
-sys.path.insert(0, '/mnt/d/Proyectos/Yggdrasil/Asgard/lilith-core')
+sys.path.insert(0, "/mnt/d/Proyectos/Yggdrasil/Asgard/lilith-core")
 
 from lilith_core.config import Config
 from lilith_core.providers.registry import ProviderRegistry
@@ -37,18 +37,16 @@ def test_alibaba_api():
         print("🔄 Enviando prueba de conexión...")
 
         messages = [
-            {
-                "role": "system",
-                "content": "Eres una asistente útil que responde de forma concisa."
-            },
+            {"role": "system", "content": "Eres una asistente útil que responde de forma concisa."},
             {
                 "role": "user",
-                "content": "Hola, ¿cómo estás? Responde en español en una sola frase."
-            }
+                "content": "Hola, ¿cómo estás? Responde en español en una sola frase.",
+            },
         ]
 
         # Obtener respuesta
         import asyncio
+
         response = asyncio.run(provider.complete(messages))
 
         print("✅ Conexión exitosa!")
@@ -79,8 +77,10 @@ def test_alibaba_api():
     except Exception as e:
         print(f"❌ Error al conectar con Alibaba Cloud: {e}")
         import traceback
+
         print(f"💡 Detalles: {traceback.format_exc()}")
         return False
+
 
 if __name__ == "__main__":
     success = test_alibaba_api()

@@ -25,13 +25,7 @@ def run_command(cmd: str, description: str):
     """Run command and print status"""
     print(f"\n🔍 {description}...")
     try:
-        result = subprocess.run(
-            cmd,
-            shell=True,
-            capture_output=True,
-            text=True,
-            check=False
-        )
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, check=False)
         if result.returncode == 0:
             print(f"✅ {description} completado")
             if result.stdout.strip():
@@ -49,12 +43,7 @@ def verify_environment():
     """Verify environment variables are set"""
     print_header("Verificación del Entorno")
 
-    required_vars = [
-        "BYTEPLUS_API_KEY",
-        "ALIBABA_API_KEY",
-        "LILITH_PROFILE",
-        "YGGDRASIL_ROOT"
-    ]
+    required_vars = ["BYTEPLUS_API_KEY", "ALIBABA_API_KEY", "LILITH_PROFILE", "YGGDRASIL_ROOT"]
 
     all_vars_set = True
     for var in required_vars:
@@ -75,8 +64,14 @@ def verify_yggdrasil_cli():
     success = True
     commands = [
         ("cd /mnt/d/Proyectos/Yggdrasil && uv run python yggdrasil_cli.py --help", "Ayuda del CLI"),
-        ("cd /mnt/d/Proyectos/Yggdrasil && uv run python yggdrasil_cli.py status", "Estado de Yggdrasil"),
-        ("cd /mnt/d/Proyectos/Yggdrasil && uv run python yggdrasil_cli.py health", "Verificación de README.md"),
+        (
+            "cd /mnt/d/Proyectos/Yggdrasil && uv run python yggdrasil_cli.py status",
+            "Estado de Yggdrasil",
+        ),
+        (
+            "cd /mnt/d/Proyectos/Yggdrasil && uv run python yggdrasil_cli.py health",
+            "Verificación de README.md",
+        ),
     ]
 
     for cmd, desc in commands:
@@ -92,9 +87,18 @@ def verify_llm_integration():
 
     success = True
     commands = [
-        ("cd /mnt/d/Proyectos/Yggdrasil && uv run python -c \"from lilith_core.config import Config; from lilith_core.providers.registry import ProviderRegistry; config = Config(); registry = ProviderRegistry(config); print('✅ Provider registry loaded'); print(f'  Active profile: {config.active_profile}'); print(f'  Available profiles: {len(registry.list_profiles())}');\"", "Carga del provider registry"),
-        ("cd /mnt/d/Proyectos/Yggdrasil && uv run python -c \"from lilith_core.providers.registry import ProviderRegistry; from lilith_core.config import Config; config = Config(); registry = ProviderRegistry(config); print('✅ BytePlus profile:'); print(f'  Model count: {len(registry.get_profile('byteplus-lite').get('models', {}).get('list', []))}'); print(f'  Description: {registry.get_profile('byteplus-lite').get('description', 'No description')}');\"", "BytePlus profile details"),
-        ("cd /mnt/d/Proyectos/Yggdrasil && uv run python -c \"from lilith_core.providers.registry import ProviderRegistry; from lilith_core.config import Config; config = Config(); registry = ProviderRegistry(config); print('✅ Alibaba profile:'); print(f'  Model count: {len(registry.get_profile('alibaba-token-plan').get('models', {}).get('list', []))}'); print(f'  Description: {registry.get_profile('alibaba-token-plan').get('description', 'No description')}');\"", "Alibaba Cloud profile details"),
+        (
+            "cd /mnt/d/Proyectos/Yggdrasil && uv run python -c \"from lilith_core.config import Config; from lilith_core.providers.registry import ProviderRegistry; config = Config(); registry = ProviderRegistry(config); print('✅ Provider registry loaded'); print(f'  Active profile: {config.active_profile}'); print(f'  Available profiles: {len(registry.list_profiles())}');\"",
+            "Carga del provider registry",
+        ),
+        (
+            "cd /mnt/d/Proyectos/Yggdrasil && uv run python -c \"from lilith_core.providers.registry import ProviderRegistry; from lilith_core.config import Config; config = Config(); registry = ProviderRegistry(config); print('✅ BytePlus profile:'); print(f'  Model count: {len(registry.get_profile('byteplus-lite').get('models', {}).get('list', []))}'); print(f'  Description: {registry.get_profile('byteplus-lite').get('description', 'No description')}');\"",
+            "BytePlus profile details",
+        ),
+        (
+            "cd /mnt/d/Proyectos/Yggdrasil && uv run python -c \"from lilith_core.providers.registry import ProviderRegistry; from lilith_core.config import Config; config = Config(); registry = ProviderRegistry(config); print('✅ Alibaba profile:'); print(f'  Model count: {len(registry.get_profile('alibaba-token-plan').get('models', {}).get('list', []))}'); print(f'  Description: {registry.get_profile('alibaba-token-plan').get('description', 'No description')}');\"",
+            "Alibaba Cloud profile details",
+        ),
     ]
 
     for cmd, desc in commands:
@@ -137,7 +141,7 @@ def run_system_health_check():
     if health_script.exists():
         return run_command(
             "cd /mnt/d/Proyectos/Yggdrasil && uv run python health_check.py",
-            "Health check completo"
+            "Health check completo",
         )
     else:
         print("⚠️ Script de health check no encontrado")

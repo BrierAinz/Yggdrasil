@@ -12,3 +12,6 @@ dependencies = ["lilith-core"]
 
 [project.urls]
 Repository = "https://github.com/BrierAinz/Yggdrasil"
+
+[tool.hatch.build.targets.wheel]
+packages = ["vanaheim"]

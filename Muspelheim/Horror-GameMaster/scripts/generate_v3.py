@@ -5,8 +5,13 @@ BytePlus (17 models) + MiMo (2 models) = 19 models total.
 Deduplicates against unified dataset.
 """
 
+import json
+import os
+import random
+import time
+
 from openai import OpenAI
-import json, time, sys, os, random
+
 
 BASE = "/home/brierainz/Proyectos/Yggdrasil/Muspelheim/Horror-GameMaster/data"
 UNIFIED = f"{BASE}/dataset_unified.jsonl"
@@ -29,25 +34,25 @@ providers = {
 
 # (provider, model_id, display_name, tokens_remaining)
 MODELS = [
-    ("byteplus", "seed-2-0-pro-260328",        "s20-pro",     415918),
-    ("byteplus", "deepseek-v3-2-251201",        "ds3.2",       448161),
-    ("byteplus", "seed-2-0-lite-260428",        "s20-lite",    372063),
-    ("byteplus", "seed-1-8-251228",             "s1.8",        359485),
-    ("byteplus", "seed-2-0-mini-260428",        "s20-mini",    295395),
-    ("byteplus", "seed-2-0-code-preview-260328","s20-code",    140534),
-    ("byteplus", "glm-4-7-251222",             "glm4.7",      500000),
-    ("byteplus", "gpt-oss-120b-250805",        "gpt-oss",     500000),
-    ("byteplus", "seed-1-6-250915",            "s1.6",        500000),
-    ("byteplus", "seed-1-6-flash-250715",      "s1.6f",       500000),
-    ("byteplus", "kimi-k2-250905",             "kimi",        500000),
-    ("byteplus", "deepseek-v3-1-250821",       "ds3.1",       500000),
-    ("byteplus", "skylark-pro-250215",         "sky-pro",     500000),
-    ("byteplus", "skylark-lite-250215",        "sky-lite",    500000),
-    ("byteplus", "deepseek-r1-250528",         "r1",          500000),
-    ("byteplus", "seed-2-0-mini-260215",       "s20m-0215",   500000),
-    ("byteplus", "seed-2-0-lite-260228",       "s20l-0228",   500000),
-    ("mimo",     "MiMo-V2.5",                  "mimo",        999999),
-    ("mimo",     "MiMo-V2.5-Pro",              "mimo-pro",    999999),
+    ("byteplus", "seed-2-0-pro-260328", "s20-pro", 415918),
+    ("byteplus", "deepseek-v3-2-251201", "ds3.2", 448161),
+    ("byteplus", "seed-2-0-lite-260428", "s20-lite", 372063),
+    ("byteplus", "seed-1-8-251228", "s1.8", 359485),
+    ("byteplus", "seed-2-0-mini-260428", "s20-mini", 295395),
+    ("byteplus", "seed-2-0-code-preview-260328", "s20-code", 140534),
+    ("byteplus", "glm-4-7-251222", "glm4.7", 500000),
+    ("byteplus", "gpt-oss-120b-250805", "gpt-oss", 500000),
+    ("byteplus", "seed-1-6-250915", "s1.6", 500000),
+    ("byteplus", "seed-1-6-flash-250715", "s1.6f", 500000),
+    ("byteplus", "kimi-k2-250905", "kimi", 500000),
+    ("byteplus", "deepseek-v3-1-250821", "ds3.1", 500000),
+    ("byteplus", "skylark-pro-250215", "sky-pro", 500000),
+    ("byteplus", "skylark-lite-250215", "sky-lite", 500000),
+    ("byteplus", "deepseek-r1-250528", "r1", 500000),
+    ("byteplus", "seed-2-0-mini-260215", "s20m-0215", 500000),
+    ("byteplus", "seed-2-0-lite-260228", "s20l-0228", 500000),
+    ("mimo", "MiMo-V2.5", "mimo", 999999),
+    ("mimo", "MiMo-V2.5-Pro", "mimo-pro", 999999),
 ]
 
 exhausted = set()
@@ -71,64 +76,117 @@ print(f"Models available: {len(MODELS)}", flush=True)
 # --- Content ---
 
 FEAR_TYPES = [
-    "psychological", "darkness", "isolation", "body_horror",
-    "paranoia", "loss_of_control", "jumpscare", "false_security",
+    "psychological",
+    "darkness",
+    "isolation",
+    "body_horror",
+    "paranoia",
+    "loss_of_control",
+    "jumpscare",
+    "false_security",
 ]
 FEAR_WEIGHTS = [1, 1, 1, 2, 1, 1, 1, 4]
 
 SCENARIOS = [
-    "a subway tunnel at 3am", "a parking garage", "a laundromat at midnight",
-    "a public library after hours", "an empty swimming pool", "a cruise ship at night",
-    "a shopping mall after closing", "an abandoned factory", "a courtroom at night",
-    "a church confessional", "a morgue", "a greenhouse at dusk",
-    "a rooftop in fog", "a broken elevator", "a sewer system",
-    "a lighthouse in a storm", "a submarine", "a derelict space station",
-    "an abandoned theater", "a mirror maze", "an infinite library",
-    "a corrupted garden", "a frozen lake", "a flooded mine shaft",
-    "a radio tower", "a barn at midnight", "a silo", "a phone booth in the rain",
-    "a suspension bridge", "a road tunnel", "a dry well", "a clock tower",
-    "a prison cell", "a hospital ward", "a school gymnasium at night",
-    "a server room", "a boiler room", "a cathedral crypt", "a catacomb",
-    "a train station at 4am", "a cemetery in fog", "a traveling carnival",
-    "a warehouse district", "a hotel lobby at 3am", "a restaurant kitchen after hours",
-    "a bank vault", "a planetarium with the lights off", "a meat locker",
-    "an attic", "a basement", "a walk-in closet", "a motel room",
-    "a construction site at night", "a water treatment plant", "a power station",
-    "a quarantine ward", "an asylum hallway", "a doll factory",
-    "a wax museum after hours", "a taxidermy shop", "a funeral home",
-    "a children's playground at midnight", "an empty school hallway",
-    "a dark forest", "an old bridge over a ravine", "a shipwreck",
-    "an underground parking level B3", "a hospital basement",
-    "a hallway that keeps repeating", "a room with no doors",
+    "a subway tunnel at 3am",
+    "a parking garage",
+    "a laundromat at midnight",
+    "a public library after hours",
+    "an empty swimming pool",
+    "a cruise ship at night",
+    "a shopping mall after closing",
+    "an abandoned factory",
+    "a courtroom at night",
+    "a church confessional",
+    "a morgue",
+    "a greenhouse at dusk",
+    "a rooftop in fog",
+    "a broken elevator",
+    "a sewer system",
+    "a lighthouse in a storm",
+    "a submarine",
+    "a derelict space station",
+    "an abandoned theater",
+    "a mirror maze",
+    "an infinite library",
+    "a corrupted garden",
+    "a frozen lake",
+    "a flooded mine shaft",
+    "a radio tower",
+    "a barn at midnight",
+    "a silo",
+    "a phone booth in the rain",
+    "a suspension bridge",
+    "a road tunnel",
+    "a dry well",
+    "a clock tower",
+    "a prison cell",
+    "a hospital ward",
+    "a school gymnasium at night",
+    "a server room",
+    "a boiler room",
+    "a cathedral crypt",
+    "a catacomb",
+    "a train station at 4am",
+    "a cemetery in fog",
+    "a traveling carnival",
+    "a warehouse district",
+    "a hotel lobby at 3am",
+    "a restaurant kitchen after hours",
+    "a bank vault",
+    "a planetarium with the lights off",
+    "a meat locker",
+    "an attic",
+    "a basement",
+    "a walk-in closet",
+    "a motel room",
+    "a construction site at night",
+    "a water treatment plant",
+    "a power station",
+    "a quarantine ward",
+    "an asylum hallway",
+    "a doll factory",
+    "a wax museum after hours",
+    "a taxidermy shop",
+    "a funeral home",
+    "a children's playground at midnight",
+    "an empty school hallway",
+    "a dark forest",
+    "an old bridge over a ravine",
+    "a shipwreck",
+    "an underground parking level B3",
+    "a hospital basement",
+    "a hallway that keeps repeating",
+    "a room with no doors",
 ]
 
 PROMPT_TEMPLATES = [
     lambda ft, sc: (
-        f"Generate 5 horror SCENE entries. Fear: \"{ft}\". Setting: {sc}. "
+        f'Generate 5 horror SCENE entries. Fear: "{ft}". Setting: {sc}. '
         "JSON: instruction, input, output, fear_type. "
         "output=100-250 words, second-person narration, atmospheric. "
         "ONLY valid JSON lines, no markdown."
     ),
     lambda ft, sc: (
-        f"Generate 5 NPC DIALOGUE entries. Fear: \"{ft}\". Setting: {sc}. "
+        f'Generate 5 NPC DIALOGUE entries. Fear: "{ft}". Setting: {sc}. '
         "JSON: instruction (NPC description), input (player speaks), "
         "output (unsettling NPC reply, 100-200 words), fear_type. "
         "ONLY valid JSON lines."
     ),
     lambda ft, sc: (
-        f"Generate 5 ENVIRONMENTAL EVENT entries. Fear: \"{ft}\". Setting: {sc}. "
+        f'Generate 5 ENVIRONMENTAL EVENT entries. Fear: "{ft}". Setting: {sc}. '
         "JSON: instruction (environment), input (player action), "
         "output (unsettening event, 100-200 words), fear_type. "
         "Sounds, temperature, objects moving, reality shifting. ONLY JSON lines."
     ),
     lambda ft, sc: (
-        f"Generate 5 FORESHADOWING entries. Fear: \"{ft}\". Setting: {sc}. "
+        f'Generate 5 FORESHADOWING entries. Fear: "{ft}". Setting: {sc}. '
         "JSON: instruction (setup), input (player investigates), "
         "output (hints at worse things, 100-200 words), fear_type. "
         "Mix real threats with false leads. ONLY JSON lines."
     ),
     lambda ft, sc: (
-        f"Generate 3 ENTITY entries. Fear: \"{ft}\". Setting: {sc}. "
+        f'Generate 3 ENTITY entries. Fear: "{ft}". Setting: {sc}. '
         "JSON: instruction (entity description), input (encounter), "
         "output (150-300 words, visceral, SCP/Silent Hill style), fear_type. "
         "ONLY JSON lines."
@@ -141,7 +199,7 @@ total_calls = 0
 errors_by_model = {}
 batch_num = 0
 
-print(f"Generating...", flush=True)
+print("Generating...", flush=True)
 print("", flush=True)
 
 outf = open(OUTFILE, "a")
@@ -164,7 +222,10 @@ while len(exhausted) < len(MODELS):
         resp = client.chat.completions.create(
             model=model,
             messages=[
-                {"role": "system", "content": "Output ONLY valid JSONL. No markdown, no fences. Raw JSON objects, one per line."},
+                {
+                    "role": "system",
+                    "content": "Output ONLY valid JSONL. No markdown, no fences. Raw JSON objects, one per line.",
+                },
                 {"role": "user", "content": prompt},
             ],
             temperature=0.95,
@@ -230,9 +291,9 @@ while len(exhausted) < len(MODELS):
 outf.close()
 
 # Merge into unified
-print(f"\nMerging into unified dataset...", flush=True)
+print("\nMerging into unified dataset...", flush=True)
 all_entries = {}
-for fname in ["dataset_unified.jsonl", OUTFILE.split("/")[-1]]:
+for fname in ["dataset_unified.jsonl", OUTFILE.rsplit("/", maxsplit=1)[-1]]:
     fpath = f"{BASE}/{fname}"
     if os.path.exists(fpath):
         with open(fpath) as f:
@@ -249,11 +310,11 @@ with open(UNIFIED, "w") as f:
     for entry in all_entries.values():
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
-print(f"\n{'='*60}", flush=True)
-print(f"GENERATION COMPLETE", flush=True)
+print(f"\n{'=' * 60}", flush=True)
+print("GENERATION COMPLETE", flush=True)
 print(f"  New entries this run: {total_new}", flush=True)
 print(f"  Total unique entries: {len(all_entries)}", flush=True)
 print(f"  API calls: {total_calls}", flush=True)
 print(f"  Models exhausted: {len(exhausted)}/{len(MODELS)}", flush=True)
 print(f"  Output: {UNIFIED}", flush=True)
-print(f"{'='*60}", flush=True)
+print(f"{'=' * 60}", flush=True)

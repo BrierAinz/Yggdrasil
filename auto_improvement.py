@@ -19,10 +19,10 @@ from lilith_memory.store import MemoryStore
 class AutoImprovement:
     """Clase para la automejora inteligente de Yggdrasil"""
 
-    def __init__(self, project_dir: str = None):
+    def __init__(self, project_dir: str | None = None):
         """
         Inicializar el AutoImprovement
-        
+
         Args:
             project_dir: Directorio raíz del proyecto
         """
@@ -40,37 +40,37 @@ class AutoImprovement:
             "bug_report": [
                 r"(error|bug|problema|fallo|no funciona|no me funciona)",
                 r"(no responde|no se conecta|se cae|se bloquea)",
-                r"(crash|crash|se cierra abruptamente)"
+                r"(crash|crash|se cierra abruptamente)",
             ],
             "feature_request": [
                 r"(necesito|quiero|me gustaría|me encantaría)",
                 r"(agregar|añadir|crear|implementar)",
-                r"(¿puedes|¿podrías|¿sería posible)"
+                r"(¿puedes|¿podrías|¿sería posible)",
             ],
             "optimization": [
                 r"(lento|lenta|poco rapido|poco eficiente)",
                 r"(mejorar|optimizar|acelerar|refactorizar)",
-                r"(consume demasiado|usa mucho)"
+                r"(consume demasiado|usa mucho)",
             ],
             "documentation": [
                 r"(no entiendo|no sé cómo|no se explica|falta)",
                 r"(documentación|manual|guía|tutorial)",
-                r"(ejemplo|ejemplo de|ejemplo cómo)"
+                r"(ejemplo|ejemplo de|ejemplo cómo)",
             ],
             "ux_improvement": [
                 r"(difícil|complicado|incomodo|no intuitivo)",
                 r"(interfaz|ux|ui|interface)",
-                r"(mejorar la experiencia|hacer más fácil)"
-            ]
+                r"(mejorar la experiencia|hacer más fácil)",
+            ],
         }
 
     def analyze_conversations(self, limit: int = 100) -> list[dict]:
         """
         Analizar conversaciones para identificar oportunidades de mejora
-        
+
         Args:
             limit: Número máximo de conversaciones a analizar
-            
+
         Returns:
             Lista de mejoras identificadas
         """
@@ -96,7 +96,7 @@ class AutoImprovement:
                         "content": entry.get("content", ""),
                         "timestamp": entry.get("timestamp", 0),
                         "patterns": matches,
-                        "id": entry.get("id", None)
+                        "id": entry.get("id", None),
                     }
                     improvements.append(improvement)
 
@@ -106,10 +106,10 @@ class AutoImprovement:
     def prioritize_improvements(self, improvements: list[dict]) -> list[dict]:
         """
         Priorizar las mejoras según su impacto
-        
+
         Args:
             improvements: Lista de mejoras identificadas
-            
+
         Returns:
             Lista de mejoras priorizadas
         """
@@ -121,7 +121,7 @@ class AutoImprovement:
             "feature_request": 5,  # Medio impacto
             "optimization": 7,  # Alto impacto
             "documentation": 3,  # Bajo impacto
-            "ux_improvement": 6  # Alto impacto
+            "ux_improvement": 6,  # Alto impacto
         }
 
         # Calcular prioridad para cada mejora
@@ -130,7 +130,9 @@ class AutoImprovement:
             type_weight = type_weights.get(improvement["type"], 1)
 
             # Peso por antigüedad (más reciente = más importante)
-            age_weight = 1 + (time.time() - improvement["timestamp"]) / 3600 / 24  # Descuento por día
+            age_weight = (
+                1 + (time.time() - improvement["timestamp"]) / 3600 / 24
+            )  # Descuento por día
 
             # Peso por número de patrones que coinciden
             pattern_weight = len(improvement["patterns"])
@@ -156,10 +158,10 @@ class AutoImprovement:
     def generate_improvement_report(self, improvements: list[dict]) -> dict:
         """
         Generar un informe de mejoras
-        
+
         Args:
             improvements: Lista de mejoras priorizadas
-            
+
         Returns:
             Diccionario con el informe
         """
@@ -168,7 +170,7 @@ class AutoImprovement:
             "total_improvements": len(improvements),
             "by_type": {},
             "by_priority": {},
-            "top_3": []
+            "top_3": [],
         }
 
         # Contar por tipo
@@ -188,14 +190,14 @@ class AutoImprovement:
 
         return report
 
-    def save_improvement_report(self, report: dict, output_path: str = None) -> str:
+    def save_improvement_report(self, report: dict, output_path: str | None = None) -> str:
         """
         Guardar el informe de mejoras en un archivo
-        
+
         Args:
             report: Informe de mejoras
             output_path: Ruta del archivo de salida
-            
+
         Returns:
             Ruta del archivo guardado
         """
@@ -212,10 +214,10 @@ class AutoImprovement:
     def apply_automated_improvements(self, improvements: list[dict]) -> list[dict]:
         """
         Aplicar mejoras automáticas cuando sea posible
-        
+
         Args:
             improvements: Lista de mejoras priorizadas
-            
+
         Returns:
             Lista de mejoras aplicadas
         """
@@ -253,10 +255,10 @@ class AutoImprovement:
     def _handle_bug_report(self, improvement: dict) -> bool:
         """
         Manejar un reporte de bug
-        
+
         Args:
             improvement: Datos del bug report
-            
+
         Returns:
             True si se aplicó la mejora, False en caso contrario
         """
@@ -268,8 +270,10 @@ class AutoImprovement:
 
             try:
                 # Intentar reiniciar el servicio
-                result = subprocess.run(["pkill", "-f", "python3.*yggdrasil_cli.py"],
-                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                subprocess.run(
+                    ["pkill", "-f", "python3.*yggdrasil_cli.py"],
+                    capture_output=True,
+                )
                 return True
             except Exception as e:
                 print(f"❌ Error al reiniciar: {e}")
@@ -279,10 +283,10 @@ class AutoImprovement:
     def _handle_feature_request(self, improvement: dict) -> bool:
         """
         Manejar una solicitud de función
-        
+
         Args:
             improvement: Datos de la solicitud
-            
+
         Returns:
             True si se aplicó la mejora, False en caso contrario
         """
@@ -310,10 +314,10 @@ class AutoImprovement:
     def _handle_optimization(self, improvement: dict) -> bool:
         """
         Manejar una solicitud de optimización
-        
+
         Args:
             improvement: Datos de la optimización
-            
+
         Returns:
             True si se aplicó la mejora, False en caso contrario
         """
@@ -327,8 +331,10 @@ class AutoImprovement:
                 # Limpiar cache de Python
                 cache_dir = self.project_dir / "__pycache__"
                 if cache_dir.exists():
-                    subprocess.run(["rm", "-rf", str(cache_dir)],
-                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    subprocess.run(
+                        ["rm", "-rf", str(cache_dir)],
+                        capture_output=True,
+                    )
 
                 return True
             except Exception as e:
@@ -339,10 +345,10 @@ class AutoImprovement:
     def _handle_documentation(self, improvement: dict) -> bool:
         """
         Manejar una solicitud de documentación
-        
+
         Args:
             improvement: Datos de la documentación
-            
+
         Returns:
             True si se aplicó la mejora, False en caso contrario
         """
@@ -351,10 +357,10 @@ class AutoImprovement:
     def _handle_ux_improvement(self, improvement: dict) -> bool:
         """
         Manejar una solicitud de mejora UX
-        
+
         Args:
             improvement: Datos de la mejora UX
-            
+
         Returns:
             True si se aplicó la mejora, False en caso contrario
         """
@@ -363,19 +369,40 @@ class AutoImprovement:
     def _extract_keywords(self, text: str) -> list[str]:
         """
         Extraer palabras clave de un texto
-        
+
         Args:
             text: Texto para extraer keywords
-            
+
         Returns:
             Lista de palabras clave
         """
         text = re.sub(r"[^\w\s]", "", text.lower())
         words = text.split()
 
-        stop_words = ["el", "la", "los", "las", "de", "del", "a", "ante", "con",
-                     "para", "por", "sin", "so", "sobre", "tras", "cuando",
-                     "donde", "como", "que", "qui", "quien", "quienes"]
+        stop_words = [
+            "el",
+            "la",
+            "los",
+            "las",
+            "de",
+            "del",
+            "a",
+            "ante",
+            "con",
+            "para",
+            "por",
+            "sin",
+            "so",
+            "sobre",
+            "tras",
+            "cuando",
+            "donde",
+            "como",
+            "que",
+            "qui",
+            "quien",
+            "quienes",
+        ]
 
         keywords = []
         for word in words:
@@ -388,7 +415,7 @@ class AutoImprovement:
     def run_complete_analysis(self) -> dict:
         """
         Ejecutar un análisis completo de automejora
-        
+
         Returns:
             Informe de la automejora
         """
@@ -408,11 +435,12 @@ class AutoImprovement:
         applied = self.apply_automated_improvements(prioritized)
 
         # Actualizar el informe con las mejoras aplicadas
-        report["applied_improvements"] = [{"id": i["id"], "type": i["type"], "priority": i["priority"]}
-                                         for i in applied]
+        report["applied_improvements"] = [
+            {"id": i["id"], "type": i["type"], "priority": i["priority"]} for i in applied
+        ]
 
         # Guardar el informe
-        report_path = self.save_improvement_report(report)
+        self.save_improvement_report(report)
 
         print("\n✅ Análisis de automejora completado")
         print("=" * 40)
@@ -422,7 +450,7 @@ class AutoImprovement:
     def print_simple_report(self, report: dict):
         """
         Imprimir un informe simple en la consola
-        
+
         Args:
             report: Informe de automejora
         """
@@ -455,10 +483,10 @@ class AutoImprovement:
     def _get_type_name(self, improvement_type: str) -> str:
         """
         Obtener el nombre legible de un tipo de mejora
-        
+
         Args:
             improvement_type: Tipo de mejora
-            
+
         Returns:
             Nombre legible
         """
@@ -467,7 +495,7 @@ class AutoImprovement:
             "feature_request": "Solicitud de Función",
             "optimization": "Optimizacion",
             "documentation": "Documentacion",
-            "ux_improvement": "Mejora UX"
+            "ux_improvement": "Mejora UX",
         }
 
         return type_names.get(improvement_type, improvement_type)

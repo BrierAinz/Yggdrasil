@@ -14,10 +14,14 @@ from __future__ import annotations
 
 import hashlib
 import threading
-from dataclasses import dataclass, field
-from typing import Optional, Sequence
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import numpy as np
+
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 @dataclass
@@ -48,7 +52,7 @@ class EmbeddingPipeline:
         embedding = pipeline.embed("A dark corridor stretches into nothingness...")
     """
 
-    def __init__(self, config: Optional[EmbeddingConfig] = None):
+    def __init__(self, config: EmbeddingConfig | None = None):
         self.config = config or EmbeddingConfig()
         self._model = None
         self._lock = threading.Lock()
@@ -73,6 +77,7 @@ class EmbeddingPipeline:
                 if device == "auto":
                     try:
                         import torch
+
                         device = "cuda" if torch.cuda.is_available() else "cpu"
                     except ImportError:
                         device = "cpu"
@@ -193,9 +198,7 @@ class EmbeddingPipeline:
             text = event_description
         return self.embed(text)
 
-    def embed_player_action(
-        self, action: str, context: str = ""
-    ) -> np.ndarray:
+    def embed_player_action(self, action: str, context: str = "") -> np.ndarray:
         """
         Embed a player action with optional context.
 
@@ -215,9 +218,7 @@ class EmbeddingPipeline:
         """
         return float(np.dot(a, b))
 
-    def similarity_matrix(
-        self, query: np.ndarray, candidates: np.ndarray
-    ) -> np.ndarray:
+    def similarity_matrix(self, query: np.ndarray, candidates: np.ndarray) -> np.ndarray:
         """
         Cosine similarities between a query vector and candidate vectors.
 
@@ -286,11 +287,11 @@ class EmbeddingPipeline:
 
 # ── module-level singleton ──────────────────────────────────────────
 
-_pipeline: Optional[EmbeddingPipeline] = None
+_pipeline: EmbeddingPipeline | None = None
 _pipeline_lock = threading.Lock()
 
 
-def get_embedding_pipeline(config: Optional[EmbeddingConfig] = None) -> EmbeddingPipeline:
+def get_embedding_pipeline(config: EmbeddingConfig | None = None) -> EmbeddingPipeline:
     """Get or create the module-level embedding pipeline singleton."""
     global _pipeline
     if _pipeline is None:

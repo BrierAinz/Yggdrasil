@@ -352,10 +352,16 @@ def chat():
     print_banner()
     console.print("[bold gold1]╭──────────────────────────────────────────────────────────────╮[/]")
     console.print("[bold gold1]│                                                              │[/]")
-    console.print("[bold gold1]│[/] [bold red]⚔[/] [bold gold1]Bienvenido al Chat con Lilith, la diosa de Yggdrasil[/] [bold red]⚔[/] [bold gold1]│[/]")
+    console.print(
+        "[bold gold1]│[/] [bold red]⚔[/] [bold gold1]Bienvenido al Chat con Lilith, la diosa de Yggdrasil[/] [bold red]⚔[/] [bold gold1]│[/]"
+    )
     console.print("[bold gold1]│                                                              │[/]")
-    console.print("[bold gold1]│[/] [dim]Escribe 'salir' o 'quit' para terminar la conversación[/] [bold gold1]│[/]")
-    console.print("[bold gold1]│[/] [dim]Escribe 'ayuda' para ver los comandos disponibles[/] [bold gold1]│[/]")
+    console.print(
+        "[bold gold1]│[/] [dim]Escribe 'salir' o 'quit' para terminar la conversación[/] [bold gold1]│[/]"
+    )
+    console.print(
+        "[bold gold1]│[/] [dim]Escribe 'ayuda' para ver los comandos disponibles[/] [bold gold1]│[/]"
+    )
     console.print("[bold gold1]╰──────────────────────────────────────────────────────────────╯[/]")
     console.print()
 
@@ -378,7 +384,9 @@ def chat():
         engine = LilithEngine(config, memory)
 
         # Animación de bienvenida
-        welcome_text = Text("Lilith está despertando desde las profundidades de Yggdrasil...", style="italic gold1")
+        welcome_text = Text(
+            "Lilith está despertando desde las profundidades de Yggdrasil...", style="italic gold1"
+        )
         console.print(welcome_text)
         time.sleep(0.5)
 
@@ -388,7 +396,9 @@ def chat():
             TextColumn("[dim]{task.description}"),
             transient=True,
         ) as progress:
-            task = progress.add_task(description="Conectando con las raíces de Yggdrasil...", total=None)
+            task = progress.add_task(
+                description="Conectando con las raíces de Yggdrasil...", total=None
+            )
             time.sleep(0.8)
             progress.update(task, description="Cargando conocimientos de los nueve reinos...")
             time.sleep(0.5)
@@ -396,11 +406,15 @@ def chat():
             time.sleep(0.3)
 
         console.print()
-        console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+        console.print(
+            "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+        )
         console.print("[success]✅[/] [bold realm]Lilith está lista para ayudarte[/]")
         console.print("[info]ℹ️[/] [dim]Modelo activo: BytePlus/ark-code-latest[/]")
         console.print("[info]ℹ️[/] [dim]Perfil: byteplus-lite[/]")
-        console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+        console.print(
+            "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+        )
         console.print()
 
         while True:
@@ -410,12 +424,16 @@ def chat():
             if user_input.lower() in ["salir", "quit", "exit", "q"]:
                 console.print()
                 console.print("[dim]Odin te guie. Hasta la próxima conversación![/]")
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 break
 
             if user_input.lower() == "ayuda":
                 console.print()
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print("[bold gold1]Comandos disponibles:[/]")
                 console.print("  [cyan]salir/quit/exit/q[/] - Terminar la conversación")
                 console.print("  [cyan]ayuda[/] - Mostrar esta ayuda")
@@ -428,13 +446,17 @@ def chat():
                 console.print("  [cyan]exportar[/] - Exportar memoria")
                 console.print("  [cyan]importar[/] - Importar memoria")
                 console.print("  [cyan]borrar[/] - Borrar la memoria")
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print()
                 continue
 
             if user_input.lower() == "buscar":
                 console.print()
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print("[bold gold1]Búsqueda Semántica[/]")
 
                 query = Prompt.ask("[bold cyan]Consulta[/]")
@@ -442,6 +464,7 @@ def chat():
 
                 try:
                     from advanced_memory import AdvancedMemoryStore
+
                     adv_memory = AdvancedMemoryStore()
                     results = adv_memory.search_semantic(query, limit=limit)
 
@@ -449,40 +472,59 @@ def chat():
                         console.print()
                         for i, result in enumerate(results, 1):
                             similarity = result["similarity"] * 100
-                            clean_content = result["content"].replace("Usuario: ", "").replace("Lilith: ", "")
+                            clean_content = (
+                                result["content"].replace("Usuario: ", "").replace("Lilith: ", "")
+                            )
                             if len(clean_content) > 100:
                                 clean_content = clean_content[:100] + "..."
-                            console.print(f"[cyan]{i}.[/] [dim][{similarity:.1f}%][/] {clean_content}")
+                            console.print(
+                                f"[cyan]{i}.[/] [dim][{similarity:.1f}%][/] {clean_content}"
+                            )
                     else:
                         console.print("[dim]No se encontraron resultados relevantes[/]")
 
                 except Exception as e:
                     console.print(f"[error]❌ Error en búsqueda semántica: {e}[/]")
 
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print()
                 continue
 
             if user_input.lower() == "analizar":
                 console.print()
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print("[bold gold1]Análisis de Patrones[/]")
 
-                limit = int(Prompt.ask("[bold cyan]Número de conversaciones a analizar[/]", default="50"))
+                limit = int(
+                    Prompt.ask("[bold cyan]Número de conversaciones a analizar[/]", default="50")
+                )
 
                 try:
                     from advanced_memory import AdvancedMemoryStore
+
                     adv_memory = AdvancedMemoryStore()
                     analysis = adv_memory.analyze_conversation_patterns(limit=limit)
 
                     console.print()
                     console.print(f"[info]ℹ️[/] [dim]Total entradas: {analysis['total_entries']}[/]")
-                    console.print(f"[info]ℹ️[/] [dim]Entradas de usuario: {analysis['user_entries']}[/]")
-                    console.print(f"[info]ℹ️[/] [dim]Entradas de asistente: {analysis['assistant_entries']}[/]")
-                    console.print(f"[info]ℹ️[/] [dim]Longitud promedio: {analysis['avg_length']:.1f} caracteres[/]")
+                    console.print(
+                        f"[info]ℹ️[/] [dim]Entradas de usuario: {analysis['user_entries']}[/]"
+                    )
+                    console.print(
+                        f"[info]ℹ️[/] [dim]Entradas de asistente: {analysis['assistant_entries']}[/]"
+                    )
+                    console.print(
+                        f"[info]ℹ️[/] [dim]Longitud promedio: {analysis['avg_length']:.1f} caracteres[/]"
+                    )
 
                     if analysis["topics"]:
-                        console.print(f"[info]ℹ️[/] [dim]Temas detectados: {', '.join(analysis['topics'])}[/]")
+                        console.print(
+                            f"[info]ℹ️[/] [dim]Temas detectados: {', '.join(analysis['topics'])}[/]"
+                        )
 
                     if analysis["frequent_words"]:
                         console.print("\n[bold gold1]Palabras frecuentes:[/]")
@@ -492,29 +534,42 @@ def chat():
                 except Exception as e:
                     console.print(f"[error]❌ Error en análisis de patrones: {e}[/]")
 
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print()
                 continue
 
             if user_input.lower() == "skills":
                 console.print()
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print("[bold gold1]Gestionar Skills[/]")
 
-                subchoice = Prompt.ask("[bold cyan]Acción[/]", choices=["crear", "actualizar", "listar", "eliminar"])
+                subchoice = Prompt.ask(
+                    "[bold cyan]Acción[/]", choices=["crear", "actualizar", "listar", "eliminar"]
+                )
 
                 try:
                     from skill_creator import SkillCreator
+
                     creator = SkillCreator()
 
                     if subchoice == "crear":
                         category = Prompt.ask("[bold cyan]Categoría[/]", default="general")
-                        limit = int(Prompt.ask("[bold cyan]Número de conversaciones[/]", default="100"))
-                        created = creator.create_skills_from_conversations(category=category, limit=limit)
+                        limit = int(
+                            Prompt.ask("[bold cyan]Número de conversaciones[/]", default="100")
+                        )
+                        created = creator.create_skills_from_conversations(
+                            category=category, limit=limit
+                        )
                         console.print(f"[success]✅[/] Skills creados: {len(created)}")
 
                     elif subchoice == "actualizar":
-                        limit = int(Prompt.ask("[bold cyan]Número de conversaciones[/]", default="50"))
+                        limit = int(
+                            Prompt.ask("[bold cyan]Número de conversaciones[/]", default="50")
+                        )
                         updated = creator.update_existing_skills(limit=limit)
                         console.print(f"[success]✅[/] Skills actualizados: {len(updated)}")
 
@@ -537,30 +592,41 @@ def chat():
                 except Exception as e:
                     console.print(f"[error]❌ Error en gestión de skills: {e}[/]")
 
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print()
                 continue
 
             if user_input.lower() == "mejora":
                 console.print()
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print("[bold gold1]Automejora Inteligente[/]")
 
-                subchoice = Prompt.ask("[bold cyan]Acción[/]", choices=["analizar", "ejecutar", "ver_informe"])
+                subchoice = Prompt.ask(
+                    "[bold cyan]Acción[/]", choices=["analizar", "ejecutar", "ver_informe"]
+                )
 
                 try:
                     from auto_improvement import AutoImprovement
+
                     auto = AutoImprovement()
 
                     if subchoice == "analizar":
-                        limit = int(Prompt.ask("[bold cyan]Número de conversaciones[/]", default="100"))
+                        limit = int(
+                            Prompt.ask("[bold cyan]Número de conversaciones[/]", default="100")
+                        )
                         improvements = auto.analyze_conversations(limit=limit)
 
                         if improvements:
                             console.print()
                             for i, improvement in enumerate(improvements, 1):
                                 type_name = auto._get_type_name(improvement["type"])
-                                console.print(f"[cyan]{i}.[/] [{type_name}] {improvement['content']}")
+                                console.print(
+                                    f"[cyan]{i}.[/] [{type_name}] {improvement['content']}"
+                                )
                         else:
                             console.print("[dim]No se encontraron oportunidades de mejora[/]")
 
@@ -572,6 +638,7 @@ def chat():
 
                     elif subchoice == "ver_informe":
                         from pathlib import Path
+
                         reports_dir = Path("/mnt/d/Proyectos/Yggdrasil")
                         reports = list(reports_dir.glob("autoimprovement_report_*.json"))
 
@@ -579,6 +646,7 @@ def chat():
                             latest_report = max(reports, key=lambda x: x.stat().st_mtime)
                             with open(latest_report, encoding="utf-8") as f:
                                 import json
+
                                 report = json.load(f)
                             console.print()
                             auto.print_simple_report(report)
@@ -588,19 +656,26 @@ def chat():
                 except Exception as e:
                     console.print(f"[error]❌ Error en automejora: {e}[/]")
 
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print()
                 continue
 
             if user_input.lower() == "exportar":
                 console.print()
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print("[bold gold1]Exportar Memoria[/]")
 
-                format = Prompt.ask("[bold cyan]Formato[/]", choices=["json", "csv", "markdown"], default="json")
+                format = Prompt.ask(
+                    "[bold cyan]Formato[/]", choices=["json", "csv", "markdown"], default="json"
+                )
 
                 try:
                     from advanced_memory import AdvancedMemoryStore
+
                     adv_memory = AdvancedMemoryStore()
                     file_path = adv_memory.export_memory(format=format)
                     console.print(f"[success]✅[/] Memoria exportada: {file_path}")
@@ -608,19 +683,24 @@ def chat():
                 except Exception as e:
                     console.print(f"[error]❌ Error en exportación: {e}[/]")
 
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print()
                 continue
 
             if user_input.lower() == "importar":
                 console.print()
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print("[bold gold1]Importar Memoria[/]")
 
                 file_path = Prompt.ask("[bold cyan]Ruta del archivo[/]")
 
                 try:
                     from advanced_memory import AdvancedMemoryStore
+
                     adv_memory = AdvancedMemoryStore()
                     imported = adv_memory.import_memory(file_path)
                     console.print(f"[success]✅[/] Entradas importadas: {imported}")
@@ -628,43 +708,57 @@ def chat():
                 except Exception as e:
                     console.print(f"[error]❌ Error en importación: {e}[/]")
 
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print()
                 continue
 
             if user_input.lower() == "resumen":
                 console.print()
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print("[bold gold1]Resumen de la Conversación[/]")
                 summary = memory.summary()
                 console.print(f"[info]ℹ️[/] [dim]Total mensajes: {summary['total_entries']}[/]")
                 console.print(f"[info]ℹ️[/] [dim]Total tokens: {summary['total_tokens']}[/]")
-                console.print(f"[info]ℹ️[/] [dim]Tokens promedio por entrada: {summary['avg_tokens_per_entry']}[/]")
-                if summary['duration_minutes'] > 0:
-                    console.print(f"[info]ℹ️[/] [dim]Duración: ~{summary['duration_minutes']} minutos[/]")
-                if summary['topics']:
+                console.print(
+                    f"[info]ℹ️[/] [dim]Tokens promedio por entrada: {summary['avg_tokens_per_entry']}[/]"
+                )
+                if summary["duration_minutes"] > 0:
+                    console.print(
+                        f"[info]ℹ️[/] [dim]Duración: ~{summary['duration_minutes']} minutos[/]"
+                    )
+                if summary["topics"]:
                     console.print(f"[info]ℹ️[/] [dim]Temas clave: {', '.join(summary['topics'])}[/]")
                 console.print()
                 console.print(f"[dim]{summary['summary_text']}[/]")
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print()
                 continue
 
             if user_input.lower() == "memoria":
                 console.print()
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print("[bold gold1]Últimas Entradas de Memoria[/]")
                 recent = memory.recent(limit=10)
                 if recent:
                     for entry in recent:
-                        timestamp = datetime.fromtimestamp(entry['timestamp']).strftime("%H:%M:%S")
-                        content = entry['content']
+                        timestamp = datetime.fromtimestamp(entry["timestamp"]).strftime("%H:%M:%S")
+                        content = entry["content"]
                         if len(content) > 100:
                             content = content[:100] + "..."
                         console.print(f"[dim]{timestamp}[/] - {content}")
                 else:
                     console.print("[dim]No hay entradas de memoria.[/]")
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 console.print()
                 continue
 
@@ -689,7 +783,10 @@ def chat():
                     TextColumn("[dim]{task.description}"),
                     transient=True,
                 ) as progress:
-                    task = progress.add_task(description="Lilith está consultando el Bosque de los Conocimientos...", total=None)
+                    task = progress.add_task(
+                        description="Lilith está consultando el Bosque de los Conocimientos...",
+                        total=None,
+                    )
                     time.sleep(0.5)
                     progress.update(task, description="Analizando el fluido de la Norn...")
                     time.sleep(0.8)
@@ -697,19 +794,24 @@ def chat():
                     result = engine.process(user_input)
 
                 console.print()
-                console.print("[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]")
+                console.print(
+                    "[bold gold1]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/]"
+                )
                 # Animación de escritura para la respuesta
                 lilith_response = Text("[bold red]Lilith[/]: ", style="bold red")
-                lilith_response.append(result['response'], style="italic white")
+                lilith_response.append(result["response"], style="italic white")
                 console.print(lilith_response)
                 console.print()
 
                 # Indicador visual de tokens usados (simulado para efecto)
-                tokens_used = len(result['response']) * 1.2  # Simulación
+                tokens_used = len(result["response"]) * 1.2  # Simulación
                 tokens_percent = min(int(tokens_used / 256 * 100), 100)
                 progress_bar = Text()
                 progress_bar.append("Tokens usados: ", style="dim")
-                progress_bar.append(f"{'█' * (tokens_percent // 10)}{'░' * (10 - (tokens_percent // 10))}", style="cyan")
+                progress_bar.append(
+                    f"{'█' * (tokens_percent // 10)}{'░' * (10 - (tokens_percent // 10))}",
+                    style="cyan",
+                )
                 progress_bar.append(f" {tokens_percent}%", style="dim")
                 console.print(progress_bar)
                 console.print()
@@ -722,6 +824,7 @@ def chat():
     except Exception as e:
         console.print(f"[error]❌ No se pudo iniciar Lilith: {e}[/]")
         import traceback
+
         console.print(f"[dim]{traceback.format_exc()}[/]")
 
 
@@ -730,6 +833,8 @@ def chat():
 def default():
     """Comando predeterminado: chat interactivo con Lilith."""
     chat()
+
+
 @app.command
 def launch():
     """Abrir menu interactivo para lanzar servicios de Yggdrasil."""

@@ -13,10 +13,10 @@ def test_new_model():
     print("🔍 Prueba de conexión con el nuevo modelo default de BytePlus...")
 
     # Configurar entorno
-    os.environ['LILITH_PROFILE'] = 'byteplus-mini'
+    os.environ["LILITH_PROFILE"] = "byteplus-mini"
 
     try:
-        sys.path.insert(0, '/mnt/d/Proyectos/Yggdrasil/Asgard/lilith-core')
+        sys.path.insert(0, "/mnt/d/Proyectos/Yggdrasil/Asgard/lilith-core")
 
         from lilith_core.config import Config
         from lilith_core.providers.registry import ProviderRegistry
@@ -30,14 +30,11 @@ def test_new_model():
         print(f"✅ Proveedor obtenido: {type(provider).__name__}")
 
         messages = [
-            {
-                "role": "system",
-                "content": "Eres una asistente útil que responde de forma concisa."
-            },
+            {"role": "system", "content": "Eres una asistente útil que responde de forma concisa."},
             {
                 "role": "user",
-                "content": "Hola, ¿qué modelo estás usando? Responde en español con el nombre exacto del modelo."
-            }
+                "content": "Hola, ¿qué modelo estás usando? Responde en español con el nombre exacto del modelo.",
+            },
         ]
 
         response = asyncio.run(provider.complete(messages))
@@ -57,8 +54,10 @@ def test_new_model():
     except Exception as e:
         print(f"❌ Error: {e}")
         import traceback
+
         print(f"💡 Detalles: {traceback.format_exc()}")
         return False
+
 
 if __name__ == "__main__":
     success = test_new_model()

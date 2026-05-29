@@ -11,64 +11,63 @@ import time
 from pathlib import Path
 
 import pytest
+from context_manager import (
+    Callback,
+    ContextManager,
+    ForeshadowSeed,
+    ForeshadowState,
+    NarrativeThread,
+    SessionContext,
+    ThreadType,
+)
+from memory.player_memory import (
+    ActionType,
+    EventCategory,
+    FearDimension,
+    FearFingerprint,
+    GameEvent,
+    HabituationTracker,
+    PlayerFearProfile,
+    PlayerMemoryStore,
+    SessionMemory,
+)
+from npc_intelligence import (
+    Doppelganger,
+    NPCBehavior,
+    NPCIntelligence,
+    NPCProfile,
+    NPCRole,
+    TrustLevel,
+    TrustSystem,
+)
 
 # ── Imports ──────────────────────────────────────────────────────────
-
 from pattern_analyzer import (
-    PatternAnalyzer,
-    ExtendedAction,
-    ExplorationStyle,
     BraveryIndex,
+    ExplorationStyle,
+    ExtendedAction,
     FearVelocity,
+    PatternAnalyzer,
     PredictionResult,
 )
 from procedural_generator import (
-    ProceduralGenerator,
-    SceneType,
-    EventType,
-    NarrativeAct,
-    EntityBehavior,
-    SceneTemplate,
-    GameEvent2,
     ChainEvent,
-    SafeRoom,
+    EntityBehavior,
     EntitySpawn,
+    EventType,
+    GameEvent2,
+    NarrativeAct,
+    ProceduralGenerator,
+    SafeRoom,
+    SceneTemplate,
+    SceneType,
 )
 from tension_manager import (
-    TensionManager,
-    TensionState,
     CooldownState,
     DecisionType,
     TensionDecision,
-)
-from context_manager import (
-    ContextManager,
-    ThreadType,
-    ForeshadowState,
-    NarrativeThread,
-    ForeshadowSeed,
-    Callback,
-    SessionContext,
-)
-from npc_intelligence import (
-    NPCIntelligence,
-    NPCRole,
-    NPCBehavior,
-    TrustLevel,
-    NPCProfile,
-    Doppelganger,
-    TrustSystem,
-)
-from memory.player_memory import (
-    FearDimension,
-    FearFingerprint,
-    PlayerFearProfile,
-    PlayerMemoryStore,
-    GameEvent,
-    EventCategory,
-    ActionType,
-    HabituationTracker,
-    SessionMemory,
+    TensionManager,
+    TensionState,
 )
 
 
@@ -395,7 +394,11 @@ class TestNPCIntelligence:
         npc = npc_sys.create_npc("Liar", NPCRole.SUSPECT, "Suspicious")
         npc.behavior = NPCBehavior.MISLEADING
         dialogue = npc_sys.generate_dialogue(npc, "Is it safe?")
-        assert "safe" in dialogue.lower() or "trust" in dialogue.lower() or "nothing" in dialogue.lower()
+        assert (
+            "safe" in dialogue.lower()
+            or "trust" in dialogue.lower()
+            or "nothing" in dialogue.lower()
+        )
 
     def test_trust_system(self):
         npc_sys = NPCIntelligence()
@@ -407,7 +410,7 @@ class TestNPCIntelligence:
     def test_betrayal(self):
         npc_sys = NPCIntelligence()
         npc = npc_sys.create_npc("Traitor", NPCRole.ALLY, "Seems friendly")
-        result = npc_sys.simulate_betrayal(npc)
+        npc_sys.simulate_betrayal(npc)
         assert npc.revealed
         assert npc.role == NPCRole.HOSTILE
         assert npc_sys.trust_system.betrayals == 1
@@ -510,7 +513,8 @@ class TestMemoryModule:
 
 class TestGameMaster:
     def test_start(self):
-        from gamemaster import GameMaster, GameConfig
+        from gamemaster import GameConfig, GameMaster
+
         gm = GameMaster(GameConfig(session_id="test", enable_npc=False, enable_doppelganger=False))
         state = gm.start()
         assert state.scene != ""
@@ -518,7 +522,8 @@ class TestGameMaster:
         assert len(state.choices) > 0
 
     def test_process_action(self):
-        from gamemaster import GameMaster, GameConfig
+        from gamemaster import GameConfig, GameMaster
+
         gm = GameMaster(GameConfig(session_id="test", enable_npc=False, enable_doppelganger=False))
         state = gm.start()
         state = gm.process_action("I look around")
@@ -526,7 +531,8 @@ class TestGameMaster:
         assert state.narrative != ""
 
     def test_classify_action(self):
-        from gamemaster import GameMaster, GameConfig
+        from gamemaster import GameConfig, GameMaster
+
         gm = GameMaster(GameConfig(session_id="test"))
         assert gm._classify_action("I open the door") == ExtendedAction.INTERACT
         assert gm._classify_action("I run away") == ExtendedAction.FLEE
@@ -534,7 +540,8 @@ class TestGameMaster:
         assert gm._classify_action("I listen") == ExtendedAction.LISTEN
 
     def test_full_state(self):
-        from gamemaster import GameMaster, GameConfig
+        from gamemaster import GameConfig, GameMaster
+
         gm = GameMaster(GameConfig(session_id="test"))
         gm.start()
         state = gm.get_full_state()
@@ -591,7 +598,9 @@ class TestDataset:
                 if i >= 100:
                     break
                 obj = json.loads(line)
-                assert len(obj["output"]) >= 100, f"Entry {i} has short output: {len(obj['output'])} chars"
+                assert len(obj["output"]) >= 100, (
+                    f"Entry {i} has short output: {len(obj['output'])} chars"
+                )
 
     def test_dataset_no_duplicates(self, dataset_path):
         seen = set()

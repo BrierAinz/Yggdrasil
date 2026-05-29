@@ -19,10 +19,10 @@ from lilith_memory.store import MemoryStore
 class AdvancedMemoryStore(MemoryStore):
     """Clase para una memoria avanzada con embeddings y búsqueda semántica"""
 
-    def __init__(self, db_path: str = None):
+    def __init__(self, db_path: str | None = None):
         """
         Inicializar la memoria avanzada
-        
+
         Args:
             db_path: Ruta de la base de datos SQLite
         """
@@ -38,6 +38,7 @@ class AdvancedMemoryStore(MemoryStore):
         """Inicializar soporte para embeddings"""
         try:
             from sentence_transformers import SentenceTransformer
+
             self.embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
             self.has_embeddings = True
             print("✅ Soporte de embeddings activado")
@@ -49,11 +50,11 @@ class AdvancedMemoryStore(MemoryStore):
     def add(self, content: str, metadata: dict | None = None) -> int:
         """
         Agregar contenido a la memoria con embeddings
-        
+
         Args:
             content: Contenido a almacenar
             metadata: Metadatos adicionales
-            
+
         Returns:
             ID de la entrada creada
         """
@@ -73,11 +74,11 @@ class AdvancedMemoryStore(MemoryStore):
     def search_semantic(self, query: str, limit: int = 5) -> list[dict[str, Any]]:
         """
         Buscar en la memoria de forma semántica
-        
+
         Args:
             query: Consulta para buscar
             limit: Número máximo de resultados
-            
+
         Returns:
             Lista de resultados con similitud
         """
@@ -100,19 +101,22 @@ class AdvancedMemoryStore(MemoryStore):
             for row in rows:
                 # Decodificar embedding desde SQLite
                 import pickle
+
                 try:
                     entry_embedding = pickle.loads(row["embedding"])
 
                     # Calcular similitud coseno
                     similarity = self._cosine_similarity(query_embedding, entry_embedding)
 
-                    results.append({
-                        "id": row["id"],
-                        "content": row["content"],
-                        "metadata": json.loads(row["metadata"]) if row["metadata"] else {},
-                        "timestamp": row["timestamp"],
-                        "similarity": similarity
-                    })
+                    results.append(
+                        {
+                            "id": row["id"],
+                            "content": row["content"],
+                            "metadata": json.loads(row["metadata"]) if row["metadata"] else {},
+                            "timestamp": row["timestamp"],
+                            "similarity": similarity,
+                        }
+                    )
                 except Exception as e:
                     print(f"❌ Error al decodificar embedding: {e}")
 
@@ -129,11 +133,11 @@ class AdvancedMemoryStore(MemoryStore):
     def _cosine_similarity(self, vec1: list[float], vec2: list[float]) -> float:
         """
         Calcular similitud coseno entre dos vectores
-        
+
         Args:
             vec1: Primer vector
             vec2: Segundo vector
-            
+
         Returns:
             Similitud coseno (0-1)
         """
@@ -154,11 +158,11 @@ class AdvancedMemoryStore(MemoryStore):
     def get_context_relevant_to_query(self, query: str, max_entries: int = 3) -> str:
         """
         Obtener contexto relevante para una consulta
-        
+
         Args:
             query: Consulta para la que se necesita contexto
             max_entries: Número máximo de entradas relevantes
-            
+
         Returns:
             Texto con el contexto
         """
@@ -180,10 +184,10 @@ class AdvancedMemoryStore(MemoryStore):
     def _clean_for_context(self, content: str) -> str:
         """
         Limpiar contenido para incluir en contexto
-        
+
         Args:
             content: Contenido a limpiar
-            
+
         Returns:
             Contenido limpio
         """
@@ -202,10 +206,10 @@ class AdvancedMemoryStore(MemoryStore):
     def analyze_conversation_patterns(self, limit: int = 50) -> dict[str, Any]:
         """
         Analizar patrones de conversación
-        
+
         Args:
             limit: Número de conversaciones a analizar
-            
+
         Returns:
             Dict con patrones analizados
         """
@@ -217,7 +221,7 @@ class AdvancedMemoryStore(MemoryStore):
             "assistant_entries": 0,
             "avg_length": 0,
             "topics": [],
-            "frequent_words": {}
+            "frequent_words": {},
         }
 
         if len(recent_entries) == 0:
@@ -249,6 +253,7 @@ class AdvancedMemoryStore(MemoryStore):
 
         # Contar palabras frecuentes
         from collections import Counter
+
         word_counts = Counter(all_words)
         analysis["frequent_words"] = dict(word_counts.most_common(10))
 
@@ -260,10 +265,10 @@ class AdvancedMemoryStore(MemoryStore):
     def _extract_topics(self, content: str) -> list[str]:
         """
         Extraer temas de un contenido
-        
+
         Args:
             content: Contenido a analizar
-            
+
         Returns:
             Lista de temas
         """
@@ -277,7 +282,7 @@ class AdvancedMemoryStore(MemoryStore):
             ("memory", ["memoria", "memory"]),
             ("skills", ["skills", "habilidades", "funciones"]),
             ("improvement", ["mejora", "improvement", "optimización"]),
-            ("conversación", ["conversación", "chat"])
+            ("conversación", ["conversación", "chat"]),
         ]
 
         for topic_name, indicators in topic_indicators:
@@ -289,19 +294,40 @@ class AdvancedMemoryStore(MemoryStore):
     def _extract_keywords(self, text: str) -> list[str]:
         """
         Extraer palabras clave de un texto
-        
+
         Args:
             text: Texto para extraer keywords
-            
+
         Returns:
             Lista de palabras clave
         """
         text = re.sub(r"[^\w\s]", "", text.lower())
         words = text.split()
 
-        stop_words = ["el", "la", "los", "las", "de", "del", "a", "ante", "con",
-                     "para", "por", "sin", "so", "sobre", "tras", "cuando",
-                     "donde", "como", "que", "qui", "quien", "quienes"]
+        stop_words = [
+            "el",
+            "la",
+            "los",
+            "las",
+            "de",
+            "del",
+            "a",
+            "ante",
+            "con",
+            "para",
+            "por",
+            "sin",
+            "so",
+            "sobre",
+            "tras",
+            "cuando",
+            "donde",
+            "como",
+            "que",
+            "qui",
+            "quien",
+            "quienes",
+        ]
 
         keywords = []
         for word in words:
@@ -314,10 +340,10 @@ class AdvancedMemoryStore(MemoryStore):
     def generate_conversation_summary(self, limit: int = 30) -> str:
         """
         Generar un resumen de la conversación
-        
+
         Args:
             limit: Número de entradas a incluir en el resumen
-            
+
         Returns:
             Resumen de la conversación
         """
@@ -336,14 +362,14 @@ class AdvancedMemoryStore(MemoryStore):
 
         return summary
 
-    def export_memory(self, output_path: str = None, format: str = "json") -> str:
+    def export_memory(self, output_path: str | None = None, format: str = "json") -> str:
         """
         Exportar la memoria
-        
+
         Args:
             output_path: Ruta de salida
             format: Formato de exportación (json, csv, markdown)
-            
+
         Returns:
             Ruta del archivo exportado
         """
@@ -358,6 +384,7 @@ class AdvancedMemoryStore(MemoryStore):
                 json.dump(entries, f, indent=2, default=str)
         elif format == "csv":
             import csv
+
             with open(output_path, "w", encoding="utf-8", newline="") as f:
                 writer = csv.DictWriter(f, fieldnames=["id", "content", "metadata", "timestamp"])
                 writer.writeheader()
@@ -367,7 +394,9 @@ class AdvancedMemoryStore(MemoryStore):
             with open(output_path, "w", encoding="utf-8") as f:
                 f.write("# Historial de Conversación\n\n")
                 for entry in reversed(entries):
-                    timestamp = datetime.fromtimestamp(entry["timestamp"]).strftime("%d/%m/%Y %H:%M:%S")
+                    timestamp = datetime.fromtimestamp(entry["timestamp"]).strftime(
+                        "%d/%m/%Y %H:%M:%S"
+                    )
                     f.write(f"## {timestamp}\n\n")
                     f.write(f"{entry['content']}\n\n---\n\n")
 
@@ -376,10 +405,10 @@ class AdvancedMemoryStore(MemoryStore):
     def import_memory(self, file_path: str) -> int:
         """
         Importar memoria desde un archivo
-        
+
         Args:
             file_path: Ruta del archivo de importación
-            
+
         Returns:
             Número de entradas importadas
         """
@@ -405,6 +434,7 @@ class AdvancedMemoryStore(MemoryStore):
 
             elif file_path.endswith(".csv"):
                 import csv
+
                 with open(file_path, encoding="utf-8") as f:
                     reader = csv.DictReader(f)
                     for row in reader:

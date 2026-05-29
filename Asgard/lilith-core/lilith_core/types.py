@@ -1,13 +1,14 @@
 """Base types for Yggdrasil ecosystem."""
 
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any, Optional
 from datetime import datetime
+from enum import Enum
+from typing import Any
 
 
 class Realm(Enum):
     """The Nine Realms of Yggdrasil."""
+
     ASGARD = "Asgard"
     ALFHEIM = "Alfheim"
     VANAHEIM = "Vanaheim"
@@ -21,6 +22,7 @@ class Realm(Enum):
 
 class Status(Enum):
     """Project status."""
+
     ACTIVE = "active"
     WIP = "wip"
     ARCHIVED = "archived"
@@ -30,6 +32,7 @@ class Status(Enum):
 @dataclass
 class Project:
     """A project in the Yggdrasil ecosystem."""
+
     name: str
     realm: Realm
     version: str = "0.1.0"
@@ -42,6 +45,7 @@ class Project:
 @dataclass
 class Agent:
     """An AI agent in the ecosystem."""
+
     name: str
     version: str
     permissions: list[str] = field(default_factory=list)
@@ -51,8 +55,9 @@ class Agent:
 @dataclass
 class Service:
     """A running service."""
+
     name: str
     port: int
     host: str = "localhost"
     active: bool = False
-    pid: Optional[int] = None
+    pid: int | None = None

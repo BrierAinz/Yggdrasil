@@ -5,8 +5,13 @@ BytePlus + MiMo models. Deduplicates against unified dataset.
 Targets underrepresented fear types.
 """
 
+import json
+import os
+import random
+import time
+
 from openai import OpenAI
-import json, time, sys, os, random
+
 
 BASE = "/home/brierainz/Proyectos/Yggdrasil/Muspelheim/Horror-GameMaster/data"
 UNIFIED = f"{BASE}/dataset_unified.jsonl"
@@ -55,46 +60,104 @@ print(f"Starting with {len(seen)} existing entries in unified dataset", flush=Tr
 # --- Content ---
 
 FEAR_TYPES = [
-    "psychological", "darkness", "isolation", "body_horror",
-    "paranoia", "loss_of_control", "jumpscare", "false_security",
+    "psychological",
+    "darkness",
+    "isolation",
+    "body_horror",
+    "paranoia",
+    "loss_of_control",
+    "jumpscare",
+    "false_security",
 ]
 
 # Weight underrepresented types more heavily
 FEAR_WEIGHTS = [1, 1, 1, 2, 1, 1, 1, 4]  # false_security gets 4x weight
 
 SCENARIOS = [
-    "a subway tunnel at 3am", "a parking garage", "a laundromat at midnight",
-    "a public library after hours", "an empty swimming pool", "a cruise ship at night",
-    "a shopping mall after closing", "an abandoned factory", "a courtroom at night",
-    "a church confessional", "a morgue", "a greenhouse at dusk",
-    "a rooftop in fog", "a broken elevator", "a sewer system",
-    "a lighthouse in a storm", "a submarine", "a derelict space station",
-    "an abandoned theater", "a mirror maze", "an infinite library",
-    "a corrupted garden", "a frozen lake", "a flooded mine shaft",
-    "a radio tower", "a barn at midnight", "a silo", "a phone booth in the rain",
-    "a suspension bridge", "a road tunnel", "a dry well", "a clock tower",
-    "a prison cell", "a hospital ward", "a school gymnasium at night",
-    "a server room", "a boiler room", "a cathedral crypt", "a catacomb",
-    "a train station at 4am", "a cemetery in fog", "a traveling carnival",
-    "a warehouse district", "a hotel lobby at 3am", "a restaurant kitchen after hours",
-    "a bank vault", "a planetarium with the lights off", "a meat locker",
-    "an attic", "a basement", "a walk-in closet", "a motel room",
-    "a construction site at night", "a water treatment plant", "a power station",
-    "a quarantine ward", "an asylum hallway", "a doll factory",
-    "a wax museum after hours", "a taxidermy shop", "a funeral home",
-    "a children's playground at midnight", "an empty school hallway",
+    "a subway tunnel at 3am",
+    "a parking garage",
+    "a laundromat at midnight",
+    "a public library after hours",
+    "an empty swimming pool",
+    "a cruise ship at night",
+    "a shopping mall after closing",
+    "an abandoned factory",
+    "a courtroom at night",
+    "a church confessional",
+    "a morgue",
+    "a greenhouse at dusk",
+    "a rooftop in fog",
+    "a broken elevator",
+    "a sewer system",
+    "a lighthouse in a storm",
+    "a submarine",
+    "a derelict space station",
+    "an abandoned theater",
+    "a mirror maze",
+    "an infinite library",
+    "a corrupted garden",
+    "a frozen lake",
+    "a flooded mine shaft",
+    "a radio tower",
+    "a barn at midnight",
+    "a silo",
+    "a phone booth in the rain",
+    "a suspension bridge",
+    "a road tunnel",
+    "a dry well",
+    "a clock tower",
+    "a prison cell",
+    "a hospital ward",
+    "a school gymnasium at night",
+    "a server room",
+    "a boiler room",
+    "a cathedral crypt",
+    "a catacomb",
+    "a train station at 4am",
+    "a cemetery in fog",
+    "a traveling carnival",
+    "a warehouse district",
+    "a hotel lobby at 3am",
+    "a restaurant kitchen after hours",
+    "a bank vault",
+    "a planetarium with the lights off",
+    "a meat locker",
+    "an attic",
+    "a basement",
+    "a walk-in closet",
+    "a motel room",
+    "a construction site at night",
+    "a water treatment plant",
+    "a power station",
+    "a quarantine ward",
+    "an asylum hallway",
+    "a doll factory",
+    "a wax museum after hours",
+    "a taxidermy shop",
+    "a funeral home",
+    "a children's playground at midnight",
+    "an empty school hallway",
 ]
 
 ENTITY_TYPES = [
-    "lovecraftian", "junji_ito", "flesh", "shadow",
-    "mimic", "memetic", "temporal", "geometric", "nature",
-    "parasitic", "recursive", "uncanny_valley",
+    "lovecraftian",
+    "junji_ito",
+    "flesh",
+    "shadow",
+    "mimic",
+    "memetic",
+    "temporal",
+    "geometric",
+    "nature",
+    "parasitic",
+    "recursive",
+    "uncanny_valley",
 ]
 
 PROMPT_TEMPLATES = [
     # Scene descriptions
     lambda ft, sc: (
-        f"Generate 5 horror SCENE entries. Fear type: \"{ft}\". "
+        f'Generate 5 horror SCENE entries. Fear type: "{ft}". '
         f"Setting: {sc}. "
         "JSON format: instruction, input, output, fear_type. "
         "output = 100-250 words, second-person horror narration. "
@@ -103,7 +166,7 @@ PROMPT_TEMPLATES = [
     ),
     # NPC dialogues
     lambda ft, sc: (
-        f"Generate 5 horror NPC DIALOGUE entries. Fear: \"{ft}\". "
+        f'Generate 5 horror NPC DIALOGUE entries. Fear: "{ft}". '
         f"Setting: {sc}. "
         "JSON: instruction (describe NPC), input (player says something), "
         "output (NPC reply that is unsettling, 100-200 words), fear_type. "
@@ -112,7 +175,7 @@ PROMPT_TEMPLATES = [
     ),
     # Environmental events
     lambda ft, sc: (
-        f"Generate 5 ENVIRONMENTAL EVENT entries. Fear: \"{ft}\". "
+        f'Generate 5 ENVIRONMENTAL EVENT entries. Fear: "{ft}". '
         f"Setting: {sc}. "
         "JSON: instruction (describe the environment), input (player action), "
         "output (what happens next — unsettling, 100-200 words), fear_type. "
@@ -121,7 +184,7 @@ PROMPT_TEMPLATES = [
     ),
     # Foreshadowing / red herrings
     lambda ft, sc: (
-        f"Generate 5 FORESHADOWING entries. Fear: \"{ft}\". "
+        f'Generate 5 FORESHADOWING entries. Fear: "{ft}". '
         f"Setting: {sc}. "
         "JSON: instruction (setup), input (player investigates), "
         "output (what they find — hints at worse things, 100-200 words), fear_type. "
@@ -129,7 +192,7 @@ PROMPT_TEMPLATES = [
     ),
     # Entity encounters
     lambda ft, sc: (
-        f"Generate 3 ENTITY ENCOUNTER entries. Type: \"{ft}\". "
+        f'Generate 3 ENTITY ENCOUNTER entries. Type: "{ft}". '
         f"Setting: {sc}. "
         "JSON: instruction (entity description), input (player encounters it), "
         "output (the encounter — 150-300 words, visceral, atmospheric), fear_type. "
@@ -170,7 +233,10 @@ while len(exhausted) < len(MODELS):
         resp = client.chat.completions.create(
             model=model,
             messages=[
-                {"role": "system", "content": "Output ONLY valid JSONL. No markdown, no code fences, no explanation. Just raw JSON objects, one per line."},
+                {
+                    "role": "system",
+                    "content": "Output ONLY valid JSONL. No markdown, no code fences, no explanation. Just raw JSON objects, one per line.",
+                },
                 {"role": "user", "content": prompt},
             ],
             temperature=0.95,
@@ -209,7 +275,11 @@ while len(exhausted) < len(MODELS):
         total_calls += 1
         consecutive_errors = 0
 
-        short_model = model.replace("seed-2-0-", "s20-").replace("seed-1-8-", "s18-").replace("deepseek-v3-2-", "ds3-")
+        short_model = (
+            model.replace("seed-2-0-", "s20-")
+            .replace("seed-1-8-", "s18-")
+            .replace("deepseek-v3-2-", "ds3-")
+        )
         short_prov = provider_name[:2]
 
         print(
@@ -225,7 +295,12 @@ while len(exhausted) < len(MODELS):
         consecutive_errors += 1
         key = f"{provider_name}:{model}"
 
-        if "429" in err or "SetLimitExceeded" in err or "insufficient" in err.lower() or "quota" in err.lower():
+        if (
+            "429" in err
+            or "SetLimitExceeded" in err
+            or "insufficient" in err.lower()
+            or "quota" in err.lower()
+        ):
             print(f"  {key}: EXHAUSTED", flush=True)
             exhausted.add(key)
         else:
@@ -238,11 +313,11 @@ while len(exhausted) < len(MODELS):
 
 outf.close()
 
-print(f"\n{'='*60}", flush=True)
-print(f"GENERATION COMPLETE", flush=True)
+print(f"\n{'=' * 60}", flush=True)
+print("GENERATION COMPLETE", flush=True)
 print(f"  New entries this run: {total_new}", flush=True)
 print(f"  Total unique entries: {len(seen)}", flush=True)
 print(f"  API calls: {total_calls}", flush=True)
 print(f"  Models exhausted: {len(exhausted)}/{len(MODELS)}", flush=True)
 print(f"  Output: {OUTFILE}", flush=True)
-print(f"{'='*60}", flush=True)
+print(f"{'=' * 60}", flush=True)

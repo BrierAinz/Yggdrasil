@@ -9,27 +9,20 @@ from __future__ import annotations
 
 import time
 from collections import defaultdict
-from enum import Enum
-from typing import Optional
-
-import numpy as np
-from pydantic import BaseModel, Field
+from enum import StrEnum
 
 from memory.player_memory import (
-    ActionType,
-    EventCategory,
     FearDimension,
     FearFingerprint,
-    GameEvent,
     HabituationTracker,
-    PlayerFearProfile,
 )
+from pydantic import BaseModel, Field
 
 
 # ── Extended Enums ───────────────────────────────────────────────────
 
 
-class ExtendedAction(str, Enum):
+class ExtendedAction(StrEnum):
     """Extended action types beyond the base ActionType."""
 
     MOVE = "move"
@@ -54,20 +47,20 @@ class ExtendedAction(str, Enum):
     CRY = "cry"
 
 
-class ExplorationStyle(str, Enum):
-    THOROUGH = "thorough"      # Examines everything, slow
-    BALANCED = "balanced"      # Normal pace
-    RUSHED = "rushed"          # Moves fast, skips details
-    CAUTIOUS = "cautious"      # Hides often, avoids risk
-    RECKLESS = "reckless"      # Charges into danger
+class ExplorationStyle(StrEnum):
+    THOROUGH = "thorough"  # Examines everything, slow
+    BALANCED = "balanced"  # Normal pace
+    RUSHED = "rushed"  # Moves fast, skips details
+    CAUTIOUS = "cautious"  # Hides often, avoids risk
+    RECKLESS = "reckless"  # Charges into danger
 
 
-class BraveryIndex(str, Enum):
-    FROZEN = "frozen"          # Cannot act, paralyzed
-    PANICKING = "panicking"    # Erratic actions, fleeing
-    NERVOUS = "nervous"        # Hesitant but functional
-    BRAVE = "brave"            # Steady, deliberate
-    FEARLESS = "fearless"      # Seeks out danger
+class BraveryIndex(StrEnum):
+    FROZEN = "frozen"  # Cannot act, paralyzed
+    PANICKING = "panicking"  # Erratic actions, fleeing
+    NERVOUS = "nervous"  # Hesitant but functional
+    BRAVE = "brave"  # Steady, deliberate
+    FEARLESS = "fearless"  # Seeks out danger
 
 
 # ── Data Models ──────────────────────────────────────────────────────
@@ -109,9 +102,9 @@ class FearVelocity(BaseModel):
 class PredictionResult(BaseModel):
     """A prediction about player behavior or optimal scare timing."""
 
-    predicted_action: Optional[ExtendedAction] = None
+    predicted_action: ExtendedAction | None = None
     confidence: float = 0.0
-    optimal_fear_type: Optional[FearDimension] = None
+    optimal_fear_type: FearDimension | None = None
     optimal_intensity: float = 0.0
     timing_score: float = 0.0  # 0 = bad time, 1 = perfect time
     reasoning: str = ""
@@ -146,9 +139,7 @@ class PatternAnalyzer:
         self._session_start: float = time.time()
         self._last_scare_time: float = 0.0
         self._scare_count: int = 0
-        self._novelty_scores: dict[FearDimension, float] = {
-            d: 1.0 for d in FearDimension
-        }
+        self._novelty_scores: dict[FearDimension, float] = dict.fromkeys(FearDimension, 1.0)
 
     # ── Recording ────────────────────────────────────────────────────
 
@@ -156,7 +147,7 @@ class PatternAnalyzer:
         self,
         action: ExtendedAction,
         location: str = "",
-        nearby_events: list[str] = None,
+        nearby_events: list[str] | None = None,
         response_time: float = 0.0,
         outcome: str = "",
     ) -> None:
@@ -193,9 +184,7 @@ class PatternAnalyzer:
         self.habituation[dimension].record_exposure(intensity)
 
         # Update novelty (decreases with repeated exposure)
-        self._novelty_scores[dimension] = max(
-            0.1, self._novelty_scores[dimension] * 0.9
-        )
+        self._novelty_scores[dimension] = max(0.1, self._novelty_scores[dimension] * 0.9)
 
         # Record trigger
         if trigger:
@@ -272,13 +261,16 @@ class PatternAnalyzer:
             self._add_pattern("explorer", "Player examines everything", 0.7)
 
         # Detect panic pattern
-        panic_count = sum(1 for a in recent if a.action in (ExtendedAction.PANIC, ExtendedAction.FLEE))
+        panic_count = sum(
+            1 for a in recent if a.action in (ExtendedAction.PANIC, ExtendedAction.FLEE)
+        )
         if panic_count > len(recent) * 0.3:
             self._add_pattern("panicked", "Player is in panic mode", 0.9)
 
         # Detect investigative pattern
         listen_read = sum(
-            1 for a in recent
+            1
+            for a in recent
             if a.action in (ExtendedAction.LISTEN, ExtendedAction.READ, ExtendedAction.EXAMINE)
         )
         if listen_read > len(recent) * 0.3:
@@ -338,7 +330,8 @@ class PatternAnalyzer:
         flee = sum(1 for a in recent if a.action == ExtendedAction.FLEE)
         hide = sum(1 for a in recent if a.action == ExtendedAction.HIDE)
         advance = sum(
-            1 for a in recent
+            1
+            for a in recent
             if a.action in (ExtendedAction.MOVE, ExtendedAction.OPEN, ExtendedAction.INTERACT)
         )
 
@@ -379,11 +372,11 @@ class PatternAnalyzer:
         # Determine optimal intensity
         bravery = self.get_bravery_index()
         intensity_map = {
-            BraveryIndex.FROZEN: 0.3,      # Low — they're already scared
+            BraveryIndex.FROZEN: 0.3,  # Low — they're already scared
             BraveryIndex.PANICKING: 0.4,
             BraveryIndex.NERVOUS: 0.6,
             BraveryIndex.BRAVE: 0.8,
-            BraveryIndex.FEARLESS: 0.95,    # High — they need a real scare
+            BraveryIndex.FEARLESS: 0.95,  # High — they need a real scare
         }
         optimal_intensity = intensity_map.get(bravery, 0.5)
 
@@ -394,7 +387,7 @@ class PatternAnalyzer:
             optimal_intensity=optimal_intensity,
             timing_score=timing,
             reasoning=f"Bravery: {bravery.value}, Style: {self.get_exploration_style().value}, "
-                      f"Fresh fears: {[d.value for d in self.get_fresh_fears()[:3]]}",
+            f"Fresh fears: {[d.value for d in self.get_fresh_fears()[:3]]}",
         )
 
     def _predict_action(self, recent: list[ActionRecord]) -> ExtendedAction:
@@ -428,7 +421,7 @@ class PatternAnalyzer:
             return 0.8  # First scare — good timing
 
         time_since_last = time.time() - self._last_scare_time
-        session_duration = time.time() - self._session_start
+        time.time() - self._session_start
 
         # Too soon after last scare
         if time_since_last < 30:

@@ -9,35 +9,36 @@ Horror GameMaster — BrierStudios
 
 from __future__ import annotations
 
-import sys
 import time
-import threading
-from typing import Optional
+
 
 try:
+    from rich.align import Align
+    from rich.columns import Columns
     from rich.console import Console
-    from rich.panel import Panel
-    from rich.text import Text
     from rich.layout import Layout
     from rich.live import Live
-    from rich.table import Table
+    from rich.panel import Panel
     from rich.progress_bar import ProgressBar
-    from rich.columns import Columns
-    from rich.align import Align
     from rich.style import Style
+    from rich.table import Table
+    from rich.text import Text
+
     RICH_AVAILABLE = True
 except ImportError:
     RICH_AVAILABLE = False
 
-from gamemaster import GameMaster, GameConfig, GameState
-from tension_manager import TensionState
+from gamemaster import GameConfig, GameMaster, GameState
 from pattern_analyzer import BraveryIndex
+from tension_manager import TensionState
 
 
 # ── Color Palette ────────────────────────────────────────────────────
 
+
 class HorrorColors:
     """Color palette for the horror terminal UI."""
+
     # Tension states
     CALM = "dim white"
     UNEASY = "yellow"
@@ -93,18 +94,21 @@ class HorrorTerminalUI:
         ui.run()
     """
 
-    def __init__(self, config: Optional[GameConfig] = None):
+    def __init__(self, config: GameConfig | None = None):
         if not RICH_AVAILABLE:
             raise ImportError("Rich is required: pip install rich")
 
         self.console = Console()
-        self.gm = GameMaster(config or GameConfig(
-            session_id="terminal_session",
-            pacing=0.5,
-            enable_npc=True,
-            enable_doppelganger=True,
-        ))
-        self.state: Optional[GameState] = None
+        self.gm = GameMaster(
+            config
+            or GameConfig(
+                session_id="terminal_session",
+                pacing=0.5,
+                enable_npc=True,
+                enable_doppelganger=True,
+            )
+        )
+        self.state: GameState | None = None
         self._typing_speed = 0.03  # Seconds per character
         self._running = False
 
@@ -282,7 +286,7 @@ class HorrorTerminalUI:
 
     # ── Input ────────────────────────────────────────────────────────
 
-    def _get_choice(self) -> Optional[str]:
+    def _get_choice(self) -> str | None:
         """Get player's choice."""
         choices = self.state.choices
         if not choices:
@@ -316,7 +320,7 @@ class HorrorTerminalUI:
                 self._running = False
                 return None
 
-    def _get_free_input(self) -> Optional[str]:
+    def _get_free_input(self) -> str | None:
         """Get free text input."""
         try:
             self.console.print("  > ", style=HorrorColors.PROMPT, end="")
@@ -398,9 +402,9 @@ class SimpleHorrorUI:
     Fallback for systems without Rich installed.
     """
 
-    def __init__(self, config: Optional[GameConfig] = None):
+    def __init__(self, config: GameConfig | None = None):
         self.gm = GameMaster(config or GameConfig(session_id="simple_session"))
-        self.state: Optional[GameState] = None
+        self.state: GameState | None = None
         self._running = False
 
     def run(self) -> None:
@@ -433,7 +437,9 @@ class SimpleHorrorUI:
         """Display game state."""
         print(f"\n{'─' * 60}")
         print(f"  TENSION: [{self.gm.tension.state.value.upper()}] {self.gm.tension.tension:.0%}")
-        print(f"  LEVEL:   {self.gm.tension.escalation_level}/10 ({self.gm.tension.get_escalation_level().name})")
+        print(
+            f"  LEVEL:   {self.gm.tension.escalation_level}/10 ({self.gm.tension.get_escalation_level().name})"
+        )
         print(f"  TURN:    {self.state.turn}")
         print(f"  WHERE:   {self.state.location}")
         print(f"{'─' * 60}")
@@ -450,7 +456,7 @@ class SimpleHorrorUI:
                 print(f"    [{i}] {choice}")
             print()
 
-    def _get_input(self) -> Optional[str]:
+    def _get_input(self) -> str | None:
         """Get player input."""
         choices = self.state.choices
         try:

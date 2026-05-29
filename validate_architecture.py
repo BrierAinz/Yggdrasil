@@ -14,14 +14,12 @@ import requests
 # Configuración de logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('validation.log'),
-        logging.StreamHandler()
-    ]
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.FileHandler("validation.log"), logging.StreamHandler()],
 )
 
 logger = logging.getLogger(__name__)
+
 
 class ArchitectureValidator:
     """Valida la arquitectura de Yggdrasil"""
@@ -35,7 +33,7 @@ class ArchitectureValidator:
             "agents": [],
             "permissions": [],
             "communication": [],
-            "security": []
+            "security": [],
         }
 
     def load_manifest(self):
@@ -43,7 +41,7 @@ class ArchitectureValidator:
         manifest_path = Path("yggdrasil_manifest.json")
 
         if manifest_path.exists():
-            with open(manifest_path, encoding='utf-8') as f:
+            with open(manifest_path, encoding="utf-8") as f:
                 return json.load(f)
 
         raise FileNotFoundError("Manifesto de arquitectura no encontrado")
@@ -55,11 +53,11 @@ class ArchitectureValidator:
         if config_path.exists():
             config = {}
 
-            with open(config_path, encoding='utf-8') as f:
+            with open(config_path, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
-                    if line and not line.startswith('#'):
-                        key, value = line.split('=', 1)
+                    if line and not line.startswith("#"):
+                        key, value = line.split("=", 1)
                         config[key.strip()] = value.strip()
 
             return config
@@ -75,7 +73,7 @@ class ArchitectureValidator:
                 "name": module["name"],
                 "version": module["version"],
                 "status": "OK" if self.validate_module(module) else "ERROR",
-                "errors": []
+                "errors": [],
             }
 
             if not self.validate_module(module):
@@ -83,7 +81,9 @@ class ArchitectureValidator:
 
             self.validation_results["modules"].append(module_result)
 
-        logger.info(f"{sum(1 for m in self.validation_results['modules'] if m['status'] == 'OK')} modules validated successfully")
+        logger.info(
+            f"{sum(1 for m in self.validation_results['modules'] if m['status'] == 'OK')} modules validated successfully"
+        )
 
     def validate_module(self, module: dict) -> bool:
         """Valida un módulo individual"""
@@ -114,7 +114,7 @@ class ArchitectureValidator:
                 "name": service["name"],
                 "port": service["port"],
                 "status": "OK" if self.validate_service(service) else "ERROR",
-                "errors": []
+                "errors": [],
             }
 
             if not self.validate_service(service):
@@ -122,7 +122,9 @@ class ArchitectureValidator:
 
             self.validation_results["services"].append(service_result)
 
-        logger.info(f"{sum(1 for s in self.validation_results['services'] if s['status'] == 'OK')} services validated successfully")
+        logger.info(
+            f"{sum(1 for s in self.validation_results['services'] if s['status'] == 'OK')} services validated successfully"
+        )
 
     def validate_service(self, service: dict) -> bool:
         """Valida un servicio individual"""
@@ -142,7 +144,7 @@ class ArchitectureValidator:
                 "name": agent["name"],
                 "version": agent["version"],
                 "status": "OK" if self.validate_agent(agent) else "ERROR",
-                "errors": []
+                "errors": [],
             }
 
             if not self.validate_agent(agent):
@@ -150,7 +152,9 @@ class ArchitectureValidator:
 
             self.validation_results["agents"].append(agent_result)
 
-        logger.info(f"{sum(1 for a in self.validation_results['agents'] if a['status'] == 'OK')} agents validated successfully")
+        logger.info(
+            f"{sum(1 for a in self.validation_results['agents'] if a['status'] == 'OK')} agents validated successfully"
+        )
 
     def validate_agent(self, agent: dict) -> bool:
         """Valida un agente individual"""
@@ -160,7 +164,7 @@ class ArchitectureValidator:
             logger.error(f"Agent path {agent['path']} not found")
             return False
 
-        if not agent_path.is_file() or not agent_path.suffix == '.py':
+        if not agent_path.is_file() or agent_path.suffix != ".py":
             logger.error(f"Agent {agent['name']} is not a valid Python file")
             return False
 
@@ -173,7 +177,7 @@ class ArchitectureValidator:
         permissions_result = {
             "status": "OK" if self.validate_permission_system() else "ERROR",
             "errors": [],
-            "total_permissions": self.count_permissions()
+            "total_permissions": self.count_permissions(),
         }
 
         if not self.validate_permission_system():
@@ -189,7 +193,7 @@ class ArchitectureValidator:
             logger.error("Permission configuration file not found")
             return False
 
-        with open(permissions_path, encoding='utf-8') as f:
+        with open(permissions_path, encoding="utf-8") as f:
             permissions = json.load(f)
 
         if "Lilith CLI" not in permissions:
@@ -205,7 +209,7 @@ class ArchitectureValidator:
         if not permissions_path.exists():
             return 0
 
-        with open(permissions_path, encoding='utf-8') as f:
+        with open(permissions_path, encoding="utf-8") as f:
             permissions = json.load(f)
 
         return len(permissions.get("Lilith CLI", {}))
@@ -217,7 +221,7 @@ class ArchitectureValidator:
         communication_result = {
             "channels": len(self.manifest["communication_channels"]),
             "optimizations": self.validate_data_transmission(),
-            "errors": []
+            "errors": [],
         }
 
         if not self.validate_data_transmission():
@@ -227,9 +231,11 @@ class ArchitectureValidator:
 
     def validate_data_transmission(self) -> bool:
         """Valida la optimización de transmisión de datos"""
-        return self.manifest["data_transmission"]["compression"]["enabled"] and \
-               self.manifest["data_transmission"]["caching"]["enabled"] and \
-               self.manifest["data_transmission"]["batching"]["enabled"]
+        return (
+            self.manifest["data_transmission"]["compression"]["enabled"]
+            and self.manifest["data_transmission"]["caching"]["enabled"]
+            and self.manifest["data_transmission"]["batching"]["enabled"]
+        )
 
     def validate_security(self):
         """Valida la seguridad de la arquitectura"""
@@ -240,18 +246,18 @@ class ArchitectureValidator:
                 "security_level": self.get_security_level(),
                 "risk_permissions": self.get_risk_permissions(),
                 "blocked_commands": self.get_blocked_commands(),
-                "errors": []
+                "errors": [],
             }
 
             self.validation_results["security"].append(security_result)
 
         except Exception as e:
-            logger.error(f"Error en validación de seguridad: {e!s}")
+            logger.exception(f"Error en validación de seguridad: {e!s}")
             security_result = {
                 "security_level": "Unknown",
                 "risk_permissions": [],
                 "blocked_commands": [],
-                "errors": [str(e)]
+                "errors": [str(e)],
             }
 
             self.validation_results["security"].append(security_result)
@@ -263,11 +269,14 @@ class ArchitectureValidator:
         if not permissions_path.exists():
             return "High Risk"
 
-        with open(permissions_path, encoding='utf-8') as f:
+        with open(permissions_path, encoding="utf-8") as f:
             permissions = json.load(f)
 
-        high_risk = sum(1 for p in permissions.get("Lilith CLI", {}).values()
-                       if p.get("level", "medium") == "high" and p.get("allowed", False))
+        high_risk = sum(
+            1
+            for p in permissions.get("Lilith CLI", {}).values()
+            if p.get("level", "medium") == "high" and p.get("allowed", False)
+        )
 
         if high_risk > 2:
             return "High Risk"
@@ -283,16 +292,19 @@ class ArchitectureValidator:
         if not permissions_path.exists():
             return []
 
-        with open(permissions_path, encoding='utf-8') as f:
+        with open(permissions_path, encoding="utf-8") as f:
             permissions = json.load(f)
 
-        return [name for name, info in permissions.get("Lilith CLI", {}).items()
-               if info.get("level", "medium") == "high" and info.get("allowed", False)]
+        return [
+            name
+            for name, info in permissions.get("Lilith CLI", {}).items()
+            if info.get("level", "medium") == "high" and info.get("allowed", False)
+        ]
 
     def get_blocked_commands(self) -> list[str]:
         """Obtiene los comandos bloqueados desde .env"""
         blocked_commands = self.config.get("BLOCKED_COMMANDS", "")
-        return [cmd.strip() for cmd in blocked_commands.split(',') if cmd.strip()]
+        return [cmd.strip() for cmd in blocked_commands.split(",") if cmd.strip()]
 
     def generate_validation_report(self):
         """Genera un informe de validación completo"""
@@ -302,17 +314,23 @@ class ArchitectureValidator:
             "validation_time": logger.handlers[0].level,
             "summary": {
                 "total_modules": len(self.manifest["modules"]),
-                "valid_modules": sum(1 for m in self.validation_results["modules"] if m["status"] == "OK"),
+                "valid_modules": sum(
+                    1 for m in self.validation_results["modules"] if m["status"] == "OK"
+                ),
                 "total_services": len(self.manifest["services"]),
-                "valid_services": sum(1 for s in self.validation_results["services"] if s["status"] == "OK"),
+                "valid_services": sum(
+                    1 for s in self.validation_results["services"] if s["status"] == "OK"
+                ),
                 "total_agents": len(self.manifest["agents"]),
-                "valid_agents": sum(1 for a in self.validation_results["agents"] if a["status"] == "OK"),
-                "total_permissions": self.count_permissions()
+                "valid_agents": sum(
+                    1 for a in self.validation_results["agents"] if a["status"] == "OK"
+                ),
+                "total_permissions": self.count_permissions(),
             },
-            "results": self.validation_results
+            "results": self.validation_results,
         }
 
-        with open("architecture_validation_report.json", 'w', encoding='utf-8') as f:
+        with open("architecture_validation_report.json", "w", encoding="utf-8") as f:
             json.dump(report, f, indent=2, ensure_ascii=False)
 
         logger.info("Informe de validación generado: architecture_validation_report.json")
@@ -362,11 +380,17 @@ class ArchitectureValidator:
         # Todos los módulos validos, al menos 1 agente válido, sistema de permisos operativo
         valid_modules = sum(1 for m in self.validation_results["modules"] if m["status"] == "OK")
         valid_agents = sum(1 for a in self.validation_results["agents"] if a["status"] == "OK")
-        permission_system = len(self.validation_results["permissions"]) > 0 and self.validation_results["permissions"][0]["status"] == "OK"
+        permission_system = (
+            len(self.validation_results["permissions"]) > 0
+            and self.validation_results["permissions"][0]["status"] == "OK"
+        )
 
-        return valid_modules == len(self.validation_results["modules"]) and \
-               valid_agents > 0 and \
-               permission_system
+        return (
+            valid_modules == len(self.validation_results["modules"])
+            and valid_agents > 0
+            and permission_system
+        )
+
 
 def main():
     """Función principal para la validación"""
@@ -389,9 +413,10 @@ def main():
         return validator.is_architecture_healthy()
 
     except Exception as e:
-        logger.error(f"Error en la validación: {e!s}")
+        logger.exception(f"Error en la validación: {e!s}")
         print(f"❌ Error: {e!s}")
         return False
+
 
 if __name__ == "__main__":
     success = main()

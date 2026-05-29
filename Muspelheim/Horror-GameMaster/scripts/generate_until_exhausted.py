@@ -5,8 +5,12 @@ Handles rate limits with exponential backoff.
 Saves incrementally to avoid data loss.
 """
 
+import json
+import os
+import time
+
 from openai import OpenAI
-import json, time, sys, os
+
 
 client = OpenAI(
     api_key="ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113",
@@ -35,30 +39,73 @@ print(f"Existing entries: {len(seen)}", flush=True)
 
 # Fear types and prompts
 FEAR_TYPES = [
-    "psychological", "darkness", "isolation", "body_horror",
-    "paranoia", "loss_of_control", "jumpscare", "false_security",
+    "psychological",
+    "darkness",
+    "isolation",
+    "body_horror",
+    "paranoia",
+    "loss_of_control",
+    "jumpscare",
+    "false_security",
 ]
 
 ENTITY_TYPES = [
-    "lovecraftian", "junji_ito", "unknown", "flesh", "shadow",
-    "mimic", "memetic", "temporal", "geometric", "nature",
-    "parasitic", "recursive",
+    "lovecraftian",
+    "junji_ito",
+    "unknown",
+    "flesh",
+    "shadow",
+    "mimic",
+    "memetic",
+    "temporal",
+    "geometric",
+    "nature",
+    "parasitic",
+    "recursive",
 ]
 
 SCENARIOS = [
-    "a subway tunnel at 3am", "a parking garage", "a laundromat",
-    "a public library after hours", "a swimming pool", "a cruise ship",
-    "a shopping mall at night", "a factory", "a courtroom",
-    "a church confessional", "a morgue", "a greenhouse",
-    "a rooftop", "an elevator", "a sewer system",
-    "a lighthouse", "a submarine", "a space station",
-    "an abandoned theater", "a mirror maze", "an infinite library",
-    "a corrupted garden", "a frozen lake", "a mine shaft",
-    "a radio tower", "a barn", "a silo", "a lighthouse",
-    "a phone booth", "a bridge", "a tunnel", "a well",
-    "a clock tower", "a prison cell", "a hospital ward",
-    "a school gymnasium", "a server room", "a boiler room",
-    "a cathedral", "a catacomb", "a lighthouse",
+    "a subway tunnel at 3am",
+    "a parking garage",
+    "a laundromat",
+    "a public library after hours",
+    "a swimming pool",
+    "a cruise ship",
+    "a shopping mall at night",
+    "a factory",
+    "a courtroom",
+    "a church confessional",
+    "a morgue",
+    "a greenhouse",
+    "a rooftop",
+    "an elevator",
+    "a sewer system",
+    "a lighthouse",
+    "a submarine",
+    "a space station",
+    "an abandoned theater",
+    "a mirror maze",
+    "an infinite library",
+    "a corrupted garden",
+    "a frozen lake",
+    "a mine shaft",
+    "a radio tower",
+    "a barn",
+    "a silo",
+    "a lighthouse",
+    "a phone booth",
+    "a bridge",
+    "a tunnel",
+    "a well",
+    "a clock tower",
+    "a prison cell",
+    "a hospital ward",
+    "a school gymnasium",
+    "a server room",
+    "a boiler room",
+    "a cathedral",
+    "a catacomb",
+    "a lighthouse",
 ]
 
 total_new = 0
@@ -66,7 +113,7 @@ consecutive_errors = 0
 backoff = 5
 batch_num = 0
 
-print(f"Starting generation. Target: until tokens exhausted.", flush=True)
+print("Starting generation. Target: until tokens exhausted.", flush=True)
 print(f"Rate limit backoff: {backoff}s initial, doubles on 429", flush=True)
 print("", flush=True)
 
@@ -82,7 +129,7 @@ while True:
     if batch_num % 3 == 0:
         etype = ENTITY_TYPES[batch_num % len(ENTITY_TYPES)]
         prompt = (
-            f"Generate 3 horror ENTITY entries. Type: \"{etype}\". "
+            f'Generate 3 horror ENTITY entries. Type: "{etype}". '
             f"Setting: {scenario}. "
             "JSON: instruction, input, output, fear_type. "
             "output=150-300 words: appearance, behavior, origin, horror, encounter. "
@@ -91,7 +138,7 @@ while True:
         )
     else:
         prompt = (
-            f"Generate 5 horror entries. Fear: \"{ft}\". "
+            f'Generate 5 horror entries. Fear: "{ft}". '
             f"Setting: {scenario}. "
             "JSON: instruction, input, output, fear_type. "
             "output=100-250 words second-person horror narration. "
@@ -151,7 +198,9 @@ while True:
         consecutive_errors += 1
 
         if "429" in err:
-            print(f"  Rate limit hit. Backoff: {backoff}s (attempt {consecutive_errors})", flush=True)
+            print(
+                f"  Rate limit hit. Backoff: {backoff}s (attempt {consecutive_errors})", flush=True
+            )
             time.sleep(backoff)
             backoff = min(backoff * 2, 300)  # Max 5 min
         elif "insufficient" in err.lower() or "quota" in err.lower() or "exceeded" in err.lower():
@@ -169,9 +218,9 @@ while True:
 
 outf.close()
 
-print(f"\n{'='*60}", flush=True)
-print(f"GENERATION COMPLETE", flush=True)
+print(f"\n{'=' * 60}", flush=True)
+print("GENERATION COMPLETE", flush=True)
 print(f"  New entries: {total_new}", flush=True)
 print(f"  Total unique: {len(seen)}", flush=True)
 print(f"  Output: {OUTFILE}", flush=True)
-print(f"{'='*60}", flush=True)
+print(f"{'=' * 60}", flush=True)

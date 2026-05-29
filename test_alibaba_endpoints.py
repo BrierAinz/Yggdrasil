@@ -10,33 +10,31 @@ import httpx
 
 def test_endpoint(endpoint, api_key):
     """Prueba la disponibilidad de un endpoint"""
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
+    headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
 
     payload = {
         "model": "qwen3.6-plus",
         "messages": [
             {"role": "system", "content": "Eres una asistente útil que responde de forma concisa."},
-            {"role": "user", "content": "Hola, ¿cómo estás? Responde en español en una sola frase."}
+            {
+                "role": "user",
+                "content": "Hola, ¿cómo estás? Responde en español en una sola frase.",
+            },
         ],
         "max_tokens": 50,
-        "temperature": 0.7
+        "temperature": 0.7,
     }
 
     try:
         response = httpx.post(
-            f"{endpoint}/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=60
+            f"{endpoint}/chat/completions", headers=headers, json=payload, timeout=60
         )
 
         return response.status_code, response.text
 
     except Exception as e:
         return None, str(e)
+
 
 def main():
     """Función principal"""
@@ -45,11 +43,14 @@ def main():
 
     api_keys = [
         ("sk-249706f9b63f4c8f917a4daf087ed840", "API Key 1"),
-        ("sk-sp-D.DRPL.cn****BwNrNv9B9d75tG3", "API Key 2")
+        ("sk-sp-D.DRPL.cn****BwNrNv9B9d75tG3", "API Key 2"),
     ]
 
     endpoints = [
-        ("https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1", "Token Plan Standard"),
+        (
+            "https://token-plan.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1",
+            "Token Plan Standard",
+        ),
         ("https://dashscope.aliyuncs.com/api/v1", "DashScope Standard"),
         ("https://dashscope.aliyuncs.com/compatible-mode/v1", "DashScope Compatible"),
         ("https://api.modelscope.cn/compatible-mode/v1", "ModelScope Compatible"),
@@ -93,6 +94,7 @@ def main():
     print("    2. Que las API Keys esten asociadas a la region correcta (Singapore)")
     print("    3. Que el endpoint esté disponible en tu región")
     print("    4. Que la API Key tenga permisos para acceder a los servicios requeridos")
+
 
 if __name__ == "__main__":
     main()

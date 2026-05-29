@@ -16,10 +16,10 @@ from lilith_memory.store import MemoryStore
 class SkillCreator:
     """Clase para crear skills automáticamente a partir de conversaciones"""
 
-    def __init__(self, project_dir: str = None):
+    def __init__(self, project_dir: str | None = None):
         """
         Inicializar el SkillCreator
-        
+
         Args:
             project_dir: Directorio raíz del proyecto
         """
@@ -49,10 +49,10 @@ class SkillCreator:
     def analyze_conversations(self, limit: int = 100) -> list[dict]:
         """
         Analizar conversaciones para identificar posibles skills
-        
+
         Args:
             limit: Número máximo de conversaciones a analizar
-            
+
         Returns:
             Lista de candidatos a skills
         """
@@ -75,7 +75,7 @@ class SkillCreator:
                     "content": entry.get("content", ""),
                     "timestamp": entry.get("timestamp", 0),
                     "patterns": matches,
-                    "id": entry.get("id", None)
+                    "id": entry.get("id", None),
                 }
                 skill_candidates.append(candidate)
 
@@ -85,10 +85,10 @@ class SkillCreator:
     def extract_keywords(self, text: str) -> list[str]:
         """
         Extraer palabras clave de un texto
-        
+
         Args:
             text: Texto para extraer keywords
-            
+
         Returns:
             Lista de palabras clave
         """
@@ -96,9 +96,30 @@ class SkillCreator:
         text = re.sub(r"[^\w\s]", "", text.lower())
         words = text.split()
 
-        stop_words = ["el", "la", "los", "las", "de", "del", "a", "ante", "con",
-                     "para", "por", "sin", "so", "sobre", "tras", "cuando",
-                     "donde", "como", "que", "qui", "quien", "quienes"]
+        stop_words = [
+            "el",
+            "la",
+            "los",
+            "las",
+            "de",
+            "del",
+            "a",
+            "ante",
+            "con",
+            "para",
+            "por",
+            "sin",
+            "so",
+            "sobre",
+            "tras",
+            "cuando",
+            "donde",
+            "como",
+            "que",
+            "qui",
+            "quien",
+            "quienes",
+        ]
 
         keywords = []
         for word in words:
@@ -112,10 +133,10 @@ class SkillCreator:
     def generate_skill_name(self, content: str) -> str:
         """
         Generar un nombre adecuado para un skill
-        
+
         Args:
             content: Contenido de la conversación
-            
+
         Returns:
             Nombre del skill
         """
@@ -131,11 +152,11 @@ class SkillCreator:
     def create_skill(self, candidate: dict, category: str = "general") -> str:
         """
         Crear un skill a partir de un candidato
-        
+
         Args:
             candidate: Datos del candidato a skill
             category: Categoría del skill
-            
+
         Returns:
             Ruta del archivo creado
         """
@@ -152,25 +173,25 @@ name: {skill_name}
 category: {category}
 description: Skill automáticamente generado desde la conversación
 created_at: {datetime.now().isoformat()}
-conversacion_id: {candidate['id']}
-keywords: {', '.join(self.extract_keywords(candidate['content']))}
-patterns: {', '.join([p for p in candidate['patterns']])}
+conversacion_id: {candidate["id"]}
+keywords: {", ".join(self.extract_keywords(candidate["content"]))}
+patterns: {", ".join(list(candidate["patterns"]))}
 ---
 
 # {skill_name}
 
 ## Descripción
-{self._clean_skill_content(candidate['content'])}
+{self._clean_skill_content(candidate["content"])}
 
 ## Uso
 Este skill fue automáticamente generado desde una conversación con Lilith.
 Puede ser modificado y amplificado manualmente para mejorar su precisión.
 
 ## Ejemplos
-- "{self._clean_skill_content(candidate['content'])[:100]}..."
+- "{self._clean_skill_content(candidate["content"])[:100]}..."
 
 ## Patrones de Activación
-{', '.join([p for p in candidate['patterns']])}
+{", ".join(list(candidate["patterns"]))}
 """
 
         # Escribir el archivo
@@ -182,10 +203,10 @@ Puede ser modificado y amplificado manualmente para mejorar su precisión.
     def _clean_skill_content(self, content: str) -> str:
         """
         Limpiar el contenido para el skill
-        
+
         Args:
             content: Contenido a limpiar
-            
+
         Returns:
             Contenido limpio
         """
@@ -197,14 +218,16 @@ Puede ser modificado y amplificado manualmente para mejorar su precisión.
 
         return content
 
-    def create_skills_from_conversations(self, category: str = "general", limit: int = 100) -> list[str]:
+    def create_skills_from_conversations(
+        self, category: str = "general", limit: int = 100
+    ) -> list[str]:
         """
         Crear skills automáticamente a partir de conversaciones
-        
+
         Args:
             category: Categoría para los skills
             limit: Número máximo de conversaciones a analizar
-            
+
         Returns:
             Lista de rutas de skills creados
         """
@@ -224,10 +247,10 @@ Puede ser modificado y amplificado manualmente para mejorar su precisión.
     def update_existing_skills(self, limit: int = 50) -> list[str]:
         """
         Actualizar skills existentes con información nueva
-        
+
         Args:
             limit: Número máximo de conversaciones a analizar
-            
+
         Returns:
             Lista de skills actualizados
         """
@@ -262,11 +285,11 @@ Puede ser modificado y amplificado manualmente para mejorar su precisión.
     def _update_skill_content(self, existing_content: str, candidate: dict) -> str:
         """
         Actualizar el contenido de un skill existente
-        
+
         Args:
             existing_content: Contenido existente
             candidate: Datos del candidato
-            
+
         Returns:
             Contenido actualizado
         """
@@ -277,11 +300,10 @@ Puede ser modificado y amplificado manualmente para mejorar su precisión.
             existing_examples = existing_content[examples_pos:].split("\n")[1:]
 
             # Verificar que el ejemplo no exista ya
-            new_example = f"- \"{self._clean_skill_content(candidate['content'])[:100]}...\""
+            new_example = f'- "{self._clean_skill_content(candidate["content"])[:100]}..."'
             if new_example not in existing_examples:
                 updated_content = existing_content.replace(
-                    "## Ejemplos",
-                    f"## Ejemplos\n{new_example}"
+                    "## Ejemplos", f"## Ejemplos\n{new_example}"
                 )
                 return updated_content
 
@@ -290,7 +312,7 @@ Puede ser modificado y amplificado manualmente para mejorar su precisión.
     def list_skills(self) -> list[dict]:
         """
         Listar todos los skills disponibles
-        
+
         Returns:
             Lista de skills con información básica
         """
@@ -307,12 +329,14 @@ Puede ser modificado y amplificado manualmente para mejorar su precisión.
                         # Extraer metadata del frontmatter
                         metadata = self._extract_frontmatter(content)
 
-                        skills.append({
-                            "name": skill_file.stem,
-                            "category": category,
-                            "path": str(skill_file),
-                            "metadata": metadata
-                        })
+                        skills.append(
+                            {
+                                "name": skill_file.stem,
+                                "category": category,
+                                "path": str(skill_file),
+                                "metadata": metadata,
+                            }
+                        )
 
                     except Exception as e:
                         print(f"❌ Error al leer skill {skill_file}: {e}")
@@ -322,10 +346,10 @@ Puede ser modificado y amplificado manualmente para mejorar su precisión.
     def _extract_frontmatter(self, content: str) -> dict:
         """
         Extraer el frontmatter YAML de un archivo Markdown
-        
+
         Args:
             content: Contenido del archivo
-            
+
         Returns:
             Diccionario con la metadata
         """
@@ -355,10 +379,10 @@ Puede ser modificado y amplificado manualmente para mejorar su precisión.
     def delete_skill(self, skill_name: str) -> bool:
         """
         Eliminar un skill
-        
+
         Args:
             skill_name: Nombre del skill a eliminar
-            
+
         Returns:
             True si se eliminó correctamente, False en caso de error
         """

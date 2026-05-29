@@ -9,17 +9,13 @@ Horror GameMaster — BrierStudios
 
 from __future__ import annotations
 
-import time
-from typing import Optional
-
-from pydantic import BaseModel, Field
-
-from pattern_analyzer import PatternAnalyzer, ExtendedAction, FearDimension
-from procedural_generator import ProceduralGenerator, SceneType, EventType, EntityBehavior
-from tension_manager import TensionManager, DecisionType
-from llm_engine import LLMEngine, LLMConfig, GenerationContext, NarratorVoice, Provider
 from context_manager import ContextManager, ThreadType
-from npc_intelligence import NPCIntelligence, NPCRole, NPCBehavior
+from llm_engine import GenerationContext, LLMConfig, LLMEngine, NarratorVoice
+from npc_intelligence import NPCBehavior, NPCIntelligence, NPCRole
+from pattern_analyzer import ExtendedAction, FearDimension, PatternAnalyzer
+from procedural_generator import EventType, ProceduralGenerator, SceneType
+from pydantic import BaseModel, Field
+from tension_manager import DecisionType, TensionManager
 
 
 # ── Data Models ──────────────────────────────────────────────────────
@@ -27,8 +23,9 @@ from npc_intelligence import NPCIntelligence, NPCRole, NPCBehavior
 
 class GameConfig(BaseModel):
     """Configuration for a GameMaster session."""
+
     session_id: str = "default"
-    llm_config: Optional[LLMConfig] = None
+    llm_config: LLMConfig | None = None
     pacing: float = 0.5  # 0 = slow burn, 1 = relentless
     narrator_voice: NarratorVoice = NarratorVoice.DETACHED
     fear_type_focus: str = "psychological"  # Primary fear type
@@ -40,6 +37,7 @@ class GameConfig(BaseModel):
 
 class GameState(BaseModel):
     """Current state of the game."""
+
     turn: int = 0
     scene: str = ""
     location: str = ""
@@ -68,7 +66,7 @@ class GameMaster:
         state = gm.process_action("I open the door")
     """
 
-    def __init__(self, config: Optional[GameConfig] = None):
+    def __init__(self, config: GameConfig | None = None):
         self.config = config or GameConfig()
 
         # Initialize all modules
@@ -85,7 +83,7 @@ class GameMaster:
 
     # ── Game Flow ────────────────────────────────────────────────────
 
-    def start(self, scene_type: Optional[SceneType] = None) -> GameState:
+    def start(self, scene_type: SceneType | None = None) -> GameState:
         """Start a new game session."""
         # Generate initial scene
         scene = self.generator.generate_scene(scene_type)
@@ -172,7 +170,9 @@ class GameMaster:
         )
 
         # Generate choices
-        scene = self.generator.generate_scene(SceneType(self.state.location.lower().replace(" ", "_")))
+        scene = self.generator.generate_scene(
+            SceneType(self.state.location.lower().replace(" ", "_"))
+        )
         self.state.choices = self._generate_choices(scene)
 
         # Update state
@@ -211,11 +211,13 @@ class GameMaster:
         self.context.auto_add_callback(f"the scare: {event.description}")
 
         # Record fear response
-        self.analyzer.record_fear_response(fear_type, prediction.optimal_intensity, event.description)
+        self.analyzer.record_fear_response(
+            fear_type, prediction.optimal_intensity, event.description
+        )
 
     def _escalate(self) -> None:
         """Escalate tension."""
-        event = self.generator.generate_event(
+        self.generator.generate_event(
             EventType.ESCALATION,
             intensity=0.5,
             fear_type=self.config.fear_type_focus,
@@ -251,11 +253,22 @@ class GameMaster:
     def _spawn_initial_npc(self) -> None:
         """Spawn an initial NPC for the session."""
         import random
+
         npc_configs = [
             ("A stranger", NPCRole.SUSPECT, "A person who should not be here", NPCBehavior.EVASIVE),
-            ("A survivor", NPCRole.ALLY, "Someone who has been here longer than you", NPCBehavior.HELPFUL),
+            (
+                "A survivor",
+                NPCRole.ALLY,
+                "Someone who has been here longer than you",
+                NPCBehavior.HELPFUL,
+            ),
             ("A child", NPCRole.VICTIM, "A lost child who needs help", NPCBehavior.HELPFUL),
-            ("A guard", NPCRole.GUARDIAN, "Someone who claims to protect this place", NPCBehavior.MENACING),
+            (
+                "A guard",
+                NPCRole.GUARDIAN,
+                "Someone who claims to protect this place",
+                NPCBehavior.MENACING,
+            ),
         ]
         name, role, desc, behavior = random.choice(npc_configs)
         npc = self.npc_system.create_npc(name, role, desc)
@@ -290,7 +303,7 @@ class GameMaster:
         if self.npc_system.doppelganger:
             # Advance every 3 turns
             if self.state.turn % 3 == 0:
-                desc = self.npc_system.advance_doppelganger()
+                self.npc_system.advance_doppelganger()
                 return self.npc_system.generate_doppelganger_encounter()
 
         return ""
@@ -306,7 +319,7 @@ class GameMaster:
     ) -> str:
         """Generate narrative using the LLM."""
         # Build generation context
-        prediction = self.analyzer.predict_next()
+        self.analyzer.predict_next()
         fingerprint = self.analyzer.get_fingerprint()
 
         gen_context = GenerationContext(
@@ -351,13 +364,14 @@ class GameMaster:
             f"The action echoes. {player_action}. The sound comes back wrong. Too loud. Too long. Not just yours.",
         ]
         import random
+
         return random.choice(templates)
 
     # ── Choice Generation ────────────────────────────────────────────
 
     def _generate_choices(self, scene) -> list[str]:
         """Generate player choices based on current state."""
-        prediction = self.analyzer.predict_next()
+        self.analyzer.predict_next()
 
         base_choices = [
             "Move forward cautiously",
@@ -376,7 +390,7 @@ class GameMaster:
             base_choices.append("Confront what you see")
 
         # Add scene-specific choices
-        if hasattr(scene, 'available_exits') and scene.available_exits:
+        if hasattr(scene, "available_exits") and scene.available_exits:
             for exit in scene.available_exits[:2]:
                 base_choices.append(f"Go to {exit.replace('_', ' ')}")
 

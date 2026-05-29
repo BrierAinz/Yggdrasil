@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """Continue entity generation from where we left off."""
 
+import json
+import time
+
 from openai import OpenAI
-import json, time
+
 
 client = OpenAI(
     api_key="ark-acc360d9-735f-4d2d-a0be-c66468f19799-bf113",
@@ -11,11 +14,23 @@ client = OpenAI(
 )
 
 ENTITY_TYPES = [
-    ("unknown", "Unknown/unclassifiable entities that defy categorization, witnesses cannot describe coherently"),
-    ("flesh", "Flesh/body entities made of human tissue, amalgamations, growths that think, skin that moves"),
-    ("shadow", "Shadow/darkness entities that live in absence of light, shadows that move independently"),
+    (
+        "unknown",
+        "Unknown/unclassifiable entities that defy categorization, witnesses cannot describe coherently",
+    ),
+    (
+        "flesh",
+        "Flesh/body entities made of human tissue, amalgamations, growths that think, skin that moves",
+    ),
+    (
+        "shadow",
+        "Shadow/darkness entities that live in absence of light, shadows that move independently",
+    ),
     ("mimic", "Mimic/shape entities that copy human form imperfectly, uncanny valley incarnate"),
-    ("memetic", "Memetic/information entities that exist in knowledge, seeing them makes them real"),
+    (
+        "memetic",
+        "Memetic/information entities that exist in knowledge, seeing them makes them real",
+    ),
     ("temporal", "Temporal/time entities that exist across time, time loops, accumulated moments"),
     ("geometric", "Geometric/mathematical entities made of impossible shapes, higher dimensions"),
     ("nature", "Nature/corruption entities, forests that think, animals that behave as one"),
@@ -65,10 +80,10 @@ for etype, description in ENTITY_TYPES:
                             total += 1
                 except json.JSONDecodeError:
                     pass
-            print(f"{etype} b{batch+1}: +{count} ({total})", flush=True)
+            print(f"{etype} b{batch + 1}: +{count} ({total})", flush=True)
             time.sleep(2)
         except Exception as e:
-            print(f"{etype} b{batch+1}: ERR {str(e)[:60]}", flush=True)
+            print(f"{etype} b{batch + 1}: ERR {str(e)[:60]}", flush=True)
             time.sleep(5)
 
 outf.close()

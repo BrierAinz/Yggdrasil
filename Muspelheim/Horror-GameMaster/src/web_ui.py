@@ -9,19 +9,18 @@ Horror GameMaster — BrierStudios
 
 from __future__ import annotations
 
-import json
-from typing import Optional
 
 try:
     from fastapi import FastAPI, Request
     from fastapi.responses import HTMLResponse
     from fastapi.staticfiles import StaticFiles
     from fastapi.templating import Jinja2Templates
+
     FASTAPI_AVAILABLE = True
 except ImportError:
     FASTAPI_AVAILABLE = False
 
-from gamemaster import GameMaster, GameConfig
+from gamemaster import GameConfig, GameMaster
 
 
 # ── HTML Template ────────────────────────────────────────────────────
@@ -345,17 +344,19 @@ class WebGameState:
     """Manages game state for the web interface."""
 
     def __init__(self):
-        self.gm: Optional[GameMaster] = None
+        self.gm: GameMaster | None = None
         self.started: bool = False
 
     def start(self) -> dict:
         """Start a new game."""
-        self.gm = GameMaster(GameConfig(
-            session_id="web_session",
-            pacing=0.5,
-            enable_npc=True,
-            enable_doppelganger=True,
-        ))
+        self.gm = GameMaster(
+            GameConfig(
+                session_id="web_session",
+                pacing=0.5,
+                enable_npc=True,
+                enable_doppelganger=True,
+            )
+        )
         self.started = True
         state = self.gm.start()
         return self._state_to_dict(state)
@@ -386,7 +387,7 @@ class WebGameState:
 # ── FastAPI App ──────────────────────────────────────────────────────
 
 
-def create_app() -> "FastAPI":
+def create_app() -> FastAPI:
     """Create the FastAPI application."""
     if not FASTAPI_AVAILABLE:
         raise ImportError("FastAPI is required: pip install fastapi uvicorn")
@@ -439,7 +440,7 @@ def create_app() -> "FastAPI":
             choices_html = f"""
             <div class="narrative">
                 <p><strong>ENDING</strong></p>
-                <p>{state['ending']}</p>
+                <p>{state["ending"]}</p>
             </div>
             <button class="choice" hx-post="/start" hx-target="#game" hx-swap="innerHTML">
                 <span class="choice-number">[▶]</span> Play again
@@ -461,15 +462,15 @@ def create_app() -> "FastAPI":
             </div>
             <div class="hud-item">
                 <div class="hud-label">Level</div>
-                <div class="hud-value">{state['level']}/10</div>
+                <div class="hud-value">{state["level"]}/10</div>
             </div>
             <div class="hud-item">
                 <div class="hud-label">Bravery</div>
-                <div class="hud-value">{state['bravery'].upper()}</div>
+                <div class="hud-value">{state["bravery"].upper()}</div>
             </div>
             <div class="hud-item">
                 <div class="hud-label">Turn</div>
-                <div class="hud-value">{state['turn']}</div>
+                <div class="hud-value">{state["turn"]}</div>
             </div>
         </div>
 
@@ -525,7 +526,8 @@ def main():
     app = create_app()
 
     import uvicorn
-    print(f"\n  Horror GameMaster Web UI")
+
+    print("\n  Horror GameMaster Web UI")
     print(f"  http://{args.host}:{args.port}\n")
     uvicorn.run(app, host=args.host, port=args.port)
 

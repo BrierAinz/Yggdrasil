@@ -4,16 +4,15 @@ import tempfile
 from pathlib import Path
 
 import pytest
-
 from memory.player_memory import (
+    ActionType,
+    EventCategory,
     FearDimension,
     FearFingerprint,
+    GameEvent,
+    HabituationTracker,
     PlayerFearProfile,
     PlayerMemoryStore,
-    GameEvent,
-    EventCategory,
-    ActionType,
-    HabituationTracker,
     SessionMemory,
 )
 

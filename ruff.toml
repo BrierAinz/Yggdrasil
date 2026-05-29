@@ -81,6 +81,15 @@ ignore = [
     "SIM102",  # nested if -> single if (sometimes nesting is clearer)
     "RUF034",  # useless if-else (false positives on intentional fallbacks)
     "ANN401",  # Any type in dynamic APIs (LLM providers, tool kwargs, config)
+    "PTH123",  # builtin-open (too pervasive, legacy code uses open() extensively)
+    "PTH110",  # os.path.exists (legacy code)
+    "PTH111",  # os.path.expanduser (legacy code)
+    "PTH117",  # os.path.isabs (legacy code)
+    "SIM115",  # open-file-with-context-handler (not always better)
+    "PLW2901", # redefined-loop-name (common pattern in data processing)
+    "ERA001",  # commented-out-code (intentional in dev scripts)
+    "PLC0206", # dict-index-missing-items (false positives)
+    "N806",    # non-lowercase-variable-in-function (NumPy/Math convention)
 ]
 
 fixable = ["ALL"]
@@ -109,6 +118,12 @@ lines-after-imports = 2
 
 # Svartalfheim skill scripts: section-separator comments are not dead code
 "Svartalfheim/Docs/skills/**/*.py" = ["ERA001", "N806"]
+
+# Rich/FastAPI imports used for availability checking via find_spec
+"Muspelheim/Horror-GameMaster/src/terminal_ui.py" = ["F401"]
+"Muspelheim/Horror-GameMaster/src/web_ui.py" = ["F401"]
+"Muspelheim/Horror-GameMaster/src/memory/embeddings.py" = ["B904"]
+"lilith_cli.py" = ["F401"]
 
 [format]
 quote-style = "double"

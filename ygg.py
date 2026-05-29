@@ -4,20 +4,17 @@ BrierStudios Nordic - Yggdrasil CLI
 The World Tree command-line interface
 """
 
-import json
 import logging
 import os
 import subprocess
 from datetime import datetime
 from pathlib import Path
 
-import cyclopts
 from cyclopts import App
 from rich.console import Console
 from rich.panel import Panel
 from rich.rule import Rule
 from rich.table import Table
-from rich.text import Text
 from rich.theme import Theme
 from rich.tree import Tree
 
@@ -50,15 +47,15 @@ console = Console(theme=nordic_theme)
 
 # ── Realms ────────────────────────────────────────────────────
 REALMS = {
-    "Asgard":       {"color": "#8b6cc7", "desc": "Core packages (lilith-*)", "icon": "◈"},
-    "Vanaheim":     {"color": "#7eb8c4", "desc": "AI agents", "icon": "◈"},
-    "Alfheim":      {"color": "#5b8a72", "desc": "UI projects", "icon": "◈"},
+    "Asgard": {"color": "#8b6cc7", "desc": "Core packages (lilith-*)", "icon": "◈"},
+    "Vanaheim": {"color": "#7eb8c4", "desc": "AI agents", "icon": "◈"},
+    "Alfheim": {"color": "#5b8a72", "desc": "UI projects", "icon": "◈"},
     "Svartalfheim": {"color": "#7eb8c4", "desc": "Documentation", "icon": "◈"},
-    "Muspelheim":   {"color": "#c94f4f", "desc": "Dev / WIP / Fire", "icon": "◈"},
-    "Niflheim":     {"color": "#8b6cc7", "desc": "Assets / Frost", "icon": "◈"},
-    "Helheim":      {"color": "#3d4162", "desc": "Archive / Dead", "icon": "◈"},
-    "Jotunheim":    {"color": "#c9a55a", "desc": "Massive projects", "icon": "◈"},
-    "Midgard":      {"color": "#c8d0e0", "desc": "Personal", "icon": "◈"},
+    "Muspelheim": {"color": "#c94f4f", "desc": "Dev / WIP / Fire", "icon": "◈"},
+    "Niflheim": {"color": "#8b6cc7", "desc": "Assets / Frost", "icon": "◈"},
+    "Helheim": {"color": "#3d4162", "desc": "Archive / Dead", "icon": "◈"},
+    "Jotunheim": {"color": "#c9a55a", "desc": "Massive projects", "icon": "◈"},
+    "Midgard": {"color": "#c8d0e0", "desc": "Personal", "icon": "◈"},
 }
 
 # ── ASCII Art Banner ──────────────────────────────────────────
@@ -81,23 +78,34 @@ app = App(
 def print_banner():
     """Print Nordic banner"""
     console.print()
-    console.print(Panel.fit(
-        YGGDRASIL_BANNER,
-        border_style="#1a1d35",
-        title="[bold #7eb8c4]ᛒ[/bold #7eb8c4] YGGDRASIL",
-        title_align="left",
-        subtitle=f"[dim #3d4162]v{app.version}[/dim #3d4162]",
-    ))
+    console.print(
+        Panel.fit(
+            YGGDRASIL_BANNER,
+            border_style="#1a1d35",
+            title="[bold #7eb8c4]ᛒ[/bold #7eb8c4] YGGDRASIL",
+            title_align="left",
+            subtitle=f"[dim #3d4162]v{app.version}[/dim #3d4162]",
+        )
+    )
     console.print(Rule(style="#1a1d35"))
     now = datetime.now()
-    console.print(f"  [#7eb8c4]{now.strftime('%H:%M')}[/#7eb8c4]  [dim #3d4162]{now.strftime('%A, %d %B %Y')}[/dim #3d4162]")
+    console.print(
+        f"  [#7eb8c4]{now.strftime('%H:%M')}[/#7eb8c4]  [dim #3d4162]{now.strftime('%A, %d %B %Y')}[/dim #3d4162]"
+    )
     console.print()
 
 
 def run_cmd(cmd, cwd=None):
     """Run shell command and return output"""
     try:
-        r = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=cwd or str(YGGDRASIL_ROOT), timeout=30)
+        r = subprocess.run(
+            cmd,
+            shell=True,
+            capture_output=True,
+            text=True,
+            cwd=cwd or str(YGGDRASIL_ROOT),
+            timeout=30,
+        )
         return r.stdout.strip()
     except Exception:
         return ""
@@ -139,7 +147,9 @@ def status():
     console.print("  [bold #c9a55a]Nine Realms[/bold #c9a55a]")
     console.print()
 
-    table = Table(show_header=True, header_style="bold #7eb8c4", border_style="#1a1d35", padding=(0, 1))
+    table = Table(
+        show_header=True, header_style="bold #7eb8c4", border_style="#1a1d35", padding=(0, 1)
+    )
     table.add_column("Realm", style="bold", min_width=14)
     table.add_column("Status", justify="center", width=6)
     table.add_column("Projects", style="#c8d0e0", min_width=20)
@@ -169,7 +179,7 @@ def status():
             status_icon = "[bold #5b8a72]✓[/bold #5b8a72]"
             proj_str = ", ".join(projects[:3])
             if len(projects) > 3:
-                proj_str += f" +{len(projects)-3}"
+                proj_str += f" +{len(projects) - 3}"
 
             table.add_row(
                 f"[{info['color']}]{realm}[/{info['color']}]",
@@ -193,7 +203,9 @@ def status():
     # Summary
     total_files = count_files(YGGDRASIL_ROOT, "*.py")
     total_size = get_dir_size(YGGDRASIL_ROOT)
-    console.print(f"  [#7eb8c4]Python files:[/#7eb8c4] {total_files}  [dim #3d4162]|[/dim #3d4162]  [#7eb8c4]Total size:[/#7eb8c4] {total_size}")
+    console.print(
+        f"  [#7eb8c4]Python files:[/#7eb8c4] {total_files}  [dim #3d4162]|[/dim #3d4162]  [#7eb8c4]Total size:[/#7eb8c4] {total_size}"
+    )
     console.print()
 
 
@@ -207,9 +219,15 @@ def realms():
     for realm, info in REALMS.items():
         realm_dir = YGGDRASIL_ROOT / realm
         exists = realm_dir.exists()
-        icon = f"[bold {info['color']}]{info['icon']}[/bold {info['color']}]" if exists else "[dim]○[/dim]"
+        icon = (
+            f"[bold {info['color']}]{info['icon']}[/bold {info['color']}]"
+            if exists
+            else "[dim]○[/dim]"
+        )
         status = "[#5b8a72]✓[/#5b8a72]" if exists else "[#c94f4f]✗[/#c94f4f]"
-        console.print(f"  {icon} [{info['color']}]{realm:14s}[/{info['color']}] {status}  [dim #3d4162]{info['desc']}[/dim #3d4162]")
+        console.print(
+            f"  {icon} [{info['color']}]{realm:14s}[/{info['color']}] {status}  [dim #3d4162]{info['desc']}[/dim #3d4162]"
+        )
 
     console.print()
 
@@ -230,7 +248,9 @@ def realm(name: str):
     realm_dir = YGGDRASIL_ROOT / name
 
     print_banner()
-    console.print(f"  [bold {info['color']}]{info['icon']} {name}[/bold {info['color']}]  [dim #3d4162]— {info['desc']}[/dim #3d4162]")
+    console.print(
+        f"  [bold {info['color']}]{info['icon']} {name}[/bold {info['color']}]  [dim #3d4162]— {info['desc']}[/dim #3d4162]"
+    )
     console.print()
 
     if not realm_dir.exists():
@@ -240,7 +260,9 @@ def realm(name: str):
     # Git info
     g = git_status(realm_dir)
     if g:
-        console.print(f"  [#7eb8c4]Git:[/#7eb8c4] {g['branch']}  [dim]|[/dim]  Last commit: {g['last_commit']}")
+        console.print(
+            f"  [#7eb8c4]Git:[/#7eb8c4] {g['branch']}  [dim]|[/dim]  Last commit: {g['last_commit']}"
+        )
         if g["dirty"] > 0:
             console.print(f"  [#c9a55a]Uncommitted changes: {g['dirty']}[/#c9a55a]")
         console.print()
@@ -304,7 +326,9 @@ def project(name: str):
             if d.is_dir() and name.lower() in d.name.lower():
                 found = True
                 info = REALMS[realm_name]
-                console.print(f"  [bold {info['color']}]{realm_name}[/bold {info['color']}] / [bold #c8d0e0]{d.name}[/bold #c8d0e0]")
+                console.print(
+                    f"  [bold {info['color']}]{realm_name}[/bold {info['color']}] / [bold #c8d0e0]{d.name}[/bold #c8d0e0]"
+                )
                 console.print(f"  [#7eb8c4]Path:[/#7eb8c4] {d}")
                 console.print(f"  [#7eb8c4]Size:[/#7eb8c4] {get_dir_size(d)}")
                 console.print(f"  [#7eb8c4]Files:[/#7eb8c4] {count_files(d)}")
@@ -317,7 +341,7 @@ def project(name: str):
                 readme = d / "README.md"
                 if readme.exists():
                     console.print()
-                    console.print(f"  [bold #c9a55a]README:[/bold #c9a55a]")
+                    console.print("  [bold #c9a55a]README:[/bold #c9a55a]")
                     lines = readme.read_text()[:500].split("\n")
                     for line in lines[:15]:
                         console.print(f"    {line}")
@@ -326,9 +350,14 @@ def project(name: str):
 
                 # Show key files
                 console.print()
-                console.print(f"  [bold #c9a55a]Key files:[/bold #c9a55a]")
+                console.print("  [bold #c9a55a]Key files:[/bold #c9a55a]")
                 for f in sorted(d.rglob("*")):
-                    if f.is_file() and f.suffix in (".py", ".toml", ".json", ".md") and ".venv" not in str(f) and ".git" not in str(f):
+                    if (
+                        f.is_file()
+                        and f.suffix in (".py", ".toml", ".json", ".md")
+                        and ".venv" not in str(f)
+                        and ".git" not in str(f)
+                    ):
                         rel = f.relative_to(d)
                         console.print(f"    [#7eb8c4]{rel}[/#7eb8c4]  ({f.stat().st_size:,} bytes)")
                 console.print()
@@ -373,6 +402,7 @@ def dataset():
     unified = base / "dataset_unified.jsonl"
     if unified.exists():
         import json
+
         with open(unified) as f:
             for line in f:
                 try:
@@ -383,7 +413,7 @@ def dataset():
 
     console.print(f"  [#7eb8c4]Total lines:[/#7eb8c4] {total_entries}")
     console.print(f"  [#7eb8c4]Unique entries:[/#7eb8c4] {len(seen)}")
-    console.print(f"  [#7eb8c4]Target:[/#7eb8c4] 5,000")
+    console.print("  [#7eb8c4]Target:[/#7eb8c4] 5,000")
     progress = len(seen) / 5000 * 100
     bar = "█" * int(progress / 5) + "░" * (20 - int(progress / 5))
     console.print(f"  [#7eb8c4]Progress:[/#7eb8c4] [{bar}] {progress:.0f}%")
@@ -401,7 +431,9 @@ def search(query: str):
     console.print(f"  [#7eb8c4]Searching:[/#7eb8c4] [bold #c8d0e0]{query}[/bold #c8d0e0]")
     console.print()
 
-    result = run_cmd(f"grep -rli '{query}' --include='*.py' --include='*.md' --include='*.json' --include='*.toml' --include='*.yaml' --include='*.conf' . 2>/dev/null | grep -v '.venv' | grep -v '.git' | grep -v node_modules | head -20")
+    result = run_cmd(
+        f"grep -rli '{query}' --include='*.py' --include='*.md' --include='*.json' --include='*.toml' --include='*.yaml' --include='*.conf' . 2>/dev/null | grep -v '.venv' | grep -v '.git' | grep -v node_modules | head -20"
+    )
 
     if result:
         for line in result.split("\n"):
@@ -455,7 +487,9 @@ def info():
     console.print(f"  [#7eb8c4]Python:[/#7eb8c4] {run_cmd('python3 --version')}")
     console.print(f"  [#7eb8c4]OS:[/#7eb8c4] {run_cmd('uname -sr')}")
     console.print(f"  [#7eb8c4]Shell:[/#7eb8c4] {os.environ.get('SHELL', '?')}")
-    console.print(f"  [#7eb8c4]GPU:[/#7eb8c4] {run_cmd('nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null') or 'N/A'}")
+    console.print(
+        f"  [#7eb8c4]GPU:[/#7eb8c4] {run_cmd('nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null') or 'N/A'}"
+    )
     console.print()
 
     console.print("  [bold #c9a55a]Venv[/bold #c9a55a]")
@@ -498,7 +532,9 @@ def tree():
             if d.is_dir() and not d.name.startswith("."):
                 fc = count_files(d)
                 if fc > 0:
-                    realm_node.add(f"[#c8d0e0]{d.name}[/#c8d0e0] [dim #3d4162]({fc} files)[/dim #3d4162]")
+                    realm_node.add(
+                        f"[#c8d0e0]{d.name}[/#c8d0e0] [dim #3d4162]({fc} files)[/dim #3d4162]"
+                    )
 
     console.print(t)
     console.print()
@@ -513,11 +549,12 @@ def chat(provider: str = "mimo"):
         provider: LLM provider (mimo, byteplus)
     """
     from lilith_agent import start_agent
+
     start_agent(provider)
 
 
 @app.command
-def run(command: str, description: str = None):
+def run(command: str, description: str | None = None):
     """Run custom commands in Yggdrasil root"""
     if description:
         console.print(f"  [bold #c8d0e0]{description}[/bold #c8d0e0]")
@@ -582,4 +619,5 @@ if __name__ == "__main__":
         console.print(f"  [#c94f4f]Error: {e}[/#c94f4f]")
         if os.getenv("DEBUG"):
             import traceback
+
             console.print(traceback.format_exc())

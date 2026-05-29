@@ -62,34 +62,44 @@ app = App(
     help="Lilith CLI - AI-Powered interface for Yggdrasil",
 )
 
+
 # ── Helper Functions ────────────────────────────────────────────
 def print_banner():
     """Print ASCII art banner"""
     console.print()
     console.print(Panel.fit(Text(LILITH_BANNER, style="red")))
     console.print(Rule(style="dim"))
-    console.print(Text(f"[bold green]Version[/] {app.version} · [cyan]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}[/]", style="dim"))
+    console.print(
+        Text(
+            f"[bold green]Version[/] {app.version} · [cyan]{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}[/]",
+            style="dim",
+        )
+    )
     console.print()
+
 
 def validate_api_connection():
     """Validate connection to Lilith API"""
     try:
         import requests
+
         response = requests.get(f"{LILITH_API_URL}/api/health", timeout=5)
         return response.status_code == 200
     except:
         return False
 
+
 def call_lilith_api(prompt: str) -> dict[str, Any]:
     """Call Lilith API for processing"""
     try:
         import requests
+
         payload = {"query": prompt}
         response = requests.post(
             f"{LILITH_API_URL}/api/query",
             json=payload,
             headers={"Content-Type": "application/json"},
-            timeout=30
+            timeout=30,
         )
 
         if response.status_code == 200:
@@ -98,25 +108,18 @@ def call_lilith_api(prompt: str) -> dict[str, Any]:
             return {
                 "response": f"Error en la API: {response.status_code}",
                 "command": None,
-                "confidence": 0.0
+                "confidence": 0.0,
             }
 
     except Exception as e:
-        return {
-            "response": f"Error de conexión: {e!s}",
-            "command": None,
-            "confidence": 0.0
-        }
+        return {"response": f"Error de conexión: {e!s}", "command": None, "confidence": 0.0}
 
-def execute_command(cmd: str, description: str = None) -> str:
+
+def execute_command(cmd: str, description: str | None = None) -> str:
     """Execute command and return output"""
     try:
         result = subprocess.run(
-            cmd,
-            shell=True,
-            capture_output=True,
-            text=True,
-            cwd=str(YGGDRASIL_ROOT)
+            cmd, shell=True, capture_output=True, text=True, cwd=str(YGGDRASIL_ROOT)
         )
 
         output = []
@@ -137,6 +140,7 @@ def execute_command(cmd: str, description: str = None) -> str:
     except Exception as e:
         return f"❌ Error al ejecutar: {e!s}"
 
+
 # ── Command Handlers ───────────────────────────────────────────
 def handle_health_check():
     """Check Yggdrasil health"""
@@ -147,8 +151,17 @@ def handle_health_check():
     output.append(f"API: {'✅' if api_healthy else '❌'}")
 
     # Check directories
-    realms = ["Asgard", "Vanaheim", "Alfheim", "Svartalfheim", "Muspelheim",
-             "Helheim", "Niflheim", "Jotunheim", "Midgard"]
+    realms = [
+        "Asgard",
+        "Vanaheim",
+        "Alfheim",
+        "Svartalfheim",
+        "Muspelheim",
+        "Helheim",
+        "Niflheim",
+        "Jotunheim",
+        "Midgard",
+    ]
 
     for realm in realms:
         realm_dir = YGGDRASIL_ROOT / realm
@@ -157,13 +170,23 @@ def handle_health_check():
 
     return "\n".join(output)
 
+
 def handle_list_projects():
     """List Yggdrasil projects"""
     output = []
 
     # Check all Yggdrasil realms
-    realms = ["Asgard", "Vanaheim", "Alfheim", "Svartalfheim", "Muspelheim",
-             "Helheim", "Niflheim", "Jotunheim", "Midgard"]
+    realms = [
+        "Asgard",
+        "Vanaheim",
+        "Alfheim",
+        "Svartalfheim",
+        "Muspelheim",
+        "Helheim",
+        "Niflheim",
+        "Jotunheim",
+        "Midgard",
+    ]
 
     projects_found = False
 
@@ -175,11 +198,13 @@ def handle_list_projects():
             for item in realm_dir.iterdir():
                 if item.is_dir():
                     # Check if it's a project (contains common project files)
-                    project_files = list(item.glob("*.py")) + \
-                                  list(item.glob("*.js")) + \
-                                  list(item.glob("*.ts")) + \
-                                  list(item.glob("*.json")) + \
-                                  list(item.glob("*.md"))
+                    project_files = (
+                        list(item.glob("*.py"))
+                        + list(item.glob("*.js"))
+                        + list(item.glob("*.ts"))
+                        + list(item.glob("*.json"))
+                        + list(item.glob("*.md"))
+                    )
 
                     if project_files:
                         projects_found = True
@@ -190,19 +215,23 @@ def handle_list_projects():
 
     return "\n".join(output)
 
+
 def handle_dashboard_status():
     """Check dashboard status"""
     try:
         import requests
+
         response = requests.get(f"{LILITH_API_URL}/", timeout=5)
         return f"Dashboard: {'✅' if response.status_code == 200 else '❌'}"
     except Exception as e:
         return f"Dashboard: ❌ {e!s}"
 
+
 def handle_memory_stats():
     """Get memory statistics"""
     try:
         import psutil
+
         memory = psutil.virtual_memory()
         return (
             f"🖥️ Memoria RAM: {memory.percent}% usado\n"
@@ -212,6 +241,7 @@ def handle_memory_stats():
         )
     except Exception as e:
         return f"Error al obtener estadísticas de memoria: {e!s}"
+
 
 def handle_system_info():
     """Get complete system information"""
@@ -225,8 +255,8 @@ def handle_system_info():
         return (
             f"🖥️ Información del Sistema:\n"
             f"  💻 CPU: {cpu_percent}% usado, {psutil.cpu_count(logical=True)} núcleos\n"
-            f"  📊 Memoria RAM: {memory.percent}% usado ({memory.used/1024/1024:.0f}MB/{memory.total/1024/1024:.0f}MB)\n"
-            f"  💾 Disco: {disk_usage.percent}% usado ({disk_usage.used/1024/1024/1024:.1f}GB/{disk_usage.total/1024/1024/1024:.1f}GB)\n"
+            f"  📊 Memoria RAM: {memory.percent}% usado ({memory.used / 1024 / 1024:.0f}MB/{memory.total / 1024 / 1024:.0f}MB)\n"
+            f"  💾 Disco: {disk_usage.percent}% usado ({disk_usage.used / 1024 / 1024 / 1024:.1f}GB/{disk_usage.total / 1024 / 1024 / 1024:.1f}GB)\n"
             f"  📱 Red: {len(psutil.net_if_addrs())} interfaces\n"
             f"  🌐 Python: {sys.version}\n"
             f"  🕐 Hora: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
@@ -244,14 +274,15 @@ def handle_system_info():
         return (
             f"🖥️ Información del Sistema:\n"
             f"  💻 CPU: {cpu_percent}% usado, {psutil.cpu_count(logical=True)} núcleos\n"
-            f"  📊 Memoria RAM: {memory.percent}% usado ({memory.used/1024/1024:.0f}MB/{memory.total/1024/1024:.0f}MB)\n"
-            f"  💾 Disco: {disk_usage.percent}% usado ({disk_usage.used/1024/1024/1024:.1f}GB/{disk_usage.total/1024/1024/1024:.1f}GB)\n"
+            f"  📊 Memoria RAM: {memory.percent}% usado ({memory.used / 1024 / 1024:.0f}MB/{memory.total / 1024 / 1024:.0f}MB)\n"
+            f"  💾 Disco: {disk_usage.percent}% usado ({disk_usage.used / 1024 / 1024 / 1024:.1f}GB/{disk_usage.total / 1024 / 1024 / 1024:.1f}GB)\n"
             f"  📱 Red: {len(psutil.net_if_addrs())} interfaces\n"
             f"  🌐 Python: {sys.version}\n"
             f"  🕐 Hora: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         )
     except Exception as e:
         return f"Error al obtener información del sistema: {e!s}"
+
 
 def handle_directory_content(directory: str):
     """List directory contents"""
@@ -282,6 +313,7 @@ def handle_directory_content(directory: str):
     except Exception as e:
         return f"Error: {e!s}"
 
+
 def handle_run_command(cmd: str):
     """Run custom command"""
     try:
@@ -291,11 +323,7 @@ def handle_run_command(cmd: str):
         cmd = cmd.replace("D:\\", "/mnt/d/").replace("\\", "/")
 
         result = subprocess.run(
-            cmd,
-            shell=True,
-            capture_output=True,
-            text=True,
-            cwd=str(YGGDRASIL_ROOT)
+            cmd, shell=True, capture_output=True, text=True, cwd=str(YGGDRASIL_ROOT)
         )
 
         output = []
@@ -313,6 +341,7 @@ def handle_run_command(cmd: str):
     except Exception as e:
         return f"Error al ejecutar: {e!s}"
 
+
 def handle_view_file(file: str):
     """View file contents"""
     try:
@@ -327,7 +356,7 @@ def handle_view_file(file: str):
         if not p.is_file():
             return f"{file} no es un archivo"
 
-        content = p.read_text(encoding='utf-8')
+        content = p.read_text(encoding="utf-8")
 
         if len(content) > 5000:
             return f"📄 Contenido de {file} (truncado a 5000 caracteres):\n" + content[:5000]
@@ -338,6 +367,7 @@ def handle_view_file(file: str):
     """Get memory statistics"""
     try:
         import psutil
+
         memory = psutil.virtual_memory()
         return (
             f"🖥️ Memoria RAM: {memory.percent}% usado\n"
@@ -348,10 +378,12 @@ def handle_view_file(file: str):
     except Exception as e:
         return f"Error al obtener estadísticas de memoria: {e!s}"
 
+
 def handle_cpu_info():
     """Get CPU information"""
     try:
         import psutil
+
         cpu_percent = psutil.cpu_percent(interval=1)
         cpu_count = psutil.cpu_count(logical=True)
         return (
@@ -362,13 +394,10 @@ def handle_cpu_info():
     except Exception as e:
         return f"Error al obtener información de CPU: {e!s}"
 
+
 def handle_start_services():
     """Start Yggdrasil services"""
-    commands = [
-        "uv run poe dashboard &",
-        "uv run poe api &",
-        "uv run poe agent &"
-    ]
+    commands = ["uv run poe dashboard &", "uv run poe api &", "uv run poe agent &"]
 
     results = []
     for cmd in commands:
@@ -380,14 +409,10 @@ def handle_start_services():
 
     return "\n".join(results)
 
+
 def handle_stop_services():
     """Stop Yggdrasil services"""
-    processes = [
-        "uvicorn",
-        "python -m uvicorn",
-        "poe",
-        "dashboard"
-    ]
+    processes = ["uvicorn", "python -m uvicorn", "poe", "dashboard"]
 
     results = []
     for proc in processes:
@@ -398,6 +423,7 @@ def handle_stop_services():
             results.append(f"❌ Error: {e!s}")
 
     return "\n".join(results)
+
 
 # ── Command Matching ───────────────────────────────────────────
 COMMANDS = {
@@ -418,6 +444,7 @@ COMMANDS = {
     "start": handle_start_services,
     "stop": handle_stop_services,
 }
+
 
 def find_command(text: str) -> str:
     """Find command in user input"""
@@ -447,6 +474,7 @@ def find_command(text: str) -> str:
         return "stop"
 
     return None
+
 
 # ── Core Commands ──────────────────────────────────────────────
 @app.command
@@ -478,6 +506,7 @@ def help():
     console.print(table)
     console.print()
     console.print(Text("O puedes usar comandos en lenguaje natural!", style="yellow"))
+
 
 @app.command
 def interactive():
@@ -512,15 +541,19 @@ def interactive():
                 if command == "dir":
                     # Find directory path in input (Windows or Linux)
                     import re
+
                     path_match = re.search(r'"([^"]+)"|([^\s]+)', user_input)
                     if path_match:
-                        result = handle_directory_content(path_match.group(1) or path_match.group(2))
+                        result = handle_directory_content(
+                            path_match.group(1) or path_match.group(2)
+                        )
                     else:
                         result = handle_directory_content("/mnt/d/Proyectos")
 
                 elif command == "view":
                     # Find file path in input
                     import re
+
                     path_match = re.search(r'"([^"]+)"|([^\s]+)', user_input)
                     if path_match:
                         result = handle_view_file(path_match.group(1) or path_match.group(2))
@@ -530,6 +563,7 @@ def interactive():
                 elif command == "run":
                     # Find command to execute
                     import re
+
                     cmd_match = re.search(r'(?<=\s|^)(run|ejecutar)?\s*["]?([^"]+)["]?', user_input)
                     if cmd_match and cmd_match.group(2):
                         result = handle_run_command(cmd_match.group(2))
@@ -540,7 +574,9 @@ def interactive():
                     # No parameters needed
                     result = COMMANDS[command]()
             else:
-                console.print(Text("🤖 No reconozco el comando. Pidiendo a Lilith...", style="yellow"))
+                console.print(
+                    Text("🤖 No reconozco el comando. Pidiendo a Lilith...", style="yellow")
+                )
                 api_response = call_lilith_api(user_input)
 
                 if api_response.get("command"):
@@ -587,7 +623,9 @@ def interactive():
                 console.print(Text(f"⚡ Ejecutando: {command}", style="cyan"))
                 result = COMMANDS[command]()
             else:
-                console.print(Text("🤖 No reconozco el comando. Pidiendo a Lilith...", style="yellow"))
+                console.print(
+                    Text("🤖 No reconozco el comando. Pidiendo a Lilith...", style="yellow")
+                )
                 api_response = call_lilith_api(user_input)
 
                 if api_response.get("command"):
@@ -606,6 +644,7 @@ def interactive():
         except Exception as e:
             console.print(Text(f"❌ Error: {e}", style="red"))
             console.print(Rule())
+
 
 @app.command
 def ask(prompt: str):
@@ -634,6 +673,7 @@ def ask(prompt: str):
 
     console.print(result)
 
+
 @app.command
 def run(cmd: str):
     """Run a specific command"""
@@ -646,6 +686,7 @@ def run(cmd: str):
     else:
         console.print(Text(f"Comando desconocido: {cmd}", style="red"))
 
+
 # ── Main Entry Point ───────────────────────────────────────────
 if __name__ == "__main__":
     try:
@@ -655,6 +696,7 @@ if __name__ == "__main__":
         except ImportError:
             console.print(Text("⚠️ psutil no está instalado. Instalando...", style="yellow"))
             import subprocess
+
             subprocess.run("uv pip install psutil", shell=True)
 
         app()
@@ -665,4 +707,5 @@ if __name__ == "__main__":
         console.print(Text(f"Error: {e}", style="red"))
         if os.getenv("DEBUG"):
             import traceback
+
             console.print(traceback.format_exc())

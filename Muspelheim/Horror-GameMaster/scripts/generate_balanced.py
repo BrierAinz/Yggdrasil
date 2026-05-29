@@ -5,8 +5,13 @@ Focus on false_security (13 -> ~250) and body_horror (176 -> ~250).
 Only uses VERIFIED working models + MiMo.
 """
 
+import json
+import os
+import random
+import time
+
 from openai import OpenAI
-import json, time, sys, os, random
+
 
 BASE = "/home/brierainz/Proyectos/Yggdrasil/Muspelheim/Horror-GameMaster/data"
 UNIFIED = f"{BASE}/dataset_unified.jsonl"
@@ -29,15 +34,15 @@ providers = {
 
 # ONLY VERIFIED WORKING MODELS (tested 2026-05-29)
 MODELS = [
-    ("byteplus", "glm-4-7-251222",             "glm4.7",      494397),
-    ("byteplus", "gpt-oss-120b-250805",        "gpt-oss",     498304),
-    ("byteplus", "seed-2-0-lite-260428",       "s20-lite",    372063),
-    ("byteplus", "seed-1-8-251228",            "s1.8",        359485),
-    ("byteplus", "seed-2-0-mini-260428",       "s20-mini",    279933),
-    ("byteplus", "deepseek-v3-2-251201",       "ds3.2",       235546),
-    ("byteplus", "seed-2-0-code-preview-260328","s20-code",   140534),
-    ("byteplus", "seed-1-6-250915",            "s1.6",        500000),
-    ("byteplus", "seed-1-6-flash-250715",      "s1.6-flash",  500000),
+    ("byteplus", "glm-4-7-251222", "glm4.7", 494397),
+    ("byteplus", "gpt-oss-120b-250805", "gpt-oss", 498304),
+    ("byteplus", "seed-2-0-lite-260428", "s20-lite", 372063),
+    ("byteplus", "seed-1-8-251228", "s1.8", 359485),
+    ("byteplus", "seed-2-0-mini-260428", "s20-mini", 279933),
+    ("byteplus", "deepseek-v3-2-251201", "ds3.2", 235546),
+    ("byteplus", "seed-2-0-code-preview-260328", "s20-code", 140534),
+    ("byteplus", "seed-1-6-250915", "s1.6", 500000),
+    ("byteplus", "seed-1-6-flash-250715", "s1.6-flash", 500000),
     # MiMo DISABLED — hangs on API calls
     # ("mimo",     "MiMo-V2.5",                 "mimo",        999999),
     # ("mimo",     "MiMo-V2.5-Pro",             "mimo-pro",    999999),
@@ -47,8 +52,12 @@ exhausted = set()
 
 # --- Load existing for dedup ---
 seen = set()
-for fname in ["dataset_unified.jsonl", "dataset_generated_v3.jsonl", "dataset_balanced.jsonl",
-              "dataset_environmental.jsonl"]:
+for fname in [
+    "dataset_unified.jsonl",
+    "dataset_generated_v3.jsonl",
+    "dataset_balanced.jsonl",
+    "dataset_environmental.jsonl",
+]:
     fpath = f"{BASE}/{fname}"
     if os.path.exists(fpath):
         with open(fpath) as f:
@@ -101,40 +110,40 @@ BALANCE_TARGETS = {
         ],
         "prompt_templates": [
             lambda sc: (
-                f'Generate 5 FALSE SECURITY horror entries. Setting: {sc}. '
-                'The scene MUST feel safe, warm, friendly at first. Then introduce '
-                'ONE subtle wrong detail that the player might miss. The horror is '
-                'in the GAP between how safe things feel and how wrong they actually are. '
-                'Do NOT make it obviously scary. The wrong detail should be easy to dismiss. '
+                f"Generate 5 FALSE SECURITY horror entries. Setting: {sc}. "
+                "The scene MUST feel safe, warm, friendly at first. Then introduce "
+                "ONE subtle wrong detail that the player might miss. The horror is "
+                "in the GAP between how safe things feel and how wrong they actually are. "
+                "Do NOT make it obviously scary. The wrong detail should be easy to dismiss. "
                 'JSON: instruction, input, output (150-250 words), fear_type="false_security". '
-                'ONLY valid JSON lines, no markdown.'
+                "ONLY valid JSON lines, no markdown."
             ),
             lambda sc: (
-                f'Generate 5 FALSE SECURITY entries. Setting: {sc}. '
-                'Write about a moment of RELIEF that is actually the setup for something worse. '
-                'The player has just escaped danger. They found safety. Everything is fine. '
-                'Except one tiny detail suggests the safety is manufactured, staged, or a trap. '
-                'The tone should be 90% comforting, 10% unsettling. '
+                f"Generate 5 FALSE SECURITY entries. Setting: {sc}. "
+                "Write about a moment of RELIEF that is actually the setup for something worse. "
+                "The player has just escaped danger. They found safety. Everything is fine. "
+                "Except one tiny detail suggests the safety is manufactured, staged, or a trap. "
+                "The tone should be 90% comforting, 10% unsettling. "
                 'JSON: instruction, input, output (150-250 words), fear_type="false_security". '
-                'ONLY valid JSON lines.'
+                "ONLY valid JSON lines."
             ),
             lambda sc: (
-                f'Generate 5 FALSE SECURITY entries about TRUST being weaponized. Setting: {sc}. '
-                'An NPC is helping the player. They seem genuine. Their advice works. '
-                'But there are signs — ambiguous signs — that this NPC knows more than they say, '
+                f"Generate 5 FALSE SECURITY entries about TRUST being weaponized. Setting: {sc}. "
+                "An NPC is helping the player. They seem genuine. Their advice works. "
+                "But there are signs — ambiguous signs — that this NPC knows more than they say, "
                 'or that the "help" is guiding the player somewhere specific. '
-                'The player should feel grateful AND slightly uneasy. '
+                "The player should feel grateful AND slightly uneasy. "
                 'JSON: instruction, input, output (150-250 words), fear_type="false_security". '
-                'ONLY valid JSON lines.'
+                "ONLY valid JSON lines."
             ),
             lambda sc: (
-                f'Generate 5 FALSE SECURITY entries about ROUTINE hiding horror. Setting: {sc}. '
-                'The scene is mundane, everyday, boring even. Nothing is wrong. '
-                'But the player notices that this exact scene — same sounds, same smells, same '
-                'arrangement — has happened before. Deja vu. Or is the environment on a loop? '
-                'The horror is in repetition that the player can\'t prove. '
+                f"Generate 5 FALSE SECURITY entries about ROUTINE hiding horror. Setting: {sc}. "
+                "The scene is mundane, everyday, boring even. Nothing is wrong. "
+                "But the player notices that this exact scene — same sounds, same smells, same "
+                "arrangement — has happened before. Deja vu. Or is the environment on a loop? "
+                "The horror is in repetition that the player can't prove. "
                 'JSON: instruction, input, output (150-250 words), fear_type="false_security". '
-                'ONLY valid JSON lines.'
+                "ONLY valid JSON lines."
             ),
         ],
     },
@@ -164,31 +173,31 @@ BALANCE_TARGETS = {
         ],
         "prompt_templates": [
             lambda sc: (
-                f'Generate 5 BODY HORROR entries. Setting: {sc}. '
-                'Focus on the WRONGNESS of flesh — not gore, but transformation. '
-                'Things that should not be growing, shrinking, moving, or changing. '
-                'The body betraying itself. Sensations that have no source. '
-                'Subtle at first, escalating. '
+                f"Generate 5 BODY HORROR entries. Setting: {sc}. "
+                "Focus on the WRONGNESS of flesh — not gore, but transformation. "
+                "Things that should not be growing, shrinking, moving, or changing. "
+                "The body betraying itself. Sensations that have no source. "
+                "Subtle at first, escalating. "
                 'JSON: instruction, input, output (150-250 words), fear_type="body_horror". '
-                'ONLY valid JSON lines.'
+                "ONLY valid JSON lines."
             ),
             lambda sc: (
-                f'Generate 5 BODY HORROR entries about PERCEPTION. Setting: {sc}. '
-                'The player notices something wrong with their own body — '
-                'a mark that appeared, a sensation that won\'t stop, a limb that '
-                'responds differently than expected. Not painful. Just WRONG. '
-                'The horror is in realizing the body is changing and you can\'t stop it. '
+                f"Generate 5 BODY HORROR entries about PERCEPTION. Setting: {sc}. "
+                "The player notices something wrong with their own body — "
+                "a mark that appeared, a sensation that won't stop, a limb that "
+                "responds differently than expected. Not painful. Just WRONG. "
+                "The horror is in realizing the body is changing and you can't stop it. "
                 'JSON: instruction, input, output (150-250 words), fear_type="body_horror". '
-                'ONLY valid JSON lines.'
+                "ONLY valid JSON lines."
             ),
             lambda sc: (
-                f'Generate 5 BODY HORROR entries about MIMICRY. Setting: {sc}. '
-                'Something is imitating human body parts imperfectly. '
-                'A hand that has too many joints. A face whose proportions are slightly off. '
-                'Skin with the wrong texture. Not monstrous — just NOT QUITE RIGHT. '
-                'Uncanny valley territory. '
+                f"Generate 5 BODY HORROR entries about MIMICRY. Setting: {sc}. "
+                "Something is imitating human body parts imperfectly. "
+                "A hand that has too many joints. A face whose proportions are slightly off. "
+                "Skin with the wrong texture. Not monstrous — just NOT QUITE RIGHT. "
+                "Uncanny valley territory. "
                 'JSON: instruction, input, output (150-250 words), fear_type="body_horror". '
-                'ONLY valid JSON lines.'
+                "ONLY valid JSON lines."
             ),
         ],
     },
@@ -205,10 +214,10 @@ total_new = 0
 total_calls = 0
 errors_by_model = {}
 batch_num = 0
-generated_per_type = {ft: 0 for ft in BALANCE_TARGETS}
+generated_per_type = dict.fromkeys(BALANCE_TARGETS, 0)
 
-print(f"\nGenerating balanced entries...", flush=True)
-print(f"Targets: false_security +175+, body_horror +75+", flush=True)
+print("\nGenerating balanced entries...", flush=True)
+print("Targets: false_security +175+, body_horror +75+", flush=True)
 print("", flush=True)
 
 outf = open(OUTFILE, "a")
@@ -234,7 +243,10 @@ while len(exhausted) < len(MODELS) and batch_num < MAX_BATCHES:
         resp = client.chat.completions.create(
             model=model,
             messages=[
-                {"role": "system", "content": "Output ONLY valid JSONL. No markdown, no fences, no code blocks. Raw JSON objects, one per line. Every entry MUST have fear_type field."},
+                {
+                    "role": "system",
+                    "content": "Output ONLY valid JSONL. No markdown, no fences, no code blocks. Raw JSON objects, one per line. Every entry MUST have fear_type field.",
+                },
                 {"role": "user", "content": prompt},
             ],
             temperature=0.95,
@@ -273,8 +285,7 @@ while len(exhausted) < len(MODELS) and batch_num < MAX_BATCHES:
 
         progress = " | ".join(f"{k}:{v}" for k, v in generated_per_type.items())
         print(
-            f"#{total_calls:3d} {short:12s} {ft:18s} "
-            f"+{count:2d} new={total_new:4d} [{progress}]",
+            f"#{total_calls:3d} {short:12s} {ft:18s} +{count:2d} new={total_new:4d} [{progress}]",
             flush=True,
         )
 
@@ -303,7 +314,7 @@ while len(exhausted) < len(MODELS) and batch_num < MAX_BATCHES:
 outf.close()
 
 # --- Merge into unified ---
-print(f"\nMerging into unified dataset...", flush=True)
+print("\nMerging into unified dataset...", flush=True)
 all_entries = {}
 for fname in ["dataset_unified.jsonl", "dataset_balanced.jsonl", "dataset_environmental.jsonl"]:
     fpath = f"{BASE}/{fname}"
@@ -340,19 +351,21 @@ with open(UNIFIED, "w") as f:
 
 # --- Final stats ---
 from collections import Counter
+
+
 fear_counts = Counter(e.get("fear_type", "unknown") for e in all_entries.values())
 
-print(f"\n{'='*60}", flush=True)
-print(f"BALANCING COMPLETE", flush=True)
+print(f"\n{'=' * 60}", flush=True)
+print("BALANCING COMPLETE", flush=True)
 print(f"  New entries this run: {total_new}", flush=True)
 print(f"  Total unique entries: {len(all_entries)}", flush=True)
 print(f"  API calls: {total_calls}", flush=True)
 print(f"  Models exhausted: {len(exhausted)}/{len(MODELS)}", flush=True)
-print(f"", flush=True)
-print(f"  Distribution:", flush=True)
+print("", flush=True)
+print("  Distribution:", flush=True)
 for ft, count in sorted(fear_counts.items(), key=lambda x: -x[1]):
     pct = count / len(all_entries) * 100
     print(f"    {ft:<22} {count:>5} ({pct:.1f}%)", flush=True)
-print(f"", flush=True)
+print("", flush=True)
 print(f"  Output: {UNIFIED}", flush=True)
-print(f"{'='*60}", flush=True)
+print(f"{'=' * 60}", flush=True)
