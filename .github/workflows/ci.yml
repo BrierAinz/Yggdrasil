@@ -60,7 +60,11 @@ jobs:
           "); do
             if [ -d "$pkg/tests" ]; then
               echo "::group::pytest $pkg"
-              uv run python -m pytest "$pkg/tests" --tb=short -q --rootdir="$pkg" --override-ini="addopts=" -p no:cacheprovider || FAILED=1
+              set +e
+              uv run python -m pytest "$pkg/tests" --tb=short -q --rootdir="$pkg" --override-ini="addopts=" -p no:cacheprovider
+              rc=$?
+              set -e
+              if [ $rc -ne 0 ] && [ $rc -ne 5 ]; then FAILED=1; fi
               echo "::endgroup::"
             fi
           done
